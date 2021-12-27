@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'dart:ffi';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 import 'bridge_generated.dart';
 
-const base = 'wordshk_api';
-final path = Platform.isWindows
-    ? '$base.dll'
-    : Platform.isMacOS
-    ? 'lib$base.dylib'
-    : 'lib$base.so';
-late final dylib = Platform.isIOS ? DynamicLibrary.process() : DynamicLibrary.open(path);
+// const base = 'wordshk_api';
+// final path = Platform.isWindows
+//     ? '$base.dll'
+//     : Platform.isMacOS
+//     ? 'lib$base.dylib'
+//     : 'lib$base.so';
+// late final dylib = Platform.isIOS ? DynamicLibrary.process() : DynamicLibrary.open(path);
+late final dylib = DynamicLibrary.process();
 late final api = WordshkApi(dylib);
-
 
 void main() {
   runApp(const MyApp());
@@ -58,17 +59,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-        title: const Text('My Home Page'),
+        title: const Text('words.hk'),
         actions: [searchBar.getSearchAction(context)]
     );
   }
 
   _MyHomePageState() {
+    // getApplicationDocumentsDirectory().then((appDir) {
+    //   api.initApi(inputAppDir: appDir.toString());
+    // });
+
     searchBar = SearchBar(
         inBar: false,
         buildDefaultAppBar: buildAppBar,
         setState: setState,
-        onSubmitted: print,
+        onSubmitted: (query) {print("querying: $query"); print(api.prSearch(capacity: 10, query: query));},
         onCleared: () {
           print("Search bar has been cleared");
         },
