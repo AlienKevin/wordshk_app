@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
+import 'dart:ffi';
+import 'dart:io';
+
+import 'bridge_generated.dart';
+
+const base = 'wordshk_api';
+final path = Platform.isWindows
+    ? '$base.dll'
+    : Platform.isMacOS
+    ? 'lib$base.dylib'
+    : 'lib$base.so';
+late final dylib = Platform.isIOS ? DynamicLibrary.process() : DynamicLibrary.open(path);
+late final api = WordshkApi(dylib);
+
 
 void main() {
   runApp(const MyApp());
