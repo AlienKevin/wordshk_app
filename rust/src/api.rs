@@ -22,8 +22,12 @@ struct Api {
 }
 
 fn serialize_api<P: AsRef<Path>>(output_path: &P, api: &Api) {
-    fs::write(output_path, serde_json::to_string(&api).unwrap())
+    info!("Serializing Api struct as json...");
+    let json = serde_json::to_string(&api).unwrap();
+    info!("Serialized Api as json!");
+    fs::write(output_path, json)
         .expect("Unable to output serailized RichDict");
+    info!("Wrote json to app dir");
 }
 
 fn deserialize_api<P: AsRef<Path>>(input_path: &P) -> Option<Api> {
@@ -48,6 +52,7 @@ impl Api {
         }
         info!("Calling Api::new()...");
         let api_path = Path::new(&app_dir).join("api.json");
+        info!("Api path is at: {:?}", api_path);
         let current_time = Utc::now();
         match deserialize_api(&api_path) {
             Some(api) => {
@@ -90,6 +95,7 @@ impl Api {
         info!("Cleaned CSV data");
         let dict = parse_dict(csv_data_remove_two_lines.as_bytes()).unwrap();
         info!("Parsed CSV data");
+        // info!("{:?}", dict.get(&(89331 as usize)).unwrap());
         let new_api = Api {
             dict: enrich_dict(&dict),
             release_time: new_release_time,

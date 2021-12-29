@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'dart:ffi';
-import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 import 'bridge_generated.dart';
@@ -66,14 +67,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _MyHomePageState() {
     getApplicationDocumentsDirectory().then((appDir) {
-      api.initApi(inputAppDir: appDir.toString());
+      api.initApi(inputAppDir: appDir.path);
     });
 
     searchBar = SearchBar(
         inBar: false,
         buildDefaultAppBar: buildAppBar,
         setState: setState,
-        onSubmitted: (query) {print("querying: $query"); print(api.prSearch(capacity: 10, query: query));},
+        onSubmitted: (query) {
+          print("querying: $query");
+          api.prSearch(capacity: 10, query: query).then(printPrSearchResults);
+          },
         onCleared: () {
           print("Search bar has been cleared");
         },
@@ -87,5 +91,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: searchBar.build(context)
     );
+  }
+}
+
+void printPrSearchResults(List<PrSearchResult> results) {
+  for (var result in results) {
+    print("${result.variant} ${result.pr}");
   }
 }
