@@ -32,7 +32,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0ABB7366277BDB3400012FD2 /* bridge_generated.dart */ = {isa = PBXFileReference; lastKnownFileType = text; name = bridge_generated.dart; path = ../lib/bridge_generated.dart; sourceTree = "<group>"; };
 		0ABB7368277BDB4500012FD2 /* libwordshk_api.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwordshk_api.a; path = ../rust/target/universal/debug/libwordshk_api.a; sourceTree = "<group>"; };
 		0ABB736A277BDB5E00012FD2 /* bridge_generated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bridge_generated.h; path = Runner/bridge_generated.h; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
@@ -71,7 +70,6 @@
 			isa = PBXGroup;
 			children = (
 				0ABB7368277BDB4500012FD2 /* libwordshk_api.a */,
-				0ABB7366277BDB3400012FD2 /* bridge_generated.dart */,
 				376A33C914C2522AA31E54D3 /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
@@ -375,7 +373,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Runner",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = hk.words.wordshk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_STYLE = debugging;
@@ -512,7 +513,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Runner",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = hk.words.wordshk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_STYLE = debugging;
@@ -537,7 +541,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Runner",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = hk.words.wordshk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_STYLE = debugging;

@@ -1,3 +1,6 @@
+# words.hk project specific
+ios/Runner/lib*.a
+
 # Miscellaneous
 *.class
 *.log

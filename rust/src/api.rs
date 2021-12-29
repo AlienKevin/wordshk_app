@@ -94,6 +94,7 @@ impl Api {
             dict: enrich_dict(&dict),
             release_time: new_release_time,
         };
+        info!("Created Api struct");
         serialize_api(api_path, &new_api);
         info!("Serialized api data");
         new_api

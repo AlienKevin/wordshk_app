@@ -65,9 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _MyHomePageState() {
-    // getApplicationDocumentsDirectory().then((appDir) {
-    //   api.initApi(inputAppDir: appDir.toString());
-    // });
+    getApplicationDocumentsDirectory().then((appDir) {
+      api.initApi(inputAppDir: appDir.toString());
+    });
 
     searchBar = SearchBar(
         inBar: false,
