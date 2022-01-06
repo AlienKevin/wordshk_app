@@ -57,12 +57,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late SearchBar searchBar;
+  String? searchQuery;
+  List<PrSearchResult> prSearchResults = [];
+  List<VariantSearchResult> variantSearchResults = [];
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-        title: const Text('words.hk'),
-        actions: [searchBar.getSearchAction(context)]
-    );
+        title: Text(searchQuery ?? "Search here..."),
+        actions: [searchBar.getSearchAction(context)]);
   }
 
   _MyHomePageState() {
@@ -75,9 +77,16 @@ class _MyHomePageState extends State<MyHomePage> {
         buildDefaultAppBar: buildAppBar,
         setState: setState,
         onSubmitted: (query) {
-          print("querying: $query");
-          api.prSearch(capacity: 10, query: query).then(printPrSearchResults);
-          },
+          setState(() {
+            searchQuery = query;
+          });
+          api.prSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              prSearchResults = results;
+              variantSearchResults.clear();
+            });
+          });
+        },
         onCleared: () {
           print("Search bar has been cleared");
         },
@@ -89,16 +98,19 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: searchBar.build(context)
+      appBar: searchBar.build(context),
+      body: ListView(
+          children: prSearchResults.isNotEmpty
+              ? prSearchResults.map((result) {
+                  return ListTile(
+                    title: Text(result.variant + " " + result.pr),
+                  );
+                }).toList()
+              : variantSearchResults.map((result) {
+                  return ListTile(
+                    title: Text(result.variant),
+                  );
+                }).toList()),
     );
-  }
-}
-
-void printPrSearchResults(List<PrSearchResult> results) {
-  for (var result in results) {
-    print("${result.variant} ${result.pr}");
-    api.getEntryHtml(id: result.id).then((html) {
-      print(html);
-    });
   }
 }
