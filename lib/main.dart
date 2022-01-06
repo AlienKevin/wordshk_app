@@ -97,5 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
 void printPrSearchResults(List<PrSearchResult> results) {
   for (var result in results) {
     print("${result.variant} ${result.pr}");
+    api.getEntryHtml(id: result.id).then((html) {
+      print(html);
+    });
   }
 }

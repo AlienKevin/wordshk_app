@@ -21,6 +21,8 @@ abstract class WordshkApi extends FlutterRustBridgeBase<WordshkApiWire> {
 
   Future<List<VariantSearchResult>> variantSearch(
       {required int capacity, required String query, dynamic hint});
+
+  Future<String> getEntryHtml({required int id, dynamic hint});
 }
 
 class PrSearchResult {
@@ -91,6 +93,18 @@ class WordshkApiImpl extends WordshkApi {
           argNames: ["capacity", "query"],
         ),
         argValues: [capacity, query],
+        hint: hint,
+      ));
+
+  Future<String> getEntryHtml({required int id, dynamic hint}) =>
+      executeNormal(FlutterRustBridgeTask(
+        callFfi: (port) => inner.wire_get_entry_html(port, _api2wire_u32(id)),
+        parseSuccessData: _wire2api_String,
+        constMeta: const FlutterRustBridgeTaskConstMeta(
+          debugName: "get_entry_html",
+          argNames: ["id"],
+        ),
+        argValues: [id],
         hint: hint,
       ));
 
@@ -243,6 +257,22 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
               ffi.Pointer<wire_uint_8_list>)>>('wire_variant_search');
   late final _wire_variant_search = _wire_variant_searchPtr
       .asFunction<void Function(int, int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_get_entry_html(
+    int port,
+    int id,
+  ) {
+    return _wire_get_entry_html(
+      port,
+      id,
+    );
+  }
+
+  late final _wire_get_entry_htmlPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Uint32)>>(
+          'wire_get_entry_html');
+  late final _wire_get_entry_html =
+      _wire_get_entry_htmlPtr.asFunction<void Function(int, int)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list(
     int len,

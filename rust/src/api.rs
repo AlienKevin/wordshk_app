@@ -1,5 +1,6 @@
 use wordshk_tools::dict::{LaxJyutPing};
 use wordshk_tools::parse::{parse_dict, parse_pr};
+use wordshk_tools::emit_html::rich_entry_to_xml;
 use wordshk_tools::rich_dict::{enrich_dict, RichDict};
 use wordshk_tools::search;
 use chrono::{DateTime, Utc};
@@ -76,6 +77,10 @@ impl Api {
 
     pub fn variant_search(&self, capacity: u32, query: &str) -> Vec<VariantSearchResult> {
         variant_search_helper(capacity, &self.dict, query)
+    }
+
+    pub fn get_entry_html(&self, id: usize) -> String {
+        rich_entry_to_xml(self.dict.get(&id).unwrap())
     }
 
     fn get_new_dict<P: AsRef<Path>>(api_path: &P) -> Api {
@@ -183,4 +188,8 @@ pub fn pr_search(capacity: u32, query: String) -> Result<Vec<PrSearchResult>> {
 
 pub fn variant_search(capacity: u32, query: String) -> Result<Vec<VariantSearchResult>> {
     Ok((*API.lock()).as_ref().unwrap().variant_search(capacity, &query))
+}
+
+pub fn get_entry_html(id: u32) -> Result<String> {
+    Ok((*API.lock()).as_ref().unwrap().get_entry_html(id as usize))
 }
