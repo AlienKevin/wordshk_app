@@ -2,15 +2,14 @@
 
 words.hk dictionary for mobile
 
-## Getting Started
+# Build
 
-This project is a starting point for a Flutter application.
+Run flutter-code-gen:
+```
+cd rust && flutter_rust_bridge_codegen --rust-input src/api.rs --dart-output ../lib/bridge_generated.dart --llvm-path /usr/local/homebrew/opt/llvm/ --c-output ../ios/Runner/bridge_generated.h
+```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Build rust for iOS:
+```
+cargo lipo && cp target/universal/debug/libwordshk_api.a ../ios/Runner
+```
