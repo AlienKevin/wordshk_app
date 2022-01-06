@@ -55,11 +55,19 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+enum BodyState {
+  prSearchResults,
+  variantSearchResults,
+  entry,
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   late SearchBar searchBar;
   String? searchQuery;
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
+  String? entryHtml;
+  BodyState bodyState = BodyState.prSearchResults;
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
@@ -82,8 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
           });
           api.prSearch(capacity: 10, query: query).then((results) {
             setState(() {
+              bodyState = BodyState.prSearchResults;
               prSearchResults = results;
-              variantSearchResults.clear();
             });
           });
         },
@@ -99,18 +107,58 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: searchBar.build(context),
-      body: ListView(
-          children: prSearchResults.isNotEmpty
-              ? prSearchResults.map((result) {
-                  return ListTile(
-                    title: Text(result.variant + " " + result.pr),
-                  );
-                }).toList()
-              : variantSearchResults.map((result) {
-                  return ListTile(
-                    title: Text(result.variant),
-                  );
-                }).toList()),
+      body: (() {
+        switch (bodyState) {
+          case BodyState.prSearchResults:
+            return showPrSearchResults();
+          case BodyState.variantSearchResults:
+            return showVariantSearchResults();
+          case BodyState.entry:
+            return showEntry();
+        }
+      })(),
     );
+  }
+
+  Widget showPrSearchResults() {
+    return ListView(
+        children: prSearchResults.map((result) {
+      return ListTile(
+        title: TextButton(
+          onPressed: () {
+            api.getEntryHtml(id: result.id).then((html) {
+              setState(() {
+                bodyState = BodyState.entry;
+                entryHtml = html;
+              });
+            });
+          },
+          child: Text(result.variant + " " + result.pr),
+        ),
+      );
+    }).toList());
+  }
+
+  Widget showVariantSearchResults() {
+    return ListView(
+        children: variantSearchResults.map((result) {
+      return ListTile(
+        title: TextButton(
+          onPressed: () {
+            api.getEntryHtml(id: result.id).then((html) {
+              setState(() {
+                bodyState = BodyState.entry;
+                entryHtml = html;
+              });
+            });
+          },
+          child: Text(result.variant),
+        ),
+      );
+    }).toList());
+  }
+
+  Widget showEntry() {
+    return Text(entryHtml!);
   }
 }
