@@ -15,6 +15,7 @@ dependencies:
   flutter_search_bar: 3.0.0-dev.1
   flutter_rust_bridge: ^1.9.1
   path_provider: ^2.0.8
+  flutter_html: ^2.2.1
 
 dev_dependencies:
   flutter_test:

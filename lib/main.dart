@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'dart:ffi';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'bridge_generated.dart';
 
@@ -159,6 +160,62 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showEntry() {
-    return Text(entryHtml!);
+    print(entryHtml!);
+    return SingleChildScrollView(
+      child: Html(
+        data: entryHtml!,
+        style: {
+          "body": Style(
+            fontSize: const FontSize(18)
+          ),
+          "div.entry-head": Style(
+            padding: const EdgeInsets.all(0),
+            margin: const EdgeInsets.all(0),
+          ),
+          "div.tags": Style(
+            padding: EdgeInsets.zero,
+            margin: EdgeInsets.zero,
+          ),
+          "h1": Style(
+            display: Display.INLINE,
+            fontSize: FontSize.percent(200),
+          ),
+          "h2": Style(
+            fontSize: FontSize.percent(150),
+          ),
+          "rt": Style(
+            fontSize: const FontSize(10),
+          ),
+          "ol": Style(
+            listStyleType: ListStyleType.NONE,
+            padding: const EdgeInsets.all(0),
+            margin: const EdgeInsets.all(0),
+          ),
+          "ruby": Style(
+            fontSize: FontSize.percent(150),
+          ),
+          "li": Style(
+            padding: const EdgeInsets.all(0),
+            margin: const EdgeInsets.all(0),
+          )
+        },
+        onLinkTap: (url, _, __, ___) {
+          print("Opening $url...");
+        },
+        onImageTap: (src, _, __, ___) {
+          print(src);
+        },
+        onImageError: (exception, stackTrace) {
+          print(exception);
+        },
+        onCssParseError: (css, messages) {
+          print("css that errored: $css");
+          print("error messages:");
+          messages.forEach((element) {
+            print(element);
+          });
+        },
+      ),
+    );
   }
 }
