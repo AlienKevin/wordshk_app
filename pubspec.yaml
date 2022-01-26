@@ -15,7 +15,10 @@ dependencies:
   flutter_search_bar: 3.0.0-dev.1
   flutter_rust_bridge: ^1.9.1
   path_provider: ^2.0.8
-  flutter_html: ^2.2.1
+  flutter_html:
+    git:
+      url: git://github.com/Sub6Resources/flutter_html.git
+      ref: ed48ee825a997abfcc1dfe43a98280ce0ea3a39a
 
 dev_dependencies:
   flutter_test:

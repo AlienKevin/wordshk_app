@@ -83,6 +83,11 @@ impl Api {
         rich_entry_to_xml(self.dict.get(&id).unwrap())
     }
 
+    pub fn get_entry_json(&self, id: usize) -> String {
+        let rich_entry = self.dict.get(&id).unwrap();
+        serde_json::to_string(&to_lean_rich_entry(rich_entry)).unwrap()
+    }
+
     fn get_new_dict<P: AsRef<Path>>(api_path: &P) -> Api {
         info!("Calling Api::get_new_dict()...");
         let new_release_time = Utc::now();
