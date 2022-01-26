@@ -126,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: prSearchResults.map((result) {
       return ListTile(
         title: TextButton(
+          style: const ButtonStyle(alignment: Alignment.centerLeft),
           onPressed: () {
             api.getEntryHtml(id: result.id).then((html) {
               setState(() {
@@ -134,7 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
               });
             });
           },
-          child: Text(result.variant + " " + result.pr),
+          child: Text(result.variant + " " + result.pr,
+              style: const TextStyle(fontSize: 18), textAlign: TextAlign.start),
         ),
       );
     }).toList());
@@ -145,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: variantSearchResults.map((result) {
       return ListTile(
         title: TextButton(
+          style: const ButtonStyle(alignment: Alignment.centerLeft),
           onPressed: () {
             api.getEntryHtml(id: result.id).then((html) {
               setState(() {
@@ -153,7 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
               });
             });
           },
-          child: Text(result.variant),
+          child: Text(result.variant,
+              style: const TextStyle(fontSize: 18), textAlign: TextAlign.start),
         ),
       );
     }).toList());
@@ -165,9 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Html(
         data: entryHtml!,
         style: {
-          "body": Style(
-            fontSize: const FontSize(18)
-          ),
+          "body": Style(fontSize: const FontSize(18)),
           "div.entry-head": Style(
             padding: const EdgeInsets.all(0),
             margin: const EdgeInsets.all(0),
@@ -183,9 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
           "h2": Style(
             fontSize: FontSize.percent(150),
           ),
-          "rt": Style(
-            fontSize: const FontSize(10),
-          ),
+          // "rt": Style(
+          //   fontSize: FontSize.percent(10),
+          // ),
           "ol": Style(
             listStyleType: ListStyleType.NONE,
             padding: const EdgeInsets.all(0),
