@@ -67,7 +67,7 @@ class Clause extends Equatable {
 
   const Clause(this.lines);
 
-  Clause.fromJson(List<String> json)
+  Clause.fromJson(List<dynamic> json)
       : lines = List.from(json).map((line) {
           return Line.fromJson(line);
         }).toList();
@@ -81,7 +81,7 @@ class Line extends Equatable {
 
   const Line(this.segments);
 
-  Line.fromJson(List<String> json)
+  Line.fromJson(List<dynamic> json)
       : segments = List.from(json).map((segment) {
           return Segment.fromJson(segment);
         }).toList();
@@ -105,7 +105,7 @@ class Segment extends Equatable {
 
   const Segment(this.type, this.segment);
 
-  Segment.fromJson(List<String> json)
+  Segment.fromJson(List<dynamic> json)
       : type = segmentTypeFromString(json[0]),
         segment = json[1];
 
@@ -183,7 +183,7 @@ class RubySegmentWord extends Equatable {
 
   RubySegmentWord.fromJson(List<dynamic> json)
       : word = Word.fromJson(json[0]),
-        prs = List.from(json);
+        prs = List.from(json[1]);
 
   @override
   List<Object?> get props => [word, prs];
@@ -256,7 +256,7 @@ class Text extends Equatable {
 
   const Text(this.style, this.text);
 
-  Text.fromJson(List<String> json)
+  Text.fromJson(List<dynamic> json)
       : style = json[0] == 'Bold' ? TextStyle.bold : TextStyle.normal,
         text = json[1];
 
