@@ -173,9 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         children: [
           showVariants(entry!.variants),
-          const SizedBox(height: 10),
           showPoses(entry!.poses),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           showDefs(entry!.defs),
         ],
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,18 +185,20 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget showVariants(List<Variant> variants) {
     return Column(
         children: variants.map((variant) {
-      return RichText(
-          text: TextSpan(
-        children: <TextSpan>[
-          TextSpan(
-              text: variant.word,
-              style: Theme.of(context).textTheme.headlineSmall),
-          const TextSpan(text: '  '),
-          TextSpan(
-              text: variant.prs, style: Theme.of(context).textTheme.bodySmall),
-        ],
-      ));
-    }).toList());
+          return RichText(
+              text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                  text: variant.word,
+                  style: Theme.of(context).textTheme.headlineSmall),
+              const TextSpan(text: '  '),
+              TextSpan(
+                  text: variant.prs,
+                  style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ));
+        }).toList(),
+        crossAxisAlignment: CrossAxisAlignment.start);
   }
 
   Widget showPoses(List<String> poses) {
@@ -205,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children: poses.map((pos) {
         return Text(
           "詞性：" + pos,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(context).textTheme.bodyMedium,
         );
       }).toList(),
     );
@@ -214,17 +215,22 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget showDefs(List<Def> defs) {
     return Column(
       children: defs.map(showDef).toList(),
+      crossAxisAlignment: CrossAxisAlignment.start,
     );
   }
 
   Widget showDef(Def def) {
-    return Column(
-      children: [
-        showClause(def.yue, "(粵) "),
-        def.eng == null
-            ? const SizedBox.shrink()
-            : showClause(def.eng!, "(英) "),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: Column(
+        children: [
+          showClause(def.yue, "(粵) "),
+          def.eng == null
+              ? const SizedBox.shrink()
+              : showClause(def.eng!, "(英) "),
+        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+      ),
     );
   }
 
@@ -233,19 +239,26 @@ class _MyHomePageState extends State<MyHomePage> {
       children: clause.lines.asMap().keys.toList().map((index) {
         return showLine(clause.lines[index], index == 0 ? tag : null);
       }).toList(),
+      crossAxisAlignment: CrossAxisAlignment.start,
     );
   }
 
-  RichText showLine(Line line, String? tag) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(text: tag),
-          ...line.segments.map(showSegment).toList()
-        ],
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
-    );
+  Widget showLine(Line line, String? tag) {
+    if (line.segments.length == 1 &&
+        line.segments[0] == const Segment(SegmentType.text, "")) {
+      return const SizedBox(height: 10);
+    } else {
+      return RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+                text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ...line.segments.map(showSegment).toList()
+          ],
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      );
+    }
   }
 
   TextSpan showSegment(Segment segment) {
