@@ -1,12 +1,14 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:ffi';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
-import 'dart:ffi';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 import 'bridge_generated.dart';
+import 'entry.dart'
+    show Clause, Def, Entry, Line, Segment, SegmentType, Variant;
 
 // const base = 'wordshk_api';
 // final path = Platform.isWindows
@@ -31,16 +33,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'words.hk',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        // Define the default brightness and colors.
+        brightness: Brightness.light,
+        primaryColor: Colors.lightBlue[800],
+        // Define the default font family.
+        fontFamily: 'Roboto',
+        textTheme: const TextTheme(
+          headlineSmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(fontSize: 24.0),
+          bodyMedium: TextStyle(fontSize: 20.0),
+          bodySmall: TextStyle(fontSize: 18.0),
+        ),
       ),
       home: const MyHomePage(title: 'words.hk home'),
     );
@@ -67,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? searchQuery;
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
-  String? entryHtml;
+  Entry? entry;
   BodyState bodyState = BodyState.prSearchResults;
 
   AppBar buildAppBar(BuildContext context) {
@@ -128,10 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: TextButton(
           style: const ButtonStyle(alignment: Alignment.centerLeft),
           onPressed: () {
-            api.getEntryHtml(id: result.id).then((html) {
+            api.getEntryJson(id: result.id).then((json) {
               setState(() {
                 bodyState = BodyState.entry;
-                entryHtml = html;
+                entry = Entry.fromJson(jsonDecode(json));
               });
             });
           },
@@ -149,10 +152,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: TextButton(
           style: const ButtonStyle(alignment: Alignment.centerLeft),
           onPressed: () {
-            api.getEntryHtml(id: result.id).then((html) {
+            api.getEntryJson(id: result.id).then((json) {
               setState(() {
                 bodyState = BodyState.entry;
-                entryHtml = html;
+                entry = Entry.fromJson(jsonDecode(json));
               });
             });
           },
@@ -164,60 +167,99 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showEntry() {
-    print(entryHtml!);
     return SingleChildScrollView(
-      child: Html(
-        data: entryHtml!,
-        style: {
-          "body": Style(fontSize: const FontSize(18)),
-          "div.entry-head": Style(
-            padding: const EdgeInsets.all(0),
-            margin: const EdgeInsets.all(0),
-          ),
-          "div.tags": Style(
-            padding: EdgeInsets.zero,
-            margin: EdgeInsets.zero,
-          ),
-          "h1": Style(
-            display: Display.INLINE,
-            fontSize: FontSize.percent(200),
-          ),
-          "h2": Style(
-            fontSize: FontSize.percent(150),
-          ),
-          // "rt": Style(
-          //   fontSize: FontSize.percent(10),
-          // ),
-          "ol": Style(
-            listStyleType: ListStyleType.NONE,
-            padding: const EdgeInsets.all(0),
-            margin: const EdgeInsets.all(0),
-          ),
-          "ruby": Style(
-            fontSize: FontSize.percent(150),
-          ),
-          "li": Style(
-            padding: const EdgeInsets.all(0),
-            margin: const EdgeInsets.all(0),
-          )
-        },
-        onLinkTap: (url, _, __, ___) {
-          print("Opening $url...");
-        },
-        onImageTap: (src, _, __, ___) {
-          print(src);
-        },
-        onImageError: (exception, stackTrace) {
-          print(exception);
-        },
-        onCssParseError: (css, messages) {
-          print("css that errored: $css");
-          print("error messages:");
-          messages.forEach((element) {
-            print(element);
-          });
-        },
+        child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          showVariants(entry!.variants),
+          const SizedBox(height: 10),
+          showPoses(entry!.poses),
+          const SizedBox(height: 10),
+          showDefs(entry!.defs),
+        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+    ));
+  }
+
+  Widget showVariants(List<Variant> variants) {
+    return Column(
+        children: variants.map((variant) {
+      return RichText(
+          text: TextSpan(
+        children: <TextSpan>[
+          TextSpan(
+              text: variant.word,
+              style: Theme.of(context).textTheme.headlineSmall),
+          const TextSpan(text: '  '),
+          TextSpan(
+              text: variant.prs, style: Theme.of(context).textTheme.bodySmall),
+        ],
+      ));
+    }).toList());
+  }
+
+  Widget showPoses(List<String> poses) {
+    return Wrap(
+      children: poses.map((pos) {
+        return Text(
+          "詞性：" + pos,
+          style: Theme.of(context).textTheme.bodyLarge,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget showDefs(List<Def> defs) {
+    return Column(
+      children: defs.map(showDef).toList(),
+    );
+  }
+
+  Widget showDef(Def def) {
+    return Column(
+      children: [
+        showClause(def.yue, "(粵) "),
+        def.eng == null
+            ? const SizedBox.shrink()
+            : showClause(def.eng!, "(英) "),
+      ],
+    );
+  }
+
+  Widget showClause(Clause clause, String? tag) {
+    return Column(
+      children: clause.lines.asMap().keys.toList().map((index) {
+        return showLine(clause.lines[index], index == 0 ? tag : null);
+      }).toList(),
+    );
+  }
+
+  RichText showLine(Line line, String? tag) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(text: tag),
+          ...line.segments.map(showSegment).toList()
+        ],
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
+  }
+
+  TextSpan showSegment(Segment segment) {
+    switch (segment.type) {
+      case SegmentType.text:
+        return TextSpan(text: segment.segment);
+      case SegmentType.link:
+        return TextSpan(
+            text: segment.segment,
+            style: const TextStyle(color: Colors.blue),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () async {
+                // TODO: go to linked entry
+              });
+    }
   }
 }

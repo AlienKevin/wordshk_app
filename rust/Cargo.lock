@@ -1365,9 +1365,9 @@ dependencies = [
 
 [[package]]
 name = "wordshk_tools"
-version = "1.0.0-beta.9"
+version = "1.0.0-beta.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31ce2238f037625a53e9513d361fee48ea5464470fd69e55775c109de755e723"
+checksum = "9c09ed8268c11246bcc676fe75bc16eb2cfce14e4ce580cb3b0b88fa6cba7875"
 dependencies = [
  "chrono",
  "csv",

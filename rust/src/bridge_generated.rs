@@ -60,16 +60,16 @@ pub extern "C" fn wire_variant_search(port: i64, capacity: u32, query: *mut wire
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_entry_html(port: i64, id: u32) {
+pub extern "C" fn wire_get_entry_json(port: i64, id: u32) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
-            debug_name: "get_entry_html",
+            debug_name: "get_entry_json",
             port: Some(port),
             mode: FfiCallMode::Normal,
         },
         move || {
             let api_id = id.wire2api();
-            move |task_callback| get_entry_html(api_id)
+            move |task_callback| get_entry_json(api_id)
         },
     )
 }
