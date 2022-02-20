@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
         textTheme: const TextTheme(
           headlineSmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
-          bodyLarge: TextStyle(fontSize: 24.0),
+          bodyLarge: TextStyle(fontSize: 28.0),
           bodyMedium: TextStyle(fontSize: 20.0),
           bodySmall: TextStyle(fontSize: 18.0),
         ),
@@ -277,38 +277,35 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showEg(e.Eg eg) {
-    return Column(
-      children: [
-        eg.zho == null ? const SizedBox.shrink() : showRichLine(eg.zho!, "中"),
-        eg.yue == null ? const SizedBox.shrink() : showRichLine(eg.yue!, "粵"),
-        eg.eng == null ? const SizedBox.shrink() : showLine(eg.eng!, "英"),
-      ],
-      crossAxisAlignment: CrossAxisAlignment.start,
-    );
+    return Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: Column(
+          children: [
+            eg.zho == null ? const SizedBox.shrink() : showRichLine(eg.zho!),
+            eg.yue == null ? const SizedBox.shrink() : showRichLine(eg.yue!),
+            eg.eng == null ? const SizedBox.shrink() : showLine(eg.eng!, ""),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        ));
   }
 
-  Widget showRichLine(e.RichLine line, String? tag) {
+  Widget showRichLine(e.RichLine line) {
     switch (line.type) {
       case e.RichLineType.ruby:
-        return showRubyLine(line.line, tag);
+        return showRubyLine(line.line);
       case e.RichLineType.word:
-        return showWordLine(line.line, tag);
+        return showWordLine(line.line);
     }
   }
 
-  Widget showRubyLine(e.RubyLine line, String? tag) {
-    double rubySize = Theme.of(context).textTheme.bodyMedium!.fontSize!;
+  Widget showRubyLine(e.RubyLine line) {
+    double rubySize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
     return Padding(
-      padding: EdgeInsets.only(top: rubySize),
+      padding: EdgeInsets.only(top: rubySize / 1.5),
       child: Wrap(
         runSpacing: rubySize,
         children: line.segments
-            .map((segment) {
-              return Stack(
-                alignment: Alignment.center,
-                children: showRubySegment(segment, rubySize),
-              );
-            })
+            .map((segment) => showRubySegment(segment, rubySize))
             .map((e) => Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   textBaseline: TextBaseline.alphabetic,
@@ -320,28 +317,50 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  List<Widget> showRubySegment(e.RubySegment segment, double rubySize) {
-    double rubyYPos = rubySize;
-    return [
+  Widget showRubySegment(e.RubySegment segment, double rubySize) {
+    double rubyYPos = rubySize / 1.1;
+    Widget text;
+    String ruby;
+    switch (segment.type) {
+      case e.RubySegmentType.punc:
+        text = Text(segment.segment as String,
+            style: TextStyle(fontSize: rubySize, height: 0.8));
+        ruby = "";
+        break;
+      case e.RubySegmentType.word:
+        text = RichText(
+            text: TextSpan(
+                children: showWord(segment.segment.word as e.Word),
+                style: TextStyle(fontSize: rubySize, height: 0.8)));
+        ruby = segment.segment.prs.join(" ");
+        break;
+      case e.RubySegmentType.linkedWord:
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          textBaseline: TextBaseline.alphabetic,
+          mainAxisSize: MainAxisSize.min,
+          children: (segment.segment.words as List<e.RubySegmentWord>)
+              .map((word) => showRubySegment(
+                  e.RubySegment(e.RubySegmentType.word, word), rubySize))
+              .toList(),
+        );
+    }
+    return Stack(alignment: Alignment.center, children: [
       Container(
           alignment: Alignment.bottomCenter,
           child: Center(
               child: Transform(
                   transform: Matrix4.translationValues(0, -(rubyYPos), 0),
-                  child: Text("ruby",
-                      style: TextStyle(fontSize: rubySize * 0.8))))),
-      Text("文字", style: TextStyle(fontSize: rubySize)),
-    ];
+                  child:
+                      Text(ruby, style: TextStyle(fontSize: rubySize * 0.4))))),
+      text
+    ]);
   }
 
-  Widget showWordLine(e.WordLine line, String? tag) {
+  Widget showWordLine(e.WordLine line) {
     return RichText(
       text: TextSpan(
-        children: [
-          TextSpan(
-              text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ...line.segments.map(showWordSegment).toList()
-        ],
+        children: line.segments.map(showWordSegment).toList(),
         style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
@@ -372,6 +391,7 @@ class _MyHomePageState extends State<MyHomePage> {
         style: TextStyle(
             fontWeight: text.style == e.TextStyle.normal
                 ? FontWeight.normal
-                : FontWeight.bold));
+                : FontWeight.bold,
+            color: Colors.black));
   }
 }
