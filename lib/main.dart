@@ -7,8 +7,7 @@ import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'bridge_generated.dart';
-import 'entry.dart'
-    show Clause, Def, Entry, Line, Segment, SegmentType, Variant;
+import 'entry.dart' as e;
 
 // const base = 'wordshk_api';
 // final path = Platform.isWindows
@@ -70,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? searchQuery;
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
-  Entry? entry;
+  e.Entry? entry;
   BodyState bodyState = BodyState.prSearchResults;
 
   AppBar buildAppBar(BuildContext context) {
@@ -134,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
             api.getEntryJson(id: result.id).then((json) {
               setState(() {
                 bodyState = BodyState.entry;
-                entry = Entry.fromJson(jsonDecode(json));
+                entry = e.Entry.fromJson(jsonDecode(json));
               });
             });
           },
@@ -155,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
             api.getEntryJson(id: result.id).then((json) {
               setState(() {
                 bodyState = BodyState.entry;
-                entry = Entry.fromJson(jsonDecode(json));
+                entry = e.Entry.fromJson(jsonDecode(json));
               });
             });
           },
@@ -182,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 
-  Widget showVariants(List<Variant> variants) {
+  Widget showVariants(List<e.Variant> variants) {
     return Column(
         children: variants.map((variant) {
           return RichText(
@@ -212,14 +211,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget showDefs(List<Def> defs) {
+  Widget showDefs(List<e.Def> defs) {
     return Column(
       children: defs.map(showDef).toList(),
       crossAxisAlignment: CrossAxisAlignment.start,
     );
   }
 
-  Widget showDef(Def def) {
+  Widget showDef(e.Def def) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Column(
@@ -228,13 +227,14 @@ class _MyHomePageState extends State<MyHomePage> {
           def.eng == null
               ? const SizedBox.shrink()
               : showClause(def.eng!, "(英) "),
+          ...def.egs.map(showEg)
         ],
         crossAxisAlignment: CrossAxisAlignment.start,
       ),
     );
   }
 
-  Widget showClause(Clause clause, String? tag) {
+  Widget showClause(e.Clause clause, String? tag) {
     return Column(
       children: clause.lines.asMap().keys.toList().map((index) {
         return showLine(clause.lines[index], index == 0 ? tag : null);
@@ -243,9 +243,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget showLine(Line line, String? tag) {
+  Widget showLine(e.Line line, String? tag) {
     if (line.segments.length == 1 &&
-        line.segments[0] == const Segment(SegmentType.text, "")) {
+        line.segments[0] == const e.Segment(e.SegmentType.text, "")) {
       return const SizedBox(height: 10);
     } else {
       return RichText(
@@ -261,11 +261,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  TextSpan showSegment(Segment segment) {
+  TextSpan showSegment(e.Segment segment) {
     switch (segment.type) {
-      case SegmentType.text:
+      case e.SegmentType.text:
         return TextSpan(text: segment.segment);
-      case SegmentType.link:
+      case e.SegmentType.link:
         return TextSpan(
             text: segment.segment,
             style: const TextStyle(color: Colors.blue),
@@ -274,5 +274,104 @@ class _MyHomePageState extends State<MyHomePage> {
                 // TODO: go to linked entry
               });
     }
+  }
+
+  Widget showEg(e.Eg eg) {
+    return Column(
+      children: [
+        eg.zho == null ? const SizedBox.shrink() : showRichLine(eg.zho!, "中"),
+        eg.yue == null ? const SizedBox.shrink() : showRichLine(eg.yue!, "粵"),
+        eg.eng == null ? const SizedBox.shrink() : showLine(eg.eng!, "英"),
+      ],
+      crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+
+  Widget showRichLine(e.RichLine line, String? tag) {
+    switch (line.type) {
+      case e.RichLineType.ruby:
+        return showRubyLine(line.line, tag);
+      case e.RichLineType.word:
+        return showWordLine(line.line, tag);
+    }
+  }
+
+  Widget showRubyLine(e.RubyLine line, String? tag) {
+    double rubySize = Theme.of(context).textTheme.bodyMedium!.fontSize!;
+    return Padding(
+      padding: EdgeInsets.only(top: rubySize),
+      child: Wrap(
+        runSpacing: rubySize,
+        children: line.segments
+            .map((segment) {
+              return Stack(
+                alignment: Alignment.center,
+                children: showRubySegment(segment, rubySize),
+              );
+            })
+            .map((e) => Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  textBaseline: TextBaseline.alphabetic,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [e],
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+  List<Widget> showRubySegment(e.RubySegment segment, double rubySize) {
+    double rubyYPos = rubySize;
+    return [
+      Container(
+          alignment: Alignment.bottomCenter,
+          child: Center(
+              child: Transform(
+                  transform: Matrix4.translationValues(0, -(rubyYPos), 0),
+                  child: Text("ruby",
+                      style: TextStyle(fontSize: rubySize * 0.8))))),
+      Text("文字", style: TextStyle(fontSize: rubySize)),
+    ];
+  }
+
+  Widget showWordLine(e.WordLine line, String? tag) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+              text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ...line.segments.map(showWordSegment).toList()
+        ],
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+    );
+  }
+
+  TextSpan showWordSegment(e.WordSegment segment) {
+    switch (segment.type) {
+      case e.SegmentType.text:
+        return TextSpan(children: showWord(segment.word));
+      case e.SegmentType.link:
+        return TextSpan(
+            children: showWord(segment.word),
+            style: const TextStyle(color: Colors.blue),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () async {
+                // TODO: go to linked entry
+              });
+    }
+  }
+
+  List<TextSpan> showWord(e.Word word) {
+    return word.texts.map(showText).toList();
+  }
+
+  TextSpan showText(e.Text text) {
+    return TextSpan(
+        text: text.text,
+        style: TextStyle(
+            fontWeight: text.style == e.TextStyle.normal
+                ? FontWeight.normal
+                : FontWeight.bold));
   }
 }
