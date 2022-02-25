@@ -303,7 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Padding(
       padding: EdgeInsets.only(top: rubySize / 1.5),
       child: Wrap(
-        runSpacing: rubySize,
+        runSpacing: rubySize / 1.4,
         children: line.segments
             .map((segment) => showRubySegment(segment, rubySize))
             .map((e) => Row(
