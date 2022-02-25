@@ -92,13 +92,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.1"
-  csslib:
-    dependency: transitive
-    description:
-      name: csslib
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.17.1"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -139,15 +132,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_html:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: ed48ee825a997abfcc1dfe43a98280ce0ea3a39a
-      resolved-ref: ed48ee825a997abfcc1dfe43a98280ce0ea3a39a
-      url: "git://github.com/Sub6Resources/flutter_html.git"
-    source: git
-    version: "3.0.0-alpha.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -188,13 +172,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.2"
-  html:
-    dependency: transitive
-    description:
-      name: html
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.15.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -272,13 +249,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.1"
-  numerus:
-    dependency: transitive
-    description:
-      name: numerus
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.1.1"
   package_config:
     dependency: transitive
     description:
