@@ -75,7 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-        title: Text(searchQuery ?? "Search here..."),
+        title: Text(searchQuery ?? "Search here...",
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(color: Colors.white)),
+        centerTitle: false,
         actions: [searchBar.getSearchAction(context)]);
   }
 
@@ -121,11 +126,17 @@ class _MyHomePageState extends State<MyHomePage> {
       body: (() {
         switch (bodyState) {
           case BodyState.prSearchResults:
-            return ListView(children: showPrSearchResults());
+            return ListView(
+                children: showPrSearchResults(),
+                padding: const EdgeInsets.only(top: 10.0));
           case BodyState.variantSearchResults:
-            return ListView(children: showVariantSearchResults());
+            return ListView(
+                children: showVariantSearchResults(),
+                padding: const EdgeInsets.only(top: 10.0));
           case BodyState.combinedSearchResults:
-            return ListView(children: showCombinedSearchResults());
+            return ListView(
+                children: showCombinedSearchResults(),
+                padding: const EdgeInsets.only(top: 10.0));
           case BodyState.entry:
             return showEntry();
         }
@@ -178,7 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
   ListTile showSearchResult(int id, TextSpan resultText) {
     return ListTile(
       title: TextButton(
-        style: const ButtonStyle(alignment: Alignment.centerLeft),
+        style: TextButton.styleFrom(
+            alignment: Alignment.centerLeft, padding: EdgeInsets.zero),
         onPressed: () {
           api.getEntryJson(id: id).then((json) {
             setState(() {
