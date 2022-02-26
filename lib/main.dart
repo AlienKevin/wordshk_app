@@ -61,6 +61,7 @@ class MyHomePage extends StatefulWidget {
 enum BodyState {
   prSearchResults,
   variantSearchResults,
+  combinedSearchResults,
   entry,
 }
 
@@ -90,11 +91,18 @@ class _MyHomePageState extends State<MyHomePage> {
         onSubmitted: (query) {
           setState(() {
             searchQuery = query;
+            prSearchResults.clear();
+            variantSearchResults.clear();
           });
           api.prSearch(capacity: 10, query: query).then((results) {
             setState(() {
-              bodyState = BodyState.prSearchResults;
               prSearchResults = results;
+            });
+          });
+          api.variantSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              bodyState = BodyState.combinedSearchResults;
+              variantSearchResults = results;
             });
           });
         },
@@ -113,9 +121,11 @@ class _MyHomePageState extends State<MyHomePage> {
       body: (() {
         switch (bodyState) {
           case BodyState.prSearchResults:
-            return showPrSearchResults();
+            return ListView(children: showPrSearchResults());
           case BodyState.variantSearchResults:
-            return showVariantSearchResults();
+            return ListView(children: showVariantSearchResults());
+          case BodyState.combinedSearchResults:
+            return ListView(children: showCombinedSearchResults());
           case BodyState.entry:
             return showEntry();
         }
@@ -123,46 +133,63 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget showPrSearchResults() {
-    return ListView(
-        children: prSearchResults.map((result) {
-      return ListTile(
-        title: TextButton(
-          style: const ButtonStyle(alignment: Alignment.centerLeft),
-          onPressed: () {
-            api.getEntryJson(id: result.id).then((json) {
-              setState(() {
-                bodyState = BodyState.entry;
-                entry = e.Entry.fromJson(jsonDecode(json));
-              });
-            });
-          },
-          child: Text(result.variant + " " + result.pr,
-              style: const TextStyle(fontSize: 18), textAlign: TextAlign.start),
-        ),
-      );
-    }).toList());
+  List<ListTile> showPrSearchResults() {
+    return prSearchResults.map((result) {
+      return showSearchResult(
+          result.id,
+          TextSpan(
+            children: [
+              TextSpan(
+                  text: result.variant + " ",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: Colors.blue)),
+              TextSpan(
+                  text: result.pr,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: Colors.grey)),
+            ],
+          ));
+    }).toList();
   }
 
-  Widget showVariantSearchResults() {
-    return ListView(
-        children: variantSearchResults.map((result) {
-      return ListTile(
-        title: TextButton(
-          style: const ButtonStyle(alignment: Alignment.centerLeft),
-          onPressed: () {
-            api.getEntryJson(id: result.id).then((json) {
-              setState(() {
-                bodyState = BodyState.entry;
-                entry = e.Entry.fromJson(jsonDecode(json));
-              });
+  List<ListTile> showVariantSearchResults() {
+    return variantSearchResults.map((result) {
+      return showSearchResult(
+          result.id,
+          TextSpan(
+              text: result.variant,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: Colors.blue)));
+    }).toList();
+  }
+
+  List<ListTile> showCombinedSearchResults() {
+    return showVariantSearchResults()
+        .followedBy(showPrSearchResults())
+        .toList();
+  }
+
+  ListTile showSearchResult(int id, TextSpan resultText) {
+    return ListTile(
+      title: TextButton(
+        style: const ButtonStyle(alignment: Alignment.centerLeft),
+        onPressed: () {
+          api.getEntryJson(id: id).then((json) {
+            setState(() {
+              bodyState = BodyState.entry;
+              entry = e.Entry.fromJson(jsonDecode(json));
             });
-          },
-          child: Text(result.variant,
-              style: const TextStyle(fontSize: 18), textAlign: TextAlign.start),
-        ),
-      );
-    }).toList());
+          });
+        },
+        child: RichText(text: resultText, textAlign: TextAlign.start),
+      ),
+    );
   }
 
   Widget showEntry() {
