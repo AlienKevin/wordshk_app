@@ -13,8 +13,8 @@ use std::path::Path;
 use parking_lot::Mutex;
 use lazy_static::lazy_static;
 use anyhow::{anyhow, Result};
-use oslog::{OsLogger};
-use log::{LevelFilter, info};
+// use oslog::{OsLogger};
+// use log::{LevelFilter, info};
 
 #[derive(Serialize, Deserialize)]
 struct Api {
@@ -23,12 +23,12 @@ struct Api {
 }
 
 fn serialize_api<P: AsRef<Path>>(output_path: &P, api: &Api) {
-    info!("Serializing Api struct as json...");
+    // info!("Serializing Api struct as json...");
     let json = serde_json::to_string(&api).unwrap();
-    info!("Serialized Api as json!");
+    // info!("Serialized Api as json!");
     fs::write(output_path, json)
         .expect("Unable to output serailized RichDict");
-    info!("Wrote json to app dir");
+    // info!("Wrote json to app dir");
 }
 
 fn deserialize_api<P: AsRef<Path>>(input_path: &P) -> Option<Api> {
@@ -43,17 +43,17 @@ fn deserialize_api<P: AsRef<Path>>(input_path: &P) -> Option<Api> {
 
 impl Api {
     pub fn new(app_dir: String) -> Self {
-        if !*IS_LOG_INITIALIZED.lock() {
-            OsLogger::new("hk.words")
-                .level_filter(LevelFilter::Debug)
-                .category_level_filter("Settings", LevelFilter::Trace)
-                .init()
-                .unwrap();
-            *IS_LOG_INITIALIZED.lock() = true;
-        }
-        info!("Calling Api::new()...");
+        // if !*IS_LOG_INITIALIZED.lock() {
+        //     OsLogger::new("hk.words")
+        //         .level_filter(LevelFilter::Debug)
+        //         .category_level_filter("Settings", LevelFilter::Trace)
+        //         .init()
+        //         .unwrap();
+        //     *IS_LOG_INITIALIZED.lock() = true;
+        // }
+        // info!("Calling Api::new()...");
         let api_path = Path::new(&app_dir).join("api.json");
-        info!("Api path is at: {:?}", api_path);
+        // info!("Api path is at: {:?}", api_path);
         let current_time = Utc::now();
         match deserialize_api(&api_path) {
             Some(api) => {
@@ -85,30 +85,30 @@ impl Api {
     }
 
     fn get_new_dict<P: AsRef<Path>>(api_path: &P) -> Api {
-        info!("Calling Api::get_new_dict()...");
+        // info!("Calling Api::get_new_dict()...");
         let new_release_time = Utc::now();
         let csv_url = "https://words.hk/static/all.csv.gz";
         let csv_gz_data = reqwest::blocking::get(csv_url).unwrap().bytes().unwrap();
-        info!("Downloaded CSV data");
+        // info!("Downloaded CSV data");
         let mut gz = GzDecoder::new(&csv_gz_data[..]);
         let mut csv_data = String::new();
         gz.read_to_string(&mut csv_data).unwrap();
-        info!("Decompressed CSV data");
+        // info!("Decompressed CSV data");
         let csv_data_remove_first_line = csv_data.get(csv_data.find('\n').unwrap() + 1..).unwrap();
         let csv_data_remove_two_lines = csv_data_remove_first_line
             .get(csv_data_remove_first_line.find('\n').unwrap() + 1..)
             .unwrap();
-        info!("Cleaned CSV data");
+        // info!("Cleaned CSV data");
         let dict = parse_dict(csv_data_remove_two_lines.as_bytes()).unwrap();
-        info!("Parsed CSV data");
-        // info!("{:?}", dict.get(&(89331 as usize)).unwrap());
+        // info!("Parsed CSV data");
+        // // info!("{:?}", dict.get(&(89331 as usize)).unwrap());
         let new_api = Api {
             dict: enrich_dict(&dict),
             release_time: new_release_time,
         };
-        info!("Created Api struct");
+        // info!("Created Api struct");
         serialize_api(api_path, &new_api);
-        info!("Serialized api data");
+        // info!("Serialized api data");
         new_api
     }
 }
@@ -177,7 +177,7 @@ lazy_static! {
 }
 
 pub fn init_api(input_app_dir: String) -> Result<()> {
-    info!("Calling init_api()...");
+    // info!("Calling init_api()...");
     *APP_DIR.lock() = Some(input_app_dir.clone());
     *API.lock() = Some(Api::new(input_app_dir));
     Ok(())
