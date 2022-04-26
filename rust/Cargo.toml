@@ -16,6 +16,7 @@ parking_lot = "0.11.2"
 lazy_static = "1.4.0"
 #oslog = { version = "0.1.0" }
 #log = "0.4.14"
+openssl = { version = "*", features = ["vendored"] }
 
 [lib]
 name = "wordshk_api"

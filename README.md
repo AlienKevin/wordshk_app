@@ -28,7 +28,7 @@ cargo lipo && cp target/universal/debug/libwordshk_api.a ../ios/Runner
 Build rust for Android:
 ```
 export ANDROID_NDK_HOME=~/Library/Android/sdk
-export OPENSSL_DIR=/opt/homebrew/opt/openssl@3
+export OPENSSL_DIR=/opt/homebrew/opt/openssl@1.1
 cargo ndk -o ../android/app/src/main/jniLibs build
 ```
 

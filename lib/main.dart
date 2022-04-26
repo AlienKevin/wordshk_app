@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +10,13 @@ import 'package:path_provider/path_provider.dart';
 import 'bridge_generated.dart';
 import 'entry.dart' as e;
 
-// const base = 'wordshk_api';
-// final path = Platform.isWindows
-//     ? '$base.dll'
-//     : Platform.isMacOS
-//     ? 'lib$base.dylib'
-//     : 'lib$base.so';
-// late final dylib = Platform.isIOS ? DynamicLibrary.process() : DynamicLibrary.open(path);
-late final dylib = DynamicLibrary.process();
+const base = 'wordshk_api';
+final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
+late final dylib = Platform.isIOS
+    ? DynamicLibrary.process()
+    : Platform.isMacOS
+        ? DynamicLibrary.executable()
+        : DynamicLibrary.open(path);
 late final api = WordshkApi(dylib);
 
 void main() {
