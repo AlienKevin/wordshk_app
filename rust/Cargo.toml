@@ -20,4 +20,4 @@ openssl = { version = "*", features = ["vendored"] }
 
 [lib]
 name = "wordshk_api"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "staticlib"]
