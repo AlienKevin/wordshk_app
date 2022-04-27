@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -59,6 +60,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 enum BodyState {
+  home,
   prSearchResults,
   variantSearchResults,
   combinedSearchResults,
@@ -67,19 +69,38 @@ enum BodyState {
 
 class _MyHomePageState extends State<MyHomePage> {
   late SearchBar searchBar;
-  String? searchQuery;
+  final TextEditingController searchController = TextEditingController();
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
   e.Entry? entry;
-  BodyState bodyState = BodyState.prSearchResults;
+  String query = "";
+  BodyState searchState = BodyState.combinedSearchResults;
+  BodyState bodyState = BodyState.home;
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-        title: Text(searchQuery ?? "Search here...",
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge
-                ?.copyWith(color: Colors.white)),
+        automaticallyImplyLeading: false,
+        leading: bodyState == BodyState.entry
+            ? IconButton(
+                icon: const BackButtonIcon(),
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                onPressed: () {
+                  setState(() {
+                    bodyState = searchState;
+                    searchBar.isSearching.value = true;
+                    searchController.text = query;
+                  });
+                })
+            : null,
+        title: bodyState == BodyState.home
+            ? Text(
+                "words.hk",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Colors.white),
+              )
+            : null,
         centerTitle: false,
         actions: [searchBar.getSearchAction(context)]);
   }
@@ -93,11 +114,14 @@ class _MyHomePageState extends State<MyHomePage> {
         inBar: false,
         buildDefaultAppBar: buildAppBar,
         setState: setState,
+        closeOnSubmit: false,
+        clearOnSubmit: false,
+        controller: searchController,
         onSubmitted: (query) {
           setState(() {
-            searchQuery = query;
             prSearchResults.clear();
             variantSearchResults.clear();
+            this.query = query;
           });
           api.prSearch(capacity: 10, query: query).then((results) {
             setState(() {
@@ -112,10 +136,14 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         onCleared: () {
-          print("Search bar has been cleared");
+          log("Search bar has been cleared");
+          searchController.clear();
         },
         onClosed: () {
-          print("Search bar has been closed");
+          log("Search bar has been closed");
+          setState(() {
+            bodyState = BodyState.home;
+          });
         });
   }
 
@@ -125,6 +153,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: searchBar.build(context),
       body: (() {
         switch (bodyState) {
+          case BodyState.home:
+            // TODO: Show search history
+            return Container();
           case BodyState.prSearchResults:
             return ListView(
                 children: showPrSearchResults(),
@@ -194,6 +225,8 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           api.getEntryJson(id: id).then((json) {
             setState(() {
+              searchBar.isSearching.value = false;
+              searchController.clear();
               bodyState = BodyState.entry;
               entry = e.Entry.fromJson(jsonDecode(json));
             });
