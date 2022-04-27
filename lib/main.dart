@@ -11,6 +11,21 @@ import 'package:path_provider/path_provider.dart';
 import 'bridge_generated.dart';
 import 'entry.dart' as e;
 
+// @freezed
+// class AppState with _$AppState {
+//   const factory AppState.home() = Home;
+//   const factory AppState.searchResults() = SearchResults;
+//   const factory AppState.entry() = Error;
+// }
+
+enum AppState { home, searchResults, entry }
+
+enum SearchMode {
+  pr,
+  variant,
+  combined,
+}
+
 const base = 'wordshk_api';
 final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
 late final dylib = Platform.isIOS
@@ -59,14 +74,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-enum BodyState {
-  home,
-  prSearchResults,
-  variantSearchResults,
-  combinedSearchResults,
-  entry,
-}
-
 class _MyHomePageState extends State<MyHomePage> {
   late SearchBar searchBar;
   final TextEditingController searchController = TextEditingController();
@@ -74,25 +81,25 @@ class _MyHomePageState extends State<MyHomePage> {
   List<VariantSearchResult> variantSearchResults = [];
   e.Entry? entry;
   String query = "";
-  BodyState searchState = BodyState.combinedSearchResults;
-  BodyState bodyState = BodyState.home;
+  SearchMode searchMode = SearchMode.combined;
+  AppState appState = AppState.home;
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
         automaticallyImplyLeading: false,
-        leading: bodyState == BodyState.entry
+        leading: appState == AppState.entry
             ? IconButton(
                 icon: const BackButtonIcon(),
                 tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: () {
                   setState(() {
-                    bodyState = searchState;
+                    appState = AppState.searchResults;
                     searchBar.isSearching.value = true;
                     searchController.text = query;
                   });
                 })
             : null,
-        title: bodyState == BodyState.home
+        title: appState == AppState.home
             ? Text(
                 "words.hk",
                 style: Theme.of(context)
@@ -130,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
           api.variantSearch(capacity: 10, query: query).then((results) {
             setState(() {
-              bodyState = BodyState.combinedSearchResults;
+              appState = AppState.searchResults;
               variantSearchResults = results;
             });
           });
@@ -142,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onClosed: () {
           log("Search bar has been closed");
           setState(() {
-            bodyState = BodyState.home;
+            appState = AppState.home;
           });
         });
   }
@@ -152,27 +159,30 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: searchBar.build(context),
       body: (() {
-        switch (bodyState) {
-          case BodyState.home:
+        switch (appState) {
+          case AppState.home:
             // TODO: Show search history
             return Container();
-          case BodyState.prSearchResults:
+          case AppState.searchResults:
             return ListView(
-                children: showPrSearchResults(),
+                children: showSearchResults(),
                 padding: const EdgeInsets.only(top: 10.0));
-          case BodyState.variantSearchResults:
-            return ListView(
-                children: showVariantSearchResults(),
-                padding: const EdgeInsets.only(top: 10.0));
-          case BodyState.combinedSearchResults:
-            return ListView(
-                children: showCombinedSearchResults(),
-                padding: const EdgeInsets.only(top: 10.0));
-          case BodyState.entry:
+          case AppState.entry:
             return showEntry();
         }
       })(),
     );
+  }
+
+  List<ListTile> showSearchResults() {
+    switch (searchMode) {
+      case SearchMode.pr:
+        return showPrSearchResults();
+      case SearchMode.variant:
+        return showVariantSearchResults();
+      case SearchMode.combined:
+        return showCombinedSearchResults();
+    }
   }
 
   List<ListTile> showPrSearchResults() {
@@ -227,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {
               searchBar.isSearching.value = false;
               searchController.clear();
-              bodyState = BodyState.entry;
+              appState = AppState.entry;
               entry = e.Entry.fromJson(jsonDecode(json));
             });
           });
