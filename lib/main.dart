@@ -57,11 +57,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'words.hk',
       theme: ThemeData(
-        // Define the default brightness and colors.
         brightness: Brightness.light,
         primaryColor: Colors.lightBlue[800],
-        // Define the default font family.
-        fontFamily: 'Roboto',
+        fontFamily: 'ChironHeiHK',
         textTheme: const TextTheme(
           headlineSmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
           bodyLarge: TextStyle(fontSize: 28.0),
@@ -413,6 +411,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.only(top: 10),
         child: Column(
           children: [
+            // TODO: add tags for chinese vs cantonese
             eg.zho == null ? const SizedBox.shrink() : showRichLine(eg.zho!),
             eg.yue == null ? const SizedBox.shrink() : showRichLine(eg.yue!),
             eg.eng == null ? const SizedBox.shrink() : showLine(eg.eng!, ""),
