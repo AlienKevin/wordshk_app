@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 
 class Entry extends Equatable {
   final int id;
@@ -176,13 +178,13 @@ class RubySegment extends Equatable {
 }
 
 class RubySegmentWord extends Equatable {
-  final Word word;
+  final EntryWord word;
   final List<String> prs;
 
   const RubySegmentWord(this.word, this.prs);
 
   RubySegmentWord.fromJson(List<dynamic> json)
-      : word = Word.fromJson(json[0]),
+      : word = EntryWord.fromJson(json[0]),
         prs = List.from(json[1]);
 
   @override
@@ -219,45 +221,45 @@ class WordLine extends Equatable {
 
 class WordSegment extends Equatable {
   final SegmentType type;
-  final Word word;
+  final EntryWord word;
 
   const WordSegment(this.type, this.word);
 
   WordSegment.fromJson(List<dynamic> json)
       : type = segmentTypeFromString(json[0]),
-        word = Word.fromJson(json[1]);
+        word = EntryWord.fromJson(json[1]);
 
   @override
   List<Object?> get props => [type, word];
 }
 
-class Word extends Equatable {
-  final List<Text> texts;
+class EntryWord extends Equatable {
+  final List<EntryText> texts;
 
-  const Word(this.texts);
+  const EntryWord(this.texts);
 
-  Word.fromJson(List<dynamic> json)
+  EntryWord.fromJson(List<dynamic> json)
       : texts = List.from(json).map((text) {
-          return Text.fromJson(text);
+          return EntryText.fromJson(text);
         }).toList();
 
   @override
   List<Object?> get props => [texts];
 }
 
-enum TextStyle {
+enum EntryTextStyle {
   bold,
   normal,
 }
 
-class Text extends Equatable {
-  final TextStyle style;
+class EntryText extends Equatable {
+  final EntryTextStyle style;
   final String text;
 
-  const Text(this.style, this.text);
+  const EntryText(this.style, this.text);
 
-  Text.fromJson(List<dynamic> json)
-      : style = json[0] == 'Bold' ? TextStyle.bold : TextStyle.normal,
+  EntryText.fromJson(List<dynamic> json)
+      : style = json[0] == 'Bold' ? EntryTextStyle.bold : EntryTextStyle.normal,
         text = json[1];
 
   @override
@@ -311,4 +313,290 @@ class Variant extends Equatable {
 
   @override
   List<Object?> get props => [word, prs];
+}
+
+Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
+    void Function(int) updateEntryIndex) {
+  double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
+  double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
+  TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
+  double padding = titleFontSize / 2;
+  double definitionHeight = MediaQuery.of(context).size.height -
+      AppBar().preferredSize.height -
+      MediaQuery.of(context).padding.top -
+      MediaQuery.of(context).padding.bottom -
+      padding * 4 -
+      titleFontSize * 2.5;
+  return Padding(
+      padding: EdgeInsets.all(padding),
+      child: Column(
+        children: [
+          SizedBox(
+              height: titleFontSize * 1.5,
+              child: showVariants(entryGroup[entryIndex].variants)),
+          DefaultTabController(
+            length: entryGroup.length,
+            child: Column(children: [
+              TabBar(
+                onTap: updateEntryIndex,
+                isScrollable: true, // Required
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.black, // Other tabs color
+                labelPadding: const EdgeInsets.symmetric(
+                    horizontal: 30), // Space between tabs
+                indicator: const UnderlineTabIndicator(
+                  borderSide: BorderSide(
+                      color: Colors.black, width: 2), // Indicator height
+                  insets:
+                      EdgeInsets.symmetric(horizontal: 60), // Indicator width
+                ),
+                tabs: entryGroup
+                    .map((entry) => Tab(text: entry.poses.first))
+                    .toList(),
+              ),
+              SizedBox(height: padding),
+              SizedBox(
+                  height: definitionHeight,
+                  child: showDefs(
+                      entryGroup[entryIndex].defs, lineTextStyle, rubyFontSize))
+            ]),
+          ),
+        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+      ));
+}
+
+Widget showVariants(List<Variant> variants) {
+  return ListView.separated(
+    itemCount: variants.length,
+    separatorBuilder: (context, index) => SizedBox(
+        width: Theme.of(context).textTheme.headlineSmall!.fontSize! / 2),
+    itemBuilder: (context, index) => RichText(
+        text: TextSpan(
+      children: <TextSpan>[
+        TextSpan(
+            text: variants[index].word,
+            style: Theme.of(context).textTheme.headlineSmall),
+        const TextSpan(text: '  '),
+        TextSpan(
+            text: variants[index].prs,
+            style: Theme.of(context).textTheme.bodySmall),
+      ],
+    )),
+    scrollDirection: Axis.horizontal,
+  );
+}
+
+Widget showPoses(List<String> poses, TextStyle style) {
+  return Wrap(
+    children: poses.map((pos) {
+      return Text(
+        "詞性：" + pos,
+        style: style, // Theme.of(context).textTheme.bodyMedium
+      );
+    }).toList(),
+  );
+}
+
+Widget showDefs(List<Def> defs, TextStyle lineTextStyle, double rubyFontSize) {
+  return ListView(
+    children:
+        defs.map((def) => showDef(def, lineTextStyle, rubyFontSize)).toList(),
+  );
+}
+
+Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize) {
+  return Padding(
+    padding: EdgeInsets.only(bottom: lineTextStyle.fontSize! * 2),
+    child: Column(
+      children: [
+        showClause(def.yue, "(粵) ", lineTextStyle),
+        def.eng == null
+            ? const SizedBox.shrink()
+            : showClause(def.eng!, "(英) ", lineTextStyle),
+        ...def.egs.map((eg) => showEg(eg, lineTextStyle, rubyFontSize))
+      ],
+      crossAxisAlignment: CrossAxisAlignment.start,
+    ),
+  );
+}
+
+Widget showClause(Clause clause, String? tag, TextStyle lineTextStyle) {
+  return Column(
+    children: clause.lines.asMap().keys.toList().map((index) {
+      return showLine(
+          clause.lines[index], index == 0 ? tag : null, lineTextStyle);
+    }).toList(),
+    crossAxisAlignment: CrossAxisAlignment.start,
+  );
+}
+
+Widget showLine(Line line, String? tag, TextStyle lineTextStyle) {
+  if (line.segments.length == 1 &&
+      line.segments[0] == const Segment(SegmentType.text, "")) {
+    return const SizedBox(height: 10);
+  } else {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+              text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ...line.segments.map(showSegment).toList()
+        ],
+        style: lineTextStyle,
+      ),
+    );
+  }
+}
+
+TextSpan showSegment(Segment segment) {
+  switch (segment.type) {
+    case SegmentType.text:
+      return TextSpan(text: segment.segment);
+    case SegmentType.link:
+      return TextSpan(
+          text: segment.segment,
+          style: const TextStyle(color: Colors.blue),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () async {
+              // TODO: go to linked entry
+            });
+  }
+}
+
+Widget showEg(Eg eg, TextStyle lineTextStyle, double rubyFontSize) {
+  return Padding(
+      padding: EdgeInsets.only(top: lineTextStyle.fontSize!),
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: Colors.grey,
+              width: 2.0,
+            ),
+          ),
+        ),
+        padding: EdgeInsets.only(left: lineTextStyle.fontSize! / 1.5),
+        child: Column(
+          children: [
+            // TODO: add tags for chinese vs cantonese
+            eg.zho == null
+                ? const SizedBox.shrink()
+                : showRichLine(eg.zho!, lineTextStyle, rubyFontSize),
+            eg.yue == null
+                ? const SizedBox.shrink()
+                : showRichLine(eg.yue!, lineTextStyle, rubyFontSize),
+            eg.eng == null
+                ? const SizedBox.shrink()
+                : showLine(eg.eng!, "", lineTextStyle),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+      ));
+}
+
+Widget showRichLine(
+    RichLine line, TextStyle lineTextStyle, double rubyFontSize) {
+  switch (line.type) {
+    case RichLineType.ruby:
+      return showRubyLine(line.line, rubyFontSize);
+    case RichLineType.word:
+      return showWordLine(line.line, lineTextStyle);
+  }
+}
+
+Widget showRubyLine(RubyLine line, double rubyFontSize) {
+  return Padding(
+    padding: EdgeInsets.only(top: rubyFontSize / 1.5),
+    child: Wrap(
+      runSpacing: rubyFontSize / 1.4,
+      children: line.segments
+          .map((segment) => showRubySegment(segment, rubyFontSize))
+          .map((e) => Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                textBaseline: TextBaseline.alphabetic,
+                mainAxisSize: MainAxisSize.min,
+                children: [e],
+              ))
+          .toList(),
+    ),
+  );
+}
+
+Widget showRubySegment(RubySegment segment, double rubySize) {
+  double rubyYPos = rubySize / 1.1;
+  Widget text;
+  String ruby;
+  switch (segment.type) {
+    case RubySegmentType.punc:
+      text = Text(segment.segment as String,
+          style: TextStyle(fontSize: rubySize, height: 0.8));
+      ruby = "";
+      break;
+    case RubySegmentType.word:
+      text = RichText(
+          text: TextSpan(
+              children: showWord(segment.segment.word as EntryWord),
+              style: TextStyle(fontSize: rubySize, height: 0.8)));
+      ruby = segment.segment.prs.join(" ");
+      break;
+    case RubySegmentType.linkedWord:
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        textBaseline: TextBaseline.alphabetic,
+        mainAxisSize: MainAxisSize.min,
+        children: (segment.segment.words as List<RubySegmentWord>)
+            .map((word) => showRubySegment(
+                RubySegment(RubySegmentType.word, word), rubySize))
+            .toList(),
+      );
+  }
+  return Stack(alignment: Alignment.center, children: [
+    Container(
+        alignment: Alignment.bottomCenter,
+        child: Center(
+            child: Transform(
+                transform: Matrix4.translationValues(0, -(rubyYPos), 0),
+                child:
+                    Text(ruby, style: TextStyle(fontSize: rubySize * 0.4))))),
+    text
+  ]);
+}
+
+Widget showWordLine(WordLine line, TextStyle lineTextStyle) {
+  return RichText(
+    text: TextSpan(
+      children: line.segments.map(showWordSegment).toList(),
+      style: lineTextStyle,
+    ),
+  );
+}
+
+TextSpan showWordSegment(WordSegment segment) {
+  switch (segment.type) {
+    case SegmentType.text:
+      return TextSpan(children: showWord(segment.word));
+    case SegmentType.link:
+      return TextSpan(
+          children: showWord(segment.word),
+          style: const TextStyle(color: Colors.blue),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () async {
+              // TODO: go to linked entry
+            });
+  }
+}
+
+List<TextSpan> showWord(EntryWord word) {
+  return word.texts.map(showText).toList();
+}
+
+TextSpan showText(EntryText text) {
+  return TextSpan(
+      text: text.text,
+      style: TextStyle(
+          fontWeight: text.style == EntryTextStyle.normal
+              ? FontWeight.normal
+              : FontWeight.bold,
+          color: Colors.black));
 }
