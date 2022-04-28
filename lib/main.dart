@@ -407,16 +407,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showEg(e.Eg eg) {
+    double padding = Theme.of(context).textTheme.bodyLarge!.fontSize! / 2;
     return Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: Column(
-          children: [
-            // TODO: add tags for chinese vs cantonese
-            eg.zho == null ? const SizedBox.shrink() : showRichLine(eg.zho!),
-            eg.yue == null ? const SizedBox.shrink() : showRichLine(eg.yue!),
-            eg.eng == null ? const SizedBox.shrink() : showLine(eg.eng!, ""),
-          ],
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.only(top: padding * 1.5),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: Colors.grey,
+                width: 2.0,
+              ),
+            ),
+          ),
+          padding: EdgeInsets.only(left: padding),
+          child: Column(
+            children: [
+              // TODO: add tags for chinese vs cantonese
+              eg.zho == null ? const SizedBox.shrink() : showRichLine(eg.zho!),
+              eg.yue == null ? const SizedBox.shrink() : showRichLine(eg.yue!),
+              eg.eng == null ? const SizedBox.shrink() : showLine(eg.eng!, ""),
+            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
         ));
   }
 
