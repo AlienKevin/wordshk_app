@@ -169,7 +169,19 @@ class _MyHomePageState extends State<MyHomePage> {
         switch (appState) {
           case AppState.home:
             // TODO: Show search history
-            return Container();
+            return Visibility(
+              visible: !searchBar.isSearching.value,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
+                  child: Image(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      image: const AssetImage('assets/logo_wide.png')),
+                ),
+              ),
+            );
           case AppState.searchResults:
             return ListView(
                 children: showSearchResults(),
