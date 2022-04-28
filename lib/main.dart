@@ -263,9 +263,28 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         children: [
           showVariants(entry!.variants),
-          showPoses(entry!.poses),
-          const SizedBox(height: 5),
-          showDefs(entry!.defs),
+          DefaultTabController(
+              length: 1,
+              child: Column(children: [
+                TabBar(
+                  isScrollable: true, // Required
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.black, // Other tabs color
+                  labelPadding: const EdgeInsets.symmetric(
+                      horizontal: 30), // Space between tabs
+                  indicator: const UnderlineTabIndicator(
+                    borderSide: BorderSide(
+                        color: Colors.black, width: 2), // Indicator height
+                    insets:
+                        EdgeInsets.symmetric(horizontal: 60), // Indicator width
+                  ),
+                  tabs: [
+                    Tab(text: entry!.poses.first),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                showDefs(entry!.defs),
+              ]))
         ],
         crossAxisAlignment: CrossAxisAlignment.start,
       ),
