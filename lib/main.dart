@@ -42,7 +42,7 @@ late final dylib = Platform.isIOS
     : Platform.isMacOS
         ? DynamicLibrary.executable()
         : DynamicLibrary.open(path);
-late final api = WordshkApi(dylib);
+late final api = WordshkApiImpl(dylib);
 
 void main() {
   runApp(const MyApp());
@@ -88,7 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController searchController = TextEditingController();
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
-  e.Entry? entry;
+  List<e.Entry> entryGroup = [];
+  int entryIndex = 0;
   String query = "";
   SearchMode searchMode = SearchMode.combined;
   AppState appState = AppState.home;
@@ -242,12 +243,15 @@ class _MyHomePageState extends State<MyHomePage> {
         style: TextButton.styleFrom(
             alignment: Alignment.centerLeft, padding: EdgeInsets.zero),
         onPressed: () {
-          api.getEntryJson(id: id).then((json) {
+          api.getEntryGroupJson(id: id).then((json) {
             setState(() {
               searchBar.isSearching.value = false;
               searchController.clear();
               appState = AppState.entry;
-              entry = e.Entry.fromJson(jsonDecode(json));
+              entryGroup = json
+                  .map((entryJson) => e.Entry.fromJson(jsonDecode(entryJson)))
+                  .toList();
+              entryIndex = 0;
             });
           });
         },
@@ -259,17 +263,28 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget showEntry() {
     double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
     double padding = titleFontSize / 2;
-    double definitionHeight =
-        MediaQuery.of(context).size.height - padding * 3 - titleFontSize * 5;
+    double definitionHeight = MediaQuery.of(context).size.height -
+        AppBar().preferredSize.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom -
+        padding * 4 -
+        titleFontSize * 2.5;
     return Padding(
         padding: EdgeInsets.all(padding),
         child: Column(
           children: [
-            showVariants(entry!.variants),
+            SizedBox(
+                height: titleFontSize * 1.5,
+                child: showVariants(entryGroup[entryIndex].variants)),
             DefaultTabController(
-              length: 1,
+              length: entryGroup.length,
               child: Column(children: [
                 TabBar(
+                  onTap: (index) {
+                    setState(() {
+                      entryIndex = index;
+                    });
+                  },
                   isScrollable: true, // Required
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.black, // Other tabs color
@@ -281,12 +296,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     insets:
                         EdgeInsets.symmetric(horizontal: 60), // Indicator width
                   ),
-                  tabs: [
-                    Tab(text: entry!.poses.first),
-                  ],
+                  tabs: entryGroup
+                      .map((entry) => Tab(text: entry.poses.first))
+                      .toList(),
                 ),
-                const SizedBox(height: 5),
-                SizedBox(height: definitionHeight, child: showDefs(entry!.defs))
+                SizedBox(height: padding),
+                SizedBox(
+                    height: definitionHeight,
+                    child: showDefs(entryGroup[entryIndex].defs))
               ]),
             ),
           ],
@@ -295,26 +312,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showVariants(List<e.Variant> variants) {
-    return SizedBox(
-      height: Theme.of(context).textTheme.headlineSmall!.fontSize! * 1.5,
-      child: ListView.separated(
-        itemCount: variants.length,
-        separatorBuilder: (context, index) => SizedBox(
-            width: Theme.of(context).textTheme.headlineSmall!.fontSize! / 2),
-        itemBuilder: (context, index) => RichText(
-            text: TextSpan(
-          children: <TextSpan>[
-            TextSpan(
-                text: variants[index].word,
-                style: Theme.of(context).textTheme.headlineSmall),
-            const TextSpan(text: '  '),
-            TextSpan(
-                text: variants[index].prs,
-                style: Theme.of(context).textTheme.bodySmall),
-          ],
-        )),
-        scrollDirection: Axis.horizontal,
-      ),
+    return ListView.separated(
+      itemCount: variants.length,
+      separatorBuilder: (context, index) => SizedBox(
+          width: Theme.of(context).textTheme.headlineSmall!.fontSize! / 2),
+      itemBuilder: (context, index) => RichText(
+          text: TextSpan(
+        children: <TextSpan>[
+          TextSpan(
+              text: variants[index].word,
+              style: Theme.of(context).textTheme.headlineSmall),
+          const TextSpan(text: '  '),
+          TextSpan(
+              text: variants[index].prs,
+              style: Theme.of(context).textTheme.bodySmall),
+        ],
+      )),
+      scrollDirection: Axis.horizontal,
     );
   }
 

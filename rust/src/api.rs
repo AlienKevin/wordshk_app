@@ -84,6 +84,14 @@ impl Api {
         serde_json::to_string(&to_lean_rich_entry(rich_entry)).unwrap()
     }
 
+    pub fn get_entry_group_json(&self, id: usize) -> Vec<String> {
+        let rich_entry_group = search::get_entry_group(&self.dict, &id);
+        rich_entry_group
+            .iter()
+            .map(|entry| serde_json::to_string(&to_lean_rich_entry(entry)).unwrap())
+            .collect()
+    }
+
     fn get_new_dict<P: AsRef<Path>>(api_path: &P) -> Api {
         // info!("Calling Api::get_new_dict()...");
         let new_release_time = Utc::now();
@@ -193,4 +201,8 @@ pub fn variant_search(capacity: u32, query: String) -> Result<Vec<VariantSearchR
 
 pub fn get_entry_json(id: u32) -> Result<String> {
     Ok((*API.lock()).as_ref().unwrap().get_entry_json(id as usize))
+}
+
+pub fn get_entry_group_json(id: u32) -> Result<Vec<String>> {
+    Ok((*API.lock()).as_ref().unwrap().get_entry_group_json(id as usize))
 }
