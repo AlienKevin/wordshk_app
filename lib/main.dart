@@ -257,13 +257,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showEntry() {
-    return SingleChildScrollView(
-        child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          showVariants(entry!.variants),
-          DefaultTabController(
+    double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
+    double padding = titleFontSize / 2;
+    double definitionHeight =
+        MediaQuery.of(context).size.height - padding * 3 - titleFontSize * 5;
+    return Padding(
+        padding: EdgeInsets.all(padding),
+        child: Column(
+          children: [
+            showVariants(entry!.variants),
+            DefaultTabController(
               length: 1,
               child: Column(children: [
                 TabBar(
@@ -283,31 +286,36 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                showDefs(entry!.defs),
-              ]))
-        ],
-        crossAxisAlignment: CrossAxisAlignment.start,
-      ),
-    ));
+                SizedBox(height: definitionHeight, child: showDefs(entry!.defs))
+              ]),
+            ),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        ));
   }
 
   Widget showVariants(List<e.Variant> variants) {
-    return Column(
-        children: variants.map((variant) {
-          return RichText(
-              text: TextSpan(
-            children: <TextSpan>[
-              TextSpan(
-                  text: variant.word,
-                  style: Theme.of(context).textTheme.headlineSmall),
-              const TextSpan(text: '  '),
-              TextSpan(
-                  text: variant.prs,
-                  style: Theme.of(context).textTheme.bodySmall),
-            ],
-          ));
-        }).toList(),
-        crossAxisAlignment: CrossAxisAlignment.start);
+    return SizedBox(
+      height: Theme.of(context).textTheme.headlineSmall!.fontSize! * 1.5,
+      child: ListView.separated(
+        itemCount: variants.length,
+        separatorBuilder: (context, index) => SizedBox(
+            width: Theme.of(context).textTheme.headlineSmall!.fontSize! / 2),
+        itemBuilder: (context, index) => RichText(
+            text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(
+                text: variants[index].word,
+                style: Theme.of(context).textTheme.headlineSmall),
+            const TextSpan(text: '  '),
+            TextSpan(
+                text: variants[index].prs,
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
+        )),
+        scrollDirection: Axis.horizontal,
+      ),
+    );
   }
 
   Widget showPoses(List<String> poses) {
@@ -322,15 +330,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showDefs(List<e.Def> defs) {
-    return Column(
+    return ListView(
       children: defs.map(showDef).toList(),
-      crossAxisAlignment: CrossAxisAlignment.start,
     );
   }
 
   Widget showDef(e.Def def) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: EdgeInsets.only(
+          bottom: Theme.of(context).textTheme.headlineSmall!.fontSize!),
       child: Column(
         children: [
           showClause(def.yue, "(粵) "),
