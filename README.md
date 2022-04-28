@@ -7,7 +7,7 @@ words.hk dictionary for mobile
 In your `Cargo.toml`, ensure the following `crate-type` is present:
 ```
 [lib]
-crate-type = ["lib", "staticlib", "cdylib"]
+crate-type = ["staticlib", "cdylib"] # "staticlib" for iOS, "cdylib" for Android
 ```
 
 Run flutter-code-gen:
@@ -20,22 +20,17 @@ flutter_rust_bridge_codegen \
 --c-output ../ios/Runner/bridge_generated.h
 ```
 
+## iOS
+
 Build rust for iOS:
 ```
 cargo lipo && cp target/universal/debug/libwordshk_api.a ../ios/Runner
 ```
 
+## Android
+See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_android.html) to set up Android.
+
 Build rust for Android:
 ```
-export ANDROID_NDK_HOME=~/Library/Android/sdk
-export OPENSSL_DIR=/opt/homebrew/opt/openssl@1.1
 cargo ndk -o ../android/app/src/main/jniLibs build
-```
-
-The toolchains folder may only be installed under `~/Library/Android/sdk/ndk-bundle/toolchains/`
-but not `~/Library/Android/sdk/toolchains/`. In this case, you can run the following commands to copy
-the `toolchains` folder:
-```
-cd ~/Library/Android/sdk
-cp -r ndk-bundle/toolchains toolchains
 ```
