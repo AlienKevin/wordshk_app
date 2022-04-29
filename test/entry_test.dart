@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:test/test.dart';
+
 import '../lib/entry.dart';
 
 void main() {
@@ -117,10 +119,13 @@ void main() {
                             RubySegmentType.linkedWord,
                             RubySegmentLinkedWord([
                               RubySegmentWord(
-                                  Word([Text(TextStyle.normal, "性")]),
+                                  EntryWord(
+                                      [EntryText(EntryTextStyle.normal, "性")]),
                                   ["sing3"]),
                               RubySegmentWord(
-                                  Word([Text(TextStyle.bold, "命")]), ["ming6"])
+                                  EntryWord(
+                                      [EntryText(EntryTextStyle.bold, "命")]),
+                                  ["ming6"])
                             ]))
                       ])),
                   eng: Line([Segment(SegmentType.text, "life; lives")]))
