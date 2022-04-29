@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'constants.dart';
+
 class Entry extends Equatable {
   final int id;
   final List<Variant> variants;
@@ -456,7 +458,7 @@ TextSpan showSegment(Segment segment) {
     case SegmentType.link:
       return TextSpan(
           text: segment.segment,
-          style: const TextStyle(color: Colors.blue),
+          style: const TextStyle(color: blueColor),
           recognizer: TapGestureRecognizer()
             ..onTap = () async {
               // TODO: go to linked entry

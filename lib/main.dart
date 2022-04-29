@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'bridge_generated.dart';
+import 'constants.dart';
 import 'entry.dart' show Entry, showEntry;
 import 'search_bar.dart';
 
@@ -43,32 +44,55 @@ late final dylib = Platform.isIOS
 late final api = WordshkApiImpl(dylib);
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  final Map<int, Color> blueColorMap = {
+    50: blueColor,
+    100: blueColor,
+    200: blueColor,
+    300: blueColor,
+    400: blueColor,
+    500: blueColor,
+    600: blueColor,
+    700: blueColor,
+    800: blueColor,
+    900: blueColor,
+  };
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var primaryColor = Colors.lightBlue[800];
+    final blueSwatch = MaterialColor(blueColor.value, blueColorMap);
     return MaterialApp(
       title: 'words.hk',
       theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: primaryColor,
-        fontFamily: 'ChironHeiHK',
-        textTheme: const TextTheme(
-          headlineSmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
-          bodyLarge: TextStyle(fontSize: 28.0),
-          bodyMedium: TextStyle(fontSize: 20.0),
-          bodySmall: TextStyle(fontSize: 18.0),
-        ),
-        iconTheme: Theme.of(context)
-            .iconTheme
-            .copyWith(color: Theme.of(context).canvasColor),
-      ),
+          brightness: Brightness.light,
+          primarySwatch: blueSwatch,
+          primaryColor: blueColor,
+          fontFamily: 'ChironHeiHK',
+          textTheme: const TextTheme(
+            headlineSmall:
+                TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
+            bodyLarge: TextStyle(fontSize: 28.0),
+            bodyMedium: TextStyle(fontSize: 20.0),
+            bodySmall: TextStyle(fontSize: 18.0),
+          ),
+          iconTheme: Theme.of(context)
+              .iconTheme
+              .copyWith(color: Theme.of(context).canvasColor),
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+            textStyle: MaterialStateProperty.all(Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: blueColor)),
+            foregroundColor:
+                MaterialStateProperty.resolveWith((_) => blueColor),
+          ))),
       home: const MyHomePage(title: 'words.hk home'),
     );
   }
@@ -225,9 +249,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           case AppState.searchResults:
-            return ListView(
-                children: showSearchResults(),
-                padding: const EdgeInsets.only(top: 10.0));
+            return ListView(children: showSearchResults());
           case AppState.entry:
             return showEntry(context, entryGroup, entryIndex, (index) {
               setState(() {
@@ -239,7 +261,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  List<ListTile> showSearchResults() {
+  List<Expanded> showSearchResults() {
     switch (searchMode) {
       case SearchMode.pr:
         return showPrSearchResults();
@@ -250,7 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  List<ListTile> showPrSearchResults() {
+  List<Expanded> showPrSearchResults() {
     return prSearchResults.map((result) {
       return showSearchResult(
           result.id,
@@ -258,59 +280,62 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               TextSpan(
                   text: result.variant + " ",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(color: Colors.blue)),
+                  style: Theme.of(context).textTheme.bodyLarge),
               TextSpan(
                   text: result.pr,
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge
-                      ?.copyWith(color: Colors.grey)),
+                      ?.copyWith(color: greyColor)),
             ],
           ));
     }).toList();
   }
 
-  List<ListTile> showVariantSearchResults() {
+  List<Expanded> showVariantSearchResults() {
     return variantSearchResults.map((result) {
       return showSearchResult(
           result.id,
           TextSpan(
               text: result.variant,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(color: Colors.blue)));
+              style: Theme.of(context).textTheme.bodyLarge));
     }).toList();
   }
 
-  List<ListTile> showCombinedSearchResults() {
+  List<Expanded> showCombinedSearchResults() {
     return showVariantSearchResults()
         .followedBy(showPrSearchResults())
         .toList();
   }
 
-  ListTile showSearchResult(int id, TextSpan resultText) {
-    return ListTile(
-      title: TextButton(
-        style: TextButton.styleFrom(
-            alignment: Alignment.centerLeft, padding: EdgeInsets.zero),
-        onPressed: () {
-          api.getEntryGroupJson(id: id).then((json) {
-            setState(() {
-              searchBar.searchBarState.value = SearchBarState.entry;
-              searchController.clear();
-              appState = AppState.entry;
-              entryGroup = json
-                  .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
-                  .toList();
-              entryIndex = 0;
+  Expanded showSearchResult(int id, TextSpan resultText) {
+    return Expanded(
+      child: Container(
+        decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: greyColor, width: 2))),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.zero,
+          ),
+          onPressed: () {
+            api.getEntryGroupJson(id: id).then((json) {
+              setState(() {
+                searchBar.searchBarState.value = SearchBarState.entry;
+                searchController.clear();
+                appState = AppState.entry;
+                entryGroup = json
+                    .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
+                    .toList();
+                entryIndex = 0;
+              });
             });
-          });
-        },
-        child: RichText(text: resultText, textAlign: TextAlign.start),
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+            child: RichText(text: resultText, textAlign: TextAlign.start),
+          ),
+        ),
       ),
     );
   }
