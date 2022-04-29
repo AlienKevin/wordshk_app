@@ -94,34 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
   SearchMode searchMode = SearchMode.combined;
   AppState appState = AppState.home;
 
-  AppBar buildAppBar(BuildContext context) {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      leading: appState == AppState.entry
-          ? IconButton(
-              icon: const BackButtonIcon(),
-              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-              onPressed: () {
-                setState(() {
-                  appState = AppState.searchResults;
-                  searchBar.isSearching.value = true;
-                  searchController.text = query;
-                });
-              })
-          : null,
-      title: appState == AppState.home
-          ? Text(
-              "words.hk",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Colors.white),
-            )
-          : null,
-      centerTitle: false,
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -129,38 +101,46 @@ class _MyHomePageState extends State<MyHomePage> {
       api.initApi(json: json);
     });
     searchBar = SearchBar(
-        setState: setState,
-        closeOnSubmit: false,
-        clearOnSubmit: false,
-        controller: searchController,
-        onSubmitted: (query) {
+      setState: setState,
+      closeOnSubmit: false,
+      clearOnSubmit: false,
+      controller: searchController,
+      onSubmitted: (query) {
+        setState(() {
+          prSearchResults.clear();
+          variantSearchResults.clear();
+          this.query = query;
+        });
+        api.prSearch(capacity: 10, query: query).then((results) {
           setState(() {
-            prSearchResults.clear();
-            variantSearchResults.clear();
-            this.query = query;
-          });
-          api.prSearch(capacity: 10, query: query).then((results) {
-            setState(() {
-              prSearchResults = results.unique((result) => result.variant);
-            });
-          });
-          api.variantSearch(capacity: 10, query: query).then((results) {
-            setState(() {
-              appState = AppState.searchResults;
-              variantSearchResults = results.unique((result) => result.variant);
-            });
-          });
-        },
-        onCleared: () {
-          log("Search bar has been cleared");
-          searchController.clear();
-        },
-        onClosed: () {
-          log("Search bar has been closed");
-          setState(() {
-            appState = AppState.home;
+            prSearchResults = results.unique((result) => result.variant);
           });
         });
+        api.variantSearch(capacity: 10, query: query).then((results) {
+          setState(() {
+            appState = AppState.searchResults;
+            variantSearchResults = results.unique((result) => result.variant);
+          });
+        });
+      },
+      onCleared: () {
+        log("Search bar has been cleared");
+        searchController.clear();
+      },
+      onClosed: () {
+        log("Search bar has been closed");
+        setState(() {
+          appState = AppState.home;
+        });
+      },
+      onEntryBacked: () {
+        setState(() {
+          appState = AppState.searchResults;
+          searchBar.searchBarState.value = SearchBarState.searching;
+          searchController.text = query;
+        });
+      },
+    );
   }
 
   @override
@@ -232,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
           case AppState.home:
             // TODO: Show search history
             return Visibility(
-              visible: !searchBar.isSearching.value,
+              visible: searchBar.searchBarState.value == SearchBarState.home,
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Padding(
@@ -320,7 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           api.getEntryGroupJson(id: id).then((json) {
             setState(() {
-              searchBar.isSearching.value = false;
+              searchBar.searchBarState.value = SearchBarState.entry;
               searchController.clear();
               appState = AppState.entry;
               entryGroup = json

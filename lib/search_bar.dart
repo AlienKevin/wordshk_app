@@ -7,6 +7,12 @@ typedef void TextFieldSubmitCallback(String value);
 typedef void TextFieldChangeCallback(String value);
 typedef void SetStateCallback(void fn());
 
+enum SearchBarState {
+  searching,
+  home,
+  entry,
+}
+
 class SearchBar {
   /// Whether or not the search bar should close on submit. Defaults to true.
   final bool closeOnSubmit;
@@ -23,6 +29,9 @@ class SearchBar {
   /// A callback which is fired when clear button is pressed.
   final VoidCallback? onCleared;
 
+  /// A void callback which is fired when the back button is pressed in the entry page
+  final VoidCallback onEntryBacked;
+
   /// Since this should be inside of a State class, just pass setState to this.
   final SetStateCallback setState;
 
@@ -33,7 +42,8 @@ class SearchBar {
   final String hintText;
 
   /// Whether search is currently active.
-  final ValueNotifier<bool> isSearching = ValueNotifier(false);
+  final ValueNotifier<SearchBarState> searchBarState =
+      ValueNotifier(SearchBarState.home);
 
   /// A callback which is invoked each time the text field's value changes
   final TextFieldChangeCallback? onChanged;
@@ -58,13 +68,14 @@ class SearchBar {
     this.onChanged,
     this.onClosed,
     this.onCleared,
+    required this.onEntryBacked,
     this.keyboardType = TextInputType.text,
   }) {
-    this.controller = controller ?? new TextEditingController();
+    this.controller = controller ?? TextEditingController();
 
     // Don't waste resources on listeners for the text controller if the dev
     // doesn't want a clear button anyways in the search bar
-    if (!this.showClearButton) {
+    if (!showClearButton) {
       return;
     }
 
@@ -96,12 +107,12 @@ class SearchBar {
     ModalRoute.of(context)!
         .addLocalHistoryEntry(LocalHistoryEntry(onRemove: () {
       setState(() {
-        isSearching.value = false;
+        searchBarState.value = SearchBarState.home;
       });
     }));
 
     setState(() {
-      isSearching.value = true;
+      searchBarState.value = SearchBarState.searching;
     });
   }
 
@@ -116,50 +127,56 @@ class SearchBar {
     Color? buttonColor = theme.iconTheme.color;
 
     return AppBar(
-      leading: isSearching.value
-          ? IconButton(
+      leading: searchBarState.value == SearchBarState.home
+          ? null
+          : IconButton(
               icon: const BackButtonIcon(),
               color: buttonColor,
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
               onPressed: () {
-                onClosed?.call();
-                controller.clear();
-                Navigator.maybePop(context);
-              })
-          : null,
-      title: Directionality(
-        textDirection: Directionality.of(context),
-        child: TextField(
-          onTap: () => beginSearch(context),
-          style: TextStyle(
-            color: theme.canvasColor,
-          ),
-          cursorColor: theme.canvasColor,
-          key: Key('SearchBarTextField'),
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: TextStyle(
-                color: theme.canvasColor,
-              ),
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              border: InputBorder.none),
-          onChanged: this.onChanged,
-          onSubmitted: (String val) async {
-            if (closeOnSubmit) {
-              await Navigator.maybePop(context);
-            }
+                if (searchBarState.value == SearchBarState.entry) {
+                  onEntryBacked.call();
+                } else {
+                  onClosed?.call();
+                  controller.clear();
+                  Navigator.maybePop(context);
+                }
+              }),
+      title: searchBarState.value == SearchBarState.entry
+          ? null
+          : Directionality(
+              textDirection: Directionality.of(context),
+              child: TextField(
+                onTap: () => beginSearch(context),
+                style: TextStyle(
+                  color: theme.canvasColor,
+                ),
+                cursorColor: theme.canvasColor,
+                key: const Key('SearchBarTextField'),
+                keyboardType: keyboardType,
+                decoration: InputDecoration(
+                    hintText: hintText,
+                    hintStyle: TextStyle(
+                      color: theme.canvasColor,
+                    ),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    border: InputBorder.none),
+                onChanged: onChanged,
+                onSubmitted: (String val) async {
+                  if (closeOnSubmit) {
+                    await Navigator.maybePop(context);
+                  }
 
-            if (clearOnSubmit) {
-              controller.clear();
-            }
-            onSubmitted?.call(val);
-          },
-          autofocus: true,
-          controller: controller,
-        ),
-      ),
+                  if (clearOnSubmit) {
+                    controller.clear();
+                  }
+                  onSubmitted?.call(val);
+                },
+                autofocus: true,
+                controller: controller,
+              ),
+            ),
       actions: !showClearButton
           ? null
           : <Widget>[
