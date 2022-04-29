@@ -4,11 +4,11 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'bridge_generated.dart';
 import 'entry.dart' show Entry, showEntry;
+import 'search_bar.dart';
 
 // @freezed
 // class AppState with _$AppState {
@@ -53,11 +53,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var primaryColor = Colors.lightBlue[800];
     return MaterialApp(
       title: 'words.hk',
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.lightBlue[800],
+        primaryColor: primaryColor,
         fontFamily: 'ChironHeiHK',
         textTheme: const TextTheme(
           headlineSmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
@@ -65,6 +66,9 @@ class MyApp extends StatelessWidget {
           bodyMedium: TextStyle(fontSize: 20.0),
           bodySmall: TextStyle(fontSize: 18.0),
         ),
+        iconTheme: Theme.of(context)
+            .iconTheme
+            .copyWith(color: Theme.of(context).canvasColor),
       ),
       home: const MyHomePage(title: 'words.hk home'),
     );
@@ -93,30 +97,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-        automaticallyImplyLeading: false,
-        leading: appState == AppState.entry
-            ? IconButton(
-                icon: const BackButtonIcon(),
-                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                onPressed: () {
-                  setState(() {
-                    appState = AppState.searchResults;
-                    searchBar.isSearching.value = true;
-                    searchController.text = query;
-                  });
-                })
-            : null,
-        title: appState == AppState.home
-            ? Text(
-                "words.hk",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: Colors.white),
-              )
-            : null,
-        centerTitle: false,
-        actions: [searchBar.getSearchAction(context)]);
+      automaticallyImplyLeading: false,
+      leading: appState == AppState.entry
+          ? IconButton(
+              icon: const BackButtonIcon(),
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              onPressed: () {
+                setState(() {
+                  appState = AppState.searchResults;
+                  searchBar.isSearching.value = true;
+                  searchController.text = query;
+                });
+              })
+          : null,
+      title: appState == AppState.home
+          ? Text(
+              "words.hk",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.white),
+            )
+          : null,
+      centerTitle: false,
+    );
   }
 
   _MyHomePageState() {
@@ -125,8 +129,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     searchBar = SearchBar(
-        inBar: false,
-        buildDefaultAppBar: buildAppBar,
         setState: setState,
         closeOnSubmit: false,
         clearOnSubmit: false,
@@ -165,6 +167,66 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: searchBar.build(context),
+      drawer: SizedBox(
+        width: 250,
+        child: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "words.hk",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Theme.of(context).canvasColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                          height: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .fontSize! /
+                              2),
+                      Text(
+                        'Crowd-sourced Cantonese dictionary for everyone.',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(color: Theme.of(context).canvasColor),
+                      )
+                    ]),
+              ),
+              Expanded(
+                  child: TextButton.icon(
+                icon: const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Icon(Icons.search)),
+                label: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Dictionary',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    )),
+                onPressed: () {
+                  // Update the state of the app
+
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              )),
+            ],
+          ),
+        ),
+      ),
       body: (() {
         switch (appState) {
           case AppState.home:

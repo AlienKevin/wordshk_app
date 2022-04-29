@@ -12,7 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  flutter_search_bar: 3.0.0-dev.1
   flutter_rust_bridge: ^1.27.2
   path_provider: ^2.0.8
   equatable: ^2.0.0
