@@ -12,7 +12,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'dart:ffi' as ffi;
 
 abstract class WordshkApi {
-  Future<void> initApi({required String inputAppDir, dynamic hint});
+  Future<void> initApi({required String json, dynamic hint});
 
   Future<List<PrSearchResult>> prSearch(
       {required int capacity, required String query, dynamic hint});
@@ -54,16 +54,15 @@ class WordshkApiImpl extends FlutterRustBridgeBase<WordshkApiWire>
 
   WordshkApiImpl.raw(WordshkApiWire inner) : super(inner);
 
-  Future<void> initApi({required String inputAppDir, dynamic hint}) =>
+  Future<void> initApi({required String json, dynamic hint}) =>
       executeNormal(FlutterRustBridgeTask(
-        callFfi: (port_) =>
-            inner.wire_init_api(port_, _api2wire_String(inputAppDir)),
+        callFfi: (port_) => inner.wire_init_api(port_, _api2wire_String(json)),
         parseSuccessData: _wire2api_unit,
         constMeta: const FlutterRustBridgeTaskConstMeta(
           debugName: "init_api",
-          argNames: ["inputAppDir"],
+          argNames: ["json"],
         ),
-        argValues: [inputAppDir],
+        argValues: [json],
         hint: hint,
       ));
 
@@ -221,11 +220,11 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
 
   void wire_init_api(
     int port_,
-    ffi.Pointer<wire_uint_8_list> input_app_dir,
+    ffi.Pointer<wire_uint_8_list> json,
   ) {
     return _wire_init_api(
       port_,
-      input_app_dir,
+      json,
     );
   }
 

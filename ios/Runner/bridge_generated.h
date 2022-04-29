@@ -17,7 +17,7 @@ typedef int64_t DartPort;
 
 typedef bool (*DartPostCObjectFnType)(DartPort port_id, void *message);
 
-void wire_init_api(int64_t port_, struct wire_uint_8_list *input_app_dir);
+void wire_init_api(int64_t port_, struct wire_uint_8_list *json);
 
 void wire_pr_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
 

@@ -4,7 +4,6 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'bridge_generated.dart';
 import 'entry.dart' show Entry, showEntry;
@@ -123,11 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  _MyHomePageState() {
-    getApplicationDocumentsDirectory().then((appDir) {
-      api.initApi(inputAppDir: appDir.path);
+  @override
+  void initState() {
+    super.initState();
+    DefaultAssetBundle.of(context).loadString("assets/api.json").then((json) {
+      api.initApi(json: json);
     });
-
     searchBar = SearchBar(
         setState: setState,
         closeOnSubmit: false,

@@ -31,18 +31,8 @@ fn serialize_api<P: AsRef<Path>>(output_path: &P, api: &Api) {
     // info!("Wrote json to app dir");
 }
 
-fn deserialize_api<P: AsRef<Path>>(input_path: &P) -> Option<Api> {
-    match fs::read_to_string(input_path) {
-        Ok(json) => match serde_json::from_str(&json) {
-            Ok(api) => Some(api),
-            Err(_) => None,
-        },
-        Err(_) => None,
-    }
-}
-
 impl Api {
-    pub fn new(app_dir: String) -> Self {
+    pub fn new(json: String) -> Self {
         // if !*IS_LOG_INITIALIZED.lock() {
         //     OsLogger::new("hk.words")
         //         .level_filter(LevelFilter::Debug)
@@ -52,23 +42,7 @@ impl Api {
         //     *IS_LOG_INITIALIZED.lock() = true;
         // }
         // info!("Calling Api::new()...");
-        let api_path = Path::new(&app_dir).join("api.json");
-        // info!("Api path is at: {:?}", api_path);
-        let current_time = Utc::now();
-        match deserialize_api(&api_path) {
-            Some(api) => {
-                if current_time
-                    .signed_duration_since(api.release_time)
-                    .num_weeks()
-                    > 1
-                {
-                    Api::get_new_dict(&api_path)
-                } else {
-                    api
-                }
-            }
-            None => Api::get_new_dict(&api_path),
-        }
+        serde_json::from_str(&json).unwrap()
     }
 
     pub fn pr_search(&self, capacity: u32, query: &str) -> Vec<PrSearchResult> {
@@ -90,34 +64,6 @@ impl Api {
             .iter()
             .map(|entry| serde_json::to_string(&to_lean_rich_entry(entry)).unwrap())
             .collect()
-    }
-
-    fn get_new_dict<P: AsRef<Path>>(api_path: &P) -> Api {
-        // info!("Calling Api::get_new_dict()...");
-        let new_release_time = Utc::now();
-        let csv_url = "https://words.hk/static/all.csv.gz";
-        let csv_gz_data = reqwest::blocking::get(csv_url).unwrap().bytes().unwrap();
-        // info!("Downloaded CSV data");
-        let mut gz = GzDecoder::new(&csv_gz_data[..]);
-        let mut csv_data = String::new();
-        gz.read_to_string(&mut csv_data).unwrap();
-        // info!("Decompressed CSV data");
-        let csv_data_remove_first_line = csv_data.get(csv_data.find('\n').unwrap() + 1..).unwrap();
-        let csv_data_remove_two_lines = csv_data_remove_first_line
-            .get(csv_data_remove_first_line.find('\n').unwrap() + 1..)
-            .unwrap();
-        // info!("Cleaned CSV data");
-        let dict = parse_dict(csv_data_remove_two_lines.as_bytes()).unwrap();
-        // info!("Parsed CSV data");
-        // // info!("{:?}", dict.get(&(89331 as usize)).unwrap());
-        let new_api = Api {
-            dict: enrich_dict(&dict),
-            release_time: new_release_time,
-        };
-        // info!("Created Api struct");
-        serialize_api(api_path, &new_api);
-        // info!("Serialized api data");
-        new_api
     }
 }
 
@@ -180,14 +126,12 @@ fn variant_search_helper(
 
 lazy_static! {
     static ref API: Mutex<Option<Api>> = Mutex::new(None);
-    static ref APP_DIR: Mutex<Option<String>> = Mutex::new(None);
     static ref IS_LOG_INITIALIZED: Mutex<bool> = Mutex::new(false);
 }
 
-pub fn init_api(input_app_dir: String) -> Result<()> {
+pub fn init_api(json: String) -> Result<()> {
     // info!("Calling init_api()...");
-    *APP_DIR.lock() = Some(input_app_dir.clone());
-    *API.lock() = Some(Api::new(input_app_dir));
+    *API.lock() = Some(Api::new(json));
     Ok(())
 }
 
