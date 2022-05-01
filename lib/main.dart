@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import 'EntryNotPublishedPage.dart';
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'entry.dart' show Entry, EntryGroup, showEntry;
@@ -267,26 +268,27 @@ class _MyHomePageState extends State<MyHomePage> {
               api
                   .variantSearch(capacity: 1, query: entryVariant)
                   .then((results) {
-                setState(() {
-                  if (results.isEmpty) {
-                    // TODO: Show entry not found
-                  } else {
-                    log(results[0].variant);
-                    api.getEntryGroupJson(id: results[0].id).then((json) {
-                      setState(() {
-                        entryGroupIndex += 1;
-                        entryGroups.add(json
-                            .map((entryJson) =>
-                                Entry.fromJson(jsonDecode(entryJson)))
-                            .toList());
-                        log(entryGroups[entryGroupIndex][0]
-                            .variants
-                            .toString());
-                        entryIndices.add(0);
-                      });
+                if (results.isEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            EntryNotPublishedPage(entryVariant: entryVariant)),
+                  );
+                } else {
+                  log(results[0].variant);
+                  api.getEntryGroupJson(id: results[0].id).then((json) {
+                    setState(() {
+                      entryGroupIndex += 1;
+                      entryGroups.add(json
+                          .map((entryJson) =>
+                              Entry.fromJson(jsonDecode(entryJson)))
+                          .toList());
+                      entryIndices.add(0);
                     });
-                  }
-                });
+                    log(entryGroups[entryGroupIndex][0].variants.toString());
+                  });
+                }
               });
             });
         }
