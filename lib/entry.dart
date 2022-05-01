@@ -486,7 +486,7 @@ Widget showEg(
         decoration: const BoxDecoration(
           border: Border(
             left: BorderSide(
-              color: Colors.grey,
+              color: greyColor,
               width: 2.0,
             ),
           ),

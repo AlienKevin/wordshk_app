@@ -347,7 +347,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Expanded(
       child: Container(
         decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: greyColor, width: 2))),
+            border:
+                Border(bottom: BorderSide(color: lightGreyColor, width: 2))),
         child: TextButton(
           style: TextButton.styleFrom(
             alignment: Alignment.centerLeft,
