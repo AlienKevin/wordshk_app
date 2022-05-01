@@ -134,4 +134,67 @@ void main() {
     );
     expect(Entry.fromJson(jsonDecode(json)), equals(expectedEntry));
   });
+
+  test('Yue eg sentence no prs gloss', () {
+    var json = """
+    {"id":108744,"variants":[{"word":"呢個","prs":"ni1 go3, li1 go3"},{"word":"哩個","prs":"ni1 go3, li1 go3"}],
+    "poses":["代詞"],"labels":[],"sims":[],"ants":[],
+    "defs":[
+      {"yue":[[["Text","指稱接近自己嘅嘢"]]],
+      "eng":[[["Text","this; something close to the speaker"]]],
+      "alts":[],
+      "egs":[
+      {
+        "zho":null,
+        "yue":{"Text":[["Text",[["Normal","我"]]],["Text",[["Bold","呢"]]]]},
+        "eng":[["Text","I think that this person is pretty suspicious."]]
+      }
+      ]}]}""";
+    var expectedEntry = const Entry(
+      id: 108744,
+      variants: [
+        Variant("呢個", "ni1 go3, li1 go3"),
+        Variant("哩個", "ni1 go3, li1 go3")
+      ],
+      poses: ["代詞"],
+      labels: [],
+      sims: [],
+      ants: [],
+      defs: [
+        Def(
+            yue: Clause([
+              Line([
+                Segment(SegmentType.text, "指稱接近自己嘅嘢"),
+              ])
+            ]),
+            eng: Clause([
+              Line([
+                Segment(
+                    SegmentType.text, "this; something close to the speaker")
+              ])
+            ]),
+            alts: [],
+            egs: [
+              Eg(
+                  zho: null,
+                  yue: RichLine(
+                      RichLineType.word,
+                      WordLine([
+                        WordSegment(
+                            SegmentType.text,
+                            EntryWord([
+                              EntryText(EntryTextStyle.normal, "我"),
+                            ])),
+                        WordSegment(SegmentType.text,
+                            EntryWord([EntryText(EntryTextStyle.bold, "呢")]))
+                      ])),
+                  eng: Line([
+                    Segment(SegmentType.text,
+                        "I think that this person is pretty suspicious.")
+                  ]))
+            ])
+      ],
+    );
+    expect(Entry.fromJson(jsonDecode(json)), equals(expectedEntry));
+  });
 }

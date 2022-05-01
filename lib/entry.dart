@@ -135,7 +135,7 @@ class RichLine extends Equatable {
       : type = json['Ruby'] != null ? RichLineType.ruby : RichLineType.word,
         line = json['Ruby'] != null
             ? RubyLine.fromJson(json['Ruby'])
-            : WordLine.fromJson(json['Word']);
+            : WordLine.fromJson(json['Text']);
 
   @override
   List<Object?> get props => [type, line];
