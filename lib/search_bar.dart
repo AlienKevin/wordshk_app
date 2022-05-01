@@ -29,9 +29,6 @@ class SearchBar {
   /// A callback which is fired when clear button is pressed.
   final VoidCallback? onCleared;
 
-  /// A void callback which is fired when the back button is pressed in the entry page
-  final VoidCallback onEntryBacked;
-
   /// Since this should be inside of a State class, just pass setState to this.
   final SetStateCallback setState;
 
@@ -68,7 +65,6 @@ class SearchBar {
     this.onChanged,
     this.onClosed,
     this.onCleared,
-    required this.onEntryBacked,
     this.keyboardType = TextInputType.text,
   }) {
     this.controller = controller ?? TextEditingController();
@@ -134,13 +130,9 @@ class SearchBar {
               color: buttonColor,
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
               onPressed: () {
-                if (searchBarState.value == SearchBarState.entry) {
-                  onEntryBacked.call();
-                } else {
-                  onClosed?.call();
-                  controller.clear();
-                  Navigator.maybePop(context);
-                }
+                onClosed?.call();
+                controller.clear();
+                Navigator.maybePop(context);
               }),
       title: searchBarState.value == SearchBarState.entry
           ? null

@@ -7,17 +7,7 @@ import 'package:wordshk/search_results_page.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
-import 'entry.dart' show Entry, EntryGroup, showEntry;
 import 'search_bar.dart';
-
-// @freezed
-// class AppState with _$AppState {
-//   const factory AppState.home() = Home;
-//   const factory AppState.searchResults() = SearchResults;
-//   const factory AppState.entry() = Error;
-// }
-
-enum AppState { home, searchResults, entry }
 
 enum SearchMode {
   pr,
@@ -109,13 +99,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late SearchBar searchBar;
-  final TextEditingController searchController = TextEditingController();
-  List<EntryGroup> entryGroups = [];
-  int entryGroupIndex = -1;
-  List<int> entryIndices = [];
   String query = "";
   SearchMode searchMode = SearchMode.combined;
-  AppState appState = AppState.home;
 
   @override
   void initState() {
@@ -127,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
       setState: setState,
       closeOnSubmit: false,
       clearOnSubmit: false,
-      controller: searchController,
       onSubmitted: (query) async {
         setState(() {
           this.query = query;
@@ -155,28 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   prSearchResults: prSearchResults,
                   variantSearchResults: variantSearchResults)),
         );
-      },
-      onCleared: () {
-        log("Search bar has been cleared");
-        searchController.clear();
-      },
-      onClosed: () {
-        log("Search bar has been closed");
-        setState(() {
-          appState = AppState.home;
-        });
-      },
-      onEntryBacked: () {
-        setState(() {
-          if (entryGroupIndex <= 0) {
-            appState = AppState.searchResults;
-            searchBar.searchBarState.value = SearchBarState.searching;
-            searchController.text = query;
-          }
-          entryGroupIndex -= 1;
-          entryGroups.removeLast();
-          entryIndices.removeLast();
-        });
       },
     );
   }
@@ -245,25 +207,20 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      body: (() {
-        switch (appState) {
-          case AppState.home:
-            // TODO: Show search history
-            return Visibility(
-              visible: searchBar.searchBarState.value == SearchBarState.home,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding:
-                      EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
-                  child: Image(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      image: const AssetImage('assets/logo_wide.png')),
-                ),
-              ),
-            );
-        }
-      })(),
+      body:
+          // TODO: Show search history
+          Visibility(
+        visible: searchBar.searchBarState.value == SearchBarState.home,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
+            child: Image(
+                width: MediaQuery.of(context).size.width * 0.7,
+                image: const AssetImage('assets/logo_wide.png')),
+          ),
+        ),
+      ),
     );
   }
 }
