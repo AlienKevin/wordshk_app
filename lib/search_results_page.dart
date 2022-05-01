@@ -30,7 +30,7 @@ class SearchResultsPage extends StatelessWidget {
                 showSearchResults(Theme.of(context).textTheme.bodyLarge)));
   }
 
-  List<Expanded> showSearchResults(textStyle) {
+  List<Widget> showSearchResults(textStyle) {
     switch (searchMode) {
       case SearchMode.pr:
         return showPrSearchResults(textStyle);
@@ -41,7 +41,7 @@ class SearchResultsPage extends StatelessWidget {
     }
   }
 
-  List<Expanded> showPrSearchResults(TextStyle textStyle) {
+  List<Widget> showPrSearchResults(TextStyle textStyle) {
     return prSearchResults.map((result) {
       return showSearchResult(
           result.id,
@@ -55,46 +55,41 @@ class SearchResultsPage extends StatelessWidget {
     }).toList();
   }
 
-  List<Expanded> showVariantSearchResults(TextStyle textStyle) {
+  List<Widget> showVariantSearchResults(TextStyle textStyle) {
     return variantSearchResults.map((result) {
       return showSearchResult(
           result.id, TextSpan(text: result.variant, style: textStyle));
     }).toList();
   }
 
-  List<Expanded> showCombinedSearchResults(TextStyle textStyle) {
+  List<Widget> showCombinedSearchResults(TextStyle textStyle) {
     return showVariantSearchResults(textStyle)
         .followedBy(showPrSearchResults(textStyle))
         .toList();
   }
 
-  Expanded showSearchResult(int id, TextSpan resultText) {
-    return Expanded(
-      child: Container(
-        decoration: const BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: lightGreyColor, width: 2))),
-        child: Builder(
-            builder: (BuildContext context) => TextButton(
-                  style: TextButton.styleFrom(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.zero,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EntryPage(id: id)),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10.0),
-                    child:
-                        RichText(text: resultText, textAlign: TextAlign.start),
-                  ),
-                )),
-      ),
+  Widget showSearchResult(int id, TextSpan resultText) {
+    return Container(
+      decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: lightGreyColor, width: 2))),
+      child: Builder(
+          builder: (BuildContext context) => TextButton(
+                style: TextButton.styleFrom(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.zero,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EntryPage(id: id)),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 10.0),
+                  child: RichText(text: resultText, textAlign: TextAlign.start),
+                ),
+              )),
     );
   }
 }

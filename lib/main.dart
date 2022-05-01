@@ -185,8 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       )
                     ]),
               ),
-              Expanded(
-                  child: TextButton.icon(
+              TextButton.icon(
                 icon: const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Icon(Icons.search)),
@@ -202,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   // Then close the drawer
                   Navigator.pop(context);
                 },
-              )),
+              ),
             ],
           ),
         ),
