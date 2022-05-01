@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart';
 
+typedef OnTapLink = void Function(String entryVariant);
+typedef EntryGroup = List<Entry>;
+
 class Entry extends Equatable {
   final int id;
   final List<Variant> variants;
@@ -246,6 +249,9 @@ class EntryWord extends Equatable {
         }).toList();
 
   @override
+  String toString() => texts.map((entryText) => entryText.text).join("");
+
+  @override
   List<Object?> get props => [texts];
 }
 
@@ -318,7 +324,7 @@ class Variant extends Equatable {
 }
 
 Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
-    void Function(int) updateEntryIndex) {
+    void Function(int) updateEntryIndex, OnTapLink onTapLink) {
   double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
@@ -359,8 +365,8 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
               SizedBox(height: padding),
               SizedBox(
                   height: definitionHeight,
-                  child: showDefs(
-                      entryGroup[entryIndex].defs, lineTextStyle, rubyFontSize))
+                  child: showDefs(entryGroup[entryIndex].defs, lineTextStyle,
+                      rubyFontSize, onTapLink))
             ]),
           ),
         ],
@@ -400,40 +406,46 @@ Widget showPoses(List<String> poses, TextStyle style) {
   );
 }
 
-Widget showDefs(List<Def> defs, TextStyle lineTextStyle, double rubyFontSize) {
+Widget showDefs(List<Def> defs, TextStyle lineTextStyle, double rubyFontSize,
+    OnTapLink onTapLink) {
   return ListView(
-    children:
-        defs.map((def) => showDef(def, lineTextStyle, rubyFontSize)).toList(),
+    children: defs
+        .map((def) => showDef(def, lineTextStyle, rubyFontSize, onTapLink))
+        .toList(),
   );
 }
 
-Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize) {
+Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
+    OnTapLink onTapLink) {
   return Padding(
     padding: EdgeInsets.only(bottom: lineTextStyle.fontSize! * 2),
     child: Column(
       children: [
-        showClause(def.yue, "(粵) ", lineTextStyle),
+        showClause(def.yue, "(粵) ", lineTextStyle, onTapLink),
         def.eng == null
             ? const SizedBox.shrink()
-            : showClause(def.eng!, "(英) ", lineTextStyle),
-        ...def.egs.map((eg) => showEg(eg, lineTextStyle, rubyFontSize))
+            : showClause(def.eng!, "(英) ", lineTextStyle, onTapLink),
+        ...def.egs
+            .map((eg) => showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
       ],
       crossAxisAlignment: CrossAxisAlignment.start,
     ),
   );
 }
 
-Widget showClause(Clause clause, String? tag, TextStyle lineTextStyle) {
+Widget showClause(
+    Clause clause, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink) {
   return Column(
     children: clause.lines.asMap().keys.toList().map((index) {
-      return showLine(
-          clause.lines[index], index == 0 ? tag : null, lineTextStyle);
+      return showLine(clause.lines[index], index == 0 ? tag : null,
+          lineTextStyle, onTapLink);
     }).toList(),
     crossAxisAlignment: CrossAxisAlignment.start,
   );
 }
 
-Widget showLine(Line line, String? tag, TextStyle lineTextStyle) {
+Widget showLine(
+    Line line, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink) {
   if (line.segments.length == 1 &&
       line.segments[0] == const Segment(SegmentType.text, "")) {
     return const SizedBox(height: 10);
@@ -443,7 +455,9 @@ Widget showLine(Line line, String? tag, TextStyle lineTextStyle) {
         children: [
           TextSpan(
               text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ...line.segments.map(showSegment).toList()
+          ...line.segments
+              .map((segment) => showSegment(segment, onTapLink))
+              .toList()
         ],
         style: lineTextStyle,
       ),
@@ -451,7 +465,7 @@ Widget showLine(Line line, String? tag, TextStyle lineTextStyle) {
   }
 }
 
-TextSpan showSegment(Segment segment) {
+TextSpan showSegment(Segment segment, OnTapLink onTapLink) {
   switch (segment.type) {
     case SegmentType.text:
       return TextSpan(text: segment.segment);
@@ -460,13 +474,12 @@ TextSpan showSegment(Segment segment) {
           text: segment.segment,
           style: const TextStyle(color: blueColor),
           recognizer: TapGestureRecognizer()
-            ..onTap = () async {
-              // TODO: go to linked entry
-            });
+            ..onTap = () => onTapLink(segment.segment));
   }
 }
 
-Widget showEg(Eg eg, TextStyle lineTextStyle, double rubyFontSize) {
+Widget showEg(
+    Eg eg, TextStyle lineTextStyle, double rubyFontSize, OnTapLink onTapLink) {
   return Padding(
       padding: EdgeInsets.only(top: lineTextStyle.fontSize!),
       child: Container(
@@ -484,26 +497,26 @@ Widget showEg(Eg eg, TextStyle lineTextStyle, double rubyFontSize) {
             // TODO: add tags for chinese vs cantonese
             eg.zho == null
                 ? const SizedBox.shrink()
-                : showRichLine(eg.zho!, lineTextStyle, rubyFontSize),
+                : showRichLine(eg.zho!, lineTextStyle, rubyFontSize, onTapLink),
             eg.yue == null
                 ? const SizedBox.shrink()
-                : showRichLine(eg.yue!, lineTextStyle, rubyFontSize),
+                : showRichLine(eg.yue!, lineTextStyle, rubyFontSize, onTapLink),
             eg.eng == null
                 ? const SizedBox.shrink()
-                : showLine(eg.eng!, "", lineTextStyle),
+                : showLine(eg.eng!, "", lineTextStyle, onTapLink),
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
       ));
 }
 
-Widget showRichLine(
-    RichLine line, TextStyle lineTextStyle, double rubyFontSize) {
+Widget showRichLine(RichLine line, TextStyle lineTextStyle, double rubyFontSize,
+    OnTapLink onTapLink) {
   switch (line.type) {
     case RichLineType.ruby:
       return showRubyLine(line.line, rubyFontSize);
     case RichLineType.word:
-      return showWordLine(line.line, lineTextStyle);
+      return showWordLine(line.line, lineTextStyle, onTapLink);
   }
 }
 
@@ -565,16 +578,19 @@ Widget showRubySegment(RubySegment segment, double rubySize) {
   ]);
 }
 
-Widget showWordLine(WordLine line, TextStyle lineTextStyle) {
+Widget showWordLine(
+    WordLine line, TextStyle lineTextStyle, OnTapLink onTapLink) {
   return RichText(
     text: TextSpan(
-      children: line.segments.map(showWordSegment).toList(),
+      children: line.segments
+          .map((segment) => showWordSegment(segment, onTapLink))
+          .toList(),
       style: lineTextStyle,
     ),
   );
 }
 
-TextSpan showWordSegment(WordSegment segment) {
+TextSpan showWordSegment(WordSegment segment, OnTapLink onTapLink) {
   switch (segment.type) {
     case SegmentType.text:
       return TextSpan(children: showWord(segment.word));
@@ -583,9 +599,7 @@ TextSpan showWordSegment(WordSegment segment) {
           children: showWord(segment.word),
           style: const TextStyle(color: Colors.blue),
           recognizer: TapGestureRecognizer()
-            ..onTap = () async {
-              // TODO: go to linked entry
-            });
+            ..onTap = () => onTapLink(segment.word.toString()));
   }
 }
 

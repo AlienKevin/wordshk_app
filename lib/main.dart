@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
-import 'entry.dart' show Entry, showEntry;
+import 'entry.dart' show Entry, EntryGroup, showEntry;
 import 'search_bar.dart';
 
 // @freezed
@@ -112,8 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController searchController = TextEditingController();
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
-  List<Entry> entryGroup = [];
-  int entryIndex = 0;
+  List<EntryGroup> entryGroups = [];
+  int entryGroupIndex = -1;
+  List<int> entryIndices = [];
   String query = "";
   SearchMode searchMode = SearchMode.combined;
   AppState appState = AppState.home;
@@ -159,9 +160,14 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       onEntryBacked: () {
         setState(() {
-          appState = AppState.searchResults;
-          searchBar.searchBarState.value = SearchBarState.searching;
-          searchController.text = query;
+          if (entryGroupIndex <= 0) {
+            appState = AppState.searchResults;
+            searchBar.searchBarState.value = SearchBarState.searching;
+            searchController.text = query;
+          }
+          entryGroupIndex -= 1;
+          entryGroups.removeLast();
+          entryIndices.removeLast();
         });
       },
     );
@@ -251,9 +257,36 @@ class _MyHomePageState extends State<MyHomePage> {
           case AppState.searchResults:
             return ListView(children: showSearchResults());
           case AppState.entry:
-            return showEntry(context, entryGroup, entryIndex, (index) {
+            return showEntry(context, entryGroups[entryGroupIndex],
+                entryIndices[entryGroupIndex], (index) {
               setState(() {
-                entryIndex = index;
+                entryIndices[entryGroupIndex] = index;
+              });
+            }, (entryVariant) {
+              log("Tapped on link $entryVariant");
+              api
+                  .variantSearch(capacity: 1, query: entryVariant)
+                  .then((results) {
+                setState(() {
+                  if (results.isEmpty) {
+                    // TODO: Show entry not found
+                  } else {
+                    log(results[0].variant);
+                    api.getEntryGroupJson(id: results[0].id).then((json) {
+                      setState(() {
+                        entryGroupIndex += 1;
+                        entryGroups.add(json
+                            .map((entryJson) =>
+                                Entry.fromJson(jsonDecode(entryJson)))
+                            .toList());
+                        log(entryGroups[entryGroupIndex][0]
+                            .variants
+                            .toString());
+                        entryIndices.add(0);
+                      });
+                    });
+                  }
+                });
               });
             });
         }
@@ -324,10 +357,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 searchBar.searchBarState.value = SearchBarState.entry;
                 searchController.clear();
                 appState = AppState.entry;
-                entryGroup = json
+                entryIndices.add(0);
+                entryGroupIndex += 1;
+                entryGroups.add(json
                     .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
-                    .toList();
-                entryIndex = 0;
+                    .toList());
               });
             });
           },

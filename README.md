@@ -34,3 +34,6 @@ Build rust for Android:
 ```
 cargo ndk -o ../android/app/src/main/jniLibs build
 ```
+
+# TODO
+1. Handle prs starting with !
