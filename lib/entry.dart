@@ -333,8 +333,8 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
       AppBar().preferredSize.height -
       MediaQuery.of(context).padding.top -
       MediaQuery.of(context).padding.bottom -
-      padding * 4 -
-      titleFontSize * 2.5;
+      padding * 5 -
+      titleFontSize * 3;
   return Padding(
       padding: EdgeInsets.all(padding),
       child: Column(

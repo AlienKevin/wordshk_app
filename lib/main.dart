@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:wordshk/search_results_page.dart';
 
-import 'EntryNotPublishedPage.dart';
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'entry.dart' show Entry, EntryGroup, showEntry;
@@ -111,8 +110,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late SearchBar searchBar;
   final TextEditingController searchController = TextEditingController();
-  List<PrSearchResult> prSearchResults = [];
-  List<VariantSearchResult> variantSearchResults = [];
   List<EntryGroup> entryGroups = [];
   int entryGroupIndex = -1;
   List<int> entryIndices = [];
@@ -131,23 +128,33 @@ class _MyHomePageState extends State<MyHomePage> {
       closeOnSubmit: false,
       clearOnSubmit: false,
       controller: searchController,
-      onSubmitted: (query) {
+      onSubmitted: (query) async {
         setState(() {
-          prSearchResults.clear();
-          variantSearchResults.clear();
           this.query = query;
         });
-        api.prSearch(capacity: 10, query: query).then((results) {
-          setState(() {
+        List<PrSearchResult> prSearchResults = [];
+        List<VariantSearchResult> variantSearchResults = [];
+        await Future.wait([
+          api.prSearch(capacity: 10, query: query).then((results) {
             prSearchResults = results.unique((result) => result.variant);
-          });
-        });
-        api.variantSearch(capacity: 10, query: query).then((results) {
-          setState(() {
-            appState = AppState.searchResults;
+          }).catchError((_) {
+            return; // it's fine that pr search failed due to user inputting Chinese characters
+          }),
+          api.variantSearch(capacity: 10, query: query).then((results) {
             variantSearchResults = results.unique((result) => result.variant);
-          });
-        });
+          }).catchError((_) {
+            return; // impossible: put here just in case variant search fails
+          })
+        ]);
+        log("Going into Search results.");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SearchResultsPage(
+                  searchMode: searchMode,
+                  prSearchResults: prSearchResults,
+                  variantSearchResults: variantSearchResults)),
+        );
       },
       onCleared: () {
         log("Search bar has been cleared");
@@ -255,125 +262,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             );
-          case AppState.searchResults:
-            return ListView(children: showSearchResults());
-          case AppState.entry:
-            return showEntry(context, entryGroups[entryGroupIndex],
-                entryIndices[entryGroupIndex], (index) {
-              setState(() {
-                entryIndices[entryGroupIndex] = index;
-              });
-            }, (entryVariant) {
-              log("Tapped on link $entryVariant");
-              api
-                  .variantSearch(capacity: 1, query: entryVariant)
-                  .then((results) {
-                if (results.isEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            EntryNotPublishedPage(entryVariant: entryVariant)),
-                  );
-                } else {
-                  log(results[0].variant);
-                  api.getEntryGroupJson(id: results[0].id).then((json) {
-                    setState(() {
-                      entryGroupIndex += 1;
-                      entryGroups.add(json
-                          .map((entryJson) =>
-                              Entry.fromJson(jsonDecode(entryJson)))
-                          .toList());
-                      entryIndices.add(0);
-                    });
-                    log(entryGroups[entryGroupIndex][0].variants.toString());
-                  });
-                }
-              });
-            });
         }
       })(),
-    );
-  }
-
-  List<Expanded> showSearchResults() {
-    switch (searchMode) {
-      case SearchMode.pr:
-        return showPrSearchResults();
-      case SearchMode.variant:
-        return showVariantSearchResults();
-      case SearchMode.combined:
-        return showCombinedSearchResults();
-    }
-  }
-
-  List<Expanded> showPrSearchResults() {
-    return prSearchResults.map((result) {
-      return showSearchResult(
-          result.id,
-          TextSpan(
-            children: [
-              TextSpan(
-                  text: result.variant + " ",
-                  style: Theme.of(context).textTheme.bodyLarge),
-              TextSpan(
-                  text: result.pr,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(color: greyColor)),
-            ],
-          ));
-    }).toList();
-  }
-
-  List<Expanded> showVariantSearchResults() {
-    return variantSearchResults.map((result) {
-      return showSearchResult(
-          result.id,
-          TextSpan(
-              text: result.variant,
-              style: Theme.of(context).textTheme.bodyLarge));
-    }).toList();
-  }
-
-  List<Expanded> showCombinedSearchResults() {
-    return showVariantSearchResults()
-        .followedBy(showPrSearchResults())
-        .toList();
-  }
-
-  Expanded showSearchResult(int id, TextSpan resultText) {
-    return Expanded(
-      child: Container(
-        decoration: const BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: lightGreyColor, width: 2))),
-        child: TextButton(
-          style: TextButton.styleFrom(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.zero,
-          ),
-          onPressed: () {
-            api.getEntryGroupJson(id: id).then((json) {
-              setState(() {
-                searchBar.searchBarState.value = SearchBarState.entry;
-                searchController.clear();
-                appState = AppState.entry;
-                entryIndices.add(0);
-                entryGroupIndex += 1;
-                entryGroups.add(json
-                    .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
-                    .toList());
-              });
-            });
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
-            child: RichText(text: resultText, textAlign: TextAlign.start),
-          ),
-        ),
-      ),
     );
   }
 }
