@@ -43,22 +43,22 @@ class _SearchResultPageState extends State<SearchResultsPage> {
           log("Going into Search results.");
         }),
         body: ListView(
-            children:
-                showSearchResults(Theme.of(context).textTheme.bodyLarge)));
+            children: showSearchResults(
+                Theme.of(context).textTheme.bodyLarge, widget.searchMode)));
   }
 
-  List<Widget> showSearchResults(textStyle) {
+  List<Widget> showSearchResults(textStyle, searchMode) {
     switch (widget.searchMode) {
       case SearchMode.pr:
-        return showPrSearchResults(textStyle);
+        return showPrSearchResults(textStyle, searchMode);
       case SearchMode.variant:
-        return showVariantSearchResults(textStyle);
+        return showVariantSearchResults(textStyle, searchMode);
       case SearchMode.combined:
-        return showCombinedSearchResults(textStyle);
+        return showCombinedSearchResults(textStyle, searchMode);
     }
   }
 
-  List<Widget> showPrSearchResults(TextStyle textStyle) {
+  List<Widget> showPrSearchResults(TextStyle textStyle, SearchMode searchMode) {
     return prSearchResults.map((result) {
       return showSearchResult(
           result.id,
@@ -68,24 +68,27 @@ class _SearchResultPageState extends State<SearchResultsPage> {
               TextSpan(
                   text: result.pr, style: textStyle.copyWith(color: greyColor)),
             ],
-          ));
+          ),
+          searchMode);
     }).toList();
   }
 
-  List<Widget> showVariantSearchResults(TextStyle textStyle) {
+  List<Widget> showVariantSearchResults(
+      TextStyle textStyle, SearchMode searchMode) {
     return variantSearchResults.map((result) {
-      return showSearchResult(
-          result.id, TextSpan(text: result.variant, style: textStyle));
+      return showSearchResult(result.id,
+          TextSpan(text: result.variant, style: textStyle), searchMode);
     }).toList();
   }
 
-  List<Widget> showCombinedSearchResults(TextStyle textStyle) {
-    return showVariantSearchResults(textStyle)
-        .followedBy(showPrSearchResults(textStyle))
+  List<Widget> showCombinedSearchResults(
+      TextStyle textStyle, SearchMode searchMode) {
+    return showVariantSearchResults(textStyle, searchMode)
+        .followedBy(showPrSearchResults(textStyle, searchMode))
         .toList();
   }
 
-  Widget showSearchResult(int id, TextSpan resultText) {
+  Widget showSearchResult(int id, TextSpan resultText, SearchMode searchMode) {
     return Container(
       decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(color: lightGreyColor, width: 2))),
@@ -98,7 +101,11 @@ class _SearchResultPageState extends State<SearchResultsPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EntryPage(id: id)),
+                    MaterialPageRoute(
+                        builder: (context) => EntryPage(
+                              id: id,
+                              searchMode: searchMode,
+                            )),
                   );
                 },
                 child: Padding(

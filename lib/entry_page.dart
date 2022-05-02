@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:wordshk/search_results_page.dart';
 
 import 'entry.dart';
 import 'entry_not_published_page.dart';
@@ -9,8 +10,10 @@ import 'main.dart';
 
 class EntryPage extends StatefulWidget {
   int id;
+  SearchMode searchMode;
 
-  EntryPage({Key? key, required this.id}) : super(key: key);
+  EntryPage({Key? key, required this.id, required this.searchMode})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _EntryPageState();
@@ -22,8 +25,24 @@ class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Entry'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              tooltip: "Search",
+              onPressed: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SearchResultsPage(searchMode: widget.searchMode)),
+                );
+              },
+            ),
+          ],
         ),
         body: FutureBuilder(
           future: api.getEntryGroupJson(id: widget.id).then((json) {
@@ -56,7 +75,10 @@ class _EntryPageState extends State<EntryPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EntryPage(id: results[0].id)),
+                          builder: (context) => EntryPage(
+                                id: results[0].id,
+                                searchMode: widget.searchMode,
+                              )),
                     );
                   }
                 });
