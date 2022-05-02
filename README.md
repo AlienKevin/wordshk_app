@@ -38,3 +38,18 @@ cargo ndk -o ../android/app/src/main/jniLibs build
 # TODO
 1. Handle prs starting with !
 2. Entry "volt"'s eg has ruby display issue
+
+# Legal
+
+"*words.hk*", "*wordshk*", "*粵典*" are trade names of Hong Kong Lexicography
+Limited. Permission by Hong Kong Lexicography Limited must be obtained to
+promote or distribute materials containing these names. In particular,
+notwithstanding any permission (if applicable) to redistribute the source code
+of this project and/or its derivative works by the copyright owner(s), unless
+you obtain explicit permission from Hong Kong Lexicography Limited, you are
+required to remove all mentions of "*words.hk*", "*wordshk*", "*粵典*" from
+your redistributions.
+
+The dictionary contents published by words.hk is copyrighted by Hong Kong
+Lexicography Limited. You may be eligible to obtain a license from
+https://words.hk/base/hoifong/
