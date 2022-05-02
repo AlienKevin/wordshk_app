@@ -26,10 +26,7 @@ class EntryNotPublishedPage extends StatelessWidget {
                   // Navigate back to first route when tapped.
                   Navigator.pop(context);
                 },
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text('Go back'),
-                ),
+                child: const Text('Go back'),
               ),
             ],
           )),

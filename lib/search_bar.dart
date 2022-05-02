@@ -1,19 +1,17 @@
 // Copyright (c) 2017, Spencer. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+
+import 'constants.dart';
 
 typedef void TextFieldSubmitCallback(String value);
 typedef void TextFieldChangeCallback(String value);
 typedef void SetStateCallback(void fn());
 
-enum SearchBarState {
-  searching,
-  home,
-  entry,
-}
-
-class SearchBar {
+class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// Whether or not the search bar should close on submit. Defaults to true.
   final bool closeOnSubmit;
 
@@ -29,18 +27,8 @@ class SearchBar {
   /// A callback which is fired when clear button is pressed.
   final VoidCallback? onCleared;
 
-  /// Since this should be inside of a State class, just pass setState to this.
-  final SetStateCallback setState;
-
-  /// Whether or not the search bar should add a clear input button, defaults to true.
-  final bool showClearButton;
-
   /// What the hintText on the search bar should be. Defaults to 'Search'.
   final String hintText;
-
-  /// Whether search is currently active.
-  final ValueNotifier<SearchBarState> searchBarState =
-      ValueNotifier(SearchBarState.home);
 
   /// A callback which is invoked each time the text field's value changes
   final TextFieldChangeCallback? onChanged;
@@ -48,47 +36,53 @@ class SearchBar {
   /// The type of keyboard to use for editing the search bar text. Defaults to 'TextInputType.text'.
   final TextInputType keyboardType;
 
-  /// The controller to be used in the textField.
-  late TextEditingController controller;
-
-  /// Whether the clear button should be active (fully colored) or inactive (greyed out)
-  bool _clearActive = false;
-
   SearchBar({
-    required this.setState,
     this.onSubmitted,
-    TextEditingController? controller,
     this.hintText = 'Search',
-    this.closeOnSubmit = true,
-    this.clearOnSubmit = true,
-    this.showClearButton = true,
+    this.closeOnSubmit = false,
+    this.clearOnSubmit = false,
     this.onChanged,
     this.onClosed,
     this.onCleared,
     this.keyboardType = TextInputType.text,
-  }) {
-    this.controller = controller ?? TextEditingController();
+  });
 
-    // Don't waste resources on listeners for the text controller if the dev
-    // doesn't want a clear button anyways in the search bar
-    if (!showClearButton) {
-      return;
-    }
+  @override
+  State<StatefulWidget> createState() => _isSearching();
 
-    this.controller.addListener(() {
-      if (this.controller.text.isEmpty) {
+  @override
+  // TODO: implement preferredSize
+  Size get preferredSize => const Size.fromHeight(appBarHeight);
+}
+
+class _isSearching extends State<SearchBar> {
+  /// The controller to be used in the textField.
+  TextEditingController controller = TextEditingController();
+
+  /// Whether search is currently active.
+  final ValueNotifier<bool> isSearching = ValueNotifier(true);
+
+  /// Whether the clear button should be active (fully colored) or inactive (greyed out)
+  bool _clearActive = false;
+
+  /// Whether or not the search bar should add a clear input button, defaults to true.
+  bool showClearButton = true;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      log("Controller addListener activated.");
+      if (controller.text.isEmpty) {
         // If clear is already disabled, don't disable it
         if (_clearActive) {
           setState(() {
             _clearActive = false;
           });
         }
-
-        return;
       }
-
       // If clear is already enabled, don't enable it
-      if (!_clearActive) {
+      else if (!_clearActive) {
         setState(() {
           _clearActive = true;
         });
@@ -96,19 +90,27 @@ class SearchBar {
     });
   }
 
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    // This also removes the _printLatestValue listener.
+    controller.dispose();
+    super.dispose();
+  }
+
   /// Initializes the search bar.
   ///
   /// This adds a route that listens for onRemove (and stops the search when that happens), and then calls [setState] to rebuild and start the search.
   void beginSearch(context) {
-    ModalRoute.of(context)!
-        .addLocalHistoryEntry(LocalHistoryEntry(onRemove: () {
-      setState(() {
-        searchBarState.value = SearchBarState.home;
-      });
-    }));
+    // ModalRoute.of(context)!
+    //     .addLocalHistoryEntry(LocalHistoryEntry(onRemove: () {
+    // setState(() {
+    //   isSearching.value = false;
+    // });
+    // }));
 
     setState(() {
-      searchBarState.value = SearchBarState.searching;
+      isSearching.value = true;
     });
   }
 
@@ -118,23 +120,24 @@ class SearchBar {
   /// backgroundColor is determined by the value of inBar
   /// title is always a [TextField] with the key 'SearchBarTextField', and various text stylings based on [inBar]. This is also where [onSubmitted] has its listener registered.
   ///
-  AppBar buildSearchBar(BuildContext context) {
+  @override
+  AppBar build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     Color? buttonColor = theme.iconTheme.color;
 
     return AppBar(
-      leading: searchBarState.value == SearchBarState.home
+      leading: !isSearching.value
           ? null
           : IconButton(
               icon: const BackButtonIcon(),
               color: buttonColor,
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
               onPressed: () {
-                onClosed?.call();
+                widget.onClosed?.call();
                 controller.clear();
                 Navigator.maybePop(context);
               }),
-      title: searchBarState.value == SearchBarState.entry
+      title: !isSearching.value
           ? null
           : Directionality(
               textDirection: Directionality.of(context),
@@ -145,25 +148,25 @@ class SearchBar {
                 ),
                 cursorColor: theme.canvasColor,
                 key: const Key('SearchBarTextField'),
-                keyboardType: keyboardType,
+                keyboardType: widget.keyboardType,
                 decoration: InputDecoration(
-                    hintText: hintText,
+                    hintText: widget.hintText,
                     hintStyle: TextStyle(
                       color: theme.canvasColor,
                     ),
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     border: InputBorder.none),
-                onChanged: onChanged,
+                onChanged: widget.onChanged,
                 onSubmitted: (String val) async {
-                  if (closeOnSubmit) {
+                  if (widget.closeOnSubmit) {
                     await Navigator.maybePop(context);
                   }
 
-                  if (clearOnSubmit) {
+                  if (widget.clearOnSubmit) {
                     controller.clear();
                   }
-                  onSubmitted?.call(val);
+                  widget.onSubmitted?.call(val);
                 },
                 autofocus: true,
                 controller: controller,
@@ -180,15 +183,10 @@ class SearchBar {
                   onPressed: !_clearActive
                       ? null
                       : () {
-                          onCleared?.call();
+                          widget.onCleared?.call();
                           controller.clear();
                         }),
             ],
     );
-  }
-
-  /// Returns an AppBar based on the value of [isSearching]
-  AppBar build(BuildContext context) {
-    return buildSearchBar(context);
   }
 }

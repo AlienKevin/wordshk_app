@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -7,7 +6,6 @@ import 'package:wordshk/search_results_page.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
-import 'search_bar.dart';
 
 enum SearchMode {
   pr,
@@ -60,29 +58,33 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'words.hk',
       theme: ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: blueSwatch,
-          primaryColor: blueColor,
-          fontFamily: 'ChironHeiHK',
-          textTheme: const TextTheme(
-            headlineSmall:
-                TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
-            bodyLarge: TextStyle(fontSize: 28.0),
-            bodyMedium: TextStyle(fontSize: 20.0),
-            bodySmall: TextStyle(fontSize: 18.0),
-          ),
-          iconTheme: Theme.of(context)
-              .iconTheme
-              .copyWith(color: Theme.of(context).canvasColor),
-          textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: blueColor)),
-            foregroundColor:
-                MaterialStateProperty.resolveWith((_) => blueColor),
-          ))),
+        brightness: Brightness.light,
+        primarySwatch: blueSwatch,
+        primaryColor: blueColor,
+        fontFamily: 'ChironHeiHK',
+        textTheme: const TextTheme(
+          headlineSmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(fontSize: 28.0),
+          bodyMedium: TextStyle(fontSize: 20.0),
+          bodySmall: TextStyle(fontSize: 18.0),
+        ),
+        iconTheme: Theme.of(context)
+            .iconTheme
+            .copyWith(color: Theme.of(context).canvasColor),
+        textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+          textStyle: MaterialStateProperty.all(Theme.of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(color: blueColor)),
+          foregroundColor: MaterialStateProperty.resolveWith((_) => blueColor),
+        )),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+          padding: MaterialStateProperty.all(
+              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)),
+        )),
+      ),
       home: const MyHomePage(title: 'words.hk home'),
     );
   }
@@ -98,8 +100,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late SearchBar searchBar;
-  String query = "";
   SearchMode searchMode = SearchMode.combined;
 
   @override
@@ -108,45 +108,12 @@ class _MyHomePageState extends State<MyHomePage> {
     DefaultAssetBundle.of(context).loadString("assets/api.json").then((json) {
       api.initApi(json: json);
     });
-    searchBar = SearchBar(
-      setState: setState,
-      closeOnSubmit: false,
-      clearOnSubmit: false,
-      onSubmitted: (query) async {
-        setState(() {
-          this.query = query;
-        });
-        List<PrSearchResult> prSearchResults = [];
-        List<VariantSearchResult> variantSearchResults = [];
-        await Future.wait([
-          api.prSearch(capacity: 10, query: query).then((results) {
-            prSearchResults = results.unique((result) => result.variant);
-          }).catchError((_) {
-            return; // it's fine that pr search failed due to user inputting Chinese characters
-          }),
-          api.variantSearch(capacity: 10, query: query).then((results) {
-            variantSearchResults = results.unique((result) => result.variant);
-          }).catchError((_) {
-            return; // impossible: put here just in case variant search fails
-          })
-        ]);
-        log("Going into Search results.");
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SearchResultsPage(
-                  searchMode: searchMode,
-                  prSearchResults: prSearchResults,
-                  variantSearchResults: variantSearchResults)),
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: searchBar.build(context),
+      appBar: AppBar(title: const Text('words.hk')),
       drawer: SizedBox(
         width: 250,
         child: Drawer(
@@ -208,15 +175,28 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body:
           // TODO: Show search history
-          Visibility(
-        visible: searchBar.searchBarState.value == SearchBarState.home,
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
-            child: Image(
-                width: MediaQuery.of(context).size.width * 0.7,
-                image: const AssetImage('assets/logo_wide.png')),
+          Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
+          child: Column(
+            children: [
+              Image(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  image: const AssetImage('assets/logo_wide.png')),
+              SizedBox(
+                  height: Theme.of(context).textTheme.bodyLarge!.fontSize!),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              SearchResultsPage(searchMode: searchMode)),
+                    );
+                  },
+                  child: const Text("Search")),
+            ],
           ),
         ),
       ),

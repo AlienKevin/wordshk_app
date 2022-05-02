@@ -2,36 +2,53 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:wordshk/bridge_generated.dart';
+import 'package:wordshk/search_bar.dart';
 
 import 'constants.dart';
 import 'entry_page.dart';
 import 'main.dart';
 
-class SearchResultsPage extends StatelessWidget {
+class SearchResultsPage extends StatefulWidget {
   SearchMode searchMode;
-  List<PrSearchResult> prSearchResults;
-  List<VariantSearchResult> variantSearchResults;
-  SearchResultsPage(
-      {Key? key,
-      required this.searchMode,
-      required this.prSearchResults,
-      required this.variantSearchResults})
-      : super(key: key);
+
+  SearchResultsPage({Key? key, required this.searchMode}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _SearchResultPageState();
+}
+
+class _SearchResultPageState extends State<SearchResultsPage> {
+  List<PrSearchResult> prSearchResults = [];
+  List<VariantSearchResult> variantSearchResults = [];
 
   @override
   Widget build(BuildContext context) {
     log("building SearchResultsPage.");
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Search Results'),
-        ),
+        appBar: SearchBar(onSubmitted: (query) {
+          api.prSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              prSearchResults = results.unique((result) => result.variant);
+            });
+          }).catchError((_) {
+            return; // it's fine that pr search failed due to user inputting Chinese characters
+          });
+          api.variantSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              variantSearchResults = results.unique((result) => result.variant);
+            });
+          }).catchError((_) {
+            return; // impossible: put here just in case variant search fails
+          });
+          log("Going into Search results.");
+        }),
         body: ListView(
             children:
                 showSearchResults(Theme.of(context).textTheme.bodyLarge)));
   }
 
   List<Widget> showSearchResults(textStyle) {
-    switch (searchMode) {
+    switch (widget.searchMode) {
       case SearchMode.pr:
         return showPrSearchResults(textStyle);
       case SearchMode.variant:
