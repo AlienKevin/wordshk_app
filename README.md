@@ -37,7 +37,6 @@ cargo ndk -o ../android/app/src/main/jniLibs build
 
 # TODO
 1. Handle prs starting with !
-2. Entry "volt"'s eg has ruby display issue
 
 # Legal
 
