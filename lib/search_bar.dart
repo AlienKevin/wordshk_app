@@ -59,6 +59,9 @@ class _isSearching extends State<SearchBar> {
   /// The controller to be used in the textField.
   TextEditingController controller = TextEditingController();
 
+  /// focusNode for the textField.
+  FocusNode focusNode = FocusNode();
+
   /// Whether search is currently active.
   final ValueNotifier<bool> isSearching = ValueNotifier(true);
 
@@ -142,6 +145,7 @@ class _isSearching extends State<SearchBar> {
           : Directionality(
               textDirection: Directionality.of(context),
               child: TextField(
+                focusNode: focusNode,
                 onTap: () => beginSearch(context),
                 style: TextStyle(
                   color: theme.canvasColor,
@@ -185,6 +189,7 @@ class _isSearching extends State<SearchBar> {
                       : () {
                           widget.onCleared?.call();
                           controller.clear();
+                          FocusScope.of(context).requestFocus(focusNode);
                         }),
             ],
     );
