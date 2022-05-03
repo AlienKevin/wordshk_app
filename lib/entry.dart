@@ -348,15 +348,16 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
               TabBar(
                 onTap: updateEntryIndex,
                 isScrollable: true, // Required
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.black, // Other tabs color
+                labelColor: lineTextStyle.color,
+                unselectedLabelColor: lineTextStyle.color, // Other tabs color
                 labelPadding: const EdgeInsets.symmetric(
                     horizontal: 30), // Space between tabs
-                indicator: const UnderlineTabIndicator(
+                indicator: UnderlineTabIndicator(
                   borderSide: BorderSide(
-                      color: Colors.black, width: 2), // Indicator height
-                  insets:
-                      EdgeInsets.symmetric(horizontal: 60), // Indicator width
+                      color: lineTextStyle.color!,
+                      width: 2), // Indicator height
+                  insets: const EdgeInsets.symmetric(
+                      horizontal: 60), // Indicator width
                 ),
                 tabs: entryGroup
                     .map((entry) => Tab(text: entry.poses.first))
@@ -514,19 +515,19 @@ Widget showRichLine(RichLine line, TextStyle lineTextStyle, double rubyFontSize,
     OnTapLink onTapLink) {
   switch (line.type) {
     case RichLineType.ruby:
-      return showRubyLine(line.line, rubyFontSize);
+      return showRubyLine(line.line, lineTextStyle.color!, rubyFontSize);
     case RichLineType.word:
       return showWordLine(line.line, lineTextStyle, onTapLink);
   }
 }
 
-Widget showRubyLine(RubyLine line, double rubyFontSize) {
+Widget showRubyLine(RubyLine line, Color textColor, double rubyFontSize) {
   return Padding(
     padding: EdgeInsets.only(top: rubyFontSize / 1.5),
     child: Wrap(
       runSpacing: rubyFontSize / 1.4,
       children: line.segments
-          .map((segment) => showRubySegment(segment, rubyFontSize))
+          .map((segment) => showRubySegment(segment, textColor, rubyFontSize))
           .map((e) => Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 textBaseline: TextBaseline.alphabetic,
@@ -538,21 +539,22 @@ Widget showRubyLine(RubyLine line, double rubyFontSize) {
   );
 }
 
-Widget showRubySegment(RubySegment segment, double rubySize) {
+Widget showRubySegment(RubySegment segment, Color textColor, double rubySize) {
   double rubyYPos = rubySize / 1.1;
   Widget text;
   String ruby;
   switch (segment.type) {
     case RubySegmentType.punc:
       text = Text(segment.segment as String,
-          style: TextStyle(fontSize: rubySize, height: 0.8));
+          style: TextStyle(fontSize: rubySize, height: 0.8, color: textColor));
       ruby = "";
       break;
     case RubySegmentType.word:
       text = RichText(
           text: TextSpan(
               children: showWord(segment.segment.word as EntryWord),
-              style: TextStyle(fontSize: rubySize, height: 0.8)));
+              style: TextStyle(
+                  fontSize: rubySize, height: 0.8, color: textColor)));
       ruby = segment.segment.prs.join(" ");
       break;
     case RubySegmentType.linkedWord:
@@ -562,7 +564,7 @@ Widget showRubySegment(RubySegment segment, double rubySize) {
         mainAxisSize: MainAxisSize.min,
         children: (segment.segment.words as List<RubySegmentWord>)
             .map((word) => showRubySegment(
-                RubySegment(RubySegmentType.word, word), rubySize))
+                RubySegment(RubySegmentType.word, word), textColor, rubySize))
             .toList(),
       );
   }
@@ -597,7 +599,7 @@ TextSpan showWordSegment(WordSegment segment, OnTapLink onTapLink) {
     case SegmentType.link:
       return TextSpan(
           children: showWord(segment.word),
-          style: const TextStyle(color: Colors.blue),
+          style: const TextStyle(color: blueColor),
           recognizer: TapGestureRecognizer()
             ..onTap = () => onTapLink(segment.word.toString()));
   }
@@ -613,6 +615,5 @@ TextSpan showText(EntryText text) {
       style: TextStyle(
           fontWeight: text.style == EntryTextStyle.normal
               ? FontWeight.normal
-              : FontWeight.bold,
-          color: Colors.black));
+              : FontWeight.bold));
 }

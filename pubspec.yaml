@@ -41,7 +41,9 @@ flutter:
 
 flutter_native_splash:
   color: "ffffff"
+  color_dark: "000000"
   image: "assets/icon_512.png"
+  image_dark: "assets/icon_512_dark.png"
 
 flutter_icons:
   android: "launcher_icon"

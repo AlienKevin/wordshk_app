@@ -114,8 +114,14 @@ class _SearchResultPageState extends State<SearchResultsPage> {
 
   Widget showSearchResult(int id, TextSpan resultText, SearchMode searchMode) {
     return Container(
-      decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: lightGreyColor, width: 2))),
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(
+                  color: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? lightGreyColor
+                      : blackColor,
+                  width: 2))),
       child: Builder(
           builder: (BuildContext context) => TextButton(
                 style: TextButton.styleFrom(

@@ -9,5 +9,5 @@ flutter pub get
 ### Generate iOS and Android icons ###
 flutter pub run flutter_launcher_icons:main -f pubspec.yaml
 
-#### Generate splash screen for Web, Android, and iOS ###
+#### Generate splash screen for Android, and iOS ###
 flutter pub run flutter_native_splash:create

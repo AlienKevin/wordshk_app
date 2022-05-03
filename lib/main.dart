@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:wordshk/search_results_page.dart';
@@ -61,36 +62,60 @@ class MyApp extends StatelessWidget {
     const bodyLarge = TextStyle(fontSize: 28.0);
     const bodyMedium = TextStyle(fontSize: 20.0);
     const bodySmall = TextStyle(fontSize: 18.0);
+    var textTheme = const TextTheme(
+      headlineSmall: headlineSmall,
+      bodyLarge: bodyLarge,
+      bodyMedium: bodyMedium,
+      bodySmall: bodySmall,
+    );
+    var appBarTheme = AppBarTheme.of(context).copyWith(
+      backgroundColor: blueColor,
+    );
+    const textSelectionTheme = TextSelectionThemeData(
+        selectionColor: greyColor,
+        selectionHandleColor: greyColor,
+        cursorColor: greyColor);
+    var textButtonTheme = TextButtonThemeData(
+        style: ButtonStyle(
+      textStyle:
+          MaterialStateProperty.all(bodyLarge.copyWith(color: blueColor)),
+      foregroundColor: MaterialStateProperty.resolveWith((_) => blueColor),
+    ));
+    var elevatedButtonTheme = ElevatedButtonThemeData(
+        style: ButtonStyle(
+      textStyle:
+          MaterialStateProperty.all(bodyLarge.copyWith(color: Colors.white)),
+      padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
+    ));
+    var lightTheme = ThemeData(
+      brightness: Brightness.light,
+      primarySwatch: blueSwatch,
+      primaryColor: blueColor,
+      appBarTheme: appBarTheme,
+      textSelectionTheme: textSelectionTheme,
+      fontFamily: 'ChironHeiHK',
+      textTheme: textTheme,
+      iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
+      textButtonTheme: textButtonTheme,
+      elevatedButtonTheme: elevatedButtonTheme,
+    );
+    var darkTheme = ThemeData(
+      brightness: Brightness.dark,
+      primarySwatch: blueSwatch,
+      primaryColor: blueColor,
+      appBarTheme: appBarTheme,
+      textSelectionTheme: textSelectionTheme,
+      fontFamily: 'ChironHeiHK',
+      textTheme: textTheme,
+      iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
+      textButtonTheme: textButtonTheme,
+      elevatedButtonTheme: elevatedButtonTheme,
+    );
     return MaterialApp(
       title: 'words.hk',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: blueSwatch,
-        primaryColor: blueColor,
-        fontFamily: 'ChironHeiHK',
-        textTheme: const TextTheme(
-          headlineSmall: headlineSmall,
-          bodyLarge: bodyLarge,
-          bodyMedium: bodyMedium,
-          bodySmall: bodySmall,
-        ),
-        iconTheme: Theme.of(context)
-            .iconTheme
-            .copyWith(color: Theme.of(context).canvasColor),
-        textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-          textStyle:
-              MaterialStateProperty.all(bodyLarge.copyWith(color: blueColor)),
-          foregroundColor: MaterialStateProperty.resolveWith((_) => blueColor),
-        )),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ButtonStyle(
-          textStyle: MaterialStateProperty.all(
-              bodyLarge.copyWith(color: Colors.white)),
-          padding: MaterialStateProperty.all(
-              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
-        )),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       home: const MyHomePage(title: 'words.hk home'),
     );
   }
@@ -118,6 +143,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var icon_wide = Image(
+        width: MediaQuery.of(context).size.width * 0.7,
+        image: const AssetImage('assets/icon_wide.png'));
+
     return Scaffold(
       appBar: AppBar(title: const Text('words.hk')),
       drawer: SizedBox(
@@ -140,8 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Text(
                         "words.hk",
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Theme.of(context).canvasColor,
-                            fontWeight: FontWeight.bold),
+                            color: whiteColor, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
                           height: Theme.of(context)
@@ -154,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
-                            ?.copyWith(color: Theme.of(context).canvasColor),
+                            ?.copyWith(color: whiteColor),
                       )
                     ]),
               ),
@@ -187,9 +215,19 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
           child: Column(
             children: [
-              Image(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  image: const AssetImage('assets/logo_wide.png')),
+              MediaQuery.of(context).platformBrightness == Brightness.light
+                  ? icon_wide
+                  : ColorFiltered(
+                      colorFilter: const ColorFilter.matrix([
+                        // source: https://www.burkharts.net/apps/blog/over-the-rainbow-colour-filters/
+                        // Inverter matrix
+                        //R G  B  A  Const
+                        -1, 0, 0, 0, 255,
+                        0, -1, 0, 0, 255,
+                        0, 0, -1, 0, 255,
+                        0, 0, 0, 1, 0,
+                      ]),
+                      child: icon_wide),
               SizedBox(
                   height:
                       Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5),

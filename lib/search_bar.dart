@@ -145,18 +145,16 @@ class _isSearching extends State<SearchBar> {
           : Directionality(
               textDirection: Directionality.of(context),
               child: TextField(
+                style: const TextStyle(color: whiteColor),
                 focusNode: focusNode,
                 onTap: () => beginSearch(context),
-                style: TextStyle(
-                  color: theme.canvasColor,
-                ),
-                cursorColor: theme.canvasColor,
+                cursorColor: whiteColor,
                 key: const Key('SearchBarTextField'),
                 keyboardType: widget.keyboardType,
                 decoration: InputDecoration(
                     hintText: widget.hintText,
-                    hintStyle: TextStyle(
-                      color: theme.canvasColor,
+                    hintStyle: const TextStyle(
+                      color: whiteColor,
                     ),
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
