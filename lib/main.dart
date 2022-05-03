@@ -56,6 +56,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final blueSwatch = MaterialColor(blueColor.value, blueColorMap);
+    const headlineSmall =
+        TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold);
+    const bodyLarge = TextStyle(fontSize: 28.0);
+    const bodyMedium = TextStyle(fontSize: 20.0);
+    const bodySmall = TextStyle(fontSize: 18.0);
     return MaterialApp(
       title: 'words.hk',
       theme: ThemeData(
@@ -64,26 +69,26 @@ class MyApp extends StatelessWidget {
         primaryColor: blueColor,
         fontFamily: 'ChironHeiHK',
         textTheme: const TextTheme(
-          headlineSmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
-          bodyLarge: TextStyle(fontSize: 28.0),
-          bodyMedium: TextStyle(fontSize: 20.0),
-          bodySmall: TextStyle(fontSize: 18.0),
+          headlineSmall: headlineSmall,
+          bodyLarge: bodyLarge,
+          bodyMedium: bodyMedium,
+          bodySmall: bodySmall,
         ),
         iconTheme: Theme.of(context)
             .iconTheme
             .copyWith(color: Theme.of(context).canvasColor),
         textButtonTheme: TextButtonThemeData(
             style: ButtonStyle(
-          textStyle: MaterialStateProperty.all(Theme.of(context)
-              .textTheme
-              .bodyLarge!
-              .copyWith(color: blueColor)),
+          textStyle:
+              MaterialStateProperty.all(bodyLarge.copyWith(color: blueColor)),
           foregroundColor: MaterialStateProperty.resolveWith((_) => blueColor),
         )),
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ButtonStyle(
+          textStyle: MaterialStateProperty.all(
+              bodyLarge.copyWith(color: Colors.white)),
           padding: MaterialStateProperty.all(
-              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0)),
+              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
         )),
       ),
       home: const MyHomePage(title: 'words.hk home'),
@@ -186,7 +191,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: MediaQuery.of(context).size.width * 0.7,
                   image: const AssetImage('assets/logo_wide.png')),
               SizedBox(
-                  height: Theme.of(context).textTheme.bodyLarge!.fontSize!),
+                  height:
+                      Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5),
               ElevatedButton(
                   onPressed: () {
                     Navigator.push(

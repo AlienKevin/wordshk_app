@@ -19,7 +19,7 @@ class EntryNotPublishedPage extends StatelessWidget {
               Text(
                   'The entry "$entryVariant" is not yet published. Our volunteers are improving and reviewing this entry to ensure its integrity.'),
               const SizedBox(
-                height: 20,
+                height: 30,
               ),
               ElevatedButton(
                 onPressed: () {
