@@ -6,6 +6,7 @@ import 'package:wordshk/search_results_page.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
+import 'custom_page_route.dart';
 
 enum SearchMode {
   pr,
@@ -190,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      CustomPageRoute(
                           builder: (context) =>
                               SearchResultsPage(searchMode: searchMode)),
                     );

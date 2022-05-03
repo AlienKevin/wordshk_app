@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/search_results_page.dart';
 
 import 'entry.dart';
@@ -36,7 +37,7 @@ class _EntryPageState extends State<EntryPage> {
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CustomPageRoute(
                       builder: (context) =>
                           SearchResultsPage(searchMode: widget.searchMode)),
                 );
@@ -66,7 +67,7 @@ class _EntryPageState extends State<EntryPage> {
                   if (results.isEmpty) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      CustomPageRoute(
                           builder: (context) => EntryNotPublishedPage(
                               entryVariant: entryVariant)),
                     );
@@ -74,7 +75,7 @@ class _EntryPageState extends State<EntryPage> {
                     log(results[0].variant);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      CustomPageRoute(
                           builder: (context) => EntryPage(
                                 id: results[0].id,
                                 searchMode: widget.searchMode,

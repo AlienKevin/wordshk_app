@@ -5,6 +5,7 @@ import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/search_bar.dart';
 
 import 'constants.dart';
+import 'custom_page_route.dart';
 import 'entry_page.dart';
 import 'main.dart';
 
@@ -124,7 +125,7 @@ class _SearchResultPageState extends State<SearchResultsPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    CustomPageRoute(
                         builder: (context) => EntryPage(
                               id: id,
                               searchMode: searchMode,
