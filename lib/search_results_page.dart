@@ -20,31 +20,54 @@ class SearchResultsPage extends StatefulWidget {
 class _SearchResultPageState extends State<SearchResultsPage> {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
+  bool finishedSearch = false;
 
   @override
   Widget build(BuildContext context) {
     log("building SearchResultsPage.");
     return Scaffold(
-        appBar: SearchBar(onSubmitted: (query) {
-          api.prSearch(capacity: 10, query: query).then((results) {
+        appBar: SearchBar(onChanged: (query) {
+          setState(() {
+            finishedSearch = false;
+          });
+        }, onSubmitted: (query) {
+          var prSearchFuture =
+              api.prSearch(capacity: 10, query: query).then((results) {
             setState(() {
               prSearchResults = results.unique((result) => result.variant);
             });
           }).catchError((_) {
+            setState(() {
+              prSearchResults.clear();
+            });
             return; // it's fine that pr search failed due to user inputting Chinese characters
           });
-          api.variantSearch(capacity: 10, query: query).then((results) {
+          var variantSearchFuture =
+              api.variantSearch(capacity: 10, query: query).then((results) {
             setState(() {
               variantSearchResults = results.unique((result) => result.variant);
             });
           }).catchError((_) {
+            setState(() {
+              variantSearchResults.clear();
+            });
             return; // impossible: put here just in case variant search fails
           });
-          log("Going into Search results.");
+          Future.wait([prSearchFuture, variantSearchFuture]).then((_) {
+            setState(() {
+              finishedSearch = true;
+            });
+          });
         }),
-        body: ListView(
-            children: showSearchResults(
-                Theme.of(context).textTheme.bodyLarge, widget.searchMode)));
+        body: (finishedSearch &&
+                prSearchResults.isEmpty &&
+                variantSearchResults.isEmpty)
+            ? const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+                child: Text("No Results Found"))
+            : ListView(
+                children: showSearchResults(
+                    Theme.of(context).textTheme.bodyLarge, widget.searchMode)));
   }
 
   List<Widget> showSearchResults(textStyle, searchMode) {
