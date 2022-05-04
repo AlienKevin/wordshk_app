@@ -367,7 +367,7 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
               SizedBox(height: padding),
               SizedBox(
                   height: definitionHeight,
-                  child: showDefs(entryGroup[entryIndex].defs, lineTextStyle,
+                  child: showTab(entryGroup[entryIndex], lineTextStyle,
                       rubyFontSize, onTapLink))
             ]),
           ),
@@ -434,14 +434,50 @@ Widget showPoses(List<String> poses, TextStyle style) {
   );
 }
 
-Widget showDefs(List<Def> defs, TextStyle lineTextStyle, double rubyFontSize,
+Widget showTab(Entry entry, TextStyle lineTextStyle, double rubyFontSize,
     OnTapLink onTapLink) {
   return ListView(
-    children: defs
-        .map((def) => showDef(def, lineTextStyle, rubyFontSize, onTapLink))
-        .toList(),
+    children: [
+      showLabels(entry.labels, lineTextStyle),
+      ...entry.defs
+          .map((def) => showDef(def, lineTextStyle, rubyFontSize, onTapLink))
+          .toList()
+    ],
   );
 }
+
+Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
+      visible: labels.isNotEmpty,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: RichText(
+            text: TextSpan(children: [
+          WidgetSpan(
+              child: Text("[標籤]",
+                  style: lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
+          ...labels
+              .map((label) => [
+                    const WidgetSpan(child: SizedBox(width: 10)),
+                    WidgetSpan(
+                        child: Chip(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: VisualDensity.compact,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            padding: EdgeInsets.zero,
+                            labelPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            labelStyle:
+                                lineTextStyle.copyWith(color: whiteColor),
+                            backgroundColor: greyColor,
+                            label: RichText(text: TextSpan(text: label))))
+                  ])
+              .expand((i) => i)
+        ])),
+      ),
+    );
 
 Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
     OnTapLink onTapLink) {
