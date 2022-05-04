@@ -37,6 +37,7 @@ cargo ndk -o ../android/app/src/main/jniLibs build
 
 # TODO
 1. Handle prs starting with !
+2. Entry hi-fi ruby rendering is broken, need to use RUBY_TEXT_IGNORE instead
 
 # Legal
 
