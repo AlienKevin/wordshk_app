@@ -38,6 +38,9 @@ cargo ndk -o ../android/app/src/main/jniLibs build
 # TODO
 1. Handle prs starting with !
 2. Entry hi-fi ruby rendering is broken, need to use RUBY_TEXT_IGNORE instead
+3. Add tags to entry
+4. Collapse egs by default and add an expand button to show more
+5. Collapse variants by default and add an expand button to show more
 
 # Legal
 

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 import 'constants.dart';
 
@@ -380,18 +381,44 @@ Widget showVariants(List<Variant> variants) {
     itemCount: variants.length,
     separatorBuilder: (context, index) => SizedBox(
         width: Theme.of(context).textTheme.headlineSmall!.fontSize! / 2),
-    itemBuilder: (context, index) => RichText(
-        text: TextSpan(
-      children: <TextSpan>[
-        TextSpan(
-            text: variants[index].word,
-            style: Theme.of(context).textTheme.headlineSmall),
-        const TextSpan(text: '  '),
-        TextSpan(
-            text: variants[index].prs,
-            style: Theme.of(context).textTheme.bodySmall),
-      ],
-    )),
+    itemBuilder: (context, index) {
+      var prs = variants[index].prs.split(", ");
+      return Row(
+        children: [
+          RichText(
+              text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                  text: variants[index].word,
+                  style: Theme.of(context).textTheme.headlineSmall),
+              const TextSpan(text: '  '),
+              ...prs.map((pr) => TextSpan(children: [
+                    TextSpan(text: pr),
+                    WidgetSpan(
+                      child: IconButton(
+                        tooltip: "Pronunciation",
+                        alignment: Alignment.bottomLeft,
+                        icon: const Icon(Icons.volume_up),
+                        color: blueColor,
+                        onPressed: () async {
+                          var player = AudioPlayer();
+                          await player.setAudioSource(ConcatenatingAudioSource(
+                              children: pr
+                                  .split(" ")
+                                  .map((syllable) => AudioSource.uri(Uri.parse(
+                                      "asset:///assets/jyutping_female/$syllable.mp3")))
+                                  .toList()));
+                          await player.seek(Duration.zero, index: 0);
+                          await player.play();
+                        },
+                      ),
+                    ),
+                  ], style: Theme.of(context).textTheme.bodySmall)),
+            ],
+          )),
+        ],
+      );
+    },
     scrollDirection: Axis.horizontal,
   );
 }
