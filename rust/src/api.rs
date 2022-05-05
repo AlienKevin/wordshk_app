@@ -139,6 +139,10 @@ impl Api {
             .map(|entry| serde_json::to_string(&to_lean_rich_entry(entry)).unwrap())
             .collect()
     }
+
+    pub fn get_entry_id(&self, query: &str) -> Option<u32> {
+        search::get_entry_id(&self.variants_map, query).map(|id| id as u32)
+    }
 }
 
 pub struct PrSearchResult {
@@ -181,4 +185,8 @@ pub fn get_entry_json(id: u32) -> Result<String> {
 
 pub fn get_entry_group_json(id: u32) -> Result<Vec<String>> {
     Ok((*API.lock()).as_ref().unwrap().get_entry_group_json(id as usize))
+}
+
+pub fn get_entry_id(query: String) -> Option<u32> {
+    (*API.lock()).as_ref().unwrap().get_entry_id(&query)
 }

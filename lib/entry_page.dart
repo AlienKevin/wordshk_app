@@ -61,10 +61,8 @@ class _EntryPageState extends State<EntryPage> {
                 });
               }, (entryVariant) {
                 log("Tapped on link $entryVariant");
-                api
-                    .variantSearch(capacity: 1, query: entryVariant)
-                    .then((results) {
-                  if (results.isEmpty) {
+                api.getEntryId(query: entryVariant).then((id) {
+                  if (id == null) {
                     Navigator.push(
                       context,
                       CustomPageRoute(
@@ -72,12 +70,11 @@ class _EntryPageState extends State<EntryPage> {
                               entryVariant: entryVariant)),
                     );
                   } else {
-                    log(results[0].variant);
                     Navigator.push(
                       context,
                       CustomPageRoute(
                           builder: (context) => EntryPage(
-                                id: results[0].id,
+                                id: id,
                                 searchMode: widget.searchMode,
                               )),
                     );

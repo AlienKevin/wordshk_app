@@ -110,6 +110,21 @@ pub extern "C" fn wire_get_entry_group_json(port_: i64, id: u32) {
     )
 }
 
+#[no_mangle]
+pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_uint_8_list) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "get_entry_id",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_query = query.wire2api();
+            move |task_callback| Ok(get_entry_id(api_query))
+        },
+    )
+}
+
 // Section: wire structs
 
 #[repr(C)]

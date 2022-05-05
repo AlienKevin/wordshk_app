@@ -26,6 +26,8 @@ abstract class WordshkApi {
   Future<String> getEntryJson({required int id, dynamic hint});
 
   Future<List<String>> getEntryGroupJson({required int id, dynamic hint});
+
+  Future<int?> getEntryId({required String query, dynamic hint});
 }
 
 class CombinedSearchResults {
@@ -146,6 +148,19 @@ class WordshkApiImpl extends FlutterRustBridgeBase<WordshkApiWire>
         hint: hint,
       ));
 
+  Future<int?> getEntryId({required String query, dynamic hint}) =>
+      executeNormal(FlutterRustBridgeTask(
+        callFfi: (port_) =>
+            inner.wire_get_entry_id(port_, _api2wire_String(query)),
+        parseSuccessData: _wire2api_opt_box_autoadd_u32,
+        constMeta: const FlutterRustBridgeTaskConstMeta(
+          debugName: "get_entry_id",
+          argNames: ["query"],
+        ),
+        argValues: [query],
+        hint: hint,
+      ));
+
   // Section: api2wire
   ffi.Pointer<wire_uint_8_list> _api2wire_String(String raw) {
     return _api2wire_uint_8_list(utf8.encoder.convert(raw));
@@ -178,6 +193,10 @@ List<String> _wire2api_StringList(dynamic raw) {
   return (raw as List<dynamic>).cast<String>();
 }
 
+int _wire2api_box_autoadd_u32(dynamic raw) {
+  return raw as int;
+}
+
 CombinedSearchResults _wire2api_combined_search_results(dynamic raw) {
   final arr = raw as List<dynamic>;
   if (arr.length != 2)
@@ -194,6 +213,10 @@ List<PrSearchResult> _wire2api_list_pr_search_result(dynamic raw) {
 
 List<VariantSearchResult> _wire2api_list_variant_search_result(dynamic raw) {
   return (raw as List<dynamic>).map(_wire2api_variant_search_result).toList();
+}
+
+int? _wire2api_opt_box_autoadd_u32(dynamic raw) {
+  return raw == null ? null : _wire2api_box_autoadd_u32(raw);
 }
 
 PrSearchResult _wire2api_pr_search_result(dynamic raw) {
@@ -360,6 +383,23 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
           'wire_get_entry_group_json');
   late final _wire_get_entry_group_json =
       _wire_get_entry_group_jsonPtr.asFunction<void Function(int, int)>();
+
+  void wire_get_entry_id(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> query,
+  ) {
+    return _wire_get_entry_id(
+      port_,
+      query,
+    );
+  }
+
+  late final _wire_get_entry_idPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_get_entry_id');
+  late final _wire_get_entry_id = _wire_get_entry_idPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list(
     int len,
