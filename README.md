@@ -44,9 +44,8 @@ cargo ndk -o ../android/app/src/main/jniLibs build --release
 ```
 
 # TODO
-1. Handle prs starting with !
-4. Collapse egs by default and add an expand button to show more
-5. Collapse variants by default and add an expand button to show more
+1. Collapse egs by default and add an expand button to show more
+2. Collapse variants by default and add an expand button to show more
 
 # Legal
 
