@@ -670,23 +670,27 @@ Widget showWordLine(
   return RichText(
     text: TextSpan(
       children: line.segments
-          .map((segment) => showWordSegment(segment, onTapLink))
+          .map((segment) => showWordSegment(segment, lineTextStyle, onTapLink))
           .toList(),
       style: lineTextStyle,
     ),
   );
 }
 
-TextSpan showWordSegment(WordSegment segment, OnTapLink onTapLink) {
+InlineSpan showWordSegment(
+    WordSegment segment, TextStyle lineTextStyle, OnTapLink onTapLink) {
   switch (segment.type) {
     case SegmentType.text:
       return TextSpan(children: showWord(segment.word));
     case SegmentType.link:
-      return TextSpan(
-          children: showWord(segment.word),
-          style: const TextStyle(color: blueColor),
-          recognizer: TapGestureRecognizer()
-            ..onTap = () => onTapLink(segment.word.toString()));
+      return WidgetSpan(
+          child: GestureDetector(
+        onTap: () => onTapLink(segment.word.toString()),
+        child: RichText(
+            text: TextSpan(
+                children: showWord(segment.word),
+                style: lineTextStyle.copyWith(color: blueColor))),
+      ));
   }
 }
 
