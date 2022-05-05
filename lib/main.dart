@@ -40,23 +40,11 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
-  final Map<int, Color> blueColorMap = {
-    50: blueColor,
-    100: blueColor,
-    200: blueColor,
-    300: blueColor,
-    400: blueColor,
-    500: blueColor,
-    600: blueColor,
-    700: blueColor,
-    800: blueColor,
-    900: blueColor,
-  };
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final blueSwatch = MaterialColor(blueColor.value, blueColorMap);
+    final colorScheme = ColorScheme.fromSwatch()
+        .copyWith(primary: Colors.blue, secondary: Colors.blueAccent);
     const headlineSmall =
         TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold);
     const bodyLarge = TextStyle(fontSize: 28.0);
@@ -69,6 +57,7 @@ class MyApp extends StatelessWidget {
       bodySmall: bodySmall,
     );
     var appBarTheme = AppBarTheme.of(context).copyWith(
+      foregroundColor: whiteColor,
       backgroundColor: blueColor,
     );
     const textSelectionTheme = TextSelectionThemeData(
@@ -90,8 +79,9 @@ class MyApp extends StatelessWidget {
     ));
     var lightTheme = ThemeData(
       brightness: Brightness.light,
-      primarySwatch: blueSwatch,
       primaryColor: blueColor,
+      primarySwatch: Colors.blue,
+      colorScheme: colorScheme.copyWith(brightness: Brightness.light),
       appBarTheme: appBarTheme,
       textSelectionTheme: textSelectionTheme,
       fontFamily: 'ChironHeiHK',
@@ -102,8 +92,9 @@ class MyApp extends StatelessWidget {
     );
     var darkTheme = ThemeData(
       brightness: Brightness.dark,
-      primarySwatch: blueSwatch,
       primaryColor: blueColor,
+      primarySwatch: Colors.blue,
+      colorScheme: colorScheme.copyWith(brightness: Brightness.dark),
       appBarTheme: appBarTheme,
       textSelectionTheme: textSelectionTheme,
       fontFamily: 'ChironHeiHK',
