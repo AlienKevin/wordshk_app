@@ -397,6 +397,9 @@ Widget showVariants(List<Variant> variants) {
                   .map((pr) => TextSpan(children: [
                         TextSpan(text: pr),
                         WidgetSpan(
+                            child: Visibility(
+                          visible: jyutpingFemaleSyllableNames
+                              .containsAll(pr.split(" ")),
                           child: IconButton(
                             tooltip: "Pronunciation",
                             alignment: Alignment.bottomLeft,
@@ -414,7 +417,7 @@ Widget showVariants(List<Variant> variants) {
                               await player.play();
                             },
                           ),
-                        ),
+                        )),
                       ], style: Theme.of(context).textTheme.bodySmall)),
             ],
           )),
