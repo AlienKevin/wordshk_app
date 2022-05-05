@@ -392,28 +392,30 @@ Widget showVariants(List<Variant> variants) {
                   text: variants[index].word,
                   style: Theme.of(context).textTheme.headlineSmall),
               const TextSpan(text: '  '),
-              ...prs.map((pr) => TextSpan(children: [
-                    TextSpan(text: pr),
-                    WidgetSpan(
-                      child: IconButton(
-                        tooltip: "Pronunciation",
-                        alignment: Alignment.bottomLeft,
-                        icon: const Icon(Icons.volume_up),
-                        color: blueColor,
-                        onPressed: () async {
-                          var player = AudioPlayer();
-                          await player.setAudioSource(ConcatenatingAudioSource(
-                              children: pr
-                                  .split(" ")
-                                  .map((syllable) => AudioSource.uri(Uri.parse(
-                                      "asset:///assets/jyutping_female/$syllable.mp3")))
-                                  .toList()));
-                          await player.seek(Duration.zero, index: 0);
-                          await player.play();
-                        },
-                      ),
-                    ),
-                  ], style: Theme.of(context).textTheme.bodySmall)),
+              ...prs
+                  .takeWhile((pr) => !pr.contains("!"))
+                  .map((pr) => TextSpan(children: [
+                        TextSpan(text: pr),
+                        WidgetSpan(
+                          child: IconButton(
+                            tooltip: "Pronunciation",
+                            alignment: Alignment.bottomLeft,
+                            icon: const Icon(Icons.volume_up),
+                            color: blueColor,
+                            onPressed: () async {
+                              var player = AudioPlayer();
+                              await player.setAudioSource(ConcatenatingAudioSource(
+                                  children: pr
+                                      .split(" ")
+                                      .map((syllable) => AudioSource.uri(Uri.parse(
+                                          "asset:///assets/jyutping_female/$syllable.mp3")))
+                                      .toList()));
+                              await player.seek(Duration.zero, index: 0);
+                              await player.play();
+                            },
+                          ),
+                        ),
+                      ], style: Theme.of(context).textTheme.bodySmall)),
             ],
           )),
         ],
