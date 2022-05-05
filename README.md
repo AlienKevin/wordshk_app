@@ -26,6 +26,10 @@ Build rust for iOS:
 ```
 cargo lipo && cp target/universal/debug/libwordshk_api.a ../ios/Runner
 ```
+Build release version:
+```
+cargo lipo --release && cp target/universal/debug/libwordshk_api.a ../ios/Runner
+```
 
 ## Android
 See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_android.html) to set up Android.
@@ -33,6 +37,10 @@ See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_andro
 Build rust for Android:
 ```
 cargo ndk -o ../android/app/src/main/jniLibs build
+```
+Build the release version:
+```
+cargo ndk -o ../android/app/src/main/jniLibs build --release
 ```
 
 # TODO
