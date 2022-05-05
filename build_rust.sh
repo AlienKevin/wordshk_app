@@ -7,10 +7,6 @@ flutter_rust_bridge_codegen \
 --llvm-path /usr/local/homebrew/opt/llvm/ \
 --c-output ../ios/Runner/bridge_generated.h
 
-# Install in case cargo.toml is changed
-cargo install
-cargo build
-
 # Generate iOS binary
 cargo lipo --release && cp target/universal/debug/libwordshk_api.a ../ios/Runner &
 # Generate Android binary
