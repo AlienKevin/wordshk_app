@@ -10,5 +10,5 @@ flutter_rust_bridge_codegen \
 # Generate iOS binary
 cargo lipo --release && cp target/universal/debug/libwordshk_api.a ../ios/Runner &
 # Generate Android binary
-cargo ndk -o ../android/app/src/main/jniLibs build &
+cargo ndk -o ../android/app/src/main/jniLibs build --release &
 wait
