@@ -209,6 +209,11 @@ class RubySegmentLinkedWord extends Equatable {
 
   @override
   List<Object?> get props => [words];
+
+  @override
+  String toString() {
+    return words.map((segmentWord) => segmentWord.word.toString()).join("");
+  }
 }
 
 class WordLine extends Equatable {
@@ -583,19 +588,22 @@ Widget showRichLine(RichLine line, TextStyle lineTextStyle, double rubyFontSize,
     OnTapLink onTapLink) {
   switch (line.type) {
     case RichLineType.ruby:
-      return showRubyLine(line.line, lineTextStyle.color!, rubyFontSize);
+      return showRubyLine(
+          line.line, lineTextStyle.color!, rubyFontSize, onTapLink);
     case RichLineType.word:
       return showWordLine(line.line, lineTextStyle, onTapLink);
   }
 }
 
-Widget showRubyLine(RubyLine line, Color textColor, double rubyFontSize) {
+Widget showRubyLine(
+    RubyLine line, Color textColor, double rubyFontSize, OnTapLink onTapLink) {
   return Padding(
     padding: EdgeInsets.only(top: rubyFontSize / 1.5),
     child: Wrap(
       runSpacing: rubyFontSize / 1.4,
       children: line.segments
-          .map((segment) => showRubySegment(segment, textColor, rubyFontSize))
+          .map((segment) =>
+              showRubySegment(segment, textColor, rubyFontSize, onTapLink))
           .map((e) => Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 textBaseline: TextBaseline.alphabetic,
@@ -607,7 +615,8 @@ Widget showRubyLine(RubyLine line, Color textColor, double rubyFontSize) {
   );
 }
 
-Widget showRubySegment(RubySegment segment, Color textColor, double rubySize) {
+Widget showRubySegment(RubySegment segment, Color textColor, double rubySize,
+    OnTapLink onTapLink) {
   double rubyYPos = rubySize / 1.1;
   Widget text;
   String ruby;
@@ -626,14 +635,22 @@ Widget showRubySegment(RubySegment segment, Color textColor, double rubySize) {
       ruby = segment.segment.prs.join(" ");
       break;
     case RubySegmentType.linkedWord:
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        textBaseline: TextBaseline.alphabetic,
-        mainAxisSize: MainAxisSize.min,
-        children: (segment.segment.words as List<RubySegmentWord>)
-            .map((word) => showRubySegment(
-                RubySegment(RubySegmentType.word, word), textColor, rubySize))
-            .toList(),
+      return GestureDetector(
+        onTap: () => onTapLink(segment.segment.toString()),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          textBaseline: TextBaseline.alphabetic,
+          mainAxisSize: MainAxisSize.min,
+          children: (segment.segment.words as List<RubySegmentWord>)
+              .map(
+                (word) => showRubySegment(
+                    RubySegment(RubySegmentType.word, word),
+                    blueColor,
+                    rubySize,
+                    onTapLink),
+              )
+              .toList(),
+        ),
       );
   }
   return Stack(alignment: Alignment.center, children: [
