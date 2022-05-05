@@ -20,9 +20,22 @@ abstract class WordshkApi {
   Future<List<VariantSearchResult>> variantSearch(
       {required int capacity, required String query, dynamic hint});
 
+  Future<CombinedSearchResults> combinedSearch(
+      {required int capacity, required String query, dynamic hint});
+
   Future<String> getEntryJson({required int id, dynamic hint});
 
   Future<List<String>> getEntryGroupJson({required int id, dynamic hint});
+}
+
+class CombinedSearchResults {
+  final List<PrSearchResult> prSearchResults;
+  final List<VariantSearchResult> variantSearchResults;
+
+  CombinedSearchResults({
+    required this.prSearchResults,
+    required this.variantSearchResults,
+  });
 }
 
 class PrSearchResult {
@@ -94,6 +107,20 @@ class WordshkApiImpl extends FlutterRustBridgeBase<WordshkApiWire>
         hint: hint,
       ));
 
+  Future<CombinedSearchResults> combinedSearch(
+          {required int capacity, required String query, dynamic hint}) =>
+      executeNormal(FlutterRustBridgeTask(
+        callFfi: (port_) => inner.wire_combined_search(
+            port_, _api2wire_u32(capacity), _api2wire_String(query)),
+        parseSuccessData: _wire2api_combined_search_results,
+        constMeta: const FlutterRustBridgeTaskConstMeta(
+          debugName: "combined_search",
+          argNames: ["capacity", "query"],
+        ),
+        argValues: [capacity, query],
+        hint: hint,
+      ));
+
   Future<String> getEntryJson({required int id, dynamic hint}) =>
       executeNormal(FlutterRustBridgeTask(
         callFfi: (port_) => inner.wire_get_entry_json(port_, _api2wire_u32(id)),
@@ -149,6 +176,16 @@ String _wire2api_String(dynamic raw) {
 
 List<String> _wire2api_StringList(dynamic raw) {
   return (raw as List<dynamic>).cast<String>();
+}
+
+CombinedSearchResults _wire2api_combined_search_results(dynamic raw) {
+  final arr = raw as List<dynamic>;
+  if (arr.length != 2)
+    throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+  return CombinedSearchResults(
+    prSearchResults: _wire2api_list_pr_search_result(arr[0]),
+    variantSearchResults: _wire2api_list_variant_search_result(arr[1]),
+  );
 }
 
 List<PrSearchResult> _wire2api_list_pr_search_result(dynamic raw) {
@@ -271,6 +308,25 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
           ffi.Void Function(ffi.Int64, ffi.Uint32,
               ffi.Pointer<wire_uint_8_list>)>>('wire_variant_search');
   late final _wire_variant_search = _wire_variant_searchPtr
+      .asFunction<void Function(int, int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_combined_search(
+    int port_,
+    int capacity,
+    ffi.Pointer<wire_uint_8_list> query,
+  ) {
+    return _wire_combined_search(
+      port_,
+      capacity,
+      query,
+    );
+  }
+
+  late final _wire_combined_searchPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Uint32,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_combined_search');
+  late final _wire_combined_search = _wire_combined_searchPtr
       .asFunction<void Function(int, int, ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_get_entry_json(

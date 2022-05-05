@@ -65,6 +65,22 @@ pub extern "C" fn wire_variant_search(port_: i64, capacity: u32, query: *mut wir
 }
 
 #[no_mangle]
+pub extern "C" fn wire_combined_search(port_: i64, capacity: u32, query: *mut wire_uint_8_list) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "combined_search",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_capacity = capacity.wire2api();
+            let api_query = query.wire2api();
+            move |task_callback| combined_search(api_capacity, api_query)
+        },
+    )
+}
+
+#[no_mangle]
 pub extern "C" fn wire_get_entry_json(port_: i64, id: u32) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
@@ -178,6 +194,17 @@ impl<T> NewWithNullPtr for *mut T {
 }
 
 // Section: impl IntoDart
+
+impl support::IntoDart for CombinedSearchResults {
+    fn into_dart(self) -> support::DartCObject {
+        vec![
+            self.pr_search_results.into_dart(),
+            self.variant_search_results.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for CombinedSearchResults {}
 
 impl support::IntoDart for PrSearchResult {
     fn into_dart(self) -> support::DartCObject {

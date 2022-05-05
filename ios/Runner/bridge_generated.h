@@ -23,6 +23,8 @@ void wire_pr_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *q
 
 void wire_variant_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
 
+void wire_combined_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
+
 void wire_get_entry_json(int64_t port_, uint32_t id);
 
 void wire_get_entry_group_json(int64_t port_, uint32_t id);
@@ -38,6 +40,7 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) wire_init_api);
     dummy_var ^= ((int64_t) (void*) wire_pr_search);
     dummy_var ^= ((int64_t) (void*) wire_variant_search);
+    dummy_var ^= ((int64_t) (void*) wire_combined_search);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_json);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_group_json);
     dummy_var ^= ((int64_t) (void*) new_uint_8_list);

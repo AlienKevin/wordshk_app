@@ -32,30 +32,12 @@ class _SearchResultPageState extends State<SearchResultsPage> {
             finishedSearch = false;
           });
         }, onSubmitted: (query) {
-          var prSearchFuture =
-              api.prSearch(capacity: 10, query: query).then((results) {
+          api.combinedSearch(capacity: 10, query: query).then((results) {
             setState(() {
-              prSearchResults = results.unique((result) => result.variant);
-            });
-          }).catchError((_) {
-            setState(() {
-              prSearchResults.clear();
-            });
-            return; // it's fine that pr search failed due to user inputting Chinese characters
-          });
-          var variantSearchFuture =
-              api.variantSearch(capacity: 10, query: query).then((results) {
-            setState(() {
-              variantSearchResults = results.unique((result) => result.variant);
-            });
-          }).catchError((_) {
-            setState(() {
-              variantSearchResults.clear();
-            });
-            return; // impossible: put here just in case variant search fails
-          });
-          Future.wait([prSearchFuture, variantSearchFuture]).then((_) {
-            setState(() {
+              prSearchResults =
+                  results.prSearchResults.unique((result) => result.variant);
+              variantSearchResults = results.variantSearchResults
+                  .unique((result) => result.variant);
               finishedSearch = true;
             });
           });

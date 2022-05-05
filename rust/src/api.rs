@@ -7,12 +7,13 @@ use chrono::{DateTime, Utc};
 use flate2::read::GzDecoder;
 use reqwest;
 use serde::{Deserialize, Serialize};
-use std::fs;
+use std::{fs, thread};
 use std::io::prelude::*;
 use std::path::Path;
 use parking_lot::Mutex;
 use lazy_static::lazy_static;
 use anyhow::{anyhow, Result};
+use rayon::prelude::*;
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
 
@@ -20,6 +21,11 @@ use anyhow::{anyhow, Result};
 struct Api {
     pub dict: RichDict,
     pub release_time: DateTime<Utc>,
+}
+
+pub struct CombinedSearchResults {
+    pub pr_search_results: Vec<PrSearchResult>,
+    pub variant_search_results: Vec<VariantSearchResult>,
 }
 
 fn serialize_api<P: AsRef<Path>>(output_path: &P, api: &Api) {
@@ -51,6 +57,17 @@ impl Api {
 
     pub fn variant_search(&self, capacity: u32, query: &str) -> Vec<VariantSearchResult> {
         variant_search_helper(capacity, &self.dict, query)
+    }
+
+    pub fn combined_search(&self, capacity: u32, query: &str) -> CombinedSearchResults {
+        let (pr_search_results, variant_search_results) =
+            rayon::join(|| { if query.is_ascii() {
+                pr_search_helper(capacity, &self.dict, &parse_pr(query))}
+            else {
+                vec![]
+            }},
+        || { variant_search_helper(capacity, &self.dict, query) });
+        CombinedSearchResults { pr_search_results, variant_search_results }
     }
 
     pub fn get_entry_json(&self, id: usize) -> String {
@@ -141,6 +158,10 @@ pub fn pr_search(capacity: u32, query: String) -> Result<Vec<PrSearchResult>> {
 
 pub fn variant_search(capacity: u32, query: String) -> Result<Vec<VariantSearchResult>> {
     Ok((*API.lock()).as_ref().unwrap().variant_search(capacity, &query))
+}
+
+pub fn combined_search(capacity: u32, query: String) -> Result<CombinedSearchResults> {
+    Ok((*API.lock()).as_ref().unwrap().combined_search(capacity, &query))
 }
 
 pub fn get_entry_json(id: u32) -> Result<String> {
