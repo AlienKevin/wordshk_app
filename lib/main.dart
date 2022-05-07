@@ -95,22 +95,24 @@ class MyApp extends StatelessWidget {
       padding: MaterialStateProperty.all(
           const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
     ));
+    const dividerTheme = DividerThemeData(space: 0, thickness: 1);
+
     var lightTheme = ThemeData(
-      brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.light,
-        accentColor: blueColor,
-      ),
-      primarySwatch: blueSwatch,
-      primaryColor: blueColor,
-      appBarTheme: appBarTheme,
-      textSelectionTheme: textSelectionTheme,
-      fontFamily: 'ChironHeiHK',
-      textTheme: textTheme,
-      iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
-      textButtonTheme: textButtonTheme,
-      elevatedButtonTheme: elevatedButtonTheme,
-    );
+        colorScheme: ColorScheme.fromSwatch(
+          brightness: Brightness.light,
+          accentColor: blueColor,
+        ),
+        primarySwatch: blueSwatch,
+        primaryColor: blueColor,
+        appBarTheme: appBarTheme,
+        textSelectionTheme: textSelectionTheme,
+        fontFamily: 'ChironHeiHK',
+        textTheme: textTheme,
+        iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
+        textButtonTheme: textButtonTheme,
+        elevatedButtonTheme: elevatedButtonTheme,
+        dividerTheme: dividerTheme.copyWith(color: lightGreyColor));
     var darkTheme = ThemeData(
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSwatch(
@@ -128,6 +130,7 @@ class MyApp extends StatelessWidget {
       iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
       textButtonTheme: textButtonTheme,
       elevatedButtonTheme: elevatedButtonTheme,
+      dividerTheme: dividerTheme.copyWith(color: darkGreyColor),
     );
     return MaterialApp(
       title: 'words.hk',

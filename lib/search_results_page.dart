@@ -26,6 +26,8 @@ class _SearchResultPageState extends State<SearchResultsPage> {
   @override
   Widget build(BuildContext context) {
     log("building SearchResultsPage.");
+    final results = showSearchResults(
+        Theme.of(context).textTheme.bodyLarge, widget.searchMode);
     return Scaffold(
         appBar: SearchBar(onChanged: (query) {
           setState(() {
@@ -48,9 +50,11 @@ class _SearchResultPageState extends State<SearchResultsPage> {
             ? const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
                 child: Text("No Results Found"))
-            : ListView(
-                children: showSearchResults(
-                    Theme.of(context).textTheme.bodyLarge, widget.searchMode)));
+            : ListView.separated(
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (_, index) => results[index],
+                itemCount: results.length,
+              ));
   }
 
   List<Widget> showSearchResults(textStyle, searchMode) {
@@ -95,37 +99,33 @@ class _SearchResultPageState extends State<SearchResultsPage> {
   }
 
   Widget showSearchResult(int id, TextSpan resultText, SearchMode searchMode) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-                  color: MediaQuery.of(context).platformBrightness ==
-                          Brightness.light
-                      ? lightGreyColor
-                      : greyColor,
-                  width: 1))),
-      child: Builder(
-          builder: (BuildContext context) => TextButton(
-                style: TextButton.styleFrom(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.zero,
+    return Builder(
+        builder: (BuildContext context) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CustomPageRoute(
+                          builder: (context) => EntryPage(
+                                id: id,
+                                searchMode: searchMode,
+                              )),
+                    );
+                  },
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child:
+                        RichText(text: resultText, textAlign: TextAlign.start),
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    CustomPageRoute(
-                        builder: (context) => EntryPage(
-                              id: id,
-                              searchMode: searchMode,
-                            )),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 10.0),
-                  child: RichText(text: resultText, textAlign: TextAlign.start),
-                ),
-              )),
-    );
+              ],
+            ));
   }
 }
