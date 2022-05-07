@@ -96,6 +96,10 @@ class MyApp extends StatelessWidget {
     ));
     var lightTheme = ThemeData(
       brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSwatch(
+        brightness: Brightness.light,
+        accentColor: blueColor,
+      ),
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
       appBarTheme: appBarTheme,
@@ -108,6 +112,10 @@ class MyApp extends StatelessWidget {
     );
     var darkTheme = ThemeData(
       brightness: Brightness.dark,
+      colorScheme: ColorScheme.fromSwatch(
+        brightness: Brightness.dark,
+        accentColor: blueColor,
+      ),
       scaffoldBackgroundColor: Colors.black,
       backgroundColor: blackColor,
       primarySwatch: blueSwatch,
