@@ -8,6 +8,7 @@ import 'package:wordshk/search_results_page.dart';
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'custom_page_route.dart';
+import 'navigation_drawer.dart';
 
 enum SearchMode {
   pr,
@@ -132,21 +133,21 @@ class MyApp extends StatelessWidget {
       title: 'words.hk',
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const MyHomePage(title: 'words.hk home'),
+      home: const HomePage(title: 'words.hk'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   SearchMode searchMode = SearchMode.combined;
 
   @override
@@ -165,64 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('words.hk')),
-      drawer: SizedBox(
-        width: 250,
-        child: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "words.hk",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: whiteColor, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                          height: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .fontSize! /
-                              2),
-                      Text(
-                        'Crowd-sourced Cantonese dictionary for everyone.',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(color: whiteColor),
-                      )
-                    ]),
-              ),
-              TextButton.icon(
-                icon: const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(Icons.search)),
-                label: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Dictionary',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    )),
-                onPressed: () {
-                  // Update the state of the app
-
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: const NavigationDrawer(),
       body:
           // TODO: Show search history
           Align(
