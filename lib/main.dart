@@ -59,12 +59,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final blueSwatch = MaterialColor(blueColor.value, blueColorMap);
     const headlineSmall =
-        TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold);
-    const titleLarge = TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold);
-    const titleMedium = TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold);
+        TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold);
+    const titleLarge = TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold);
+    const titleMedium = TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
     const titleSmall = TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
-    const bodyLarge = TextStyle(fontSize: 24.0);
-    const bodyMedium = TextStyle(fontSize: 20.0);
+    const bodyLarge = TextStyle(fontSize: 22.0);
+    const bodyMedium = TextStyle(fontSize: 18.0);
     const bodySmall = TextStyle(fontSize: 16.0);
     var textTheme = const TextTheme(
       headlineSmall: headlineSmall,
