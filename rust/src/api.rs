@@ -30,15 +30,6 @@ pub struct CombinedSearchResults {
     pub variant_search_results: Vec<VariantSearchResult>,
 }
 
-fn serialize_api<P: AsRef<Path>>(output_path: &P, api: &Api) {
-    // info!("Serializing Api struct as json...");
-    let json = serde_json::to_string(&api).unwrap();
-    // info!("Serialized Api as json!");
-    fs::write(output_path, json)
-        .expect("Unable to output serailized RichDict");
-    // info!("Wrote json to app dir");
-}
-
 impl Api {
     pub fn new(json: String) -> Self {
         // if !*IS_LOG_INITIALIZED.lock() {
