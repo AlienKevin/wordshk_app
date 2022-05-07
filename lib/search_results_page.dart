@@ -102,8 +102,8 @@ class _SearchResultPageState extends State<SearchResultsPage> {
                   color: MediaQuery.of(context).platformBrightness ==
                           Brightness.light
                       ? lightGreyColor
-                      : blackColor,
-                  width: 2))),
+                      : greyColor,
+                  width: 1))),
       child: Builder(
           builder: (BuildContext context) => TextButton(
                 style: TextButton.styleFrom(
