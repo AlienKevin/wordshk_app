@@ -1,0 +1,22 @@
+fastlane_require 'yaml'
+
+update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Increment version number"
+  lane :bump do
+    # Source: https://spin.atomicobject.com/2022/02/10/version-fastlane/
+    increment_version_number(
+      version_number: YAML.load_file("../../pubspec.yaml")["version"]
+    )
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    bump
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    upload_to_testflight
+  end
+end
