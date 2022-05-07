@@ -450,6 +450,7 @@ Widget showTab(Entry entry, TextStyle lineTextStyle, double rubyFontSize,
   return ListView(
     children: [
       showLabels(entry.labels, lineTextStyle),
+      showSims(entry.sims, lineTextStyle, onTapLink),
       ...entry.defs
           .map((def) => showDef(def, lineTextStyle, rubyFontSize,
               entry.defs.length == 1, onTapLink))
@@ -457,6 +458,26 @@ Widget showTab(Entry entry, TextStyle lineTextStyle, double rubyFontSize,
     ],
   );
 }
+
+Widget showSims(
+        List<String> sims, TextStyle lineTextStyle, OnTapLink onTapLink) =>
+    Visibility(
+        visible: sims.isNotEmpty,
+        child: Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: RichText(
+                text: TextSpan(style: lineTextStyle, children: [
+              WidgetSpan(
+                  child: Text("[近義]",
+                      style:
+                          lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
+              const WidgetSpan(child: SizedBox(width: 10)),
+              ...sims.map((sim) => TextSpan(
+                  text: sim + " ",
+                  style: const TextStyle(color: blueColor),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => onTapLink(sim)))
+            ]))));
 
 Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
       visible: labels.isNotEmpty,
