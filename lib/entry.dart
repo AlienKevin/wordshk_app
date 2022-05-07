@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -450,7 +451,8 @@ Widget showTab(Entry entry, TextStyle lineTextStyle, double rubyFontSize,
     children: [
       showLabels(entry.labels, lineTextStyle),
       ...entry.defs
-          .map((def) => showDef(def, lineTextStyle, rubyFontSize, onTapLink))
+          .map((def) => showDef(def, lineTextStyle, rubyFontSize,
+              entry.defs.length == 1, onTapLink))
           .toList()
     ],
   );
@@ -490,7 +492,7 @@ Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
     );
 
 Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
-    OnTapLink onTapLink) {
+    bool isSingleDef, OnTapLink onTapLink) {
   return Padding(
     padding: EdgeInsets.only(bottom: lineTextStyle.fontSize! * 2),
     child: Column(
@@ -499,12 +501,77 @@ Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
         def.eng == null
             ? const SizedBox.shrink()
             : showClause(def.eng!, "(英) ", lineTextStyle, onTapLink),
-        ...def.egs
-            .map((eg) => showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
+        showEgs(def.egs, lineTextStyle, rubyFontSize, isSingleDef, onTapLink)
       ],
       crossAxisAlignment: CrossAxisAlignment.start,
     ),
   );
+}
+
+Widget egExpandableButton(
+        String text, IconData icon, TextStyle lineTextStyle) =>
+    ExpandableButton(
+        child: RichText(
+            text: TextSpan(
+      children: [
+        TextSpan(text: text, style: lineTextStyle.copyWith(color: blueColor)),
+        WidgetSpan(child: Icon(icon, color: blueColor))
+      ],
+    )));
+
+Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
+    bool isSingleDef, OnTapLink onTapLink) {
+  if (egs.isEmpty) {
+    return Container();
+  } else if (egs.length == 1) {
+    return showEg(egs[0], lineTextStyle, rubyFontSize, onTapLink);
+  } else if (isSingleDef) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: egs
+            .map((eg) => showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
+            .toList());
+  } else {
+    return ExpandableNotifier(
+        child: ExpandableTheme(
+            data: const ExpandableThemeData(
+              animationDuration: Duration(milliseconds: 200),
+              useInkWell: true,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expandable(
+                    collapsed: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          showEg(
+                              egs[0], lineTextStyle, rubyFontSize, onTapLink),
+                          egExpandableButton(
+                              "More examples", Icons.expand_more, lineTextStyle)
+                        ]),
+                    expanded: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...egs
+                              .map((eg) => showEg(
+                                  eg, lineTextStyle, rubyFontSize, onTapLink))
+                              .toList(),
+                          egExpandableButton("Collapse examples",
+                              Icons.expand_less, lineTextStyle)
+                        ])),
+              ],
+            )));
+  }
+  // return ExpandablePanel(
+  //   header: const Text("Examples"),
+  //   collapsed: showEg(egs[0], lineTextStyle, rubyFontSize, onTapLink),
+  //   expanded: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: egs
+  //           .map((eg) => showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
+  //           .toList()),
+  // );
 }
 
 Widget showClause(
