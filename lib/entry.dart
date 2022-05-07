@@ -449,8 +449,14 @@ Widget showTab(Entry entry, TextStyle lineTextStyle, double rubyFontSize,
     OnTapLink onTapLink) {
   return ListView(
     children: [
-      showLabels(entry.labels, lineTextStyle),
-      showSims(entry.sims, lineTextStyle, onTapLink),
+      Padding(
+        padding: EdgeInsets.only(bottom: lineTextStyle.fontSize!),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          showLabels(entry.labels, lineTextStyle),
+          showSimsOrAnts("[近義]", entry.sims, lineTextStyle, onTapLink),
+          showSimsOrAnts("[反義]", entry.ants, lineTextStyle, onTapLink),
+        ]),
+      ),
       ...entry.defs
           .map((def) => showDef(def, lineTextStyle, rubyFontSize,
               entry.defs.length == 1, onTapLink))
@@ -459,60 +465,53 @@ Widget showTab(Entry entry, TextStyle lineTextStyle, double rubyFontSize,
   );
 }
 
-Widget showSims(
-        List<String> sims, TextStyle lineTextStyle, OnTapLink onTapLink) =>
+Widget showSimsOrAnts(String label, List<String> simsOrAnts,
+        TextStyle lineTextStyle, OnTapLink onTapLink) =>
     Visibility(
-        visible: sims.isNotEmpty,
-        child: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: RichText(
-                text: TextSpan(style: lineTextStyle, children: [
-              WidgetSpan(
-                  child: Text("[近義]",
-                      style:
-                          lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
-              const WidgetSpan(child: SizedBox(width: 10)),
-              ...sims.asMap().entries.map((sim) => TextSpan(children: [
-                    TextSpan(
-                        text: sim.value,
-                        style: const TextStyle(color: blueColor),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => onTapLink(sim.value)),
-                    TextSpan(text: sim.key == sims.length - 1 ? "" : " · ")
-                  ]))
-            ]))));
+        visible: simsOrAnts.isNotEmpty,
+        child: RichText(
+            text: TextSpan(style: lineTextStyle, children: [
+          WidgetSpan(
+              child: Text(label,
+                  style: lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
+          const WidgetSpan(child: SizedBox(width: 10)),
+          ...simsOrAnts.asMap().entries.map((sim) => TextSpan(children: [
+                TextSpan(
+                    text: sim.value,
+                    style: const TextStyle(color: blueColor),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => onTapLink(sim.value)),
+                TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
+              ]))
+        ])));
 
 Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
       visible: labels.isNotEmpty,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: RichText(
-            text: TextSpan(children: [
-          WidgetSpan(
-              child: Text("[標籤]",
-                  style: lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
-          ...labels
-              .map((label) => [
-                    const WidgetSpan(child: SizedBox(width: 10)),
-                    WidgetSpan(
-                        child: Chip(
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            padding: EdgeInsets.zero,
-                            labelPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            labelStyle:
-                                lineTextStyle.copyWith(color: whiteColor),
-                            backgroundColor: greyColor,
-                            label: RichText(text: TextSpan(text: label))))
-                  ])
-              .expand((i) => i)
-        ])),
-      ),
+      child: RichText(
+          text: TextSpan(children: [
+        WidgetSpan(
+            child: Text("[標籤]",
+                style: lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
+        ...labels
+            .map((label) => [
+                  const WidgetSpan(child: SizedBox(width: 10)),
+                  WidgetSpan(
+                      child: Chip(
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          padding: EdgeInsets.zero,
+                          labelPadding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 10),
+                          labelStyle: lineTextStyle.copyWith(color: whiteColor),
+                          backgroundColor: greyColor,
+                          label: RichText(text: TextSpan(text: label))))
+                ])
+            .expand((i) => i)
+      ])),
     );
 
 Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
