@@ -472,11 +472,14 @@ Widget showSims(
                       style:
                           lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
               const WidgetSpan(child: SizedBox(width: 10)),
-              ...sims.map((sim) => TextSpan(
-                  text: sim + " ",
-                  style: const TextStyle(color: blueColor),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => onTapLink(sim)))
+              ...sims.asMap().entries.map((sim) => TextSpan(children: [
+                    TextSpan(
+                        text: sim.value,
+                        style: const TextStyle(color: blueColor),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => onTapLink(sim.value)),
+                    TextSpan(text: sim.key == sims.length - 1 ? "" : " · ")
+                  ]))
             ]))));
 
 Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
