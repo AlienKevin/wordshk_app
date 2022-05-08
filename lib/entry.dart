@@ -360,7 +360,7 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
                   const EdgeInsets.symmetric(horizontal: 60), // Indicator width
             ),
             tabs: entryGroup
-                .map((entry) => Tab(text: entry.poses.first))
+                .map((entry) => Tab(text: entry.poses.join("/")))
                 .toList(),
           ),
           SizedBox(
