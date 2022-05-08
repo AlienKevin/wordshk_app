@@ -340,97 +340,86 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
       AppBar().preferredSize.height -
       MediaQuery.of(context).padding.top -
       MediaQuery.of(context).padding.bottom -
-      padding * 5 -
       titleFontSize * 3;
-  return Padding(
-      padding: EdgeInsets.all(padding),
-      child: Column(
-        children: [
-          SizedBox(
-              height: titleFontSize * 1.5,
-              child: showVariants(entryGroup[entryIndex].variants)),
-          DefaultTabController(
-            length: entryGroup.length,
-            child: Column(children: [
-              TabBar(
-                onTap: updateEntryIndex,
-                isScrollable: true, // Required
-                labelColor: lineTextStyle.color,
-                unselectedLabelColor: lineTextStyle.color, // Other tabs color
-                labelPadding: const EdgeInsets.symmetric(
-                    horizontal: 30), // Space between tabs
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(
-                      color: lineTextStyle.color!,
-                      width: 2), // Indicator height
-                  insets: const EdgeInsets.symmetric(
-                      horizontal: 60), // Indicator width
-                ),
-                tabs: entryGroup
-                    .map((entry) => Tab(text: entry.poses.first))
-                    .toList(),
-              ),
-              SizedBox(height: padding),
-              SizedBox(
-                  height: definitionHeight,
-                  child: showTab(entryGroup[entryIndex], lineTextStyle,
-                      rubyFontSize, onTapLink))
-            ]),
+  return Column(
+    children: [
+      DefaultTabController(
+        length: entryGroup.length,
+        child: Column(children: [
+          TabBar(
+            onTap: updateEntryIndex,
+            isScrollable: true, // Required
+            labelColor: lineTextStyle.color,
+            unselectedLabelColor: lineTextStyle.color, // Other tabs color
+            labelPadding: const EdgeInsets.symmetric(
+                horizontal: 30), // Space between tabs
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(
+                  color: lineTextStyle.color!, width: 2), // Indicator height
+              insets:
+                  const EdgeInsets.symmetric(horizontal: 60), // Indicator width
+            ),
+            tabs: entryGroup
+                .map((entry) => Tab(text: entry.poses.first))
+                .toList(),
           ),
-        ],
-        crossAxisAlignment: CrossAxisAlignment.start,
-      ));
+          SizedBox(
+              height: definitionHeight,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: padding),
+                child: showTab(
+                    entryGroup[entryIndex],
+                    Theme.of(context).textTheme.headlineSmall!,
+                    Theme.of(context).textTheme.bodySmall!,
+                    lineTextStyle,
+                    rubyFontSize,
+                    onTapLink),
+              ))
+        ]),
+      ),
+    ],
+    crossAxisAlignment: CrossAxisAlignment.start,
+  );
 }
 
-Widget showVariants(List<Variant> variants) {
-  return ListView.separated(
-    itemCount: variants.length,
-    separatorBuilder: (context, index) => SizedBox(
-        width: Theme.of(context).textTheme.headlineSmall!.fontSize! / 2),
-    itemBuilder: (context, index) {
-      var prs = variants[index].prs.split(", ");
-      return Row(
-        children: [
-          RichText(
-              text: TextSpan(
-            children: <TextSpan>[
-              TextSpan(
-                  text: variants[index].word,
-                  style: Theme.of(context).textTheme.headlineSmall),
-              const TextSpan(text: '  '),
-              ...prs
-                  .takeWhile((pr) => !pr.contains("!"))
-                  .map((pr) => TextSpan(children: [
-                        TextSpan(text: pr),
-                        WidgetSpan(
-                            child: Visibility(
-                          visible: jyutpingFemaleSyllableNames
-                              .containsAll(pr.split(" ")),
-                          child: IconButton(
-                            tooltip: "Pronunciation",
-                            alignment: Alignment.bottomLeft,
-                            icon: const Icon(Icons.volume_up),
-                            color: blueColor,
-                            onPressed: () async {
-                              var player = AudioPlayer();
-                              await player.setAudioSource(ConcatenatingAudioSource(
-                                  children: pr
-                                      .split(" ")
-                                      .map((syllable) => AudioSource.uri(Uri.parse(
-                                          "asset:///assets/jyutping_female/$syllable.mp3")))
-                                      .toList()));
-                              await player.seek(Duration.zero, index: 0);
-                              await player.play();
-                            },
-                          ),
-                        )),
-                      ], style: Theme.of(context).textTheme.bodySmall)),
-            ],
-          )),
-        ],
-      );
-    },
-    scrollDirection: Axis.horizontal,
+Widget showVariants(
+    List<Variant> variants, TextStyle variantTextStyle, TextStyle prTextStyle) {
+  var prs = variants[0].prs.split(", ");
+  return Row(
+    children: [
+      RichText(
+          text: TextSpan(children: <TextSpan>[
+        TextSpan(text: variants[0].word, style: variantTextStyle),
+        const TextSpan(text: '  '),
+        ...prs.takeWhile((pr) => !pr.contains("!")).map(
+              (pr) => TextSpan(children: [
+                TextSpan(text: pr),
+                WidgetSpan(
+                    child: Visibility(
+                  visible:
+                      jyutpingFemaleSyllableNames.containsAll(pr.split(" ")),
+                  child: IconButton(
+                    tooltip: "Pronunciation",
+                    alignment: Alignment.bottomLeft,
+                    icon: const Icon(Icons.volume_up),
+                    color: blueColor,
+                    onPressed: () async {
+                      var player = AudioPlayer();
+                      await player.setAudioSource(ConcatenatingAudioSource(
+                          children: pr
+                              .split(" ")
+                              .map((syllable) => AudioSource.uri(Uri.parse(
+                                  "asset:///assets/jyutping_female/$syllable.mp3")))
+                              .toList()));
+                      await player.seek(Duration.zero, index: 0);
+                      await player.play();
+                    },
+                  ),
+                )),
+              ], style: prTextStyle),
+            )
+      ])),
+    ],
   );
 }
 
@@ -445,25 +434,23 @@ Widget showPoses(List<String> poses, TextStyle style) {
   );
 }
 
-Widget showTab(Entry entry, TextStyle lineTextStyle, double rubyFontSize,
-    OnTapLink onTapLink) {
-  return ListView(
-    children: [
-      Padding(
-        padding: EdgeInsets.only(bottom: lineTextStyle.fontSize!),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          showLabels(entry.labels, lineTextStyle),
-          showSimsOrAnts("[近義]", entry.sims, lineTextStyle, onTapLink),
-          showSimsOrAnts("[反義]", entry.ants, lineTextStyle, onTapLink),
-        ]),
-      ),
-      ...entry.defs
-          .map((def) => showDef(def, lineTextStyle, rubyFontSize,
-              entry.defs.length == 1, onTapLink))
-          .toList()
-    ],
-  );
-}
+Widget showTab(Entry entry, TextStyle variantTextStyle, TextStyle prTextStyle,
+        TextStyle lineTextStyle, double rubyFontSize, OnTapLink onTapLink) =>
+    ListView.separated(
+      itemBuilder: (context, index) => index == 0
+          ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              showVariants(entry.variants, variantTextStyle, prTextStyle),
+              showLabels(entry.labels, lineTextStyle),
+              showSimsOrAnts("[近義]", entry.sims, lineTextStyle, onTapLink),
+              showSimsOrAnts("[反義]", entry.ants, lineTextStyle, onTapLink),
+            ])
+          : showDef(entry.defs[index - 1], lineTextStyle, rubyFontSize,
+              entry.defs.length == 1, onTapLink),
+      separatorBuilder: (_, index) => index == 0
+          ? SizedBox(height: lineTextStyle.fontSize!)
+          : Divider(height: lineTextStyle.fontSize! * 2),
+      itemCount: entry.defs.length + 1,
+    );
 
 Widget showSimsOrAnts(String label, List<String> simsOrAnts,
         TextStyle lineTextStyle, OnTapLink onTapLink) =>
@@ -515,10 +502,8 @@ Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
     );
 
 Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
-    bool isSingleDef, OnTapLink onTapLink) {
-  return Padding(
-    padding: EdgeInsets.only(bottom: lineTextStyle.fontSize! * 2),
-    child: Column(
+        bool isSingleDef, OnTapLink onTapLink) =>
+    Column(
       children: [
         showClause(def.yue, "(粵) ", lineTextStyle, onTapLink),
         def.eng == null
@@ -527,9 +512,7 @@ Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
         showEgs(def.egs, lineTextStyle, rubyFontSize, isSingleDef, onTapLink)
       ],
       crossAxisAlignment: CrossAxisAlignment.start,
-    ),
-  );
-}
+    );
 
 Widget egExpandableButton(
         String text, IconData icon, TextStyle lineTextStyle) =>
