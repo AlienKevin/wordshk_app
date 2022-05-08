@@ -363,7 +363,7 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
               borderSide: BorderSide(
                   color: lineTextStyle.color!, width: 2), // Indicator height
               insets:
-                  const EdgeInsets.symmetric(horizontal: 60), // Indicator width
+                  const EdgeInsets.symmetric(horizontal: 30), // Indicator width
             ),
             tabs: entryGroup
                 .asMap()
