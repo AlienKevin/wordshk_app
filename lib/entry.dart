@@ -2,12 +2,18 @@ import 'package:equatable/equatable.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'constants.dart';
 
 typedef OnTapLink = void Function(String entryVariant);
 typedef EntryGroup = List<Entry>;
+
+ExpandableTheme applyExpandableTheme(Widget child) => ExpandableTheme(
+    data: const ExpandableThemeData(
+        animationDuration: Duration(milliseconds: 200), useInkWell: false),
+    child: child);
 
 class Entry extends Equatable {
   final int id;
@@ -387,14 +393,47 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
   );
 }
 
-Widget showVariants(
-    List<Variant> variants, TextStyle variantTextStyle, TextStyle prTextStyle) {
-  var prs = variants[0].prs.split(", ");
+Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
+        TextStyle prTextStyle, TextStyle lineTextStyle) =>
+    variants.length <= 1
+        ? SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: showVariant(variants[0], variantTextStyle, prTextStyle))
+        : ExpandableNotifier(
+            child: applyExpandableTheme(Expandable(
+                collapsed: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          showVariant(
+                              variants[0], variantTextStyle, prTextStyle),
+                          egExpandableButton(
+                              "More variants", Icons.expand_more, lineTextStyle)
+                        ])),
+                expanded: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: variants
+                                  .map((variant) => showVariant(
+                                      variant, variantTextStyle, prTextStyle))
+                                  .toList())),
+                      egExpandableButton(
+                          "Collapse variants", Icons.expand_less, lineTextStyle)
+                    ]))));
+
+Widget showVariant(
+    Variant variant, TextStyle variantTextStyle, TextStyle prTextStyle) {
+  var prs = variant.prs.split(", ");
   return Row(
     children: [
       RichText(
           text: TextSpan(children: <TextSpan>[
-        TextSpan(text: variants[0].word, style: variantTextStyle),
+        TextSpan(text: variant.word, style: variantTextStyle),
         const TextSpan(text: '  '),
         ...prs.takeWhile((pr) => !pr.contains("!")).map(
               (pr) => TextSpan(children: [
@@ -404,6 +443,7 @@ Widget showVariants(
                   visible:
                       jyutpingFemaleSyllableNames.containsAll(pr.split(" ")),
                   child: IconButton(
+                    visualDensity: VisualDensity.compact,
                     tooltip: "Pronunciation",
                     alignment: Alignment.bottomLeft,
                     icon: const Icon(Icons.volume_up),
@@ -444,7 +484,8 @@ Widget showTab(Entry entry, TextStyle variantTextStyle, TextStyle prTextStyle,
     ListView.separated(
       itemBuilder: (context, index) => index == 0
           ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              showVariants(entry.variants, variantTextStyle, prTextStyle),
+              showVariants(
+                  entry.variants, variantTextStyle, prTextStyle, lineTextStyle),
               showLabels(entry.labels, lineTextStyle),
               showSimsOrAnts("[近義]", entry.sims, lineTextStyle, onTapLink),
               showSimsOrAnts("[反義]", entry.ants, lineTextStyle, onTapLink),
@@ -544,35 +585,27 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
             .toList());
   } else {
     return ExpandableNotifier(
-        child: ExpandableTheme(
-            data: const ExpandableThemeData(
-              animationDuration: Duration(milliseconds: 200),
-              useInkWell: true,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expandable(
-                    collapsed: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          showEg(
-                              egs[0], lineTextStyle, rubyFontSize, onTapLink),
-                          egExpandableButton(
-                              "More examples", Icons.expand_more, lineTextStyle)
-                        ]),
-                    expanded: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...egs
-                              .map((eg) => showEg(
-                                  eg, lineTextStyle, rubyFontSize, onTapLink))
-                              .toList(),
-                          egExpandableButton("Collapse examples",
-                              Icons.expand_less, lineTextStyle)
-                        ])),
-              ],
-            )));
+        child: applyExpandableTheme(Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expandable(
+            collapsed:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              showEg(egs[0], lineTextStyle, rubyFontSize, onTapLink),
+              egExpandableButton(
+                  "More examples", Icons.expand_more, lineTextStyle)
+            ]),
+            expanded:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              ...egs
+                  .map((eg) =>
+                      showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
+                  .toList(),
+              egExpandableButton(
+                  "Collapse examples", Icons.expand_less, lineTextStyle)
+            ])),
+      ],
+    )));
   }
   // return ExpandablePanel(
   //   header: const Text("Examples"),
