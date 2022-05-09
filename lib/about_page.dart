@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'constants.dart';
 import 'navigation_drawer.dart';
 
 class AboutPage extends StatelessWidget {
@@ -15,8 +17,30 @@ class AboutPage extends StatelessWidget {
             height: 10,
           ),
           Text(title, style: Theme.of(context).textTheme.titleLarge!),
-          Text(paragraph)
+          Text(paragraph, style: Theme.of(context).textTheme.bodyMedium),
         ]);
+
+    section(String title, TextSpan paragraph) =>
+        Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text(title, style: Theme.of(context).textTheme.titleLarge!),
+          RichText(
+              textScaleFactor: MediaQuery.of(context).textScaleFactor,
+              text: paragraph),
+        ]);
+
+    void openLink(String url) async {
+      var uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      } else {
+        throw 'Could not launch $url';
+      }
+    }
+
+    linkedTextSpan(String text, String link) => TextSpan(
+        text: text,
+        style: const TextStyle(color: blueColor),
+        recognizer: TapGestureRecognizer()..onTap = () => openLink(link));
 
     return Scaffold(
         appBar: AppBar(title: const Text('About words.hk')),
@@ -49,7 +73,22 @@ class AboutPage extends StatelessWidget {
                   "Open Content",
                   "We believe in ideas of open content, and we publish our content under a relatively permissive license. In addition, some of our data that may be useful for developing input methods, natural language processing etc. is released in the Public Domain.",
                   "assets/images/wordshk_open_data.jpeg",
-                )
+                ),
+                const SizedBox(height: 40),
+                section(
+                    "Want to help?",
+                    TextSpan(
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: [
+                          const TextSpan(
+                            text:
+                                "As long as you use Cantonese in your daily life, no matter where you live, we are more than happy to invite you to our editor team. If you are interested in joining us, please contact us via either ",
+                          ),
+                          linkedTextSpan("email", "mailto:join@words.hk"),
+                          const TextSpan(text: " or "),
+                          linkedTextSpan("Facebook",
+                              "https://www.facebook.com/www.words.hk")
+                        ])),
               ],
             ),
           ),
