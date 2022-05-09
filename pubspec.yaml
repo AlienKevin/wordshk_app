@@ -36,6 +36,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/images/
     - assets/jyutping_female/
   fonts:
     - family: ChironHeiHK
