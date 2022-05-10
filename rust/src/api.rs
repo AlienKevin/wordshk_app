@@ -1,19 +1,11 @@
-use wordshk_tools::dict::{LaxJyutPing};
-use wordshk_tools::parse::{parse_dict, parse_pr};
-use wordshk_tools::rich_dict::{enrich_dict, RichDict};
+use wordshk_tools::rich_dict::{RichDict};
 use wordshk_tools::lean_rich_dict::{to_lean_rich_entry};
 use wordshk_tools::search;
 use chrono::{DateTime, Utc};
-use flate2::read::GzDecoder;
-use reqwest;
 use serde::{Deserialize, Serialize};
-use std::{fs, thread};
-use std::io::prelude::*;
-use std::path::Path;
 use parking_lot::Mutex;
 use lazy_static::lazy_static;
-use anyhow::{anyhow, Result};
-use rayon::prelude::*;
+use anyhow::{Result};
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
 
