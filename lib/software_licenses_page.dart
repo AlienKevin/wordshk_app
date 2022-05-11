@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wordshk/license.dart';
 
 import 'expandable.dart';
+import 'navigation_drawer.dart';
 
 // Source: https://github.com/JohannesMilke/license_page_example/blob/master/lib/page/licenses_registry_page.dart
 class SoftwareLicensesPage extends StatelessWidget {
@@ -15,6 +16,7 @@ class SoftwareLicensesPage extends StatelessWidget {
           title: const Text('Software Licenses'),
           centerTitle: true,
         ),
+        drawer: const NavigationDrawer(),
         body: FutureBuilder<List<License>>(
           future: loadLicenses(),
           builder: (context, snapshot) {
