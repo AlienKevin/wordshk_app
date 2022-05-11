@@ -3,7 +3,7 @@ import 'dart:ui';
 const blueColor = Color(0xff0B83D0);
 const whiteColor = Color(0xffffffff);
 const lightGreyColor = Color(0xffDEE2E6);
-const greyColor = Color(0xff6C757D);
+const greyColor = Color(0xff808080);
 const darkGreyColor = Color(0xff33373b);
 const blackColor = Color(0xff000000);
 const double appBarHeight = 60.0;
