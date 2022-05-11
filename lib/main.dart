@@ -73,7 +73,6 @@ class MyApp extends StatelessWidget {
       titleSmall: titleSmall,
       bodyLarge: bodyLarge,
       bodyMedium: bodyMedium,
-      bodySmall: bodySmall,
     );
     var appBarTheme = AppBarTheme.of(context).copyWith(
       backgroundColor: blueColor,
@@ -108,7 +107,8 @@ class MyApp extends StatelessWidget {
         appBarTheme: appBarTheme,
         textSelectionTheme: textSelectionTheme,
         fontFamily: 'ChironHeiHK',
-        textTheme: textTheme,
+        textTheme: textTheme.copyWith(
+            bodySmall: bodySmall.copyWith(color: darkGreyColor)),
         iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
         textButtonTheme: textButtonTheme,
         elevatedButtonTheme: elevatedButtonTheme,
@@ -126,7 +126,8 @@ class MyApp extends StatelessWidget {
       appBarTheme: appBarTheme,
       textSelectionTheme: textSelectionTheme,
       fontFamily: 'ChironHeiHK',
-      textTheme: textTheme,
+      textTheme: textTheme.copyWith(
+          bodySmall: bodySmall.copyWith(color: lightGreyColor)),
       iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
       textButtonTheme: textButtonTheme,
       elevatedButtonTheme: elevatedButtonTheme,
