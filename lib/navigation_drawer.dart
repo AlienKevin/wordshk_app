@@ -4,6 +4,7 @@ import 'package:wordshk/software_licenses_page.dart';
 import 'about_page.dart';
 import 'constants.dart';
 import 'custom_page_route.dart';
+import 'dictionary_license_page.dart';
 import 'main.dart';
 
 class NavigationDrawer extends StatelessWidget {
@@ -78,6 +79,9 @@ class NavigationDrawer extends StatelessWidget {
               const Divider(),
               drawerButton("About words.hk", Icons.info_outline,
                   (_) => const AboutPage()),
+              const Divider(),
+              drawerButton("Dictionary License", Icons.handshake_outlined,
+                  (_) => const DictionaryLicensePage()),
               const Divider(),
               drawerButton("Software Licenses", Icons.balance,
                   (_) => const SoftwareLicensesPage()),
