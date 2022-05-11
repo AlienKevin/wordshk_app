@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/search_bar.dart';
 
@@ -48,9 +49,11 @@ class _SearchResultPageState extends State<SearchResultsPage> {
         body: (finishedSearch &&
                 prSearchResults.isEmpty &&
                 variantSearchResults.isEmpty)
-            ? const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
-                child: Text("No Results Found"))
+            ? Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+                child: Text(AppLocalizations.of(context)!
+                    .searchDictionaryNoResultsFound))
             : ListView.separated(
                 separatorBuilder: (_, __) => const Divider(),
                 itemBuilder: (_, index) => results[index],

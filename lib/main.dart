@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/search_results_page.dart';
 
 import 'bridge_generated.dart';
@@ -134,6 +135,8 @@ class MyApp extends StatelessWidget {
     );
     return MaterialApp(
       title: 'words.hk',
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: lightTheme,
       darkTheme: darkTheme,
       home: const HomePage(title: 'words.hk'),
@@ -203,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                               SearchResultsPage(searchMode: searchMode)),
                     );
                   },
-                  child: const Text("Search")),
+                  child: Text(AppLocalizations.of(context)!.searchDictionary)),
             ],
           ),
         ),

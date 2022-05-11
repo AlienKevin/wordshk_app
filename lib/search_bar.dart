@@ -4,6 +4,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'constants.dart';
 
@@ -27,9 +28,6 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// A callback which is fired when clear button is pressed.
   final VoidCallback? onCleared;
 
-  /// What the hintText on the search bar should be. Defaults to 'Search'.
-  final String hintText;
-
   /// A callback which is invoked each time the text field's value changes
   final TextFieldChangeCallback? onChanged;
 
@@ -38,7 +36,6 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
   const SearchBar({
     this.onSubmitted,
-    this.hintText = 'Search',
     this.closeOnSubmit = false,
     this.clearOnSubmit = false,
     this.onChanged,
@@ -153,7 +150,8 @@ class IsSearching extends State<SearchBar> {
                 key: const Key('SearchBarTextField'),
                 keyboardType: widget.keyboardType,
                 decoration: InputDecoration(
-                    hintText: widget.hintText,
+                    hintText:
+                        AppLocalizations.of(context)!.searchDictionaryHintText,
                     hintStyle: const TextStyle(
                       color: whiteColor,
                     ),

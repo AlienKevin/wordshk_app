@@ -1,6 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/license.dart';
 
 import 'expandable.dart';
@@ -12,10 +13,8 @@ class SoftwareLicensesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Software Licenses'),
-          centerTitle: true,
-        ),
+        appBar:
+            AppBar(title: Text(AppLocalizations.of(context)!.softwareLicenses)),
         drawer: const NavigationDrawer(),
         body: FutureBuilder<List<License>>(
           future: loadLicenses(),
@@ -49,8 +48,7 @@ class SoftwareLicensesPage extends StatelessWidget {
       })
       .toList()
       .then((licenses) {
-        const appLicense =
-            License("words.hk (this app)", """Copyright 2022 Xiang Li
+        const appLicense = License("words.hk", """Copyright 2022 Xiang Li
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -90,7 +88,10 @@ class LicensesWidget extends StatelessWidget {
                               license.text.split("\n")[0],
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                            expandButton("Show license", Icons.expand_more,
+                            expandButton(
+                                AppLocalizations.of(context)!
+                                    .softwareLicensesShowLicense,
+                                Icons.expand_more,
                                 Theme.of(context).textTheme.bodySmall!)
                           ]),
                       expanded: Column(
@@ -100,7 +101,10 @@ class LicensesWidget extends StatelessWidget {
                               license.text,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                            expandButton("Hide license", Icons.expand_less,
+                            expandButton(
+                                AppLocalizations.of(context)!
+                                    .softwareLicensesHideLicense,
+                                Icons.expand_less,
                                 Theme.of(context).textTheme.bodySmall!)
                           ])))));
         },

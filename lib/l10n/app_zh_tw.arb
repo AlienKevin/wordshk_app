@@ -1,0 +1,35 @@
+{
+    "searchDictionary": "查字典",
+    "searchDictionaryHintText": "輸入漢字/jyut6 ping3",
+    "searchDictionaryNoResultsFound": "抱歉，詞典裡找不到相關資料",
+
+    "entry": "詞條",
+    "entryMoreVariants": "更多寫法",
+    "entryCollapseVariants": "折疊寫法",
+    "entryMoreExamples": "更多例句",
+    "entryCollapseExamples": "折疊例句",
+
+    "wordshkSlogan": "成長中的大型crowd-sourced粵語字典",
+    "dictionary": "字典",
+    "aboutWordshk": "關於粤典",
+
+    "dictionaryLicense": "字典授權協議",
+    "dictionaryLicenseSummary": "《粵典》軟體中的內容會用以下的授權協議開放給公眾使用：",
+
+    "softwareLicenses": "軟體授權協議",
+    "softwareLicensesShowLicense": "顯示授權協議",
+    "softwareLicensesHideLicense": "折疊授權協議",
+
+    "aboutWordshkIntroductionTitle": "簡介",
+    "aboutWordshkIntroductionText": "《粵典》是一個大型的粵語辭典計劃。我們用Crowd-sourcing的方法，製作一本大型、可持續發展的粵語辭典。我們的字典用香港粵語（廣東話）做中心，編寫解釋和例句時都會考慮香港的用法；部份例句會從本土的文章中節選出來，務求反映真實的語言現狀。",
+    "aboutWordshkTenetsTitle": "宗旨",
+    "aboutWordshkTenetsText": "我們無意把《粵典》變成粵語的「權威」，亦明白一個語言根本不存在權威。所以我們會以資料為依據，用「描述主義 (descriptivism)」的方法，盡力描述現今的語言狀況。這種態度意味著，我們會收錄各家流行的寫法、讀音、用法，裡面會包含一些公認為正確的用法，也會有新興的用法、比較小眾的用法。",
+    "aboutWordshkPurposeTitle": "目標",
+    "aboutWordshkPurposeText": "雖然過往有很多關於粵語的工具書，不過由於長期的「中文本位」觀念，這些工具書大多只是收錄粵語和中文不同的部份，並沒有將粵語視作一個完整的語言去看待。我們希望透過編寫《粵典》這本「以粵釋粵」的辭典，來打破這種觀念，讓大家把粵語視為一個完整的語言，讓我們的語言和文字可以傳承下去。",
+    "aboutWordshkOpenContentTitle": "開放資料",
+    "aboutWordshkOpenContentText": "我們希望以開放資料（OpenData）的形式發佈資料。你日常用到的輸入法、語音辨識、機械翻譯，全部都要大量的語言資料才能運行，而粵語在這方面沒什麼資源。這次這個計劃除了可以讓一般用家可以容易啲找到粵語的材料，還可以方便開發者製作粵語工具。",
+    "aboutWordshkWantToHelpTitle": "想要幫忙？",
+    "aboutWordshkWantToHelpText": "只要你以粵語為日常的交談和書寫語言，無論你身處何方，都歡迎你加入我們的編輯團隊。如果有興趣參與，歡迎用以下方式和我們聯絡：",
+    "email": "電郵",
+    "facebook": "Facebook"
+}

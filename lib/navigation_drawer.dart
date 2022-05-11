@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/software_licenses_page.dart';
 
 import 'about_page.dart';
@@ -54,14 +55,14 @@ class NavigationDrawer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "words.hk",
+                          "粵典 words.hk",
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge
                               ?.copyWith(color: whiteColor),
                         ),
                         Text(
-                          'Crowd-sourced Cantonese dictionary for everyone.',
+                          AppLocalizations.of(context)!.wordshkSlogan,
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
@@ -71,19 +72,19 @@ class NavigationDrawer extends StatelessWidget {
                 ),
               ),
               drawerButton(
-                  "Dictionary",
+                  AppLocalizations.of(context)!.dictionary,
                   Icons.search,
                   (_) => const HomePage(
                         title: 'words.hk',
                       )),
               const Divider(),
-              drawerButton("About words.hk", Icons.info_outline,
+              drawerButton(AppLocalizations.of(context)!.aboutWordshk, Icons.info_outline,
                   (_) => const AboutPage()),
               const Divider(),
-              drawerButton("Dictionary License", Icons.handshake_outlined,
+              drawerButton(AppLocalizations.of(context)!.dictionaryLicense, Icons.handshake_outlined,
                   (_) => const DictionaryLicensePage()),
               const Divider(),
-              drawerButton("Software Licenses", Icons.balance,
+              drawerButton(AppLocalizations.of(context)!.softwareLicenses, Icons.balance,
                   (_) => const SoftwareLicensesPage()),
             ],
           ),

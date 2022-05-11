@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'navigation_drawer.dart';
 
@@ -8,7 +9,8 @@ class DictionaryLicensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Dictionary License')),
+        appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.dictionaryLicense)),
         drawer: const NavigationDrawer(),
         body: SingleChildScrollView(
           child: Padding(
@@ -16,8 +18,7 @@ class DictionaryLicensePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                    r'All dictionary entries in this app (words.hk) are licensed under the Non-Commercial Open Data License.',
+                Text(AppLocalizations.of(context)!.dictionaryLicenseSummary,
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 20),
                 Text("""

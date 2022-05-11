@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/search_results_page.dart';
 
@@ -28,11 +29,11 @@ class _EntryPageState extends State<EntryPage> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Entry'),
+          title: Text(AppLocalizations.of(context)!.entry),
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
-              tooltip: "Search",
+              tooltip: AppLocalizations.of(context)!.searchDictionary,
               onPressed: () {
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.push(

@@ -11,12 +11,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_rust_bridge: ^1.27.2
   equatable: ^2.0.0
   flutter_native_splash: ^2.0.4
   just_audio: ^0.9.20
   expandable: ^5.0.1
   url_launcher: ^6.1.0
+  intl: ^0.17.0
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:
@@ -34,6 +37,7 @@ dev_dependencies:
 #  freezed: ^1.1.0
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/

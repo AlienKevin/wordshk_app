@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'constants.dart';
@@ -403,8 +404,12 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                         children: [
                           showVariant(
                               variants[0], variantTextStyle, prTextStyle),
-                          expandButton(
-                              "More variants", Icons.expand_more, lineTextStyle)
+                          Builder(builder: (context) {
+                            return expandButton(
+                                AppLocalizations.of(context)!.entryMoreVariants,
+                                Icons.expand_more,
+                                lineTextStyle);
+                          })
                         ])),
                 expanded: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,8 +422,12 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                                   .map((variant) => showVariant(
                                       variant, variantTextStyle, prTextStyle))
                                   .toList())),
-                      expandButton(
-                          "Collapse variants", Icons.expand_less, lineTextStyle)
+                      Builder(builder: (context) {
+                        return expandButton(
+                            AppLocalizations.of(context)!.entryCollapseVariants,
+                            Icons.expand_less,
+                            lineTextStyle);
+                      })
                     ]))));
 
 Widget showVariant(
@@ -576,7 +585,12 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
             collapsed:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               showEg(egs[0], lineTextStyle, rubyFontSize, onTapLink),
-              expandButton("More examples", Icons.expand_more, lineTextStyle)
+              Builder(builder: (context) {
+                return expandButton(
+                    AppLocalizations.of(context)!.entryMoreExamples,
+                    Icons.expand_more,
+                    lineTextStyle);
+              })
             ]),
             expanded:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -584,8 +598,12 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
                   .map((eg) =>
                       showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
                   .toList(),
-              expandButton(
-                  "Collapse examples", Icons.expand_less, lineTextStyle)
+              Builder(builder: (context) {
+                return expandButton(
+                    AppLocalizations.of(context)!.entryCollapseExamples,
+                    Icons.expand_less,
+                    lineTextStyle);
+              })
             ])),
       ],
     )));
