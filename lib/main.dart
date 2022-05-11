@@ -76,6 +76,7 @@ class MyApp extends StatelessWidget {
     );
     var appBarTheme = AppBarTheme.of(context).copyWith(
       backgroundColor: blueColor,
+      centerTitle: true,
     );
     const textSelectionTheme = TextSelectionThemeData(
         selectionColor: greyColor,
