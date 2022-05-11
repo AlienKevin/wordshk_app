@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart';
 
-typedef void TextFieldSubmitCallback(String value);
-typedef void TextFieldChangeCallback(String value);
-typedef void SetStateCallback(void fn());
+typedef TextFieldSubmitCallback = void Function(String value);
+typedef TextFieldChangeCallback = void Function(String value);
+typedef SetStateCallback = void Function(void Function());
 
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// Whether or not the search bar should close on submit. Defaults to true.
@@ -36,7 +36,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// The type of keyboard to use for editing the search bar text. Defaults to 'TextInputType.text'.
   final TextInputType keyboardType;
 
-  SearchBar({
+  const SearchBar({
     this.onSubmitted,
     this.hintText = 'Search',
     this.closeOnSubmit = false,
@@ -45,17 +45,18 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
     this.onClosed,
     this.onCleared,
     this.keyboardType = TextInputType.text,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _isSearching();
+  State<StatefulWidget> createState() => IsSearching();
 
   @override
   // TODO: implement preferredSize
   Size get preferredSize => const Size.fromHeight(appBarHeight);
 }
 
-class _isSearching extends State<SearchBar> {
+class IsSearching extends State<SearchBar> {
   /// The controller to be used in the textField.
   TextEditingController controller = TextEditingController();
 

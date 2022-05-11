@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class EntryNotPublishedPage extends StatelessWidget {
-  String entryVariant;
+  final String entryVariant;
 
-  EntryNotPublishedPage({Key? key, required this.entryVariant})
+  const EntryNotPublishedPage({Key? key, required this.entryVariant})
       : super(key: key);
 
   @override

@@ -10,9 +10,10 @@ import 'entry_page.dart';
 import 'main.dart';
 
 class SearchResultsPage extends StatefulWidget {
-  SearchMode searchMode;
+  final SearchMode searchMode;
 
-  SearchResultsPage({Key? key, required this.searchMode}) : super(key: key);
+  const SearchResultsPage({Key? key, required this.searchMode})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _SearchResultPageState();

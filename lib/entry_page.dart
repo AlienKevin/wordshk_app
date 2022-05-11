@@ -10,10 +10,10 @@ import 'entry_not_published_page.dart';
 import 'main.dart';
 
 class EntryPage extends StatefulWidget {
-  int id;
-  SearchMode searchMode;
+  final int id;
+  final SearchMode searchMode;
 
-  EntryPage({Key? key, required this.id, required this.searchMode})
+  const EntryPage({Key? key, required this.id, required this.searchMode})
       : super(key: key);
 
   @override

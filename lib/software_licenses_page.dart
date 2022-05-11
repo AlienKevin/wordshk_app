@@ -64,9 +64,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 class LicensesWidget extends StatelessWidget {
   final List<License> licenses;
 
-  const LicensesWidget({
-    required this.licenses,
-  }) : super();
+  const LicensesWidget({required this.licenses, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => ListView.builder(

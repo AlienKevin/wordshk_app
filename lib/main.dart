@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:wordshk/search_results_page.dart';
@@ -18,7 +17,7 @@ enum SearchMode {
 
 extension Unique<E, Id> on List<E> {
   List<E> unique([Id Function(E element)? id, bool inplace = true]) {
-    final ids = Set();
+    final ids = <Id>{};
     var list = inplace ? this : List<E>.from(this);
     list.retainWhere((x) => ids.add(id != null ? id(x) : x as Id));
     return list;
@@ -164,7 +163,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var icon_wide = Image(
+    var iconWide = Image(
         width: MediaQuery.of(context).size.width * 0.7,
         image: const AssetImage('assets/icon_wide.png'));
 
@@ -180,7 +179,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               MediaQuery.of(context).platformBrightness == Brightness.light
-                  ? icon_wide
+                  ? iconWide
                   : ColorFiltered(
                       colorFilter: const ColorFilter.matrix([
                         // source: https://www.burkharts.net/apps/blog/over-the-rainbow-colour-filters/
@@ -191,7 +190,7 @@ class _HomePageState extends State<HomePage> {
                         0, 0, -1, 0, 255,
                         0, 0, 0, 1, 0,
                       ]),
-                      child: icon_wide),
+                      child: iconWide),
               SizedBox(
                   height:
                       Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5),
