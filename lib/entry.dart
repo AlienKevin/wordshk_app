@@ -2,18 +2,13 @@ import 'package:equatable/equatable.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'constants.dart';
+import 'expandable.dart';
 
 typedef OnTapLink = void Function(String entryVariant);
 typedef EntryGroup = List<Entry>;
-
-ExpandableTheme applyExpandableTheme(Widget child) => ExpandableTheme(
-    data: const ExpandableThemeData(
-        animationDuration: Duration(milliseconds: 200), useInkWell: false),
-    child: child);
 
 class Entry extends Equatable {
   final int id;
@@ -408,7 +403,7 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                         children: [
                           showVariant(
                               variants[0], variantTextStyle, prTextStyle),
-                          egExpandableButton(
+                          expandButton(
                               "More variants", Icons.expand_more, lineTextStyle)
                         ])),
                 expanded: Column(
@@ -422,7 +417,7 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                                   .map((variant) => showVariant(
                                       variant, variantTextStyle, prTextStyle))
                                   .toList())),
-                      egExpandableButton(
+                      expandButton(
                           "Collapse variants", Icons.expand_less, lineTextStyle)
                     ]))));
 
@@ -560,17 +555,6 @@ Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
       crossAxisAlignment: CrossAxisAlignment.start,
     );
 
-Widget egExpandableButton(
-        String text, IconData icon, TextStyle lineTextStyle) =>
-    ExpandableButton(
-        child: RichText(
-            text: TextSpan(
-      children: [
-        TextSpan(text: text, style: lineTextStyle.copyWith(color: blueColor)),
-        WidgetSpan(child: Icon(icon, color: blueColor))
-      ],
-    )));
-
 Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
     bool isSingleDef, OnTapLink onTapLink) {
   if (egs.isEmpty) {
@@ -592,8 +576,7 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
             collapsed:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               showEg(egs[0], lineTextStyle, rubyFontSize, onTapLink),
-              egExpandableButton(
-                  "More examples", Icons.expand_more, lineTextStyle)
+              expandButton("More examples", Icons.expand_more, lineTextStyle)
             ]),
             expanded:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -601,7 +584,7 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
                   .map((eg) =>
                       showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
                   .toList(),
-              egExpandableButton(
+              expandButton(
                   "Collapse examples", Icons.expand_less, lineTextStyle)
             ])),
       ],

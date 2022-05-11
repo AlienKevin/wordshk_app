@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordshk/software_licenses_page.dart';
 
 import 'about_page.dart';
 import 'constants.dart';
@@ -75,8 +76,11 @@ class NavigationDrawer extends StatelessWidget {
                         title: 'words.hk',
                       )),
               const Divider(),
-              drawerButton(
-                  "About words.hk", Icons.info, (_) => const AboutPage()),
+              drawerButton("About words.hk", Icons.info_outline,
+                  (_) => const AboutPage()),
+              const Divider(),
+              drawerButton("Software Licenses", Icons.balance,
+                  (_) => const SoftwareLicensesPage()),
             ],
           ),
         ));
