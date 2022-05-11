@@ -49,6 +49,9 @@ cargo ndk -o ../android/app/src/main/jniLibs build --release
 
 # Legal
 
+Software: Copyright (C) 2022 Xiang Li, licensed under the MIT license.
+Dictionary: Copyright (C) 2014-2022 Hong Kong Lexicography Limited.
+
 "*words.hk*", "*wordshk*", "*粵典*" are trade names of Hong Kong Lexicography
 Limited. Permission by Hong Kong Lexicography Limited must be obtained to
 promote or distribute materials containing these names. In particular,
