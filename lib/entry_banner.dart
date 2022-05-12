@@ -30,7 +30,7 @@ class _EntryBannerState extends State<EntryBanner> {
           child: Column(children: [
             Row(children: [
               const SizedBox(width: 6),
-              const Icon(Icons.warning_amber_outlined, color: blackColor),
+              Icon(Icons.warning_amber_outlined, color: Theme.of(context).textTheme.bodySmall!.color),
               const SizedBox(width: 16),
               Expanded(
                   child: Text(AppLocalizations.of(context)!.unpublishedWarning,
