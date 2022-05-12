@@ -13,6 +13,12 @@
     "dictionary": "Dictionary",
     "aboutWordshk": "About words.hk",
 
+    "qualityControl": "Quality Control",
+    "qualityControlText": "We employed technology when applicable to facilitate our workflows. To reduce personal bias and facilitate crowdsourcing, we adopted multiple interaction approaches. When editing and cross-checking entries, editors can leave comments in the column for internal reference. Editing histories are also preserved and made visible to all editors for record-keeping. In addition, public users can report issues on a form on our website or by email.\n\nTo ensure correctness in our published entries, all new entries are unpublished when created, and only a handful of senior editors have the rights to publish an entry. In practice the chief editor publishes the vast majority of entries. The chief editor is assisted by a review system where any editor can mark an entry as reviewed. This gives the chief editor an additional assurance vouching for the accuracy of the entry, and allows the system to prioritize entries that have already been reviewed by others for the chief editor's final review before publication.",
+    "unpublishedWarning": "This entry is reviewed but not yet published. It may contain some error.",
+    "learnMore": "Learn More",
+    "dismiss": "Dismiss",
+
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",
 

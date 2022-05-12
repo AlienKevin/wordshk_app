@@ -84,7 +84,8 @@ void main() {
 				}
 			]
 		}
-	]
+	],
+	"published": true
 }""";
     var expectedEntry = const Entry(
       id: 56534,
@@ -130,6 +131,7 @@ void main() {
                   eng: Line([Segment(SegmentType.text, "life; lives")]))
             ])
       ],
+      published: true,
     );
     expect(Entry.fromJson(jsonDecode(json)), equals(expectedEntry));
   });
@@ -148,7 +150,9 @@ void main() {
         "yue":{"Text":[["Text",[["Normal","我"]]],["Text",[["Bold","呢"]]]]},
         "eng":[["Text","I think that this person is pretty suspicious."]]
       }
-      ]}]}""";
+      ]}],
+      "published": false
+      }""";
     var expectedEntry = const Entry(
       id: 108744,
       variants: [
@@ -193,6 +197,7 @@ void main() {
                   ]))
             ])
       ],
+      published: false,
     );
     expect(Entry.fromJson(jsonDecode(json)), equals(expectedEntry));
   });

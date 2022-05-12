@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:wordshk/entry_banner.dart';
 
 import 'constants.dart';
 import 'expandable.dart';
@@ -19,15 +20,18 @@ class Entry extends Equatable {
   final List<String> sims;
   final List<String> ants;
   final List<Def> defs;
+  final bool published;
 
-  const Entry(
-      {required this.id,
-      required this.variants,
-      required this.poses,
-      required this.labels,
-      required this.sims,
-      required this.ants,
-      required this.defs});
+  const Entry({
+    required this.id,
+    required this.variants,
+    required this.poses,
+    required this.labels,
+    required this.sims,
+    required this.ants,
+    required this.defs,
+    required this.published,
+  });
 
   Entry.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -40,7 +44,8 @@ class Entry extends Equatable {
         ants = List.from(json['ants']),
         defs = List.from(json['defs']).map((def) {
           return Def.fromJson(def);
-        }).toList();
+        }).toList(),
+        published = json['published'];
 
   @override
   List<Object> get props => [id, variants, poses, labels, sims, ants, defs];
@@ -488,6 +493,7 @@ Widget showTab(Entry entry, TextStyle variantTextStyle, TextStyle prTextStyle,
     ListView.separated(
       itemBuilder: (context, index) => index == 0
           ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              showUnpublishedWarning(entry.published),
               showVariants(
                   entry.variants, variantTextStyle, prTextStyle, lineTextStyle),
               showLabels(entry.labels, lineTextStyle),
@@ -501,6 +507,9 @@ Widget showTab(Entry entry, TextStyle variantTextStyle, TextStyle prTextStyle,
           : Divider(height: lineTextStyle.fontSize! * 2),
       itemCount: entry.defs.length + 1,
     );
+
+Widget showUnpublishedWarning(bool published) =>
+    EntryBanner(published: published);
 
 Widget showSimsOrAnts(String label, List<String> simsOrAnts,
         TextStyle lineTextStyle, OnTapLink onTapLink) =>

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:wordshk/quality_control_page.dart';
 import 'package:wordshk/software_licenses_page.dart';
 
 import 'about_page.dart';
@@ -78,14 +79,21 @@ class NavigationDrawer extends StatelessWidget {
                         title: 'words.hk',
                       )),
               const Divider(),
-              drawerButton(AppLocalizations.of(context)!.aboutWordshk, Icons.info_outline,
-                  (_) => const AboutPage()),
+              drawerButton(AppLocalizations.of(context)!.aboutWordshk,
+                  Icons.info_outline, (_) => const AboutPage()),
               const Divider(),
-              drawerButton(AppLocalizations.of(context)!.dictionaryLicense, Icons.handshake_outlined,
+              drawerButton(
+                  AppLocalizations.of(context)!.qualityControl,
+                  Icons.check,
+                  (_) => const QualityControlPage(useBackNavigation: false)),
+              const Divider(),
+              drawerButton(
+                  AppLocalizations.of(context)!.dictionaryLicense,
+                  Icons.handshake_outlined,
                   (_) => const DictionaryLicensePage()),
               const Divider(),
-              drawerButton(AppLocalizations.of(context)!.softwareLicenses, Icons.balance,
-                  (_) => const SoftwareLicensesPage()),
+              drawerButton(AppLocalizations.of(context)!.softwareLicenses,
+                  Icons.balance, (_) => const SoftwareLicensesPage()),
             ],
           ),
         ));
