@@ -23,10 +23,10 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>LSApplicationQueriesSchemes</key>
-        <array>
-          <string>https</string>
-          <string>mailto</string>
-        </array>
+		<array>
+			<string>https</string>
+			<string>mailto</string>
+		</array>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
