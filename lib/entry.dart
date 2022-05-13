@@ -480,10 +480,11 @@ Widget showVariant(
 Widget showPoses(List<String> poses, TextStyle style) {
   return Wrap(
     children: poses.map((pos) {
-      return Text(
-        "詞性：" + pos,
+      return RichText(
+          text: TextSpan(
+        text: "詞性：" + pos,
         style: style, // Theme.of(context).textTheme.bodyMedium
-      );
+      ));
     }).toList(),
   );
 }
@@ -518,8 +519,11 @@ Widget showSimsOrAnts(String label, List<String> simsOrAnts,
         child: RichText(
             text: TextSpan(style: lineTextStyle, children: [
           WidgetSpan(
-              child: Text(label,
-                  style: lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
+              child: RichText(
+                  text: TextSpan(
+                      text: label,
+                      style: lineTextStyle.copyWith(
+                          fontWeight: FontWeight.bold)))),
           const WidgetSpan(child: SizedBox(width: 10)),
           ...simsOrAnts.asMap().entries.map((sim) => TextSpan(children: [
                 TextSpan(
@@ -536,8 +540,11 @@ Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
       child: RichText(
           text: TextSpan(children: [
         WidgetSpan(
-            child: Text("[標籤]",
-                style: lineTextStyle.copyWith(fontWeight: FontWeight.bold))),
+            child: RichText(
+                text: TextSpan(
+                    text: "[標籤]",
+                    style:
+                        lineTextStyle.copyWith(fontWeight: FontWeight.bold)))),
         ...labels
             .map((label) => [
                   const WidgetSpan(child: SizedBox(width: 10)),
@@ -743,8 +750,11 @@ Widget showRubySegment(RubySegment segment, Color textColor, double rubySize,
   String ruby;
   switch (segment.type) {
     case RubySegmentType.punc:
-      text = Text(segment.segment as String,
-          style: TextStyle(fontSize: rubySize, height: 0.8, color: textColor));
+      text = RichText(
+          text: TextSpan(
+              text: segment.segment as String,
+              style: TextStyle(
+                  fontSize: rubySize, height: 0.8, color: textColor)));
       ruby = "";
       break;
     case RubySegmentType.word:
@@ -780,8 +790,10 @@ Widget showRubySegment(RubySegment segment, Color textColor, double rubySize,
         child: Center(
             child: Transform(
                 transform: Matrix4.translationValues(0, -(rubyYPos), 0),
-                child:
-                    Text(ruby, style: TextStyle(fontSize: rubySize * 0.4))))),
+                child: RichText(
+                    text: TextSpan(
+                        text: ruby,
+                        style: TextStyle(fontSize: rubySize * 0.5)))))),
     text
   ]);
 }
