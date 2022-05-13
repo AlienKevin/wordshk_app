@@ -732,6 +732,8 @@ Widget showRubyLine(
       children: line.segments
           .map((segment) =>
               showRubySegment(segment, textColor, rubyFontSize, onTapLink))
+          .expand((i) => i)
+          .toList()
           .map((e) => Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 textBaseline: TextBaseline.alphabetic,
@@ -743,8 +745,8 @@ Widget showRubyLine(
   );
 }
 
-Widget showRubySegment(RubySegment segment, Color textColor, double rubySize,
-    OnTapLink onTapLink) {
+List<Widget> showRubySegment(RubySegment segment, Color textColor,
+    double rubySize, OnTapLink onTapLink) {
   double rubyYPos = rubySize / 1.1;
   Widget text;
   String ruby;
@@ -766,36 +768,33 @@ Widget showRubySegment(RubySegment segment, Color textColor, double rubySize,
       ruby = segment.segment.prs.join(" ");
       break;
     case RubySegmentType.linkedWord:
-      return GestureDetector(
-        onTap: () => onTapLink(segment.segment.toString()),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          textBaseline: TextBaseline.alphabetic,
-          mainAxisSize: MainAxisSize.min,
-          children: (segment.segment.words as List<RubySegmentWord>)
-              .map(
-                (word) => showRubySegment(
-                    RubySegment(RubySegmentType.word, word),
-                    blueColor,
-                    rubySize,
-                    onTapLink),
-              )
-              .toList(),
-        ),
-      );
+      return (segment.segment.words as List<RubySegmentWord>)
+          .map((word) => showRubySegment(
+              RubySegment(RubySegmentType.word, word),
+              blueColor,
+              rubySize,
+              onTapLink))
+          .expand((i) => i)
+          .map((seg) => GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => onTapLink(segment.segment.toString()),
+              child: seg))
+          .toList();
   }
-  return Stack(alignment: Alignment.center, children: [
-    Container(
-        alignment: Alignment.bottomCenter,
-        child: Center(
-            child: Transform(
-                transform: Matrix4.translationValues(0, -(rubyYPos), 0),
-                child: RichText(
-                    text: TextSpan(
-                        text: ruby,
-                        style: TextStyle(fontSize: rubySize * 0.5)))))),
-    text
-  ]);
+  return [
+    Stack(alignment: Alignment.center, children: [
+      Container(
+          alignment: Alignment.bottomCenter,
+          child: Center(
+              child: Transform(
+                  transform: Matrix4.translationValues(0, -(rubyYPos), 0),
+                  child: RichText(
+                      text: TextSpan(
+                          text: ruby,
+                          style: TextStyle(fontSize: rubySize * 0.5)))))),
+      text
+    ])
+  ];
 }
 
 Widget showWordLine(
