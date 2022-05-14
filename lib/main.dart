@@ -167,10 +167,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var iconWide = Image(
-        width: MediaQuery.of(context).size.width * 0.7,
-        image: const AssetImage('assets/icon_wide.png'));
-
     return Scaffold(
       appBar: AppBar(title: const Text('words.hk')),
       drawer: const NavigationDrawer(),
@@ -182,19 +178,11 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
           child: Column(
             children: [
-              MediaQuery.of(context).platformBrightness == Brightness.light
-                  ? iconWide
-                  : ColorFiltered(
-                      colorFilter: const ColorFilter.matrix([
-                        // source: https://www.burkharts.net/apps/blog/over-the-rainbow-colour-filters/
-                        // Inverter matrix
-                        //R G  B  A  Const
-                        -1, 0, 0, 0, 255,
-                        0, -1, 0, 0, 255,
-                        0, 0, -1, 0, 255,
-                        0, 0, 0, 1, 0,
-                      ]),
-                      child: iconWide),
+              Image(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  image: const AssetImage('assets/icon.png'),
+                  color: const Color.fromRGBO(255, 255, 255, 0.5),
+                  colorBlendMode: BlendMode.modulate),
               SizedBox(
                   height:
                       Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5),

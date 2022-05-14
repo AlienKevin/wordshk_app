@@ -51,13 +51,13 @@ flutter:
 flutter_native_splash:
   color: "ffffff"
   color_dark: "000000"
-  image: "assets/icon_512.png"
-  image_dark: "assets/icon_512_dark.png"
+  image: "assets/icon.png"
+  image_dark: "assets/icon.png"
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon_512.png"
+  image_path: "assets/icon_with_bg.png"
 
 flutter_launcher_name:
   name: "words.hk"
