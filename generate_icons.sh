@@ -1,8 +1,6 @@
 #!/bin/bash
 
-convert assets/icon_512.png -negate assets/icon_512_dark.png
-pngquant assets/icon_512.png --force --quality 65-80 --output assets/icon_512.png
-pngquant assets/icon_512_dark.png --force --quality 65-80 --output assets/icon_512_dark.png
+pngquant assets/icon.png --force --quality 65-80 --output assets/icon.png
 
 ### Clean and rebuild flutter ###
 flutter clean
