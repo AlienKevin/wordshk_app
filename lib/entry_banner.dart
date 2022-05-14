@@ -30,7 +30,8 @@ class _EntryBannerState extends State<EntryBanner> {
           child: Column(children: [
             Row(children: [
               const SizedBox(width: 6),
-              Icon(Icons.warning_amber_outlined, color: Theme.of(context).textTheme.bodySmall!.color),
+              Icon(Icons.warning_amber_outlined,
+                  color: Theme.of(context).textTheme.bodySmall!.color),
               const SizedBox(width: 16),
               Expanded(
                   child: Text(AppLocalizations.of(context)!.unpublishedWarning,
@@ -53,10 +54,8 @@ class _EntryBannerState extends State<EntryBanner> {
                       );
                     },
                     child: Text(AppLocalizations.of(context)!.learnMore,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: blueColor)),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.secondary)),
                   ),
                   TextButton(
                     onPressed: () {
@@ -65,10 +64,8 @@ class _EntryBannerState extends State<EntryBanner> {
                       });
                     },
                     child: Text(AppLocalizations.of(context)!.dismiss,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: blueColor)),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.secondary)),
                   )
                 ],
               ),

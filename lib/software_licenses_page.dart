@@ -23,7 +23,9 @@ class SoftwareLicensesPage extends StatelessWidget {
 
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary));
               default:
                 return snapshot.hasError
                     ? const Center(
@@ -92,7 +94,10 @@ class LicensesWidget extends StatelessWidget {
                                 AppLocalizations.of(context)!
                                     .softwareLicensesShowLicense,
                                 Icons.expand_more,
-                                Theme.of(context).textTheme.bodySmall!)
+                                Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary))
                           ]),
                       expanded: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +110,10 @@ class LicensesWidget extends StatelessWidget {
                                 AppLocalizations.of(context)!
                                     .softwareLicensesHideLicense,
                                 Icons.expand_less,
-                                Theme.of(context).textTheme.bodySmall!)
+                                Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary))
                           ])))));
         },
       );

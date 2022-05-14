@@ -90,6 +90,7 @@ class MyApp extends StatelessWidget {
     ));
     var elevatedButtonTheme = ElevatedButtonThemeData(
         style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all(blueColor),
       textStyle:
           MaterialStateProperty.all(bodyLarge.copyWith(color: Colors.white)),
       padding: MaterialStateProperty.all(
@@ -118,7 +119,7 @@ class MyApp extends StatelessWidget {
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.dark,
-        accentColor: blueColor,
+        accentColor: lightBlueColor,
       ),
       scaffoldBackgroundColor: Colors.black,
       backgroundColor: blackColor,

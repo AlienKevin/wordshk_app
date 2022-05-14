@@ -384,6 +384,7 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
                     Theme.of(context).textTheme.headlineSmall!,
                     Theme.of(context).textTheme.bodySmall!,
                     lineTextStyle,
+                    Theme.of(context).colorScheme.secondary,
                     rubyFontSize,
                     onTapLink),
               ))
@@ -413,7 +414,10 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                             return expandButton(
                                 AppLocalizations.of(context)!.entryMoreVariants,
                                 Icons.expand_more,
-                                lineTextStyle);
+                                lineTextStyle.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary));
                           })
                         ])),
                 expanded: Column(
@@ -431,7 +435,9 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                         return expandButton(
                             AppLocalizations.of(context)!.entryCollapseVariants,
                             Icons.expand_less,
-                            lineTextStyle);
+                            lineTextStyle.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.secondary));
                       })
                     ]))));
 
@@ -451,24 +457,26 @@ Widget showVariant(
                     child: Visibility(
                   visible:
                       jyutpingFemaleSyllableNames.containsAll(pr.split(" ")),
-                  child: IconButton(
-                    visualDensity: VisualDensity.compact,
-                    tooltip: "Pronunciation",
-                    alignment: Alignment.bottomLeft,
-                    icon: const Icon(Icons.volume_up),
-                    color: blueColor,
-                    onPressed: () async {
-                      var player = AudioPlayer();
-                      await player.setAudioSource(ConcatenatingAudioSource(
-                          children: pr
-                              .split(" ")
-                              .map((syllable) => AudioSource.uri(Uri.parse(
-                                  "asset:///assets/jyutping_female/$syllable.mp3")))
-                              .toList()));
-                      await player.seek(Duration.zero, index: 0);
-                      await player.play();
-                    },
-                  ),
+                  child: Builder(builder: (context) {
+                    return IconButton(
+                      visualDensity: VisualDensity.compact,
+                      tooltip: "Pronunciation",
+                      alignment: Alignment.bottomLeft,
+                      icon: const Icon(Icons.volume_up),
+                      color: Theme.of(context).colorScheme.secondary,
+                      onPressed: () async {
+                        var player = AudioPlayer();
+                        await player.setAudioSource(ConcatenatingAudioSource(
+                            children: pr
+                                .split(" ")
+                                .map((syllable) => AudioSource.uri(Uri.parse(
+                                    "asset:///assets/jyutping_female/$syllable.mp3")))
+                                .toList()));
+                        await player.seek(Duration.zero, index: 0);
+                        await player.play();
+                      },
+                    );
+                  }),
                 )),
               ], style: prTextStyle),
             )
@@ -489,8 +497,14 @@ Widget showPoses(List<String> poses, TextStyle style) {
   );
 }
 
-Widget showTab(Entry entry, TextStyle variantTextStyle, TextStyle prTextStyle,
-        TextStyle lineTextStyle, double rubyFontSize, OnTapLink onTapLink) =>
+Widget showTab(
+        Entry entry,
+        TextStyle variantTextStyle,
+        TextStyle prTextStyle,
+        TextStyle lineTextStyle,
+        Color linkColor,
+        double rubyFontSize,
+        OnTapLink onTapLink) =>
     ListView.separated(
       itemBuilder: (context, index) => index == 0
           ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -501,8 +515,8 @@ Widget showTab(Entry entry, TextStyle variantTextStyle, TextStyle prTextStyle,
               showSimsOrAnts("[近義]", entry.sims, lineTextStyle, onTapLink),
               showSimsOrAnts("[反義]", entry.ants, lineTextStyle, onTapLink),
             ])
-          : showDef(entry.defs[index - 1], lineTextStyle, rubyFontSize,
-              entry.defs.length == 1, onTapLink),
+          : showDef(entry.defs[index - 1], lineTextStyle, linkColor,
+              rubyFontSize, entry.defs.length == 1, onTapLink),
       separatorBuilder: (_, index) => index == 0
           ? SizedBox(height: lineTextStyle.fontSize!)
           : Divider(height: lineTextStyle.fontSize! * 2),
@@ -516,24 +530,27 @@ Widget showSimsOrAnts(String label, List<String> simsOrAnts,
         TextStyle lineTextStyle, OnTapLink onTapLink) =>
     Visibility(
         visible: simsOrAnts.isNotEmpty,
-        child: RichText(
-            text: TextSpan(style: lineTextStyle, children: [
-          WidgetSpan(
-              child: RichText(
-                  text: TextSpan(
-                      text: label,
-                      style: lineTextStyle.copyWith(
-                          fontWeight: FontWeight.bold)))),
-          const WidgetSpan(child: SizedBox(width: 10)),
-          ...simsOrAnts.asMap().entries.map((sim) => TextSpan(children: [
-                TextSpan(
-                    text: sim.value,
-                    style: const TextStyle(color: blueColor),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => onTapLink(sim.value)),
-                TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
-              ]))
-        ])));
+        child: Builder(builder: (context) {
+          return RichText(
+              text: TextSpan(style: lineTextStyle, children: [
+            WidgetSpan(
+                child: RichText(
+                    text: TextSpan(
+                        text: label,
+                        style: lineTextStyle.copyWith(
+                            fontWeight: FontWeight.bold)))),
+            const WidgetSpan(child: SizedBox(width: 10)),
+            ...simsOrAnts.asMap().entries.map((sim) => TextSpan(children: [
+                  TextSpan(
+                      text: sim.value,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => onTapLink(sim.value)),
+                  TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
+                ]))
+          ]));
+        }));
 
 Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
       visible: labels.isNotEmpty,
@@ -567,30 +584,32 @@ Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
       ])),
     );
 
-Widget showDef(Def def, TextStyle lineTextStyle, double rubyFontSize,
-        bool isSingleDef, OnTapLink onTapLink) =>
+Widget showDef(Def def, TextStyle lineTextStyle, Color linkColor,
+        double rubyFontSize, bool isSingleDef, OnTapLink onTapLink) =>
     Column(
       children: [
         showClause(def.yue, "(粵) ", lineTextStyle, onTapLink),
         def.eng == null
             ? const SizedBox.shrink()
             : showClause(def.eng!, "(英) ", lineTextStyle, onTapLink),
-        showEgs(def.egs, lineTextStyle, rubyFontSize, isSingleDef, onTapLink)
+        showEgs(def.egs, lineTextStyle, linkColor, rubyFontSize, isSingleDef,
+            onTapLink)
       ],
       crossAxisAlignment: CrossAxisAlignment.start,
     );
 
-Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
-    bool isSingleDef, OnTapLink onTapLink) {
+Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, Color linkColor,
+    double rubyFontSize, bool isSingleDef, OnTapLink onTapLink) {
   if (egs.isEmpty) {
     return Container();
   } else if (egs.length == 1) {
-    return showEg(egs[0], lineTextStyle, rubyFontSize, onTapLink);
+    return showEg(egs[0], lineTextStyle, linkColor, rubyFontSize, onTapLink);
   } else if (isSingleDef) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: egs
-            .map((eg) => showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
+            .map((eg) =>
+                showEg(eg, lineTextStyle, linkColor, rubyFontSize, onTapLink))
             .toList());
   } else {
     return ExpandableNotifier(
@@ -600,25 +619,27 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, double rubyFontSize,
         Expandable(
             collapsed:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              showEg(egs[0], lineTextStyle, rubyFontSize, onTapLink),
+              showEg(egs[0], lineTextStyle, linkColor, rubyFontSize, onTapLink),
               Builder(builder: (context) {
                 return expandButton(
                     AppLocalizations.of(context)!.entryMoreExamples,
                     Icons.expand_more,
-                    lineTextStyle);
+                    lineTextStyle.copyWith(
+                        color: Theme.of(context).colorScheme.secondary));
               })
             ]),
             expanded:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               ...egs
-                  .map((eg) =>
-                      showEg(eg, lineTextStyle, rubyFontSize, onTapLink))
+                  .map((eg) => showEg(
+                      eg, lineTextStyle, linkColor, rubyFontSize, onTapLink))
                   .toList(),
               Builder(builder: (context) {
                 return expandButton(
                     AppLocalizations.of(context)!.entryCollapseExamples,
                     Icons.expand_less,
-                    lineTextStyle);
+                    lineTextStyle.copyWith(
+                        color: Theme.of(context).colorScheme.secondary));
               })
             ])),
       ],
@@ -652,36 +673,39 @@ Widget showLine(
       line.segments[0] == const Segment(SegmentType.text, "")) {
     return const SizedBox(height: 10);
   } else {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-              text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ...line.segments
-              .map((segment) => showSegment(segment, onTapLink))
-              .toList()
-        ],
-        style: lineTextStyle,
-      ),
-    );
+    return Builder(builder: (context) {
+      return RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+                text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ...line.segments
+                .map((segment) => showSegment(segment,
+                    Theme.of(context).colorScheme.secondary, onTapLink))
+                .toList()
+          ],
+          style: lineTextStyle,
+        ),
+      );
+    });
   }
 }
 
-TextSpan showSegment(Segment segment, OnTapLink onTapLink) {
+TextSpan showSegment(Segment segment, Color linkColor, OnTapLink onTapLink) {
   switch (segment.type) {
     case SegmentType.text:
       return TextSpan(text: segment.segment);
     case SegmentType.link:
       return TextSpan(
           text: segment.segment,
-          style: const TextStyle(color: blueColor),
+          style: TextStyle(color: linkColor),
           recognizer: TapGestureRecognizer()
             ..onTap = () => onTapLink(segment.segment));
   }
 }
 
-Widget showEg(
-    Eg eg, TextStyle lineTextStyle, double rubyFontSize, OnTapLink onTapLink) {
+Widget showEg(Eg eg, TextStyle lineTextStyle, Color linkColor,
+    double rubyFontSize, OnTapLink onTapLink) {
   return Padding(
       padding: EdgeInsets.only(top: lineTextStyle.fontSize!),
       child: Container(
@@ -699,10 +723,12 @@ Widget showEg(
             // TODO: add tags for chinese vs cantonese
             eg.zho == null
                 ? const SizedBox.shrink()
-                : showRichLine(eg.zho!, lineTextStyle, rubyFontSize, onTapLink),
+                : showRichLine(
+                    eg.zho!, lineTextStyle, linkColor, rubyFontSize, onTapLink),
             eg.yue == null
                 ? const SizedBox.shrink()
-                : showRichLine(eg.yue!, lineTextStyle, rubyFontSize, onTapLink),
+                : showRichLine(
+                    eg.yue!, lineTextStyle, linkColor, rubyFontSize, onTapLink),
             eg.eng == null
                 ? const SizedBox.shrink()
                 : showLine(eg.eng!, "", lineTextStyle, onTapLink),
@@ -712,26 +738,26 @@ Widget showEg(
       ));
 }
 
-Widget showRichLine(RichLine line, TextStyle lineTextStyle, double rubyFontSize,
-    OnTapLink onTapLink) {
+Widget showRichLine(RichLine line, TextStyle lineTextStyle, Color linkColor,
+    double rubyFontSize, OnTapLink onTapLink) {
   switch (line.type) {
     case RichLineType.ruby:
       return showRubyLine(
-          line.line, lineTextStyle.color!, rubyFontSize, onTapLink);
+          line.line, lineTextStyle.color!, linkColor, rubyFontSize, onTapLink);
     case RichLineType.word:
       return showWordLine(line.line, lineTextStyle, onTapLink);
   }
 }
 
-Widget showRubyLine(
-    RubyLine line, Color textColor, double rubyFontSize, OnTapLink onTapLink) {
+Widget showRubyLine(RubyLine line, Color textColor, Color linkColor,
+    double rubyFontSize, OnTapLink onTapLink) {
   return Padding(
     padding: EdgeInsets.only(top: rubyFontSize / 1.5),
     child: Wrap(
       runSpacing: rubyFontSize / 1.4,
       children: line.segments
-          .map((segment) =>
-              showRubySegment(segment, textColor, rubyFontSize, onTapLink))
+          .map((segment) => showRubySegment(
+              segment, textColor, linkColor, rubyFontSize, onTapLink))
           .expand((i) => i)
           .toList()
           .map((e) => Row(
@@ -746,7 +772,7 @@ Widget showRubyLine(
 }
 
 List<Widget> showRubySegment(RubySegment segment, Color textColor,
-    double rubySize, OnTapLink onTapLink) {
+    Color linkColor, double rubySize, OnTapLink onTapLink) {
   double rubyYPos = rubySize / 1.1;
   Widget text;
   String ruby;
@@ -771,7 +797,8 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
       return (segment.segment.words as List<RubySegmentWord>)
           .map((word) => showRubySegment(
               RubySegment(RubySegmentType.word, word),
-              blueColor,
+              textColor,
+              linkColor,
               rubySize,
               onTapLink))
           .expand((i) => i)
@@ -818,10 +845,13 @@ InlineSpan showWordSegment(
       return WidgetSpan(
           child: GestureDetector(
         onTap: () => onTapLink(segment.word.toString()),
-        child: RichText(
-            text: TextSpan(
-                children: showWord(segment.word),
-                style: lineTextStyle.copyWith(color: blueColor))),
+        child: Builder(builder: (context) {
+          return RichText(
+              text: TextSpan(
+                  children: showWord(segment.word),
+                  style: lineTextStyle.copyWith(
+                      color: Theme.of(context).colorScheme.secondary)));
+        }),
       ));
   }
 }
