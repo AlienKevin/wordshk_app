@@ -1,6 +1,7 @@
 #!/bin/bash
 
 pngquant assets/icon.png --force --quality 65-80 --output assets/icon.png
+pngquant assets/icon_with_bg.png --force --quality 65-80 --output assets/icon_with_bg.png
 
 ### Clean and rebuild flutter ###
 flutter clean
