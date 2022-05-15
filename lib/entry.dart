@@ -818,7 +818,8 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
                   child: RichText(
                       text: TextSpan(
                           text: ruby,
-                          style: TextStyle(fontSize: rubySize * 0.5)))))),
+                          style: TextStyle(
+                              fontSize: rubySize * 0.5, color: textColor)))))),
       text
     ])
   ];
