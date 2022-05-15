@@ -169,6 +169,10 @@ class _HomePageState extends State<HomePage> {
     DefaultAssetBundle.of(context).loadString("assets/api.json").then((json) {
       api.initApi(json: json);
     });
+    if (persistentQuery.isNotEmpty) {
+      queryEmptied = false;
+      doSearch(persistentQuery);
+    }
   }
 
   @override
@@ -189,16 +193,7 @@ class _HomePageState extends State<HomePage> {
               finishedSearch = false;
             });
           }
-        }, onSubmitted: (query) {
-          api.combinedSearch(capacity: 10, query: query).then((results) {
-            setState(() {
-              prSearchResults =
-                  results.prSearchResults.unique((result) => result.variant);
-              variantSearchResults = results.variantSearchResults
-                  .unique((result) => result.variant);
-              finishedSearch = true;
-            });
-          });
+          doSearch(query);
         }, onCleared: () {
           setState(() {
             results.clear();
@@ -233,6 +228,18 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (_, index) => results[index],
                     itemCount: results.length,
                   )));
+  }
+
+  void doSearch(String query) {
+    api.combinedSearch(capacity: 10, query: query).then((results) {
+      setState(() {
+        prSearchResults =
+            results.prSearchResults.unique((result) => result.variant);
+        variantSearchResults =
+            results.variantSearchResults.unique((result) => result.variant);
+        finishedSearch = true;
+      });
+    });
   }
 
   List<Widget> showSearchResults(TextStyle textStyle, SearchMode searchMode) {
