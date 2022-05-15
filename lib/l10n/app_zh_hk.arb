@@ -9,6 +9,9 @@
     "entryMoreExamples": "多啲例句",
     "entryCollapseExamples": "折疊例句",
 
+    "entryNotPublished": "詞條未公開",
+    "entryNotPublishedText": "詞條「{entryVariant}」仲未公開。我哋嘅编辑喺度完善緊呢個詞條。",
+
     "wordshkSlogan": "成長中嘅大型crowd-sourced粵語字典",
     "dictionary": "字典",
     "aboutWordshk": "關於粤典",

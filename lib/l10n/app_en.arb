@@ -9,6 +9,14 @@
     "entryMoreExamples": "More Examples",
     "entryCollapseExamples": "Collapse Examples",
 
+    "entryNotPublished": "Entry Not Published",
+    "entryNotPublishedText": "The entry \"{entryVariant}\" is not yet published. Our editors are hard at work improving this entry.",
+    "@entryNotPublishedText" : {
+        "placeholders": {
+            "entryVariant": {}
+        }
+    },
+
     "wordshkSlogan": "A growing large-scale crowd-sourced Cantonese dictionary",
     "dictionary": "Dictionary",
     "aboutWordshk": "About words.hk",

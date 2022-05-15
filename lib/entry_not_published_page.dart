@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EntryNotPublishedPage extends StatelessWidget {
   final String entryVariant;
@@ -10,14 +11,14 @@ class EntryNotPublishedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Entry Not Published'),
+        title: Text(AppLocalizations.of(context)!.entryNotPublished),
       ),
       body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Text(
-                  'The entry "$entryVariant" is not yet published. Our volunteers are improving and reviewing this entry to ensure its integrity.'),
+              Text(AppLocalizations.of(context)!
+                  .entryNotPublishedText(entryVariant)),
               const SizedBox(
                 height: 30,
               ),
