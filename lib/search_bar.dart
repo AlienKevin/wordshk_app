@@ -12,6 +12,8 @@ typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
 typedef SetStateCallback = void Function(void Function());
 
+var persistentQuery = "";
+
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// Whether or not the search bar should close on submit. Defaults to true.
   final bool closeOnSubmit;
@@ -89,6 +91,7 @@ class IsSearching extends State<SearchBar> {
         });
       }
     });
+    controller.text = persistentQuery;
   }
 
   @override
@@ -149,7 +152,12 @@ class IsSearching extends State<SearchBar> {
                   border: InputBorder.none,
                   fillColor: whiteColor,
                 ),
-                onChanged: widget.onChanged,
+                onChanged: (query) {
+                  persistentQuery = query;
+                  if (widget.onChanged != null) {
+                    widget.onChanged!(query);
+                  }
+                },
                 onSubmitted: (String val) async {
                   if (widget.closeOnSubmit) {
                     await Navigator.maybePop(context);
@@ -178,6 +186,7 @@ class IsSearching extends State<SearchBar> {
                           widget.onCleared?.call();
                           controller.clear();
                           FocusScope.of(context).requestFocus(focusNode);
+                          persistentQuery = "";
                         }),
             ],
     );
