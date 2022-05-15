@@ -127,17 +127,6 @@ class IsSearching extends State<SearchBar> {
     Color? buttonColor = theme.iconTheme.color;
 
     return AppBar(
-      leading: !isSearching.value
-          ? null
-          : IconButton(
-              icon: const BackButtonIcon(),
-              color: buttonColor,
-              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-              onPressed: () {
-                widget.onClosed?.call();
-                controller.clear();
-                Navigator.maybePop(context);
-              }),
       title: !isSearching.value
           ? null
           : Directionality(
@@ -150,14 +139,16 @@ class IsSearching extends State<SearchBar> {
                 key: const Key('SearchBarTextField'),
                 keyboardType: widget.keyboardType,
                 decoration: InputDecoration(
-                    hintText:
-                        AppLocalizations.of(context)!.searchDictionaryHintText,
-                    hintStyle: const TextStyle(
-                      color: whiteColor,
-                    ),
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    border: InputBorder.none),
+                  hintText:
+                      AppLocalizations.of(context)!.searchDictionaryHintText,
+                  hintStyle: const TextStyle(
+                    color: whiteColor,
+                  ),
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  fillColor: whiteColor,
+                ),
                 onChanged: widget.onChanged,
                 onSubmitted: (String val) async {
                   if (widget.closeOnSubmit) {

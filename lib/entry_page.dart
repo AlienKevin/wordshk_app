@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/custom_page_route.dart';
-import 'package:wordshk/search_results_page.dart';
 
 import 'entry.dart';
 import 'entry_not_published_page.dart';
@@ -37,11 +36,10 @@ class _EntryPageState extends State<EntryPage> {
               onPressed: () {
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.push(
-                  context,
-                  CustomPageRoute(
-                      builder: (context) =>
-                          SearchResultsPage(searchMode: widget.searchMode)),
-                );
+                    context,
+                    CustomPageRoute(
+                        builder: (context) =>
+                            const HomePage(title: "words.hk")));
               },
             ),
           ],

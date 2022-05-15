@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:wordshk/search_results_page.dart';
+import 'package:wordshk/search_bar.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'custom_page_route.dart';
+import 'entry_page.dart';
 import 'navigation_drawer.dart';
 
 enum SearchMode {
@@ -157,6 +158,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   SearchMode searchMode = SearchMode.combined;
+  List<PrSearchResult> prSearchResults = [];
+  List<VariantSearchResult> variantSearchResults = [];
+  bool finishedSearch = false;
+  bool queryEmptied = true;
 
   @override
   void initState() {
@@ -168,39 +173,137 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var watermarkSize = MediaQuery.of(context).size.width * 0.8;
+    final results =
+        showSearchResults(Theme.of(context).textTheme.bodyLarge!, searchMode);
     return Scaffold(
-      appBar: AppBar(title: const Text('words.hk')),
-      drawer: const NavigationDrawer(),
-      body:
-          // TODO: Show search history
-          Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.only(top: AppBar().preferredSize.height * 1.5),
-          child: Column(
+        appBar: SearchBar(onChanged: (query) {
+          if (query.isEmpty) {
+            setState(() {
+              queryEmptied = true;
+              finishedSearch = false;
+            });
+          } else {
+            setState(() {
+              queryEmptied = false;
+              finishedSearch = false;
+            });
+          }
+        }, onSubmitted: (query) {
+          api.combinedSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              prSearchResults =
+                  results.prSearchResults.unique((result) => result.variant);
+              variantSearchResults = results.variantSearchResults
+                  .unique((result) => result.variant);
+              finishedSearch = true;
+            });
+          });
+        }, onCleared: () {
+          setState(() {
+            results.clear();
+            queryEmptied = true;
+          });
+        }),
+        drawer: const NavigationDrawer(),
+        body: (finishedSearch &&
+                prSearchResults.isEmpty &&
+                variantSearchResults.isEmpty)
+            ? Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+                child: Text(AppLocalizations.of(context)!
+                    .searchDictionaryNoResultsFound))
+            : (queryEmptied
+                ? Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: (MediaQuery.of(context).size.height / 2 -
+                              watermarkSize)),
+                      child: Image(
+                          width: watermarkSize,
+                          image: const AssetImage('assets/icon.png'),
+                          color: const Color.fromRGBO(255, 255, 255, 0.5),
+                          colorBlendMode: BlendMode.modulate),
+                    ),
+                  )
+                : ListView.separated(
+                    separatorBuilder: (_, __) => const Divider(),
+                    itemBuilder: (_, index) => results[index],
+                    itemCount: results.length,
+                  )));
+  }
+
+  List<Widget> showSearchResults(TextStyle textStyle, SearchMode searchMode) {
+    switch (searchMode) {
+      case SearchMode.pr:
+        return showPrSearchResults(textStyle, searchMode);
+      case SearchMode.variant:
+        return showVariantSearchResults(textStyle, searchMode);
+      case SearchMode.combined:
+        return showCombinedSearchResults(textStyle, searchMode);
+    }
+  }
+
+  List<Widget> showPrSearchResults(TextStyle textStyle, SearchMode searchMode) {
+    return prSearchResults.map((result) {
+      return showSearchResult(
+          result.id,
+          TextSpan(
             children: [
-              Image(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  image: const AssetImage('assets/icon.png'),
-                  color: const Color.fromRGBO(255, 255, 255, 0.5),
-                  colorBlendMode: BlendMode.modulate),
-              SizedBox(
-                  height:
-                      Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5),
-              ElevatedButton(
+              TextSpan(text: result.variant + " ", style: textStyle),
+              TextSpan(
+                  text: result.pr, style: textStyle.copyWith(color: greyColor)),
+            ],
+          ),
+          searchMode);
+    }).toList();
+  }
+
+  List<Widget> showVariantSearchResults(
+      TextStyle textStyle, SearchMode searchMode) {
+    return variantSearchResults.map((result) {
+      return showSearchResult(result.id,
+          TextSpan(text: result.variant, style: textStyle), searchMode);
+    }).toList();
+  }
+
+  List<Widget> showCombinedSearchResults(
+      TextStyle textStyle, SearchMode searchMode) {
+    return showVariantSearchResults(textStyle, searchMode)
+        .followedBy(showPrSearchResults(textStyle, searchMode))
+        .toList();
+  }
+
+  Widget showSearchResult(int id, TextSpan resultText, SearchMode searchMode) {
+    return Builder(
+        builder: (BuildContext context) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.zero,
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
                       CustomPageRoute(
-                          builder: (context) =>
-                              SearchResultsPage(searchMode: searchMode)),
+                          builder: (context) => EntryPage(
+                                id: id,
+                                searchMode: searchMode,
+                              )),
                     );
                   },
-                  child: Text(AppLocalizations.of(context)!.searchDictionary)),
-            ],
-          ),
-        ),
-      ),
-    );
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child:
+                        RichText(text: resultText, textAlign: TextAlign.start),
+                  ),
+                ),
+              ],
+            ));
   }
 }
