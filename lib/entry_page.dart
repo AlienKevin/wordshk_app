@@ -29,20 +29,6 @@ class _EntryPageState extends State<EntryPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.entry),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              tooltip: AppLocalizations.of(context)!.searchDictionary,
-              onPressed: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.push(
-                    context,
-                    CustomPageRoute(
-                        builder: (context) =>
-                            const HomePage(title: "words.hk")));
-              },
-            ),
-          ],
         ),
         body: FutureBuilder(
           future: api.getEntryGroupJson(id: widget.id).then((json) {
