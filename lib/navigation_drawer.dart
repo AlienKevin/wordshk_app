@@ -49,7 +49,7 @@ class NavigationDrawer extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: [
               SizedBox(
-                height: 210,
+                height: 210 * MediaQuery.of(context).textScaleFactor * 0.9,
                 child: DrawerHeader(
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
