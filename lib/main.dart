@@ -216,11 +216,14 @@ class _HomePageState extends State<HomePage> {
                       padding: EdgeInsets.only(
                           top: (MediaQuery.of(context).size.height / 2 -
                               watermarkSize)),
-                      child: Image(
-                          width: watermarkSize,
-                          image: const AssetImage('assets/icon.png'),
-                          color: const Color.fromRGBO(255, 255, 255, 0.5),
-                          colorBlendMode: BlendMode.modulate),
+                      child: MediaQuery.of(context).platformBrightness ==
+                              Brightness.light
+                          ? Image(
+                              width: watermarkSize,
+                              image: const AssetImage('assets/icon.png'))
+                          : Image(
+                              width: watermarkSize,
+                              image: const AssetImage('assets/icon_grey.png')),
                     ),
                   )
                 : ListView.separated(
