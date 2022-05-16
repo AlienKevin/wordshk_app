@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wordshk/entry_banner.dart';
+import 'package:wordshk/scalable_text_span.dart';
 
 import 'constants.dart';
 import 'expandable.dart';
@@ -444,10 +445,8 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
 Widget showVariant(
     Variant variant, TextStyle variantTextStyle, TextStyle prTextStyle) {
   var prs = variant.prs.split(", ");
-  return Row(
-    children: [
-      RichText(
-          text: TextSpan(children: <TextSpan>[
+  return SelectableText.rich(
+      TextSpan(children: <TextSpan>[
         TextSpan(text: variant.word, style: variantTextStyle),
         const TextSpan(text: '  '),
         ...prs.takeWhile((pr) => !pr.contains("!")).map(
@@ -480,21 +479,8 @@ Widget showVariant(
                 )),
               ], style: prTextStyle),
             )
-      ])),
-    ],
-  );
-}
-
-Widget showPoses(List<String> poses, TextStyle style) {
-  return Wrap(
-    children: poses.map((pos) {
-      return RichText(
-          text: TextSpan(
-        text: "詞性：" + pos,
-        style: style, // Theme.of(context).textTheme.bodyMedium
-      ));
-    }).toList(),
-  );
+      ]),
+      style: variantTextStyle);
 }
 
 Widget showTab(
@@ -535,13 +521,14 @@ Widget showSimsOrAnts(String label, List<String> simsOrAnts,
               text: TextSpan(style: lineTextStyle, children: [
             WidgetSpan(
                 child: RichText(
+                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
                     text: TextSpan(
                         text: label,
                         style: lineTextStyle.copyWith(
                             fontWeight: FontWeight.bold)))),
             const WidgetSpan(child: SizedBox(width: 10)),
             ...simsOrAnts.asMap().entries.map((sim) => TextSpan(children: [
-                  TextSpan(
+                  ScalableTextSpan(context,
                       text: sim.value,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.secondary),
@@ -554,34 +541,38 @@ Widget showSimsOrAnts(String label, List<String> simsOrAnts,
 
 Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
       visible: labels.isNotEmpty,
-      child: RichText(
-          text: TextSpan(children: [
-        WidgetSpan(
-            child: RichText(
-                text: TextSpan(
-                    text: "[標籤]",
-                    style:
-                        lineTextStyle.copyWith(fontWeight: FontWeight.bold)))),
-        ...labels
-            .map((label) => [
-                  const WidgetSpan(child: SizedBox(width: 10)),
-                  WidgetSpan(
-                      child: Chip(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          padding: EdgeInsets.zero,
-                          labelPadding: const EdgeInsets.symmetric(
-                              vertical: 0, horizontal: 10),
-                          labelStyle: lineTextStyle.copyWith(color: whiteColor),
-                          backgroundColor: greyColor,
-                          label: RichText(text: TextSpan(text: label))))
-                ])
-            .expand((i) => i)
-      ])),
+      child: Builder(builder: (context) {
+        return RichText(
+            text: TextSpan(children: [
+          WidgetSpan(
+              child: RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  text: TextSpan(
+                      text: "[標籤]",
+                      style: lineTextStyle.copyWith(
+                          fontWeight: FontWeight.bold)))),
+          ...labels
+              .map((label) => [
+                    const WidgetSpan(child: SizedBox(width: 10)),
+                    WidgetSpan(
+                        child: Chip(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: VisualDensity.compact,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            padding: EdgeInsets.zero,
+                            labelPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            labelStyle:
+                                lineTextStyle.copyWith(color: whiteColor),
+                            backgroundColor: greyColor,
+                            label: Text(label)))
+                  ])
+              .expand((i) => i)
+        ]));
+      }),
     );
 
 Widget showDef(Def def, TextStyle lineTextStyle, Color linkColor,
@@ -674,8 +665,8 @@ Widget showLine(
     return const SizedBox(height: 10);
   } else {
     return Builder(builder: (context) {
-      return RichText(
-        text: TextSpan(
+      return SelectableText.rich(
+        TextSpan(
           children: [
             TextSpan(
                 text: tag, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -684,8 +675,8 @@ Widget showLine(
                     Theme.of(context).colorScheme.secondary, onTapLink))
                 .toList()
           ],
-          style: lineTextStyle,
         ),
+        style: lineTextStyle,
       );
     });
   }
@@ -751,46 +742,58 @@ Widget showRichLine(RichLine line, TextStyle lineTextStyle, Color linkColor,
 
 Widget showRubyLine(RubyLine line, Color textColor, Color linkColor,
     double rubyFontSize, OnTapLink onTapLink) {
-  return Padding(
-    padding: EdgeInsets.only(top: rubyFontSize / 1.5),
-    child: Wrap(
-      runSpacing: rubyFontSize / 1.4,
-      children: line.segments
-          .map((segment) => showRubySegment(
-              segment, textColor, linkColor, rubyFontSize, onTapLink))
-          .expand((i) => i)
-          .toList()
-          .map((e) => Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                textBaseline: TextBaseline.alphabetic,
-                mainAxisSize: MainAxisSize.min,
-                children: [e],
-              ))
-          .toList(),
-    ),
-  );
+  return Builder(builder: (context) {
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    return Padding(
+      padding: EdgeInsets.only(top: rubyFontSize * textScaleFactor / 1.5),
+      child: Wrap(
+        runSpacing: rubyFontSize * textScaleFactor / 1.4,
+        children: line.segments
+            .map((segment) => showRubySegment(segment, textColor, linkColor,
+                rubyFontSize, textScaleFactor, onTapLink))
+            .expand((i) => i)
+            .toList()
+            .map((e) => Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  textBaseline: TextBaseline.alphabetic,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [e],
+                ))
+            .toList(),
+      ),
+    );
+  });
 }
 
-List<Widget> showRubySegment(RubySegment segment, Color textColor,
-    Color linkColor, double rubySize, OnTapLink onTapLink) {
-  double rubyYPos = rubySize / 1.1;
+List<Widget> showRubySegment(
+    RubySegment segment,
+    Color textColor,
+    Color linkColor,
+    double rubySize,
+    double textScaleFactor,
+    OnTapLink onTapLink) {
+  double rubyYPos = rubySize * textScaleFactor;
   Widget text;
   String ruby;
   switch (segment.type) {
     case RubySegmentType.punc:
-      text = RichText(
-          text: TextSpan(
-              text: segment.segment as String,
-              style: TextStyle(
-                  fontSize: rubySize, height: 0.8, color: textColor)));
+      text = Builder(builder: (context) {
+        return RichText(
+            text: ScalableTextSpan(context,
+                text: segment.segment as String,
+                style: TextStyle(
+                    fontSize: rubySize, height: 1, color: textColor)));
+      });
       ruby = "";
       break;
     case RubySegmentType.word:
-      text = RichText(
-          text: TextSpan(
-              children: showWord(segment.segment.word as EntryWord),
-              style: TextStyle(
-                  fontSize: rubySize, height: 0.8, color: textColor)));
+      text = Builder(builder: (context) {
+        return RichText(
+            text: ScalableTextSpan(context,
+                children: showWord(segment.segment.word as EntryWord),
+                style: TextStyle(
+                    fontSize: rubySize, height: 1, color: textColor)));
+      });
       ruby = segment.segment.prs.join(" ");
       break;
     case RubySegmentType.linkedWord:
@@ -800,6 +803,7 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
               textColor,
               linkColor,
               rubySize,
+              textScaleFactor,
               onTapLink))
           .expand((i) => i)
           .map((seg) => GestureDetector(
@@ -815,11 +819,13 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
           child: Center(
               child: Transform(
                   transform: Matrix4.translationValues(0, -(rubyYPos), 0),
-                  child: RichText(
-                      text: TextSpan(
-                          text: ruby,
-                          style: TextStyle(
-                              fontSize: rubySize * 0.5, color: textColor)))))),
+                  child: Builder(builder: (context) {
+                    return RichText(
+                        text: ScalableTextSpan(context,
+                            text: ruby,
+                            style: TextStyle(
+                                fontSize: rubySize * 0.5, color: textColor)));
+                  })))),
       text
     ])
   ];
@@ -827,14 +833,18 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
 
 Widget showWordLine(
     WordLine line, TextStyle lineTextStyle, OnTapLink onTapLink) {
-  return RichText(
-    text: TextSpan(
-      children: line.segments
-          .map((segment) => showWordSegment(segment, lineTextStyle, onTapLink))
-          .toList(),
-      style: lineTextStyle,
-    ),
-  );
+  return Builder(builder: (context) {
+    return RichText(
+      textScaleFactor: MediaQuery.of(context).textScaleFactor,
+      text: TextSpan(
+        children: line.segments
+            .map(
+                (segment) => showWordSegment(segment, lineTextStyle, onTapLink))
+            .toList(),
+        style: lineTextStyle,
+      ),
+    );
+  });
 }
 
 InlineSpan showWordSegment(
@@ -848,6 +858,7 @@ InlineSpan showWordSegment(
         onTap: () => onTapLink(segment.word.toString()),
         child: Builder(builder: (context) {
           return RichText(
+              textScaleFactor: MediaQuery.of(context).textScaleFactor,
               text: TextSpan(
                   children: showWord(segment.word),
                   style: lineTextStyle.copyWith(
