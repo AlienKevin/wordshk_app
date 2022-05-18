@@ -52,7 +52,10 @@ flutter_native_splash:
   color: "ffffff"
   color_dark: "000000"
   image: "assets/icon.png"
-  image_dark: "assets/icon.png"
+  image_dark: "assets/icon_grey.png"
+  info_plist_files:
+    - 'ios/Runner/Info-Debug.plist'
+    - 'ios/Runner/Info-Release.plist'
 
 flutter_icons:
   android: "launcher_icon"
