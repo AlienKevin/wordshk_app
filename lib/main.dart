@@ -15,6 +15,7 @@ enum SearchMode {
   pr,
   variant,
   combined,
+  english,
 }
 
 extension Unique<E, Id> on List<E> {
@@ -157,17 +158,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  SearchMode searchMode = SearchMode.combined;
+  SearchMode searchMode = SearchMode.english;
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
+  List<EnglishSearchResult> englishSearchResults = [];
   bool finishedSearch = false;
   bool queryEmptied = true;
 
   @override
   void initState() {
     super.initState();
-    DefaultAssetBundle.of(context).loadString("assets/api.json").then((json) {
-      api.initApi(json: json);
+    Future.wait([
+      DefaultAssetBundle.of(context).loadString("assets/api.json"),
+      DefaultAssetBundle.of(context).loadString("assets/english_index.json")
+    ]).then((jsons) {
+      api.initApi(apiJson: jsons[0], englishIndexJson: jsons[1]);
     });
     if (persistentQuery.isNotEmpty) {
       queryEmptied = false;
@@ -180,6 +185,22 @@ class _HomePageState extends State<HomePage> {
     var watermarkSize = MediaQuery.of(context).size.width * 0.8;
     final results =
         showSearchResults(Theme.of(context).textTheme.bodyLarge!, searchMode);
+    final bool isSearchResultsEmpty;
+    switch (searchMode) {
+      case SearchMode.pr:
+        isSearchResultsEmpty = prSearchResults.isEmpty;
+        break;
+      case SearchMode.variant:
+        isSearchResultsEmpty = variantSearchResults.isEmpty;
+        break;
+      case SearchMode.combined:
+        isSearchResultsEmpty =
+            prSearchResults.isEmpty && variantSearchResults.isEmpty;
+        break;
+      case SearchMode.english:
+        isSearchResultsEmpty = englishSearchResults.isEmpty;
+        break;
+    }
     return Scaffold(
         appBar: SearchBar(onChanged: (query) {
           if (query.isEmpty) {
@@ -201,9 +222,7 @@ class _HomePageState extends State<HomePage> {
           });
         }),
         drawer: const NavigationDrawer(),
-        body: (finishedSearch &&
-                prSearchResults.isEmpty &&
-                variantSearchResults.isEmpty)
+        body: (finishedSearch && isSearchResultsEmpty)
             ? Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
@@ -234,12 +253,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   void doSearch(String query) {
-    api.combinedSearch(capacity: 10, query: query).then((results) {
+    // api.combinedSearch(capacity: 10, query: query).then((results) {
+    //   setState(() {
+    //     prSearchResults =
+    //         results.prSearchResults.unique((result) => result.variant);
+    //     variantSearchResults =
+    //         results.variantSearchResults.unique((result) => result.variant);
+    //     finishedSearch = true;
+    //   });
+    // });
+    api.englishSearch(capacity: 10, query: query).then((results) {
       setState(() {
-        prSearchResults =
-            results.prSearchResults.unique((result) => result.variant);
-        variantSearchResults =
-            results.variantSearchResults.unique((result) => result.variant);
+        englishSearchResults = results;
         finishedSearch = true;
       });
     });
@@ -253,7 +278,28 @@ class _HomePageState extends State<HomePage> {
         return showVariantSearchResults(textStyle, searchMode);
       case SearchMode.combined:
         return showCombinedSearchResults(textStyle, searchMode);
+      case SearchMode.english:
+        return showEnglishSearchResults(textStyle, searchMode);
     }
+  }
+
+  List<Widget> showEnglishSearchResults(
+      TextStyle textStyle, SearchMode searchMode) {
+    return englishSearchResults.map((result) {
+      return showSearchResult(
+          result.id,
+          TextSpan(
+            children: [
+              TextSpan(text: result.variant + " ", style: textStyle),
+              TextSpan(
+                  text: result.pr, style: textStyle.copyWith(color: greyColor)),
+              TextSpan(
+                  text: "\n" + result.eng,
+                  style: textStyle.copyWith(color: greyColor)),
+            ],
+          ),
+          searchMode);
+    }).toList();
   }
 
   List<Widget> showPrSearchResults(TextStyle textStyle, SearchMode searchMode) {

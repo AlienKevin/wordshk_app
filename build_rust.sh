@@ -4,7 +4,7 @@ cd rust || exit
 flutter_rust_bridge_codegen \
 --rust-input src/api.rs \
 --dart-output ../lib/bridge_generated.dart \
---llvm-path /usr/local/homebrew/opt/llvm/ \
+--llvm-path /opt/homebrew/opt/llvm/ \
 --c-output ../ios/Runner/bridge_generated.h
 
 # Generate iOS binary

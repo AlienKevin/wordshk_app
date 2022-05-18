@@ -18,7 +18,11 @@ use flutter_rust_bridge::*;
 // Section: wire functions
 
 #[no_mangle]
-pub extern "C" fn wire_init_api(port_: i64, json: *mut wire_uint_8_list) {
+pub extern "C" fn wire_init_api(
+    port_: i64,
+    api_json: *mut wire_uint_8_list,
+    english_index_json: *mut wire_uint_8_list,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "init_api",
@@ -26,8 +30,9 @@ pub extern "C" fn wire_init_api(port_: i64, json: *mut wire_uint_8_list) {
             mode: FfiCallMode::Normal,
         },
         move || {
-            let api_json = json.wire2api();
-            move |task_callback| init_api(api_json)
+            let api_api_json = api_json.wire2api();
+            let api_english_index_json = english_index_json.wire2api();
+            move |task_callback| init_api(api_api_json, api_english_index_json)
         },
     )
 }
@@ -76,6 +81,22 @@ pub extern "C" fn wire_combined_search(port_: i64, capacity: u32, query: *mut wi
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
             move |task_callback| combined_search(api_capacity, api_query)
+        },
+    )
+}
+
+#[no_mangle]
+pub extern "C" fn wire_english_search(port_: i64, capacity: u32, query: *mut wire_uint_8_list) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "english_search",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_capacity = capacity.wire2api();
+            let api_query = query.wire2api();
+            move |task_callback| english_search(api_capacity, api_query)
         },
     )
 }
@@ -220,6 +241,19 @@ impl support::IntoDart for CombinedSearchResults {
     }
 }
 impl support::IntoDartExceptPrimitive for CombinedSearchResults {}
+
+impl support::IntoDart for EnglishSearchResult {
+    fn into_dart(self) -> support::DartCObject {
+        vec![
+            self.id.into_dart(),
+            self.variant.into_dart(),
+            self.pr.into_dart(),
+            self.eng.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for EnglishSearchResult {}
 
 impl support::IntoDart for PrSearchResult {
     fn into_dart(self) -> support::DartCObject {

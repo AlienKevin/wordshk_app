@@ -1,17 +1,22 @@
+use std::cmp::min;
 use wordshk_tools::rich_dict::{RichDict};
 use wordshk_tools::lean_rich_dict::{to_lean_rich_entry};
 use wordshk_tools::search;
+use wordshk_tools::english_index::EnglishIndex;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use parking_lot::Mutex;
 use lazy_static::lazy_static;
 use anyhow::{Result};
+use wordshk_tools::dict::clause_to_string;
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
 
 #[derive(Serialize, Deserialize)]
 struct Api {
     pub dict: RichDict,
+    #[serde(skip)]
+    pub english_index: EnglishIndex,
     #[serde(skip)]
     pub variants_map: search::VariantsMap,
     pub release_time: DateTime<Utc>,
@@ -23,7 +28,7 @@ pub struct CombinedSearchResults {
 }
 
 impl Api {
-    pub fn new(json: String) -> Self {
+    pub fn new(api_json: String, english_index_json: String) -> Self {
         // if !*IS_LOG_INITIALIZED.lock() {
         //     OsLogger::new("hk.words")
         //         .level_filter(LevelFilter::Debug)
@@ -33,8 +38,10 @@ impl Api {
         //     *IS_LOG_INITIALIZED.lock() = true;
         // }
         // info!("Calling Api::new()...");
-        let mut api: Api = serde_json::from_str(&json).unwrap();
+        let mut api: Api = serde_json::from_str(&api_json).unwrap();
         api.variants_map = search::rich_dict_to_variants_map(&api.dict);
+        let english_index: EnglishIndex = serde_json::from_str(&english_index_json).unwrap();
+        api.english_index = english_index;
         api
     }
 
@@ -110,6 +117,21 @@ impl Api {
         CombinedSearchResults { variant_search_results, pr_search_results }
     }
 
+    pub fn english_search(&self, capacity: u32, query: &str) -> Vec<EnglishSearchResult> {
+        match self.english_index.get(query) {
+            Some(entries) => entries[..min(capacity as usize, entries.len())].iter().map(|entry| {
+                let variant = &self.variants_map.get(&entry.entry_id).unwrap().0[0];
+                EnglishSearchResult {
+                    id: entry.entry_id as u32,
+                    variant: variant.word.clone(),
+                    pr: variant.prs.0[0].to_string(),
+                    eng: clause_to_string(&self.dict.get(&entry.entry_id).unwrap().defs[entry.def_index].eng.as_ref().unwrap()),
+                }
+            }).collect(),
+            None => vec![]
+        }
+    }
+
     pub fn get_entry_json(&self, id: usize) -> String {
         let rich_entry = self.dict.get(&id).unwrap();
         serde_json::to_string(&to_lean_rich_entry(rich_entry)).unwrap()
@@ -139,14 +161,21 @@ pub struct VariantSearchResult {
     pub variant: String,
 }
 
+pub struct EnglishSearchResult {
+    pub id: u32,
+    pub variant: String,
+    pub pr: String,
+    pub eng: String,
+}
+
 lazy_static! {
     static ref API: Mutex<Option<Api>> = Mutex::new(None);
     static ref IS_LOG_INITIALIZED: Mutex<bool> = Mutex::new(false);
 }
 
-pub fn init_api(json: String) -> Result<()> {
+pub fn init_api(api_json: String, english_index_json: String) -> Result<()> {
     // info!("Calling init_api()...");
-    *API.lock() = Some(Api::new(json));
+    *API.lock() = Some(Api::new(api_json, english_index_json));
     Ok(())
 }
 
@@ -160,6 +189,10 @@ pub fn variant_search(capacity: u32, query: String) -> Result<Vec<VariantSearchR
 
 pub fn combined_search(capacity: u32, query: String) -> Result<CombinedSearchResults> {
     Ok((*API.lock()).as_ref().unwrap().combined_search(capacity, &query))
+}
+
+pub fn english_search(capacity: u32, query: String) -> Result<Vec<EnglishSearchResult>> {
+    Ok((*API.lock()).as_ref().unwrap().english_search(capacity, &query))
 }
 
 pub fn get_entry_json(id: u32) -> Result<String> {

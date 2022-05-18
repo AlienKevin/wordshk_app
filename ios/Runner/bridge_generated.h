@@ -17,13 +17,17 @@ typedef int64_t DartPort;
 
 typedef bool (*DartPostCObjectFnType)(DartPort port_id, void *message);
 
-void wire_init_api(int64_t port_, struct wire_uint_8_list *json);
+void wire_init_api(int64_t port_,
+                   struct wire_uint_8_list *api_json,
+                   struct wire_uint_8_list *english_index_json);
 
 void wire_pr_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
 
 void wire_variant_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
 
 void wire_combined_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
+
+void wire_english_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
 
 void wire_get_entry_json(int64_t port_, uint32_t id);
 
@@ -43,6 +47,7 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) wire_pr_search);
     dummy_var ^= ((int64_t) (void*) wire_variant_search);
     dummy_var ^= ((int64_t) (void*) wire_combined_search);
+    dummy_var ^= ((int64_t) (void*) wire_english_search);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_json);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_group_json);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_id);
