@@ -44,8 +44,12 @@ cargo ndk -o ../android/app/src/main/jniLibs build --release
 ```
 
 # TODO
-1. Collapse egs by default and add an expand button to show more
-2. Collapse variants by default and add an expand button to show more
+1. Show jyutping help before search or suggestions for fix during search
+2. Add spell checker suggestion to english search
+3. Use word match percent instead of direct lookup for phrases with >1 words
+4. Add translations to POS and language tags before explanations
+5. Test multi-language support for entries
+6. Add auto language detection for searches
 
 # Legal
 
