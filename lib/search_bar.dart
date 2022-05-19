@@ -5,11 +5,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:wordshk/main.dart';
 
 import 'constants.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
+typedef TextFieldOnShowSearchModeSelectorCallback = void Function();
 typedef SetStateCallback = void Function(void Function());
 
 var persistentQuery = "";
@@ -33,6 +36,9 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// A callback which is invoked each time the text field's value changes
   final TextFieldChangeCallback? onChanged;
 
+  /// A callback which is invoked when the search mode button is pressed
+  final TextFieldOnShowSearchModeSelectorCallback onShowSearchModeSelector;
+
   /// The type of keyboard to use for editing the search bar text. Defaults to 'TextInputType.text'.
   final TextInputType keyboardType;
 
@@ -43,6 +49,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
     this.onChanged,
     this.onClosed,
     this.onCleared,
+    required this.onShowSearchModeSelector,
     this.keyboardType = TextInputType.text,
     Key? key,
   }) : super(key: key);
@@ -188,6 +195,24 @@ class IsSearching extends State<SearchBar> {
                           FocusScope.of(context).requestFocus(focusNode);
                           persistentQuery = "";
                         }),
+              Container(
+                  width: 38,
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: whiteColor, width: 2),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: IconButton(
+                      padding: const EdgeInsets.all(0),
+                      visualDensity: VisualDensity.compact,
+                      icon: Consumer<SearchModeState>(
+                        builder: (context, searchModeState, child) =>
+                            Text(searchModeToString(searchModeState.mode)),
+                      ),
+                      color: buttonColor,
+                      disabledColor: theme.disabledColor.withOpacity(0),
+                      onPressed: widget.onShowSearchModeSelector)),
             ],
     );
   }

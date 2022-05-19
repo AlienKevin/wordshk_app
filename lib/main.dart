@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:wordshk/search_bar.dart';
 
 import 'bridge_generated.dart';
@@ -37,7 +38,13 @@ late final dylib = Platform.isIOS
 late final api = WordshkApiImpl(dylib);
 
 void main() {
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+    // Initialize the model in the builder. That way, Provider
+    // can own SearchModeState's lifecycle, making sure to call `dispose`
+    // when not needed anymore.
+    create: (context) => SearchModeState(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -157,13 +164,22 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+class SearchModeState with ChangeNotifier {
+  SearchMode mode = SearchMode.combined;
+
+  void updateSearchMode(SearchMode newMode) {
+    mode = newMode;
+    notifyListeners();
+  }
+}
+
 class _HomePageState extends State<HomePage> {
-  SearchMode searchMode = SearchMode.english;
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
   bool finishedSearch = false;
   bool queryEmptied = true;
+  bool showSearchModeSelector = false;
 
   @override
   void initState() {
@@ -176,17 +192,15 @@ class _HomePageState extends State<HomePage> {
     });
     if (persistentQuery.isNotEmpty) {
       queryEmptied = false;
-      doSearch(persistentQuery);
+      doSearch(persistentQuery, context.read<SearchModeState>().mode);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var watermarkSize = MediaQuery.of(context).size.width * 0.8;
-    final results =
-        showSearchResults(Theme.of(context).textTheme.bodyLarge!, searchMode);
     final bool isSearchResultsEmpty;
-    switch (searchMode) {
+    switch (context.read<SearchModeState>().mode) {
       case SearchMode.pr:
         isSearchResultsEmpty = prSearchResults.isEmpty;
         break;
@@ -202,89 +216,186 @@ class _HomePageState extends State<HomePage> {
         break;
     }
     return Scaffold(
-        appBar: SearchBar(onChanged: (query) {
-          if (query.isEmpty) {
+        appBar: SearchBar(
+          onChanged: (query) {
+            if (query.isEmpty) {
+              setState(() {
+                queryEmptied = true;
+                finishedSearch = false;
+              });
+            } else {
+              setState(() {
+                queryEmptied = false;
+                finishedSearch = false;
+              });
+            }
+            doSearch(query, context.read<SearchModeState>().mode);
+          },
+          onCleared: () {
             setState(() {
+              // TODO: hide search results
               queryEmptied = true;
-              finishedSearch = false;
             });
-          } else {
+          },
+          onShowSearchModeSelector: () {
             setState(() {
-              queryEmptied = false;
-              finishedSearch = false;
+              showSearchModeSelector = true;
             });
-          }
-          doSearch(query);
-        }, onCleared: () {
-          setState(() {
-            results.clear();
-            queryEmptied = true;
-          });
-        }),
+          },
+        ),
         drawer: const NavigationDrawer(),
-        body: (finishedSearch && isSearchResultsEmpty)
-            ? Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
-                child: Text(AppLocalizations.of(context)!
-                    .searchDictionaryNoResultsFound))
-            : (queryEmptied
-                ? Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          top: (MediaQuery.of(context).size.height / 2 -
-                              watermarkSize)),
-                      child: MediaQuery.of(context).platformBrightness ==
-                              Brightness.light
-                          ? Image(
-                              width: watermarkSize,
-                              image: const AssetImage('assets/icon.png'))
-                          : Image(
-                              width: watermarkSize,
-                              image: const AssetImage('assets/icon_grey.png')),
-                    ),
-                  )
-                : ListView.separated(
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemBuilder: (_, index) => results[index],
-                    itemCount: results.length,
-                  )));
+        body: showSearchModeSelector
+            ? Consumer<SearchModeState>(
+                builder: (context, searchModeState, child) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          RadioListTile<SearchMode>(
+                              title: const Text('Auto'),
+                              value: SearchMode.combined,
+                              groupValue: searchModeState.mode,
+                              onChanged: (SearchMode? value) {
+                                if (value != null) {
+                                  context
+                                      .read<SearchModeState>()
+                                      .updateSearchMode(value);
+                                }
+                              }),
+                          RadioListTile<SearchMode>(
+                              title: const Text('Jyut6ping3'),
+                              value: SearchMode.pr,
+                              groupValue: searchModeState.mode,
+                              onChanged: (SearchMode? value) {
+                                if (value != null) {
+                                  context
+                                      .read<SearchModeState>()
+                                      .updateSearchMode(value);
+                                }
+                              }),
+                          RadioListTile<SearchMode>(
+                              title: const Text('Variant'),
+                              value: SearchMode.variant,
+                              groupValue: searchModeState.mode,
+                              onChanged: (SearchMode? value) {
+                                if (value != null) {
+                                  context
+                                      .read<SearchModeState>()
+                                      .updateSearchMode(value);
+                                }
+                              }),
+                          RadioListTile<SearchMode>(
+                              title: const Text('English'),
+                              value: SearchMode.english,
+                              groupValue: searchModeState.mode,
+                              onChanged: (SearchMode? value) {
+                                if (value != null) {
+                                  context
+                                      .read<SearchModeState>()
+                                      .updateSearchMode(value);
+                                }
+                              }),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 24.0, top: 16.0),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showSearchModeSelector = false;
+                                  });
+                                },
+                                child: const Text("Save")),
+                          )
+                        ]))
+            : ((finishedSearch && isSearchResultsEmpty)
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10.0),
+                    child: Text(AppLocalizations.of(context)!
+                        .searchDictionaryNoResultsFound))
+                : (queryEmptied
+                    ? Align(
+                        alignment: Alignment.topCenter,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: (MediaQuery.of(context).size.height / 2 -
+                                  watermarkSize)),
+                          child: MediaQuery.of(context).platformBrightness ==
+                                  Brightness.light
+                              ? Image(
+                                  width: watermarkSize,
+                                  image: const AssetImage('assets/icon.png'))
+                              : Image(
+                                  width: watermarkSize,
+                                  image:
+                                      const AssetImage('assets/icon_grey.png')),
+                        ),
+                      )
+                    : Consumer<SearchModeState>(
+                        builder: (context, searchModeState, child) {
+                        final results = showSearchResults(
+                            Theme.of(context).textTheme.bodyLarge!,
+                            searchModeState.mode);
+                        return ListView.separated(
+                          separatorBuilder: (_, __) => const Divider(),
+                          itemBuilder: (_, index) => results[index],
+                          itemCount: results.length,
+                        );
+                      }))));
   }
 
-  void doSearch(String query) {
-    // api.combinedSearch(capacity: 10, query: query).then((results) {
-    //   setState(() {
-    //     prSearchResults =
-    //         results.prSearchResults.unique((result) => result.variant);
-    //     variantSearchResults =
-    //         results.variantSearchResults.unique((result) => result.variant);
-    //     finishedSearch = true;
-    //   });
-    // });
-    api.englishSearch(capacity: 10, query: query).then((results) {
-      setState(() {
-        englishSearchResults = results;
-        finishedSearch = true;
-      });
-    });
+  void doSearch(String query, SearchMode searchMode) {
+    switch (searchMode) {
+      case SearchMode.pr:
+        api.prSearch(capacity: 10, query: query).then((results) {
+          setState(() {
+            prSearchResults = results.unique((result) => result.variant);
+            finishedSearch = true;
+          });
+        });
+        break;
+      case SearchMode.variant:
+        api.variantSearch(capacity: 10, query: query).then((results) {
+          setState(() {
+            variantSearchResults = results.unique((result) => result.variant);
+            finishedSearch = true;
+          });
+        });
+        break;
+      case SearchMode.combined:
+        api.combinedSearch(capacity: 10, query: query).then((results) {
+          setState(() {
+            prSearchResults =
+                results.prSearchResults.unique((result) => result.variant);
+            variantSearchResults =
+                results.variantSearchResults.unique((result) => result.variant);
+            finishedSearch = true;
+          });
+        });
+        break;
+      case SearchMode.english:
+        api.englishSearch(capacity: 10, query: query).then((results) {
+          setState(() {
+            englishSearchResults = results;
+            finishedSearch = true;
+          });
+        });
+        break;
+    }
   }
 
   List<Widget> showSearchResults(TextStyle textStyle, SearchMode searchMode) {
     switch (searchMode) {
       case SearchMode.pr:
-        return showPrSearchResults(textStyle, searchMode);
+        return showPrSearchResults(textStyle);
       case SearchMode.variant:
-        return showVariantSearchResults(textStyle, searchMode);
+        return showVariantSearchResults(textStyle);
       case SearchMode.combined:
-        return showCombinedSearchResults(textStyle, searchMode);
+        return showCombinedSearchResults(textStyle);
       case SearchMode.english:
-        return showEnglishSearchResults(textStyle, searchMode);
+        return showEnglishSearchResults(textStyle);
     }
   }
 
-  List<Widget> showEnglishSearchResults(
-      TextStyle textStyle, SearchMode searchMode) {
+  List<Widget> showEnglishSearchResults(TextStyle textStyle) {
     return englishSearchResults.map((result) {
       return showSearchResult(
           result.id,
@@ -297,12 +408,11 @@ class _HomePageState extends State<HomePage> {
                   text: "\n" + result.eng,
                   style: textStyle.copyWith(color: greyColor)),
             ],
-          ),
-          searchMode);
+          ));
     }).toList();
   }
 
-  List<Widget> showPrSearchResults(TextStyle textStyle, SearchMode searchMode) {
+  List<Widget> showPrSearchResults(TextStyle textStyle) {
     return prSearchResults.map((result) {
       return showSearchResult(
           result.id,
@@ -312,27 +422,24 @@ class _HomePageState extends State<HomePage> {
               TextSpan(
                   text: result.pr, style: textStyle.copyWith(color: greyColor)),
             ],
-          ),
-          searchMode);
+          ));
     }).toList();
   }
 
-  List<Widget> showVariantSearchResults(
-      TextStyle textStyle, SearchMode searchMode) {
+  List<Widget> showVariantSearchResults(TextStyle textStyle) {
     return variantSearchResults.map((result) {
-      return showSearchResult(result.id,
-          TextSpan(text: result.variant, style: textStyle), searchMode);
+      return showSearchResult(
+          result.id, TextSpan(text: result.variant, style: textStyle));
     }).toList();
   }
 
-  List<Widget> showCombinedSearchResults(
-      TextStyle textStyle, SearchMode searchMode) {
-    return showVariantSearchResults(textStyle, searchMode)
-        .followedBy(showPrSearchResults(textStyle, searchMode))
+  List<Widget> showCombinedSearchResults(TextStyle textStyle) {
+    return showVariantSearchResults(textStyle)
+        .followedBy(showPrSearchResults(textStyle))
         .toList();
   }
 
-  Widget showSearchResult(int id, TextSpan resultText, SearchMode searchMode) {
+  Widget showSearchResult(int id, TextSpan resultText) {
     return Builder(
         builder: (BuildContext context) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -348,7 +455,8 @@ class _HomePageState extends State<HomePage> {
                       CustomPageRoute(
                           builder: (context) => EntryPage(
                                 id: id,
-                                searchMode: searchMode,
+                                searchMode:
+                                    context.read<SearchModeState>().mode,
                               )),
                     );
                   },
@@ -362,4 +470,23 @@ class _HomePageState extends State<HomePage> {
               ],
             ));
   }
+}
+
+searchModeToString(SearchMode searchMode) {
+  final String str;
+  switch (searchMode) {
+    case SearchMode.pr:
+      str = "J";
+      break;
+    case SearchMode.variant:
+      str = "V";
+      break;
+    case SearchMode.combined:
+      str = "A";
+      break;
+    case SearchMode.english:
+      str = "E";
+      break;
+  }
+  return str;
 }
