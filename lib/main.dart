@@ -265,23 +265,18 @@ class _HomePageState extends State<HomePage> {
         body: Consumer<SearchModeState>(
             builder: (context, searchModeState, child) => searchModeState
                     .showSearchModeSelector
-                ? Column(crossAxisAlignment: CrossAxisAlignment.end, children: <
-                    Widget>[
-                    searchModeRadioListTile(
-                        SearchMode.combined, "Auto", searchModeState.mode),
-                    searchModeRadioListTile(
-                        SearchMode.pr, "Jyut6ping3", searchModeState.mode),
-                    searchModeRadioListTile(
-                        SearchMode.variant, "Variant", searchModeState.mode),
-                    searchModeRadioListTile(
-                        SearchMode.english, "English", searchModeState.mode),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0, right: 8.0),
-                      child: ElevatedButton(
-                          onPressed: searchModeState.toggleSearchModeSelector,
-                          child: const Text("Save")),
-                    )
-                  ])
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                        searchModeRadioListTile(
+                            SearchMode.combined, "Auto", searchModeState.mode),
+                        searchModeRadioListTile(
+                            SearchMode.pr, "Jyut6ping3", searchModeState.mode),
+                        searchModeRadioListTile(SearchMode.variant, "Variant",
+                            searchModeState.mode),
+                        searchModeRadioListTile(SearchMode.english, "English",
+                            searchModeState.mode),
+                      ])
                 : ((finishedSearch && isSearchResultsEmpty)
                     ? Padding(
                         padding: const EdgeInsets.symmetric(

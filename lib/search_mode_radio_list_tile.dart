@@ -202,7 +202,10 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
       getMode: (_) => value,
       highlighted: context.read<SearchModeState>().mode == value,
       inAppBar: false,
-      onPressed: () => context.read<SearchModeState>().updateSearchMode(value),
+      onPressed: () {
+        context.read<SearchModeState>().updateSearchMode(value);
+        context.read<SearchModeState>().toggleSearchModeSelector();
+      },
     );
     Widget? leading, trailing;
     switch (controlAffinity) {
