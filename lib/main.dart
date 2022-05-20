@@ -383,35 +383,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget showSearchResult(int id, TextSpan resultText) {
-    return Builder(
-        builder: (BuildContext context) => Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.zero,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CustomPageRoute(
-                          builder: (context) => EntryPage(
-                                id: id,
-                                searchMode:
-                                    context.read<SearchModeState>().mode,
-                              )),
-                    );
-                  },
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child:
-                        RichText(text: resultText, textAlign: TextAlign.start),
-                  ),
-                ),
-              ],
-            ));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextButton(
+          style: TextButton.styleFrom(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.zero,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              CustomPageRoute(
+                  builder: (context) => EntryPage(
+                        id: id,
+                        searchMode: context.read<SearchModeState>().mode,
+                      )),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            child: RichText(text: resultText, textAlign: TextAlign.start),
+          ),
+        ),
+      ],
+    );
   }
 }
 
