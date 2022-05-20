@@ -200,7 +200,7 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
     // );
     Widget control = SearchModeButton(
       getMode: (_) => value,
-      highlighted: context.read<SearchModeState>().mode == value,
+      highlighted: context.watch<SearchModeState>().mode == value,
       inAppBar: false,
       onPressed: () {
         context.read<SearchModeState>().updateSearchMode(value);

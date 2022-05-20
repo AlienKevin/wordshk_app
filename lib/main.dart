@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/search_bar.dart';
-import 'package:wordshk/search_mode_radio_list_tile.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
@@ -145,14 +145,15 @@ class MyApp extends StatelessWidget {
       elevatedButtonTheme: elevatedButtonTheme,
       dividerTheme: dividerTheme.copyWith(color: darkGreyColor),
     );
-    return MaterialApp(
+    return Portal(
+        child: MaterialApp(
       title: 'words.hk',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: lightTheme,
       darkTheme: darkTheme,
       home: const HomePage(title: 'words.hk'),
-    );
+    ));
   }
 }
 
@@ -187,6 +188,7 @@ class _HomePageState extends State<HomePage> {
   bool finishedSearch = false;
   bool queryEmptied = true;
   bool showSearchModeSelector = false;
+  OverlayEntry? searchModeSelectors;
 
   @override
   void initState() {
@@ -207,7 +209,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var watermarkSize = MediaQuery.of(context).size.width * 0.8;
     final bool isSearchResultsEmpty;
-    switch (context.read<SearchModeState>().mode) {
+    switch (context.watch<SearchModeState>().mode) {
       case SearchMode.pr:
         isSearchResultsEmpty = prSearchResults.isEmpty;
         break;
@@ -222,24 +224,6 @@ class _HomePageState extends State<HomePage> {
         isSearchResultsEmpty = englishSearchResults.isEmpty;
         break;
     }
-
-    searchModeRadioListTile(
-            SearchMode mode, String title, SearchMode groupMode) =>
-        SearchModeRadioListTile(
-          activeColor: blueColor,
-          title: Text(
-            title,
-            textAlign: TextAlign.end,
-          ),
-          value: mode,
-          groupValue: groupMode,
-          onChanged: (SearchMode? value) {
-            if (value != null) {
-              context.read<SearchModeState>().updateSearchMode(value);
-            }
-          },
-          autofocus: true,
-        );
 
     return Scaffold(
         appBar: SearchBar(onChanged: (query) {
@@ -262,58 +246,40 @@ class _HomePageState extends State<HomePage> {
           });
         }),
         drawer: const NavigationDrawer(),
-        body: Consumer<SearchModeState>(
-            builder: (context, searchModeState, child) => searchModeState
-                    .showSearchModeSelector
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                        searchModeRadioListTile(
-                            SearchMode.combined, "Auto", searchModeState.mode),
-                        searchModeRadioListTile(
-                            SearchMode.pr, "Jyut6ping3", searchModeState.mode),
-                        searchModeRadioListTile(SearchMode.variant, "Variant",
-                            searchModeState.mode),
-                        searchModeRadioListTile(SearchMode.english, "English",
-                            searchModeState.mode),
-                      ])
-                : ((finishedSearch && isSearchResultsEmpty)
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10.0),
-                        child: Text(AppLocalizations.of(context)!
-                            .searchDictionaryNoResultsFound))
-                    : (queryEmptied
-                        ? Align(
-                            alignment: Alignment.topCenter,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: (MediaQuery.of(context).size.height / 2 -
-                                      watermarkSize)),
-                              child: MediaQuery.of(context)
-                                          .platformBrightness ==
-                                      Brightness.light
-                                  ? Image(
-                                      width: watermarkSize,
-                                      image:
-                                          const AssetImage('assets/icon.png'))
-                                  : Image(
-                                      width: watermarkSize,
-                                      image: const AssetImage(
-                                          'assets/icon_grey.png')),
-                            ),
-                          )
-                        : Consumer<SearchModeState>(
-                            builder: (context, searchModeState, child) {
-                            final results = showSearchResults(
-                                Theme.of(context).textTheme.bodyLarge!,
-                                searchModeState.mode);
-                            return ListView.separated(
-                              separatorBuilder: (_, __) => const Divider(),
-                              itemBuilder: (_, index) => results[index],
-                              itemCount: results.length,
-                            );
-                          })))));
+        body: ((finishedSearch && isSearchResultsEmpty)
+            ? Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+                child: Text(AppLocalizations.of(context)!
+                    .searchDictionaryNoResultsFound))
+            : (queryEmptied
+                ? Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: (MediaQuery.of(context).size.height / 2 -
+                              watermarkSize)),
+                      child: MediaQuery.of(context).platformBrightness ==
+                              Brightness.light
+                          ? Image(
+                              width: watermarkSize,
+                              image: const AssetImage('assets/icon.png'))
+                          : Image(
+                              width: watermarkSize,
+                              image: const AssetImage('assets/icon_grey.png')),
+                    ),
+                  )
+                : Consumer<SearchModeState>(
+                    builder: (context, searchModeState, child) {
+                    final results = showSearchResults(
+                        Theme.of(context).textTheme.bodyLarge!,
+                        searchModeState.mode);
+                    return ListView.separated(
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (_, index) => results[index],
+                      itemCount: results.length,
+                    );
+                  }))));
   }
 
   void doSearch(String query, SearchMode searchMode) {

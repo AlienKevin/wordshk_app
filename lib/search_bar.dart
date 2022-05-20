@@ -5,8 +5,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/search_mode_button.dart';
+import 'package:wordshk/search_mode_radio_list_tile.dart';
 
 import 'constants.dart';
 import 'main.dart';
@@ -132,6 +134,24 @@ class IsSearching extends State<SearchBar> {
     ThemeData theme = Theme.of(context);
     Color? buttonColor = theme.iconTheme.color;
 
+    searchModeRadioListTile(
+            SearchMode mode, String title, SearchMode groupMode) =>
+        SearchModeRadioListTile(
+          activeColor: blueColor,
+          title: Text(
+            title,
+            textAlign: TextAlign.end,
+          ),
+          value: mode,
+          groupValue: groupMode,
+          onChanged: (SearchMode? value) {
+            if (value != null) {
+              context.read<SearchModeState>().updateSearchMode(value);
+            }
+          },
+          autofocus: true,
+        );
+
     return AppBar(
       title: !isSearching.value
           ? null
@@ -191,13 +211,57 @@ class IsSearching extends State<SearchBar> {
                           FocusScope.of(context).requestFocus(focusNode);
                           persistentQuery = "";
                         }),
-              SearchModeButton(
-                getMode: (mode) => mode,
-                highlighted: true,
-                inAppBar: true,
-                onPressed:
-                    context.read<SearchModeState>().toggleSearchModeSelector,
-              ),
+              PortalTarget(
+                  visible:
+                      context.watch<SearchModeState>().showSearchModeSelector,
+                  anchor: const Aligned(
+                    follower: Alignment.topRight,
+                    target: Alignment.bottomRight,
+                    offset: Offset(0, 4),
+                  ),
+                  portalFollower: Material(
+                      color: Theme.of(context).canvasColor,
+                      child: Container(
+                        width: 160,
+                        height: (48 + 10) * 4,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                                width: 2.0, color: theme.dividerColor),
+                            bottom: BorderSide(
+                                width: 2.0, color: theme.dividerColor),
+                          ),
+                          color: Theme.of(context).canvasColor,
+                        ),
+                        child: Consumer<SearchModeState>(
+                            builder: (context, searchModeState, child) =>
+                                Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      searchModeRadioListTile(
+                                          SearchMode.combined,
+                                          "Auto",
+                                          searchModeState.mode),
+                                      searchModeRadioListTile(SearchMode.pr,
+                                          "Jyutping", searchModeState.mode),
+                                      searchModeRadioListTile(
+                                          SearchMode.variant,
+                                          "Variant",
+                                          searchModeState.mode),
+                                      searchModeRadioListTile(
+                                          SearchMode.english,
+                                          "English",
+                                          searchModeState.mode),
+                                    ])),
+                      )),
+                  child: SearchModeButton(
+                    getMode: (mode) => mode,
+                    highlighted: true,
+                    inAppBar: true,
+                    onPressed: context
+                        .read<SearchModeState>()
+                        .toggleSearchModeSelector,
+                  )),
             ],
     );
   }
