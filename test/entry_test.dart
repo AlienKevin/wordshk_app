@@ -90,7 +90,7 @@ void main() {
     var expectedEntry = const Entry(
       id: 56534,
       variants: [Variant("命", "ming6")],
-      poses: ["語素"],
+      poses: [Pos.morpheme],
       labels: [],
       sims: [],
       ants: [],
@@ -159,7 +159,7 @@ void main() {
         Variant("呢個", "ni1 go3, li1 go3"),
         Variant("哩個", "ni1 go3, li1 go3")
       ],
-      poses: ["代詞"],
+      poses: [Pos.pronoun],
       labels: [],
       sims: [],
       ants: [],

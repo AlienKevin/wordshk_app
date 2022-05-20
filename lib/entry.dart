@@ -16,7 +16,7 @@ typedef EntryGroup = List<Entry>;
 class Entry extends Equatable {
   final int id;
   final List<Variant> variants;
-  final List<String> poses;
+  final List<Pos> poses;
   final List<String> labels;
   final List<String> sims;
   final List<String> ants;
@@ -39,7 +39,8 @@ class Entry extends Equatable {
         variants = List.from(json['variants']).map((variant) {
           return Variant.fromJson(variant);
         }).toList(),
-        poses = List.from(json['poses']),
+        poses =
+            List.from(json['poses']).map((pos) => stringToPos(pos)).toList(),
         labels = List.from(json['labels']),
         sims = List.from(json['sims']),
         ants = List.from(json['ants']),
@@ -338,6 +339,124 @@ class Variant extends Equatable {
   List<Object?> get props => [word, prs];
 }
 
+enum Pos {
+  noun,
+  verb,
+  adjective,
+  adverb,
+  localiser,
+  conjunction,
+  expression,
+  affix,
+  pronoun,
+  preposition,
+  quantifier,
+  particle,
+  modalVerb,
+  number,
+  time,
+  other,
+  morpheme,
+  interjection,
+  nonPredicateAdjective,
+  onomatopoeia,
+  unknown
+}
+
+Pos stringToPos(String str) {
+  switch (str) {
+    case "名詞":
+      return Pos.noun;
+    case "動詞":
+      return Pos.verb;
+    case "形容詞":
+      return Pos.adjective;
+    case "副詞":
+      return Pos.adverb;
+    case "方位詞":
+      return Pos.localiser;
+    case "連詞":
+      return Pos.conjunction;
+    case "語句":
+      return Pos.expression;
+    case "詞綴":
+      return Pos.affix;
+    case "代詞":
+      return Pos.pronoun;
+    case "介詞":
+      return Pos.preposition;
+    case "量詞":
+      return Pos.quantifier;
+    case "助詞":
+      return Pos.particle;
+    case "情態動詞":
+      return Pos.modalVerb;
+    case "數詞":
+      return Pos.number;
+    case "時間詞":
+      return Pos.time;
+    case "其他":
+      return Pos.other;
+    case "語素":
+      return Pos.morpheme;
+    case "感嘆詞":
+      return Pos.interjection;
+    case "區別詞":
+      return Pos.nonPredicateAdjective;
+    case "擬聲詞":
+      return Pos.onomatopoeia;
+    default:
+      return Pos.unknown;
+  }
+}
+
+translatePos(Pos pos, AppLocalizations context) {
+  switch (pos) {
+    case Pos.noun:
+      return context.noun;
+    case Pos.verb:
+      return context.verb;
+    case Pos.adjective:
+      return context.adjective;
+    case Pos.adverb:
+      return context.adverb;
+    case Pos.localiser:
+      return context.localiser;
+    case Pos.conjunction:
+      return context.conjunction;
+    case Pos.expression:
+      return context.expression;
+    case Pos.affix:
+      return context.affix;
+    case Pos.pronoun:
+      return context.pronoun;
+    case Pos.preposition:
+      return context.preposition;
+    case Pos.quantifier:
+      return context.quantifier;
+    case Pos.particle:
+      return context.particle;
+    case Pos.modalVerb:
+      return context.modalVerb;
+    case Pos.number:
+      return context.number;
+    case Pos.time:
+      return context.time;
+    case Pos.other:
+      return context.other;
+    case Pos.morpheme:
+      return context.morpheme;
+    case Pos.interjection:
+      return context.interjection;
+    case Pos.nonPredicateAdjective:
+      return context.nonPredicateAdjective;
+    case Pos.onomatopoeia:
+      return context.onomatopoeia;
+    case Pos.unknown:
+      return context.unknown;
+  }
+}
+
 Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
     void Function(int) updateEntryIndex, OnTapLink onTapLink) {
   double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
@@ -349,6 +468,7 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
       MediaQuery.of(context).padding.top -
       MediaQuery.of(context).padding.bottom -
       titleFontSize * 3;
+  final localizationContext = AppLocalizations.of(context)!;
   return Column(
     children: [
       DefaultTabController(
@@ -373,7 +493,10 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
                 .map((entry) => Tab(
                     text: (entry.key + 1).toString() +
                         " " +
-                        entry.value.poses.join("/")))
+                        entry.value.poses
+                            .map(
+                                (pos) => translatePos(pos, localizationContext))
+                            .join("/")))
                 .toList(),
           ),
           SizedBox(
