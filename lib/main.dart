@@ -166,9 +166,15 @@ class HomePage extends StatefulWidget {
 
 class SearchModeState with ChangeNotifier {
   SearchMode mode = SearchMode.combined;
+  bool showSearchModeSelector = false;
 
   void updateSearchMode(SearchMode newMode) {
     mode = newMode;
+    notifyListeners();
+  }
+
+  void toggleSearchModeSelector() {
+    showSearchModeSelector = !showSearchModeSelector;
     notifyListeners();
   }
 }
@@ -215,131 +221,108 @@ class _HomePageState extends State<HomePage> {
         isSearchResultsEmpty = englishSearchResults.isEmpty;
         break;
     }
+
+    searchModeRadioListTile(
+            SearchMode mode, String title, SearchMode groupMode) =>
+        RadioListTile<SearchMode>(
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.trailing,
+            activeColor: blueColor,
+            title: Text(
+              title,
+              textAlign: TextAlign.end,
+            ),
+            value: mode,
+            groupValue: groupMode,
+            onChanged: (SearchMode? value) {
+              if (value != null) {
+                context.read<SearchModeState>().updateSearchMode(value);
+              }
+            });
+
     return Scaffold(
-        appBar: SearchBar(
-          onChanged: (query) {
-            if (query.isEmpty) {
-              setState(() {
-                queryEmptied = true;
-                finishedSearch = false;
-              });
-            } else {
-              setState(() {
-                queryEmptied = false;
-                finishedSearch = false;
-              });
-            }
-            doSearch(query, context.read<SearchModeState>().mode);
-          },
-          onCleared: () {
+        appBar: SearchBar(onChanged: (query) {
+          if (query.isEmpty) {
             setState(() {
-              // TODO: hide search results
               queryEmptied = true;
+              finishedSearch = false;
             });
-          },
-          onShowSearchModeSelector: () {
+          } else {
             setState(() {
-              showSearchModeSelector = true;
+              queryEmptied = false;
+              finishedSearch = false;
             });
-          },
-        ),
+          }
+          doSearch(query, context.read<SearchModeState>().mode);
+        }, onCleared: () {
+          setState(() {
+            // TODO: hide search results
+            queryEmptied = true;
+          });
+        }),
         drawer: const NavigationDrawer(),
-        body: showSearchModeSelector
-            ? Consumer<SearchModeState>(
-                builder: (context, searchModeState, child) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        body: Consumer<SearchModeState>(
+            builder: (context, searchModeState, child) => searchModeState
+                    .showSearchModeSelector
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          RadioListTile<SearchMode>(
-                              title: const Text('Auto'),
-                              value: SearchMode.combined,
-                              groupValue: searchModeState.mode,
-                              onChanged: (SearchMode? value) {
-                                if (value != null) {
-                                  context
-                                      .read<SearchModeState>()
-                                      .updateSearchMode(value);
-                                }
-                              }),
-                          RadioListTile<SearchMode>(
-                              title: const Text('Jyut6ping3'),
-                              value: SearchMode.pr,
-                              groupValue: searchModeState.mode,
-                              onChanged: (SearchMode? value) {
-                                if (value != null) {
-                                  context
-                                      .read<SearchModeState>()
-                                      .updateSearchMode(value);
-                                }
-                              }),
-                          RadioListTile<SearchMode>(
-                              title: const Text('Variant'),
-                              value: SearchMode.variant,
-                              groupValue: searchModeState.mode,
-                              onChanged: (SearchMode? value) {
-                                if (value != null) {
-                                  context
-                                      .read<SearchModeState>()
-                                      .updateSearchMode(value);
-                                }
-                              }),
-                          RadioListTile<SearchMode>(
-                              title: const Text('English'),
-                              value: SearchMode.english,
-                              groupValue: searchModeState.mode,
-                              onChanged: (SearchMode? value) {
-                                if (value != null) {
-                                  context
-                                      .read<SearchModeState>()
-                                      .updateSearchMode(value);
-                                }
-                              }),
+                          searchModeRadioListTile(SearchMode.combined, "Auto",
+                              searchModeState.mode),
+                          searchModeRadioListTile(SearchMode.pr, "Jyut6ping3",
+                              searchModeState.mode),
+                          searchModeRadioListTile(SearchMode.variant, "Variant",
+                              searchModeState.mode),
+                          searchModeRadioListTile(SearchMode.english, "English",
+                              searchModeState.mode),
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 24.0, top: 16.0),
+                            padding: const EdgeInsets.only(top: 16.0),
                             child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showSearchModeSelector = false;
-                                  });
-                                },
+                                onPressed:
+                                    searchModeState.toggleSearchModeSelector,
                                 child: const Text("Save")),
                           )
-                        ]))
-            : ((finishedSearch && isSearchResultsEmpty)
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10.0),
-                    child: Text(AppLocalizations.of(context)!
-                        .searchDictionaryNoResultsFound))
-                : (queryEmptied
-                    ? Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              top: (MediaQuery.of(context).size.height / 2 -
-                                  watermarkSize)),
-                          child: MediaQuery.of(context).platformBrightness ==
-                                  Brightness.light
-                              ? Image(
-                                  width: watermarkSize,
-                                  image: const AssetImage('assets/icon.png'))
-                              : Image(
-                                  width: watermarkSize,
-                                  image:
-                                      const AssetImage('assets/icon_grey.png')),
-                        ),
-                      )
-                    : Consumer<SearchModeState>(
-                        builder: (context, searchModeState, child) {
-                        final results = showSearchResults(
-                            Theme.of(context).textTheme.bodyLarge!,
-                            searchModeState.mode);
-                        return ListView.separated(
-                          separatorBuilder: (_, __) => const Divider(),
-                          itemBuilder: (_, index) => results[index],
-                          itemCount: results.length,
-                        );
-                      }))));
+                        ]),
+                  )
+                : ((finishedSearch && isSearchResultsEmpty)
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10.0),
+                        child: Text(AppLocalizations.of(context)!
+                            .searchDictionaryNoResultsFound))
+                    : (queryEmptied
+                        ? Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: (MediaQuery.of(context).size.height / 2 -
+                                      watermarkSize)),
+                              child: MediaQuery.of(context)
+                                          .platformBrightness ==
+                                      Brightness.light
+                                  ? Image(
+                                      width: watermarkSize,
+                                      image:
+                                          const AssetImage('assets/icon.png'))
+                                  : Image(
+                                      width: watermarkSize,
+                                      image: const AssetImage(
+                                          'assets/icon_grey.png')),
+                            ),
+                          )
+                        : Consumer<SearchModeState>(
+                            builder: (context, searchModeState, child) {
+                            final results = showSearchResults(
+                                Theme.of(context).textTheme.bodyLarge!,
+                                searchModeState.mode);
+                            return ListView.separated(
+                              separatorBuilder: (_, __) => const Divider(),
+                              itemBuilder: (_, index) => results[index],
+                              itemCount: results.length,
+                            );
+                          })))));
   }
 
   void doSearch(String query, SearchMode searchMode) {
