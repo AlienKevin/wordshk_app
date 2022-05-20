@@ -1,28 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/main.dart';
 
 import 'constants.dart';
-import 'main.dart';
 
 class SearchModeButton extends StatelessWidget {
-  const SearchModeButton({Key? key}) : super(key: key);
+  final SearchMode Function(SearchMode) getMode;
+  final bool highlighted;
+  final bool inAppBar;
+  final void Function() onPressed;
+
+  const SearchModeButton(
+      {Key? key,
+      required this.getMode,
+      required this.highlighted,
+      required this.inAppBar,
+      required this.onPressed})
+      : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Container(
-      width: 38,
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: whiteColor, width: 2),
-        shape: BoxShape.rectangle,
-      ),
-      child: IconButton(
-          padding: const EdgeInsets.all(0),
-          visualDensity: VisualDensity.compact,
-          icon: Consumer<SearchModeState>(
-            builder: (context, searchModeState, child) =>
-                Text(searchModeToString(searchModeState.mode)),
-          ),
-          color: Theme.of(context).iconTheme.color,
-          disabledColor: Theme.of(context).disabledColor.withOpacity(0),
-          onPressed: context.read<SearchModeState>().toggleSearchModeSelector));
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+        width: 38,
+        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: highlighted && inAppBar
+                  ? theme.iconTheme.color!
+                  : theme.textTheme.bodyLarge!.color!,
+              width: 2.5),
+          shape: BoxShape.rectangle,
+          color: highlighted ? blueColor : null,
+        ),
+        child: IconButton(
+            padding: const EdgeInsets.all(0),
+            visualDensity: VisualDensity.compact,
+            icon: Consumer<SearchModeState>(
+                builder: (context, searchModeState, child) => Text(
+                    searchModeToString(getMode(searchModeState.mode)),
+                    style: theme.textTheme.titleMedium!.copyWith(
+                        color: highlighted ? theme.iconTheme.color : null))),
+            color: theme.iconTheme.color,
+            disabledColor: theme.disabledColor.withOpacity(0),
+            onPressed: onPressed));
+  }
 }

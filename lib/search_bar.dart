@@ -5,9 +5,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:wordshk/search_mode_button.dart';
 
 import 'constants.dart';
+import 'main.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
@@ -189,7 +191,13 @@ class IsSearching extends State<SearchBar> {
                           FocusScope.of(context).requestFocus(focusNode);
                           persistentQuery = "";
                         }),
-              const SearchModeButton(),
+              SearchModeButton(
+                getMode: (mode) => mode,
+                highlighted: true,
+                inAppBar: true,
+                onPressed:
+                    context.read<SearchModeState>().toggleSearchModeSelector,
+              ),
             ],
     );
   }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/search_bar.dart';
+import 'package:wordshk/search_mode_radio_list_tile.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
@@ -224,21 +225,21 @@ class _HomePageState extends State<HomePage> {
 
     searchModeRadioListTile(
             SearchMode mode, String title, SearchMode groupMode) =>
-        RadioListTile<SearchMode>(
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.trailing,
-            activeColor: blueColor,
-            title: Text(
-              title,
-              textAlign: TextAlign.end,
-            ),
-            value: mode,
-            groupValue: groupMode,
-            onChanged: (SearchMode? value) {
-              if (value != null) {
-                context.read<SearchModeState>().updateSearchMode(value);
-              }
-            });
+        SearchModeRadioListTile(
+          activeColor: blueColor,
+          title: Text(
+            title,
+            textAlign: TextAlign.end,
+          ),
+          value: mode,
+          groupValue: groupMode,
+          onChanged: (SearchMode? value) {
+            if (value != null) {
+              context.read<SearchModeState>().updateSearchMode(value);
+            }
+          },
+          autofocus: true,
+        );
 
     return Scaffold(
         appBar: SearchBar(onChanged: (query) {
@@ -264,28 +265,23 @@ class _HomePageState extends State<HomePage> {
         body: Consumer<SearchModeState>(
             builder: (context, searchModeState, child) => searchModeState
                     .showSearchModeSelector
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          searchModeRadioListTile(SearchMode.combined, "Auto",
-                              searchModeState.mode),
-                          searchModeRadioListTile(SearchMode.pr, "Jyut6ping3",
-                              searchModeState.mode),
-                          searchModeRadioListTile(SearchMode.variant, "Variant",
-                              searchModeState.mode),
-                          searchModeRadioListTile(SearchMode.english, "English",
-                              searchModeState.mode),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: ElevatedButton(
-                                onPressed:
-                                    searchModeState.toggleSearchModeSelector,
-                                child: const Text("Save")),
-                          )
-                        ]),
-                  )
+                ? Column(crossAxisAlignment: CrossAxisAlignment.end, children: <
+                    Widget>[
+                    searchModeRadioListTile(
+                        SearchMode.combined, "Auto", searchModeState.mode),
+                    searchModeRadioListTile(
+                        SearchMode.pr, "Jyut6ping3", searchModeState.mode),
+                    searchModeRadioListTile(
+                        SearchMode.variant, "Variant", searchModeState.mode),
+                    searchModeRadioListTile(
+                        SearchMode.english, "English", searchModeState.mode),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0, right: 8.0),
+                      child: ElevatedButton(
+                          onPressed: searchModeState.toggleSearchModeSelector,
+                          child: const Text("Save")),
+                    )
+                  ])
                 : ((finishedSearch && isSearchResultsEmpty)
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
