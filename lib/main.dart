@@ -203,6 +203,9 @@ class _HomePageState extends State<HomePage> {
       queryEmptied = false;
       doSearch(persistentQuery, context.read<SearchModeState>().mode);
     }
+    context.read<SearchModeState>().addListener(() {
+      doSearch(persistentQuery, context.read<SearchModeState>().mode);
+    });
   }
 
   @override
