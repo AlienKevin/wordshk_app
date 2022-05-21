@@ -3,6 +3,15 @@
     "searchDictionaryHintText": "输入汉字/jyut6 ping3",
     "searchDictionaryNoResultsFound": "抱歉，词典里找不到相关数据",
 
+    "searchModeVariant": "字词",
+    "searchModePr": "粤语拼音",
+    "searchModeCombined": "字词或粤语拼音",
+    "searchModeEnglish": "英语",
+    "searchModeVariantIcon": "词",
+    "searchModePrIcon": "拼",
+    "searchModeCombinedIcon": "或",
+    "searchModeEnglishIcon": "英",
+
     "entry": "词条",
     "entryMoreVariants": "更多写法",
     "entryCollapseVariants": "折叠写法",

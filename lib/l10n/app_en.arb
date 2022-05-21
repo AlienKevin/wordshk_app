@@ -3,6 +3,15 @@
     "searchDictionaryHintText": "Enter 漢字/jyut6 ping3",
     "searchDictionaryNoResultsFound": "Sorry, no results found",
 
+    "searchModeVariant": "Words",
+    "searchModePr": "Jyutping",
+    "searchModeCombined": "Combine Variant & Jyutping",
+    "searchModeEnglish": "English",
+    "searchModeVariantIcon": "W",
+    "searchModePrIcon": "J",
+    "searchModeCombinedIcon": "C",
+    "searchModeEnglishIcon": "E",
+
     "entry": "entry",
     "entryMoreVariants": "More Variants",
     "entryCollapseVariants": "Collapse Variants",

@@ -220,7 +220,11 @@ class IsSearching extends State<SearchBar> {
                   portalFollower: Material(
                       color: Theme.of(context).canvasColor,
                       child: Container(
-                        width: 320,
+                        width: AppLocalizations.of(context)!
+                                .localeName
+                                .startsWith("zh")
+                            ? 264
+                            : 320,
                         height: 300,
                         decoration: BoxDecoration(
                           border: Border(
@@ -238,22 +242,26 @@ class IsSearching extends State<SearchBar> {
                                     children: <Widget>[
                                       searchModeRadioListTile(
                                           SearchMode.variant,
-                                          "Variant",
+                                          AppLocalizations.of(context)!
+                                              .searchModeVariant,
                                           "(e.g. 好彩)",
                                           searchModeState.mode),
                                       searchModeRadioListTile(
                                           SearchMode.pr,
-                                          "Jyutping",
+                                          AppLocalizations.of(context)!
+                                              .searchModePr,
                                           "(e.g. hou2 coi2)",
                                           searchModeState.mode),
                                       searchModeRadioListTile(
                                           SearchMode.combined,
-                                          "Combine Variant & Jyutping",
+                                          AppLocalizations.of(context)!
+                                              .searchModeCombined,
                                           "(e.g. 好彩 / hou2 coi2)",
                                           searchModeState.mode),
                                       searchModeRadioListTile(
                                           SearchMode.english,
-                                          "English",
+                                          AppLocalizations.of(context)!
+                                              .searchModeEnglish,
                                           "(e.g. lucky)",
                                           searchModeState.mode),
                                     ])),

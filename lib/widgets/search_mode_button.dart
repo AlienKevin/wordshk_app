@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/main.dart';
 
@@ -38,7 +39,8 @@ class SearchModeButton extends StatelessWidget {
             visualDensity: VisualDensity.compact,
             icon: Consumer<SearchModeState>(
                 builder: (context, searchModeState, child) => Text(
-                    searchModeToString(getMode(searchModeState.mode)),
+                    searchModeToString(AppLocalizations.of(context)!,
+                        getMode(searchModeState.mode)),
                     style: theme.textTheme.titleMedium!.copyWith(
                         color: highlighted ? theme.iconTheme.color : null))),
             color: theme.iconTheme.color,

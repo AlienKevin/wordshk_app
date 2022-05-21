@@ -454,20 +454,20 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-searchModeToString(SearchMode searchMode) {
+searchModeToString(AppLocalizations appLocalizations, SearchMode searchMode) {
   final String str;
   switch (searchMode) {
     case SearchMode.pr:
-      str = "J";
+      str = appLocalizations.searchModePrIcon;
       break;
     case SearchMode.variant:
-      str = "V";
+      str = appLocalizations.searchModeVariantIcon;
       break;
     case SearchMode.combined:
-      str = "C";
+      str = appLocalizations.searchModeCombinedIcon;
       break;
     case SearchMode.english:
-      str = "E";
+      str = appLocalizations.searchModeEnglishIcon;
       break;
   }
   return str;
