@@ -80,7 +80,6 @@ class IsSearching extends State<SearchBar> {
   void initState() {
     super.initState();
     controller.addListener(() {
-      log("Controller addListener activated.");
       if (controller.text.isEmpty) {
         // If clear is already disabled, don't disable it
         if (_clearActive) {
