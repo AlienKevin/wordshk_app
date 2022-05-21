@@ -464,7 +464,7 @@ searchModeToString(SearchMode searchMode) {
       str = "V";
       break;
     case SearchMode.combined:
-      str = "A";
+      str = "C";
       break;
     case SearchMode.english:
       str = "E";

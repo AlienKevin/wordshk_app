@@ -131,14 +131,15 @@ class IsSearching extends State<SearchBar> {
     ThemeData theme = Theme.of(context);
     Color? buttonColor = theme.iconTheme.color;
 
-    searchModeRadioListTile(
-            SearchMode mode, String title, SearchMode groupMode) =>
+    searchModeRadioListTile(SearchMode mode, String title, String subtitle,
+            SearchMode groupMode) =>
         SearchModeRadioListTile(
           activeColor: blueColor,
           title: Text(
             title,
             textAlign: TextAlign.end,
           ),
+          subtitle: Text(subtitle, textAlign: TextAlign.end),
           value: mode,
           groupValue: groupMode,
           onChanged: (SearchMode? value) {
@@ -219,8 +220,8 @@ class IsSearching extends State<SearchBar> {
                   portalFollower: Material(
                       color: Theme.of(context).canvasColor,
                       child: Container(
-                        width: 160,
-                        height: (48 + 10) * 4,
+                        width: 320,
+                        height: 300,
                         decoration: BoxDecoration(
                           border: Border(
                             left: BorderSide(
@@ -236,18 +237,24 @@ class IsSearching extends State<SearchBar> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
                                       searchModeRadioListTile(
-                                          SearchMode.combined,
-                                          "Auto",
-                                          searchModeState.mode),
-                                      searchModeRadioListTile(SearchMode.pr,
-                                          "Jyutping", searchModeState.mode),
-                                      searchModeRadioListTile(
                                           SearchMode.variant,
                                           "Variant",
+                                          "(e.g. 好彩)",
+                                          searchModeState.mode),
+                                      searchModeRadioListTile(
+                                          SearchMode.pr,
+                                          "Jyutping",
+                                          "(e.g. hou2 coi2)",
+                                          searchModeState.mode),
+                                      searchModeRadioListTile(
+                                          SearchMode.combined,
+                                          "Combine Variant & Jyutping",
+                                          "(e.g. 好彩 / hou2 coi2)",
                                           searchModeState.mode),
                                       searchModeRadioListTile(
                                           SearchMode.english,
                                           "English",
+                                          "(e.g. lucky)",
                                           searchModeState.mode),
                                     ])),
                       )),
