@@ -149,7 +149,50 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
       title: 'words.hk',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      localeResolutionCallback: (
+        locale,
+        supportedLocales,
+      ) {
+        if (locale?.languageCode == 'yue') {
+          return const Locale.fromSubtags(
+              languageCode: 'zh',
+              scriptCode: 'Hant',
+              countryCode: 'HK'); // 'zh_Hant_HK'
+        } else if (supportedLocales.contains(locale) ||
+            locale?.languageCode == 'zh') {
+          return locale;
+        } else {
+          return const Locale.fromSubtags(languageCode: 'en');
+        }
+      },
+      supportedLocales: const [
+        Locale.fromSubtags(
+            languageCode:
+                'en'), // generic English (defaults to American English)// 'yue_Hant_HK'
+        Locale.fromSubtags(
+            languageCode:
+                'zh'), // generic Chinese 'zh' (defaults to zh_Hans_CN)
+        Locale.fromSubtags(
+            languageCode: 'zh',
+            scriptCode:
+                'Hans'), // generic simplified Chinese 'zh_Hans' (defaults to zh_Hans_CN)
+        Locale.fromSubtags(
+            languageCode: 'zh',
+            scriptCode:
+                'Hant'), // generic traditional Chinese 'zh_Hant' (defaults to zh_Hant_TW)
+        Locale.fromSubtags(
+            languageCode: 'zh',
+            scriptCode: 'Hans',
+            countryCode: 'CN'), // 'zh_Hans_CN'
+        Locale.fromSubtags(
+            languageCode: 'zh',
+            scriptCode: 'Hant',
+            countryCode: 'TW'), // 'zh_Hant_TW'
+        Locale.fromSubtags(
+            languageCode: 'zh',
+            scriptCode: 'Hant',
+            countryCode: 'HK'), // 'zh_Hant_HK'
+      ],
       theme: lightTheme,
       darkTheme: darkTheme,
       home: const HomePage(title: 'words.hk'),
