@@ -2,10 +2,10 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:wordshk/license.dart';
+import 'package:wordshk/models/license.dart';
 
-import 'expandable.dart';
-import 'navigation_drawer.dart';
+import '../widgets/expandable.dart';
+import '../widgets/navigation_drawer.dart';
 
 // Source: https://github.com/JohannesMilke/license_page_example/blob/master/lib/page/licenses_registry_page.dart
 class SoftwareLicensesPage extends StatelessWidget {

@@ -4,11 +4,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:wordshk/entry_banner.dart';
-import 'package:wordshk/scalable_text_span.dart';
+import 'package:wordshk/widgets/entry_banner.dart';
+import 'package:wordshk/widgets/scalable_text_span.dart';
 
-import 'constants.dart';
-import 'expandable.dart';
+import '../constants.dart';
+import '../widgets/expandable.dart';
 
 typedef OnTapLink = void Function(String entryVariant);
 typedef EntryGroup = List<Entry>;

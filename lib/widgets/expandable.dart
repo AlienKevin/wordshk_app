@@ -1,6 +1,6 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:wordshk/scalable_text_span.dart';
+import 'package:wordshk/widgets/scalable_text_span.dart';
 
 ExpandableTheme applyExpandableTheme(Widget child) => ExpandableTheme(
     data: const ExpandableThemeData(

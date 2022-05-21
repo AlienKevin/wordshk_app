@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:wordshk/quality_control_page.dart';
-import 'package:wordshk/software_licenses_page.dart';
+import 'package:wordshk/pages/quality_control_page.dart';
+import 'package:wordshk/pages/software_licenses_page.dart';
 
-import 'about_page.dart';
-import 'constants.dart';
-import 'custom_page_route.dart';
-import 'dictionary_license_page.dart';
-import 'main.dart';
+import '../constants.dart';
+import '../custom_page_route.dart';
+import '../main.dart';
+import '../pages/about_page.dart';
+import '../pages/dictionary_license_page.dart';
 
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);

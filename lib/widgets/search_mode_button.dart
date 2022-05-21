@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/main.dart';
 
-import 'constants.dart';
+import '../constants.dart';
 
 class SearchModeButton extends StatelessWidget {
   final SearchMode Function(SearchMode) getMode;

@@ -4,9 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/search_mode_button.dart';
+import 'package:wordshk/widgets/search_mode_button.dart';
 
-import 'main.dart';
+import '../main.dart';
 
 class SearchModeRadioListTile<T> extends StatelessWidget {
   /// Creates a combination of a list tile and a radio button.

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:wordshk/entry.dart';
+import 'package:wordshk/models/entry.dart';
 
 void main() {
   test('simple', () {

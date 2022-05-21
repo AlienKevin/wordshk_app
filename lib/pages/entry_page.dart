@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/custom_page_route.dart';
 
-import 'entry.dart';
+import '../main.dart';
+import '../models/entry.dart';
 import 'entry_not_published_page.dart';
-import 'main.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;

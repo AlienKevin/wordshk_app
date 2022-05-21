@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/search_bar.dart';
+import 'package:wordshk/widgets/search_bar.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'custom_page_route.dart';
-import 'entry_page.dart';
-import 'navigation_drawer.dart';
+import 'pages/entry_page.dart';
+import 'widgets/navigation_drawer.dart';
 
 enum SearchMode {
   pr,

@@ -1,17 +1,15 @@
 // Copyright (c) 2017, Spencer. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/search_mode_button.dart';
-import 'package:wordshk/search_mode_radio_list_tile.dart';
+import 'package:wordshk/widgets/search_mode_button.dart';
+import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
 
-import 'constants.dart';
-import 'main.dart';
+import '../constants.dart';
+import '../main.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
