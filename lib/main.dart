@@ -33,13 +33,17 @@ late final dylib = Platform.isIOS
 late final api = WordshkApiImpl(dylib);
 
 void main() {
-  runApp(ChangeNotifierProvider(
-    // Initialize the model in the builder. That way, Provider
-    // can own SearchModeState's lifecycle, making sure to call `dispose`
-    // when not needed anymore.
-    create: (context) => SearchModeState(),
-    child: MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SearchModeState>(
+            create: (_) => SearchModeState()),
+        ChangeNotifierProvider<SearchQueryState>(
+            create: (_) => SearchQueryState()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -218,6 +222,15 @@ class SearchModeState with ChangeNotifier {
   }
 }
 
+class SearchQueryState with ChangeNotifier {
+  String query = "";
+
+  void updateSearchQuery(String newQuery) {
+    query = newQuery;
+    notifyListeners();
+  }
+}
+
 class _HomePageState extends State<HomePage> {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
@@ -236,12 +249,14 @@ class _HomePageState extends State<HomePage> {
     ]).then((jsons) {
       api.initApi(apiJson: jsons[0], englishIndexJson: jsons[1]);
     });
-    if (persistentQuery.isNotEmpty) {
+    final query = context.read<SearchQueryState>().query;
+    if (query.isNotEmpty) {
       queryEmptied = false;
-      doSearch(persistentQuery, context.read<SearchModeState>().mode);
+      doSearch(query, context.read<SearchModeState>().mode);
     }
     context.read<SearchModeState>().addListener(() {
-      doSearch(persistentQuery, context.read<SearchModeState>().mode);
+      final query = context.read<SearchQueryState>().query;
+      doSearch(query, context.read<SearchModeState>().mode);
     });
   }
 

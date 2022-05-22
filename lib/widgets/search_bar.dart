@@ -16,8 +16,6 @@ typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
 typedef SetStateCallback = void Function(void Function());
 
-var persistentQuery = "";
-
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// Whether or not the search bar should close on submit. Defaults to true.
   final bool closeOnSubmit;
@@ -94,7 +92,7 @@ class IsSearching extends State<SearchBar> {
         });
       }
     });
-    controller.text = persistentQuery;
+    controller.text = context.read<SearchQueryState>().query;
   }
 
   @override
@@ -192,7 +190,9 @@ class IsSearching extends State<SearchBar> {
                                               controller.clear();
                                               FocusScope.of(context)
                                                   .requestFocus(focusNode);
-                                              persistentQuery = "";
+                                              context
+                                                  .read<SearchQueryState>()
+                                                  .updateSearchQuery("");
                                             })
                                   : null,
                           enabledBorder: InputBorder.none,
@@ -200,7 +200,9 @@ class IsSearching extends State<SearchBar> {
                           border: InputBorder.none,
                         ),
                         onChanged: (query) {
-                          persistentQuery = query;
+                          context
+                              .read<SearchQueryState>()
+                              .updateSearchQuery(query);
                           if (widget.onChanged != null) {
                             widget.onChanged!(query);
                           }
