@@ -40,8 +40,8 @@ class SearchModeButton extends StatelessWidget {
             visualDensity: VisualDensity.compact,
             icon: Consumer<SearchModeState>(
                 builder: (context, searchModeState, child) => Text(
-                    searchModeToString(AppLocalizations.of(context)!,
-                        getMode(searchModeState.mode)),
+                    translateSearchModeIcon(getMode(searchModeState.mode),
+                        AppLocalizations.of(context)!),
                     style: theme.textTheme.titleMedium!.copyWith(
                         color: highlighted ? theme.iconTheme.color : null))),
             color: theme.iconTheme.color,

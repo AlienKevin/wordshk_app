@@ -19,3 +19,23 @@ translateSearchMode(SearchMode searchMode, AppLocalizations context) {
       return context.searchModeEnglish;
   }
 }
+
+translateSearchModeIcon(
+    SearchMode searchMode, AppLocalizations appLocalizations) {
+  final String str;
+  switch (searchMode) {
+    case SearchMode.pr:
+      str = appLocalizations.searchModePrIcon;
+      break;
+    case SearchMode.variant:
+      str = appLocalizations.searchModeVariantIcon;
+      break;
+    case SearchMode.combined:
+      str = appLocalizations.searchModeCombinedIcon;
+      break;
+    case SearchMode.english:
+      str = appLocalizations.searchModeEnglishIcon;
+      break;
+  }
+  return str;
+}
