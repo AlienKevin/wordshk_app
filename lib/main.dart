@@ -323,42 +323,51 @@ class _HomePageState extends State<HomePage> {
   }
 
   void doSearch(String query, SearchMode searchMode) {
-    switch (searchMode) {
-      case SearchMode.pr:
-        api.prSearch(capacity: 10, query: query).then((results) {
-          setState(() {
-            prSearchResults = results.unique((result) => result.variant);
-            finishedSearch = true;
+    if (query.isEmpty) {
+      setState(() {
+        variantSearchResults.clear();
+        prSearchResults.clear();
+        englishSearchResults.clear();
+        finishedSearch = true;
+      });
+    } else {
+      switch (searchMode) {
+        case SearchMode.pr:
+          api.prSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              prSearchResults = results.unique((result) => result.variant);
+              finishedSearch = true;
+            });
           });
-        });
-        break;
-      case SearchMode.variant:
-        api.variantSearch(capacity: 10, query: query).then((results) {
-          setState(() {
-            variantSearchResults = results.unique((result) => result.variant);
-            finishedSearch = true;
+          break;
+        case SearchMode.variant:
+          api.variantSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              variantSearchResults = results.unique((result) => result.variant);
+              finishedSearch = true;
+            });
           });
-        });
-        break;
-      case SearchMode.combined:
-        api.combinedSearch(capacity: 10, query: query).then((results) {
-          setState(() {
-            prSearchResults =
-                results.prSearchResults.unique((result) => result.variant);
-            variantSearchResults =
-                results.variantSearchResults.unique((result) => result.variant);
-            finishedSearch = true;
+          break;
+        case SearchMode.combined:
+          api.combinedSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              prSearchResults =
+                  results.prSearchResults.unique((result) => result.variant);
+              variantSearchResults = results.variantSearchResults
+                  .unique((result) => result.variant);
+              finishedSearch = true;
+            });
           });
-        });
-        break;
-      case SearchMode.english:
-        api.englishSearch(capacity: 10, query: query).then((results) {
-          setState(() {
-            englishSearchResults = results;
-            finishedSearch = true;
+          break;
+        case SearchMode.english:
+          api.englishSearch(capacity: 10, query: query).then((results) {
+            setState(() {
+              englishSearchResults = results;
+              finishedSearch = true;
+            });
           });
-        });
-        break;
+          break;
+      }
     }
   }
 
