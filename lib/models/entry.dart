@@ -413,47 +413,47 @@ Pos stringToPos(String str) {
 translatePos(Pos pos, AppLocalizations context) {
   switch (pos) {
     case Pos.noun:
-      return context.noun;
+      return context.posNoun;
     case Pos.verb:
-      return context.verb;
+      return context.posVerb;
     case Pos.adjective:
-      return context.adjective;
+      return context.posAdjective;
     case Pos.adverb:
-      return context.adverb;
+      return context.posAdverb;
     case Pos.localiser:
-      return context.localiser;
+      return context.posLocaliser;
     case Pos.conjunction:
-      return context.conjunction;
+      return context.posConjunction;
     case Pos.expression:
-      return context.expression;
+      return context.posExpression;
     case Pos.affix:
-      return context.affix;
+      return context.posAffix;
     case Pos.pronoun:
-      return context.pronoun;
+      return context.posPronoun;
     case Pos.preposition:
-      return context.preposition;
+      return context.posPreposition;
     case Pos.quantifier:
-      return context.quantifier;
+      return context.posQuantifier;
     case Pos.particle:
-      return context.particle;
+      return context.posParticle;
     case Pos.modalVerb:
-      return context.modalVerb;
+      return context.posModalVerb;
     case Pos.number:
-      return context.number;
+      return context.posNumber;
     case Pos.time:
-      return context.time;
+      return context.posTime;
     case Pos.other:
-      return context.other;
+      return context.posOther;
     case Pos.morpheme:
-      return context.morpheme;
+      return context.posMorpheme;
     case Pos.interjection:
-      return context.interjection;
+      return context.posInterjection;
     case Pos.nonPredicateAdjective:
-      return context.nonPredicateAdjective;
+      return context.posNonPredicateAdjective;
     case Pos.onomatopoeia:
-      return context.onomatopoeia;
+      return context.posOnomatopoeia;
     case Pos.unknown:
-      return context.unknown;
+      return context.posUnknown;
   }
 }
 
