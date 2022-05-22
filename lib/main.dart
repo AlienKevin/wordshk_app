@@ -343,7 +343,7 @@ class _HomePageState extends State<HomePage> {
         variantSearchResults.clear();
         prSearchResults.clear();
         englishSearchResults.clear();
-        finishedSearch = true;
+        finishedSearch = false;
       });
     } else {
       switch (searchMode) {
