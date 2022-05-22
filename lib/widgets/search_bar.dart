@@ -152,12 +152,15 @@ class IsSearching extends State<SearchBar> {
         );
 
     return AppBar(
+      titleSpacing: 0.0,
       title: !isSearching.value
           ? null
-          : Directionality(
-              textDirection: Directionality.of(context),
-              child: Consumer<SearchModeState>(
-                  builder: (context, searchModeState, child) => TextField(
+          : Consumer<SearchModeState>(
+              builder: (context, searchModeState, child) => Padding(
+                    padding: const EdgeInsets.only(right: 10, top: 2),
+                    child: SizedBox(
+                      height: 42,
+                      child: TextField(
                         style: const TextStyle(color: whiteColor),
                         focusNode: focusNode,
                         onTap: () => beginSearch(context),
@@ -165,15 +168,36 @@ class IsSearching extends State<SearchBar> {
                         key: const Key('SearchBarTextField'),
                         keyboardType: widget.keyboardType,
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Theme.of(context).canvasColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 5),
                           hintText: translateSearchMode(searchModeState.mode,
                               AppLocalizations.of(context)!),
                           hintStyle: const TextStyle(
                             color: whiteColor,
                           ),
+                          suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
+                              showClearButton
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear,
+                                          semanticLabel: "Clear"),
+                                      color: buttonColor,
+                                      disabledColor:
+                                          theme.disabledColor.withOpacity(0),
+                                      onPressed: !_clearActive
+                                          ? null
+                                          : () {
+                                              widget.onCleared?.call();
+                                              controller.clear();
+                                              FocusScope.of(context)
+                                                  .requestFocus(focusNode);
+                                              persistentQuery = "";
+                                            })
+                                  : null,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           border: InputBorder.none,
-                          fillColor: whiteColor,
                         ),
                         onChanged: (query) {
                           persistentQuery = query;
@@ -193,78 +217,53 @@ class IsSearching extends State<SearchBar> {
                         },
                         autofocus: true,
                         controller: controller,
-                      )),
-            ),
-      actions: !showClearButton
-          ? null
-          : <Widget>[
-              // Show an icon if clear is not active, so there's no ripple on tap
-              IconButton(
-                  icon: const Icon(Icons.clear, semanticLabel: "Clear"),
-                  color: buttonColor,
-                  disabledColor: theme.disabledColor.withOpacity(0),
-                  onPressed: !_clearActive
-                      ? null
-                      : () {
-                          widget.onCleared?.call();
-                          controller.clear();
-                          FocusScope.of(context).requestFocus(focusNode);
-                          persistentQuery = "";
-                        }),
-              PortalTarget(
-                  visible:
-                      context.watch<SearchModeState>().showSearchModeSelector,
-                  anchor: const Aligned(
-                    follower: Alignment.topRight,
-                    target: Alignment.bottomRight,
-                    offset: Offset(0, 4),
-                  ),
-                  portalFollower: Material(
-                      color: Theme.of(context).canvasColor,
-                      child: Container(
-                        width: 264,
-                        height: 300,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            left: BorderSide(
-                                width: 2.0, color: theme.dividerColor),
-                            bottom: BorderSide(
-                                width: 2.0, color: theme.dividerColor),
-                          ),
-                          color: Theme.of(context).canvasColor,
-                        ),
-                        child: Consumer<SearchModeState>(
-                            builder: (context, searchModeState, child) =>
-                                Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      searchModeRadioListTile(
-                                          SearchMode.variant,
-                                          "(e.g. 好彩)",
-                                          searchModeState.mode),
-                                      searchModeRadioListTile(
-                                          SearchMode.pr,
-                                          "(e.g. hou2 coi2)",
-                                          searchModeState.mode),
-                                      searchModeRadioListTile(
-                                          SearchMode.combined,
-                                          "(e.g. 好彩 / hou2 coi2)",
-                                          searchModeState.mode),
-                                      searchModeRadioListTile(
-                                          SearchMode.english,
-                                          "(e.g. lucky)",
-                                          searchModeState.mode),
-                                    ])),
-                      )),
-                  child: SearchModeButton(
-                    getMode: (mode) => mode,
-                    highlighted: true,
-                    inAppBar: true,
-                    onPressed: context
-                        .read<SearchModeState>()
-                        .toggleSearchModeSelector,
+                      ),
+                    ),
                   )),
-            ],
+      actions: [
+        PortalTarget(
+            visible: context.watch<SearchModeState>().showSearchModeSelector,
+            anchor: const Aligned(
+              follower: Alignment.topRight,
+              target: Alignment.bottomRight,
+              offset: Offset(0, 4),
+            ),
+            portalFollower: Material(
+                color: Theme.of(context).canvasColor,
+                child: Container(
+                  width: 264,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(width: 2.0, color: theme.dividerColor),
+                      bottom: BorderSide(width: 2.0, color: theme.dividerColor),
+                    ),
+                    color: Theme.of(context).canvasColor,
+                  ),
+                  child: Consumer<SearchModeState>(
+                      builder: (context, searchModeState, child) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                searchModeRadioListTile(SearchMode.variant,
+                                    "(e.g. 好彩)", searchModeState.mode),
+                                searchModeRadioListTile(SearchMode.pr,
+                                    "(e.g. hou2 coi2)", searchModeState.mode),
+                                searchModeRadioListTile(
+                                    SearchMode.combined,
+                                    "(e.g. 好彩 / hou2 coi2)",
+                                    searchModeState.mode),
+                                searchModeRadioListTile(SearchMode.english,
+                                    "(e.g. lucky)", searchModeState.mode),
+                              ])),
+                )),
+            child: SearchModeButton(
+              getMode: (mode) => mode,
+              highlighted: true,
+              inAppBar: true,
+              onPressed:
+                  context.read<SearchModeState>().toggleSearchModeSelector,
+            )),
+      ],
     );
   }
 }
