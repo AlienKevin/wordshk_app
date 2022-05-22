@@ -17,7 +17,7 @@ class Entry extends Equatable {
   final int id;
   final List<Variant> variants;
   final List<Pos> poses;
-  final List<String> labels;
+  final List<Label> labels;
   final List<String> sims;
   final List<String> ants;
   final List<Def> defs;
@@ -41,7 +41,9 @@ class Entry extends Equatable {
         }).toList(),
         poses =
             List.from(json['poses']).map((pos) => stringToPos(pos)).toList(),
-        labels = List.from(json['labels']),
+        labels = List.from(json['labels'])
+            .map((label) => stringToLabel(label))
+            .toList(),
         sims = List.from(json['sims']),
         ants = List.from(json['ants']),
         defs = List.from(json['defs']).map((def) {
@@ -457,6 +459,131 @@ translatePos(Pos pos, AppLocalizations context) {
   }
 }
 
+enum Label {
+  vulgar,
+  slang,
+  controversial,
+  buzzword,
+  properNoun,
+  jargon,
+  obsolete,
+  hongKong,
+  mainland,
+  taiwan,
+  macau,
+  japan,
+  loanword,
+  invented,
+  justForFun,
+  plastictrans,
+  written,
+  spoken,
+  wrong,
+  classical,
+  nsfw,
+  folkEtymology,
+}
+
+Label stringToLabel(String str) {
+  switch (str) {
+    case "粗口":
+      return Label.vulgar;
+    case "俚語":
+      return Label.slang;
+    case "爭議":
+      return Label.controversial;
+    case "潮語":
+      return Label.buzzword;
+    case "專名":
+      return Label.properNoun;
+    case "術語":
+      return Label.jargon;
+    case "舊式":
+      return Label.obsolete;
+    case "香港":
+      return Label.hongKong;
+    case "大陸":
+      return Label.mainland;
+    case "台灣":
+      return Label.taiwan;
+    case "澳門":
+      return Label.macau;
+    case "日本":
+      return Label.japan;
+    case "外來語":
+      return Label.loanword;
+    case "自創":
+      return Label.invented;
+    case "玩嘢":
+      return Label.justForFun;
+    case "膠譯":
+      return Label.plastictrans;
+    case "書面語":
+      return Label.written;
+    case "口語":
+      return Label.spoken;
+    case "錯字":
+      return Label.wrong;
+    case "文言":
+      return Label.classical;
+    case "黃賭毒":
+      return Label.nsfw;
+    case "坊間詞源":
+      return Label.folkEtymology;
+    default:
+      throw "Invalid label \"$str\".";
+  }
+}
+
+translateLabel(Label label, AppLocalizations context) {
+  switch (label) {
+    case Label.vulgar:
+      return context.labelVulgar;
+    case Label.slang:
+      return context.labelSlang;
+    case Label.controversial:
+      return context.labelControversial;
+    case Label.buzzword:
+      return context.labelBuzzword;
+    case Label.properNoun:
+      return context.labelProperNoun;
+    case Label.jargon:
+      return context.labelJargon;
+    case Label.obsolete:
+      return context.labelObsolete;
+    case Label.hongKong:
+      return context.labelHongKong;
+    case Label.mainland:
+      return context.labelMainland;
+    case Label.taiwan:
+      return context.labelTaiwan;
+    case Label.macau:
+      return context.labelMacau;
+    case Label.japan:
+      return context.labelJapan;
+    case Label.loanword:
+      return context.labelLoanword;
+    case Label.invented:
+      return context.labelInvented;
+    case Label.justForFun:
+      return context.labelJustForFun;
+    case Label.plastictrans:
+      return context.labelPlastictrans;
+    case Label.written:
+      return context.labelWritten;
+    case Label.spoken:
+      return context.labelSpoken;
+    case Label.wrong:
+      return context.labelWrong;
+    case Label.classical:
+      return context.labelClassical;
+    case Label.nsfw:
+      return context.labelNsfw;
+    case Label.folkEtymology:
+      return context.labelFolkEtymology;
+  }
+}
+
 Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
     void Function(int) updateEntryIndex, OnTapLink onTapLink) {
   double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
@@ -662,7 +789,7 @@ Widget showSimsOrAnts(String label, List<String> simsOrAnts,
           ]));
         }));
 
-Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
+Widget showLabels(List<Label> labels, TextStyle lineTextStyle) => Visibility(
       visible: labels.isNotEmpty,
       child: Builder(builder: (context) {
         return RichText(
@@ -691,7 +818,8 @@ Widget showLabels(List<String> labels, TextStyle lineTextStyle) => Visibility(
                             labelStyle:
                                 lineTextStyle.copyWith(color: whiteColor),
                             backgroundColor: greyColor,
-                            label: Text(label)))
+                            label: Text(translateLabel(
+                                label, AppLocalizations.of(context)!))))
                   ])
               .expand((i) => i)
         ]));
