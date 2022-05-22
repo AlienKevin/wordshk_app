@@ -7,6 +7,7 @@ import 'package:wordshk/custom_page_route.dart';
 
 import '../main.dart';
 import '../models/entry.dart';
+import '../models/search_mode.dart';
 import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {

@@ -10,15 +10,9 @@ import 'package:wordshk/widgets/search_bar.dart';
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'custom_page_route.dart';
+import 'models/search_mode.dart';
 import 'pages/entry_page.dart';
 import 'widgets/navigation_drawer.dart';
-
-enum SearchMode {
-  pr,
-  variant,
-  combined,
-  english,
-}
 
 extension Unique<E, Id> on List<E> {
   List<E> unique([Id Function(E element)? id, bool inplace = true]) {

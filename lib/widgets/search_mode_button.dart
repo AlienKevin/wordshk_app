@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:wordshk/main.dart';
 
 import '../constants.dart';
+import '../models/search_mode.dart';
 
 class SearchModeButton extends StatelessWidget {
   final SearchMode Function(SearchMode) getMode;

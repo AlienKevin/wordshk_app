@@ -10,6 +10,7 @@ import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
 
 import '../constants.dart';
 import '../main.dart';
+import '../models/search_mode.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
@@ -131,12 +132,12 @@ class IsSearching extends State<SearchBar> {
     ThemeData theme = Theme.of(context);
     Color? buttonColor = theme.iconTheme.color;
 
-    searchModeRadioListTile(SearchMode mode, String title, String subtitle,
-            SearchMode groupMode) =>
+    searchModeRadioListTile(
+            SearchMode mode, String subtitle, SearchMode groupMode) =>
         SearchModeRadioListTile(
           activeColor: blueColor,
           title: Text(
-            title,
+            translateSearchMode(mode, AppLocalizations.of(context)!),
             textAlign: TextAlign.end,
           ),
           subtitle: Text(subtitle, textAlign: TextAlign.end),
@@ -155,43 +156,44 @@ class IsSearching extends State<SearchBar> {
           ? null
           : Directionality(
               textDirection: Directionality.of(context),
-              child: TextField(
-                style: const TextStyle(color: whiteColor),
-                focusNode: focusNode,
-                onTap: () => beginSearch(context),
-                cursorColor: whiteColor,
-                key: const Key('SearchBarTextField'),
-                keyboardType: widget.keyboardType,
-                decoration: InputDecoration(
-                  hintText:
-                      AppLocalizations.of(context)!.searchDictionaryHintText,
-                  hintStyle: const TextStyle(
-                    color: whiteColor,
-                  ),
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  border: InputBorder.none,
-                  fillColor: whiteColor,
-                ),
-                onChanged: (query) {
-                  persistentQuery = query;
-                  if (widget.onChanged != null) {
-                    widget.onChanged!(query);
-                  }
-                },
-                onSubmitted: (String val) async {
-                  if (widget.closeOnSubmit) {
-                    await Navigator.maybePop(context);
-                  }
+              child: Consumer<SearchModeState>(
+                  builder: (context, searchModeState, child) => TextField(
+                        style: const TextStyle(color: whiteColor),
+                        focusNode: focusNode,
+                        onTap: () => beginSearch(context),
+                        cursorColor: whiteColor,
+                        key: const Key('SearchBarTextField'),
+                        keyboardType: widget.keyboardType,
+                        decoration: InputDecoration(
+                          hintText: translateSearchMode(searchModeState.mode,
+                              AppLocalizations.of(context)!),
+                          hintStyle: const TextStyle(
+                            color: whiteColor,
+                          ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          border: InputBorder.none,
+                          fillColor: whiteColor,
+                        ),
+                        onChanged: (query) {
+                          persistentQuery = query;
+                          if (widget.onChanged != null) {
+                            widget.onChanged!(query);
+                          }
+                        },
+                        onSubmitted: (String val) async {
+                          if (widget.closeOnSubmit) {
+                            await Navigator.maybePop(context);
+                          }
 
-                  if (widget.clearOnSubmit) {
-                    controller.clear();
-                  }
-                  widget.onSubmitted?.call(val);
-                },
-                autofocus: true,
-                controller: controller,
-              ),
+                          if (widget.clearOnSubmit) {
+                            controller.clear();
+                          }
+                          widget.onSubmitted?.call(val);
+                        },
+                        autofocus: true,
+                        controller: controller,
+                      )),
             ),
       actions: !showClearButton
           ? null
@@ -242,26 +244,18 @@ class IsSearching extends State<SearchBar> {
                                     children: <Widget>[
                                       searchModeRadioListTile(
                                           SearchMode.variant,
-                                          AppLocalizations.of(context)!
-                                              .searchModeVariant,
                                           "(e.g. 好彩)",
                                           searchModeState.mode),
                                       searchModeRadioListTile(
                                           SearchMode.pr,
-                                          AppLocalizations.of(context)!
-                                              .searchModePr,
                                           "(e.g. hou2 coi2)",
                                           searchModeState.mode),
                                       searchModeRadioListTile(
                                           SearchMode.combined,
-                                          AppLocalizations.of(context)!
-                                              .searchModeCombined,
                                           "(e.g. 好彩 / hou2 coi2)",
                                           searchModeState.mode),
                                       searchModeRadioListTile(
                                           SearchMode.english,
-                                          AppLocalizations.of(context)!
-                                              .searchModeEnglish,
                                           "(e.g. lucky)",
                                           searchModeState.mode),
                                     ])),
