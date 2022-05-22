@@ -1,10 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../constants.dart';
 import '../widgets/navigation_drawer.dart';
+import '../widgets/scalable_text_span.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -30,6 +29,7 @@ class AboutPage extends StatelessWidget {
         ]);
 
     void openLink(String url) async {
+      print("openLink");
       var uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri);
@@ -38,10 +38,24 @@ class AboutPage extends StatelessWidget {
       }
     }
 
-    linkedTextSpan(String text, String link) => TextSpan(
-        text: text,
-        style: const TextStyle(color: blueColor),
-        recognizer: TapGestureRecognizer()..onTap = () => openLink(link));
+    linkedTextSpan(IconData icon, String text, String link) {
+      final color = Theme.of(context).colorScheme.secondary;
+      return WidgetSpan(
+          child: GestureDetector(
+              onTap: () => openLink(link),
+              child: Builder(builder: (context) {
+                return RichText(
+                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                    text: ScalableTextSpan(
+                      context,
+                      children: [
+                        WidgetSpan(child: Icon(icon, color: color)),
+                        TextSpan(text: text),
+                      ],
+                      style: TextStyle(color: color),
+                    ));
+              })));
+    }
 
     return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.aboutWordshk)),
@@ -82,19 +96,22 @@ class AboutPage extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium,
                         children: [
                           TextSpan(
-                            text: AppLocalizations.of(context)!
-                                .aboutWordshkWantToHelpText,
-                          ),
+                              text: AppLocalizations.of(context)!
+                                  .aboutWordshkWantToHelpText),
                           linkedTextSpan(
+                            Icons.email_outlined,
                             AppLocalizations.of(context)!.email,
                             "mailto:join@words.hk",
                           ),
-                          const TextSpan(text: " | "),
+                          const TextSpan(text: "  "),
                           linkedTextSpan(
+                            Icons.facebook_outlined,
                             AppLocalizations.of(context)!.facebook,
                             "https://www.facebook.com/www.words.hk",
                           )
                         ])),
+                SizedBox(
+                    height: Theme.of(context).textTheme.bodyMedium!.fontSize),
               ],
             ),
           ),
