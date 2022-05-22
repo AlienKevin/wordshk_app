@@ -2,13 +2,13 @@
     "searchDictionary": "Search",
     "searchDictionaryNoResultsFound": "Sorry, no results found",
 
-    "searchModeVariant": "Words",
+    "searchModeVariant": "Word",
     "searchModePr": "Jyutping",
-    "searchModeCombined": "Combine Variant & Jyutping",
+    "searchModeCombined": "Word or Jyutping",
     "searchModeEnglish": "English",
     "searchModeVariantIcon": "W",
     "searchModePrIcon": "J",
-    "searchModeCombinedIcon": "C",
+    "searchModeCombinedIcon": "O",
     "searchModeEnglishIcon": "E",
 
     "entry": "entry",

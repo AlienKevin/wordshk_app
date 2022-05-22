@@ -222,11 +222,7 @@ class IsSearching extends State<SearchBar> {
                   portalFollower: Material(
                       color: Theme.of(context).canvasColor,
                       child: Container(
-                        width: AppLocalizations.of(context)!
-                                .localeName
-                                .startsWith("zh")
-                            ? 264
-                            : 320,
+                        width: 264,
                         height: 300,
                         decoration: BoxDecoration(
                           border: Border(
