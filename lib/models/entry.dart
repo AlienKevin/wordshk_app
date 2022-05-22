@@ -805,21 +805,23 @@ Widget showLabels(List<Label> labels, TextStyle lineTextStyle) => Visibility(
               .map((label) => [
                     const WidgetSpan(child: SizedBox(width: 10)),
                     WidgetSpan(
-                        child: Chip(
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            padding: EdgeInsets.zero,
-                            labelPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            labelStyle:
-                                lineTextStyle.copyWith(color: whiteColor),
-                            backgroundColor: greyColor,
-                            label: Text(translateLabel(
-                                label, AppLocalizations.of(context)!))))
+                        child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Chip(
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          padding: EdgeInsets.zero,
+                          labelPadding: const EdgeInsets.only(
+                              left: 10, right: 10, bottom: 2),
+                          labelStyle: lineTextStyle.copyWith(color: whiteColor),
+                          backgroundColor: greyColor,
+                          label: Text(translateLabel(
+                              label, AppLocalizations.of(context)!))),
+                    ))
                   ])
               .expand((i) => i)
         ]));
