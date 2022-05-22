@@ -304,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                     child: Padding(
                       padding: EdgeInsets.only(
                           top: (MediaQuery.of(context).size.height / 2 -
-                              watermarkSize)),
+                              watermarkSize * 1.2)),
                       child: MediaQuery.of(context).platformBrightness ==
                               Brightness.light
                           ? Image(
