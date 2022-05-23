@@ -22,6 +22,7 @@ dependencies:
   intl: ^0.17.0
   provider: ^6.0.2
   flutter_portal: ^1.1.0
+  flutter_web_browser: ^0.17.1
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:

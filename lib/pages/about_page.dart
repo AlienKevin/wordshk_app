@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
 import '../widgets/scalable_text_span.dart';
 
@@ -27,16 +27,6 @@ class AboutPage extends StatelessWidget {
               textScaleFactor: MediaQuery.of(context).textScaleFactor,
               text: paragraph),
         ]);
-
-    void openLink(String url) async {
-      print("openLink");
-      var uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-      } else {
-        throw 'Could not launch $url';
-      }
-    }
 
     linkedTextSpan(IconData icon, String text, String link) {
       final color = Theme.of(context).colorScheme.secondary;
