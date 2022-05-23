@@ -129,6 +129,7 @@ class IsSearching extends State<SearchBar> {
   AppBar build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     Color? buttonColor = theme.iconTheme.color;
+    final textColor = theme.textTheme.bodyMedium!.color;
 
     searchModeRadioListTile(
             SearchMode mode, String subtitle, SearchMode groupMode) =>
@@ -159,10 +160,10 @@ class IsSearching extends State<SearchBar> {
                     child: SizedBox(
                       height: 42,
                       child: TextField(
-                        style: const TextStyle(color: whiteColor),
+                        style: TextStyle(color: textColor),
                         focusNode: focusNode,
                         onTap: () => beginSearch(context),
-                        cursorColor: whiteColor,
+                        cursorColor: textColor,
                         key: const Key('SearchBarTextField'),
                         keyboardType: widget.keyboardType,
                         decoration: InputDecoration(
@@ -172,8 +173,8 @@ class IsSearching extends State<SearchBar> {
                               horizontal: 8, vertical: 5),
                           hintText: translateSearchMode(searchModeState.mode,
                               AppLocalizations.of(context)!),
-                          hintStyle: const TextStyle(
-                            color: whiteColor,
+                          hintStyle: TextStyle(
+                            color: textColor,
                           ),
                           suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
                               showClearButton
