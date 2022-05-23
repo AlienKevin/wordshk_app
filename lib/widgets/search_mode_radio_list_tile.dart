@@ -36,7 +36,6 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
     this.dense,
     this.secondary,
     this.selected = false,
-    this.controlAffinity = ListTileControlAffinity.trailing,
     required this.autofocus,
     this.shape,
     this.tileColor,
@@ -150,9 +149,6 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
   /// Normally, this property is left to its default value, false.
   final bool selected;
 
-  /// Where to place the control relative to the text.
-  final ListTileControlAffinity controlAffinity;
-
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
@@ -194,40 +190,22 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final Widget control = Radio<T>(
-    //   value: value,
-    //   groupValue: groupValue,
-    //   onChanged: onChanged,
-    // );
-    Widget control = SearchModeButton(
-      getMode: (_) => value,
-      highlighted: context.watch<SearchModeState>().mode == value,
-      inAppBar: false,
-      onPressed: () {
-        context.read<SearchModeState>().updateSearchMode(value);
-        context.read<SearchModeState>().toggleSearchModeSelector();
-      },
-    );
-    Widget? leading, trailing;
-    switch (controlAffinity) {
-      case ListTileControlAffinity.leading:
-      case ListTileControlAffinity.platform:
-        leading = control;
-        trailing = secondary;
-        break;
-      case ListTileControlAffinity.trailing:
-        leading = secondary;
-        trailing = control;
-        break;
-    }
     return MergeSemantics(
       child: ListTileTheme.merge(
         selectedColor: activeColor ?? Theme.of(context).toggleableActiveColor,
         child: ListTile(
-          leading: leading,
+          leading: secondary,
           title: title,
           subtitle: subtitle,
-          trailing: trailing,
+          trailing: Consumer<SearchModeState>(
+              builder: (context, searchModeState, child) => SearchModeButton(
+                    getMode: (_) => value,
+                    highlighted: searchModeState.mode == value,
+                    inAppBar: false,
+                    onPressed: () {
+                      searchModeState.updateSearchModeAndCloseSelector(value);
+                    },
+                  )),
           isThreeLine: isThreeLine,
           dense: dense,
           enabled: onChanged != null,

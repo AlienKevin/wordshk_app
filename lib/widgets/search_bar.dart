@@ -144,7 +144,9 @@ class IsSearching extends State<SearchBar> {
           groupValue: groupMode,
           onChanged: (SearchMode? value) {
             if (value != null) {
-              context.read<SearchModeState>().updateSearchMode(value);
+              context
+                  .read<SearchModeState>()
+                  .updateSearchModeAndCloseSelector(value);
             }
           },
           autofocus: true,
@@ -224,48 +226,57 @@ class IsSearching extends State<SearchBar> {
                     ),
                   )),
       actions: [
-        PortalTarget(
-            visible: context.watch<SearchModeState>().showSearchModeSelector,
-            anchor: const Aligned(
-              follower: Alignment.topRight,
-              target: Alignment.bottomRight,
-              offset: Offset(0, 4),
-            ),
-            portalFollower: Material(
-                color: Theme.of(context).canvasColor,
-                child: Container(
-                  width: 264,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(width: 2.0, color: theme.dividerColor),
-                      bottom: BorderSide(width: 2.0, color: theme.dividerColor),
-                    ),
+        Consumer<SearchModeState>(
+            builder: (context, searchModeState, child) => PortalTarget(
+                visible: searchModeState.showSearchModeSelector,
+                anchor: const Aligned(
+                  follower: Alignment.topRight,
+                  target: Alignment.bottomRight,
+                  offset: Offset(0, 4),
+                ),
+                portalFollower: Material(
                     color: Theme.of(context).canvasColor,
-                  ),
-                  child: Consumer<SearchModeState>(
-                      builder: (context, searchModeState, child) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                searchModeRadioListTile(SearchMode.variant,
-                                    "(e.g. 好彩)", searchModeState.mode),
-                                searchModeRadioListTile(SearchMode.pr,
-                                    "(e.g. hou2 coi2)", searchModeState.mode),
-                                searchModeRadioListTile(
-                                    SearchMode.combined,
-                                    "(e.g. 好彩 / hou2 coi2)",
-                                    searchModeState.mode),
-                                searchModeRadioListTile(SearchMode.english,
-                                    "(e.g. lucky)", searchModeState.mode),
-                              ])),
-                )),
-            child: SearchModeButton(
-              getMode: (mode) => mode,
-              highlighted: true,
-              inAppBar: true,
-              onPressed:
-                  context.read<SearchModeState>().toggleSearchModeSelector,
-            )),
+                    child: Container(
+                      width: 264,
+                      height: 290,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          left:
+                              BorderSide(width: 2.0, color: theme.dividerColor),
+                          bottom:
+                              BorderSide(width: 2.0, color: theme.dividerColor),
+                        ),
+                        color: Theme.of(context).canvasColor,
+                      ),
+                      child: Consumer<SearchModeState>(
+                          builder: (context, searchModeState, child) => Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    searchModeRadioListTile(SearchMode.variant,
+                                        "(e.g. 好彩)", searchModeState.mode),
+                                    const Divider(thickness: 2),
+                                    searchModeRadioListTile(
+                                        SearchMode.pr,
+                                        "(e.g. hou2 coi2)",
+                                        searchModeState.mode),
+                                    const Divider(thickness: 2),
+                                    searchModeRadioListTile(
+                                        SearchMode.combined,
+                                        "(e.g. 好彩 / hou2 coi2)",
+                                        searchModeState.mode),
+                                    const Divider(thickness: 2),
+                                    searchModeRadioListTile(SearchMode.english,
+                                        "(e.g. lucky)", searchModeState.mode),
+                                  ])),
+                    )),
+                child: SearchModeButton(
+                  getMode: (mode) => mode,
+                  highlighted: true,
+                  inAppBar: true,
+                  onPressed: () => context
+                      .read<SearchModeState>()
+                      .toggleSearchModeSelector(),
+                ))),
       ],
     );
   }

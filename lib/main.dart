@@ -107,22 +107,24 @@ class MyApp extends StatelessWidget {
     const dividerTheme = DividerThemeData(space: 0, thickness: 1);
 
     var lightTheme = ThemeData(
+      brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSwatch(
-          brightness: Brightness.light,
-          accentColor: blueColor,
-        ),
-        primarySwatch: blueSwatch,
-        primaryColor: blueColor,
-        appBarTheme: appBarTheme,
-        textSelectionTheme: textSelectionTheme,
-        fontFamily: 'ChironHeiHK',
-        textTheme: textTheme.copyWith(
-            bodySmall: bodySmall.copyWith(color: darkGreyColor)),
-        iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
-        textButtonTheme: textButtonTheme,
-        elevatedButtonTheme: elevatedButtonTheme,
-        dividerTheme: dividerTheme.copyWith(color: lightGreyColor));
+        accentColor: blueColor,
+      ),
+      primarySwatch: blueSwatch,
+      primaryColor: blueColor,
+      appBarTheme: appBarTheme,
+      textSelectionTheme: textSelectionTheme,
+      fontFamily: 'ChironHeiHK',
+      textTheme: textTheme.copyWith(
+          bodySmall: bodySmall.copyWith(color: darkGreyColor)),
+      iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
+      textButtonTheme: textButtonTheme,
+      elevatedButtonTheme: elevatedButtonTheme,
+      dividerColor: lightGreyColor,
+      dividerTheme: dividerTheme,
+    );
     var darkTheme = ThemeData(
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSwatch(
@@ -141,7 +143,8 @@ class MyApp extends StatelessWidget {
       iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
       textButtonTheme: textButtonTheme,
       elevatedButtonTheme: elevatedButtonTheme,
-      dividerTheme: dividerTheme.copyWith(color: darkGreyColor),
+      dividerColor: darkGreyColor,
+      dividerTheme: dividerTheme,
     );
     return Portal(
         child: MaterialApp(
@@ -210,6 +213,12 @@ class HomePage extends StatefulWidget {
 class SearchModeState with ChangeNotifier {
   SearchMode mode = SearchMode.combined;
   bool showSearchModeSelector = false;
+
+  void updateSearchModeAndCloseSelector(SearchMode newMode) {
+    mode = newMode;
+    showSearchModeSelector = false;
+    notifyListeners();
+  }
 
   void updateSearchMode(SearchMode newMode) {
     mode = newMode;
