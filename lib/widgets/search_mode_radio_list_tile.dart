@@ -28,6 +28,7 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
     required this.value,
     required this.groupValue,
     required this.onChanged,
+    required this.searchTextFieldFocusNode,
     this.activeColor,
     this.title,
     this.subtitle,
@@ -81,6 +82,9 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
   /// )
   /// ```
   final ValueChanged<SearchMode?>? onChanged;
+
+  /// focusNode of SearchBar's TextField
+  final FocusNode searchTextFieldFocusNode;
 
   /// The color to use when this radio button is selected.
   ///
@@ -177,7 +181,8 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
                     highlighted: searchModeState.mode == value,
                     inAppBar: false,
                     onPressed: () {
-                      searchModeState.updateSearchModeAndCloseSelector(value);
+                      searchModeState.updateSearchModeAndCloseSelector(
+                          value, searchTextFieldFocusNode);
                     },
                   )),
           isThreeLine: isThreeLine,
@@ -189,11 +194,9 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
           onTap: onChanged != null
               ? () {
                   if (checked) {
-                    print("onChanged!(null)");
                     onChanged!(null);
                     return;
                   } else {
-                    print("!checked");
                     onChanged!(value);
                   }
                 }

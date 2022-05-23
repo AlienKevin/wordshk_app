@@ -214,13 +214,16 @@ class SearchModeState with ChangeNotifier {
   SearchMode mode = SearchMode.combined;
   bool showSearchModeSelector = false;
 
-  void updateSearchModeAndCloseSelector(SearchMode newMode) {
+  void updateSearchModeAndCloseSelector(
+      SearchMode newMode, FocusNode focusNode) {
+    switchKeyboardType(focusNode);
     mode = newMode;
     showSearchModeSelector = false;
     notifyListeners();
   }
 
-  void updateSearchMode(SearchMode newMode) {
+  void updateSearchMode(SearchMode newMode, FocusNode focusNode) {
+    switchKeyboardType(focusNode);
     mode = newMode;
     notifyListeners();
   }
@@ -229,6 +232,13 @@ class SearchModeState with ChangeNotifier {
     showSearchModeSelector = !showSearchModeSelector;
     notifyListeners();
   }
+}
+
+switchKeyboardType(FocusNode focusNode) {
+  focusNode.unfocus();
+  WidgetsBinding.instance.addPostFrameCallback(
+    (_) => focusNode.requestFocus(),
+  );
 }
 
 class SearchQueryState with ChangeNotifier {

@@ -1,6 +1,8 @@
 // Copyright (c) 2017, Spencer. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -35,9 +37,6 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   /// A callback which is invoked each time the text field's value changes
   final TextFieldChangeCallback? onChanged;
 
-  /// The type of keyboard to use for editing the search bar text. Defaults to 'TextInputType.text'.
-  final TextInputType keyboardType;
-
   const SearchBar({
     this.onSubmitted,
     this.closeOnSubmit = false,
@@ -45,7 +44,6 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
     this.onChanged,
     this.onClosed,
     this.onCleared,
-    this.keyboardType = TextInputType.text,
     Key? key,
   }) : super(key: key);
 
@@ -146,11 +144,12 @@ class IsSearching extends State<SearchBar> {
             if (value != null) {
               context
                   .read<SearchModeState>()
-                  .updateSearchModeAndCloseSelector(value);
+                  .updateSearchModeAndCloseSelector(value, focusNode);
             } else {
               context.read<SearchModeState>().toggleSearchModeSelector();
             }
           },
+          searchTextFieldFocusNode: focusNode,
           autofocus: true,
         );
 
@@ -169,7 +168,12 @@ class IsSearching extends State<SearchBar> {
                         onTap: () => beginSearch(context),
                         cursorColor: textColor,
                         key: const Key('SearchBarTextField'),
-                        keyboardType: widget.keyboardType,
+                        autocorrect: searchModeState.mode != SearchMode.pr &&
+                            searchModeState.mode != SearchMode.combined,
+                        keyboardType: searchModeState.mode == SearchMode.pr &&
+                                Platform.isAndroid
+                            ? TextInputType.visiblePassword
+                            : TextInputType.text,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Theme.of(context).canvasColor,
