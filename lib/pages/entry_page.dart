@@ -8,6 +8,7 @@ import 'package:wordshk/custom_page_route.dart';
 import '../main.dart';
 import '../models/entry.dart';
 import '../models/search_mode.dart';
+import '../utils.dart';
 import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class EntryPage extends StatefulWidget {
 
 class _EntryPageState extends State<EntryPage> {
   int entryIndex = 0;
+  late List<Entry> entryGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +32,22 @@ class _EntryPageState extends State<EntryPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.entry),
+          actions: [
+            IconButton(
+                onPressed: () => openLink(
+                    "https://words.hk/zidin/v/${entryGroup[entryIndex].id}"),
+                icon: const Icon(Icons.edit))
+          ],
         ),
         body: FutureBuilder(
           future: api.getEntryGroupJson(id: widget.id).then((json) {
-            // log("json is ${json.toString()}");
-            var entryGroup = json
+            var newEntryGroup = json
                 .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
                 .toList();
-            return entryGroup;
+            setState(() {
+              entryGroup = newEntryGroup;
+            });
+            return newEntryGroup;
           }),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
