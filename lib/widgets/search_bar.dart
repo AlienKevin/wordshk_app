@@ -147,6 +147,8 @@ class IsSearching extends State<SearchBar> {
               context
                   .read<SearchModeState>()
                   .updateSearchModeAndCloseSelector(value);
+            } else {
+              context.read<SearchModeState>().toggleSearchModeSelector();
             }
           },
           autofocus: true,

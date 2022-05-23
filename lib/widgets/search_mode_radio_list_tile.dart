@@ -28,7 +28,6 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
     required this.value,
     required this.groupValue,
     required this.onChanged,
-    this.toggleable = false,
     this.activeColor,
     this.title,
     this.subtitle,
@@ -82,31 +81,6 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
   /// )
   /// ```
   final ValueChanged<SearchMode?>? onChanged;
-
-  /// Set to true if this radio list tile is allowed to be returned to an
-  /// indeterminate state by selecting it again when selected.
-  ///
-  /// To indicate returning to an indeterminate state, [onChanged] will be
-  /// called with null.
-  ///
-  /// If true, [onChanged] can be called with [value] when selected while
-  /// [groupValue] != [value], or with null when selected again while
-  /// [groupValue] == [value].
-  ///
-  /// If false, [onChanged] will be called with [value] when it is selected
-  /// while [groupValue] != [value], and only by selecting another radio button
-  /// in the group (i.e. changing the value of [groupValue]) can this radio
-  /// list tile be unselected.
-  ///
-  /// The default is false.
-  ///
-  /// {@tool dartpad}
-  /// This example shows how to enable deselecting a radio button by setting the
-  /// [toggleable] attribute.
-  ///
-  /// ** See code in examples/api/lib/material/radio_list_tile/radio_list_tile.toggleable.0.dart **
-  /// {@end-tool}
-  final bool toggleable;
 
   /// The color to use when this radio button is selected.
   ///
@@ -214,11 +188,12 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
           selectedTileColor: selectedTileColor,
           onTap: onChanged != null
               ? () {
-                  if (toggleable && checked) {
+                  if (checked) {
+                    print("onChanged!(null)");
                     onChanged!(null);
                     return;
-                  }
-                  if (!checked) {
+                  } else {
+                    print("!checked");
                     onChanged!(value);
                   }
                 }
