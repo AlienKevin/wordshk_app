@@ -48,7 +48,9 @@ cargo ndk -o ../android/app/src/main/jniLibs build --release
 2. Add spell checker suggestion to english search
 3. Use word match percent instead of direct lookup for phrases with >1 words
 4. Test multi-language support for entries
-5.Add auto language detection for searches
+5. Add auto language detection for searches
+6. Show possible jyutping when search result is not found.
+7. Offer option to show entries in simplified
 
 # Legal
 
