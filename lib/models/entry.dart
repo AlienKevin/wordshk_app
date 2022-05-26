@@ -486,7 +486,7 @@ enum Label {
 
 Label stringToLabel(String str) {
   switch (str) {
-    case "粗口":
+    case "粗俗":
       return Label.vulgar;
     case "俚語":
       return Label.slang;
@@ -528,7 +528,7 @@ Label stringToLabel(String str) {
       return Label.classical;
     case "黃賭毒":
       return Label.nsfw;
-    case "坊間詞源":
+    case "民間傳説":
       return Label.folkEtymology;
     default:
       throw "Invalid label \"$str\".";
