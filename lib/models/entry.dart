@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:equatable/equatable.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
@@ -734,42 +736,43 @@ Widget showVariants(
 Widget showVariant(
     Variant variant, TextStyle variantTextStyle, TextStyle prTextStyle) {
   var prs = variant.prs.split(", ");
-  return SelectableText.rich(
-      TextSpan(children: <TextSpan>[
-        TextSpan(text: variant.word, style: variantTextStyle),
-        const TextSpan(text: '  '),
-        ...prs.takeWhile((pr) => !pr.contains("!")).map(
-              (pr) => TextSpan(children: [
-                TextSpan(text: pr),
-                WidgetSpan(
-                    child: Visibility(
-                  visible:
-                      jyutpingFemaleSyllableNames.containsAll(pr.split(" ")),
-                  child: Builder(builder: (context) {
-                    return IconButton(
-                      visualDensity: VisualDensity.compact,
-                      tooltip: "Pronunciation",
-                      alignment: Alignment.bottomLeft,
-                      icon: const Icon(Icons.volume_up),
-                      color: Theme.of(context).colorScheme.secondary,
-                      onPressed: () async {
-                        var player = AudioPlayer();
-                        await player.setAudioSource(ConcatenatingAudioSource(
-                            children: pr
-                                .split(" ")
-                                .map((syllable) => AudioSource.uri(Uri.parse(
-                                    "asset:///assets/jyutping_female/$syllable.mp3")))
-                                .toList()));
-                        await player.seek(Duration.zero, index: 0);
-                        await player.play();
-                      },
-                    );
-                  }),
-                )),
-              ], style: prTextStyle),
-            )
-      ]),
-      style: variantTextStyle);
+  return Row(children: [
+    SelectableText.rich(
+      TextSpan(text: variant.word),
+      style: variantTextStyle,
+    ),
+    const SizedBox(width: 10),
+    ...prs.takeWhile((pr) => !pr.contains("!")).expand((pr) => [
+          SelectableText.rich(
+            TextSpan(text: pr),
+            style: prTextStyle,
+            // selectionWidthStyle: BoxWidthStyle.max,
+          ),
+          Visibility(
+            visible: jyutpingFemaleSyllableNames.containsAll(pr.split(" ")),
+            child: Builder(builder: (context) {
+              return IconButton(
+                visualDensity: VisualDensity.compact,
+                tooltip: "Pronunciation",
+                alignment: Alignment.bottomLeft,
+                icon: const Icon(Icons.volume_up),
+                color: Theme.of(context).colorScheme.secondary,
+                onPressed: () async {
+                  var player = AudioPlayer();
+                  await player.setAudioSource(ConcatenatingAudioSource(
+                      children: pr
+                          .split(" ")
+                          .map((syllable) => AudioSource.uri(Uri.parse(
+                              "asset:///assets/jyutping_female/$syllable.mp3")))
+                          .toList()));
+                  await player.seek(Duration.zero, index: 0);
+                  await player.play();
+                },
+              );
+            }),
+          )
+        ])
+  ]);
 }
 
 Widget showTab(
