@@ -474,11 +474,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              CustomPageRoute(
-                  builder: (context) => EntryPage(
-                        id: id,
-                        searchMode: context.read<SearchModeState>().mode,
-                      )),
+              CustomPageRoute(builder: (context) => EntryPage(id: id)),
             );
           },
           child: Padding(

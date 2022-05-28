@@ -8,16 +8,13 @@ import 'package:wordshk/custom_page_route.dart';
 import '../main.dart';
 import '../models/entry.dart';
 import '../models/script.dart';
-import '../models/search_mode.dart';
 import '../utils.dart';
 import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;
-  final SearchMode searchMode;
 
-  const EntryPage({Key? key, required this.id, required this.searchMode})
-      : super(key: key);
+  const EntryPage({Key? key, required this.id}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _EntryPageState();
@@ -71,11 +68,7 @@ class _EntryPageState extends State<EntryPage> {
                   } else {
                     Navigator.push(
                       context,
-                      CustomPageRoute(
-                          builder: (context) => EntryPage(
-                                id: id,
-                                searchMode: widget.searchMode,
-                              )),
+                      CustomPageRoute(builder: (context) => EntryPage(id: id)),
                     );
                   }
                 });
