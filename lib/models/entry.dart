@@ -1060,7 +1060,8 @@ Widget showRichLine(RichLine line, TextStyle lineTextStyle, Color linkColor,
       return showRubyLine(
           line.line, lineTextStyle.color!, linkColor, rubyFontSize, onTapLink);
     case RichLineType.word:
-      return showWordLine(line.line, lineTextStyle, onTapLink);
+      return showWordLine(
+          line.line, lineTextStyle.color!, linkColor, rubyFontSize, onTapLink);
   }
 }
 
@@ -1155,24 +1156,24 @@ List<Widget> showRubySegment(
   ];
 }
 
-Widget showWordLine(
-    WordLine line, TextStyle lineTextStyle, OnTapLink onTapLink) {
+Widget showWordLine(WordLine line, Color textColor, Color linkColor,
+    double fontSize, OnTapLink onTapLink) {
   return Builder(builder: (context) {
     return RichText(
       textScaleFactor: MediaQuery.of(context).textScaleFactor,
       text: TextSpan(
         children: line.segments
-            .map(
-                (segment) => showWordSegment(segment, lineTextStyle, onTapLink))
+            .map((segment) =>
+                showWordSegment(segment, linkColor, fontSize, onTapLink))
             .toList(),
-        style: lineTextStyle,
+        style: TextStyle(fontSize: fontSize, height: 1.2, color: textColor),
       ),
     );
   });
 }
 
-InlineSpan showWordSegment(
-    WordSegment segment, TextStyle lineTextStyle, OnTapLink onTapLink) {
+InlineSpan showWordSegment(WordSegment segment, Color linkColor,
+    double fontSize, OnTapLink onTapLink) {
   switch (segment.type) {
     case SegmentType.text:
       return TextSpan(children: showWord(segment.word));
@@ -1183,10 +1184,9 @@ InlineSpan showWordSegment(
         child: Builder(builder: (context) {
           return RichText(
               textScaleFactor: MediaQuery.of(context).textScaleFactor,
-              text: TextSpan(
+              text: ScalableTextSpan(context,
                   children: showWord(segment.word),
-                  style: lineTextStyle.copyWith(
-                      color: Theme.of(context).colorScheme.secondary)));
+                  style: TextStyle(color: linkColor, fontSize: fontSize)));
         }),
       ));
   }
