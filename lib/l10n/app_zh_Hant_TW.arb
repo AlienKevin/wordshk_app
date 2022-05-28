@@ -42,6 +42,8 @@
     "label": "標籤",
     "synonym": "近義",
     "antonym": "反義",
+    "cantonese": "粵",
+    "english": "英",
 
     "labelVulgar": "粗口",
     "labelSlang": "俚語",

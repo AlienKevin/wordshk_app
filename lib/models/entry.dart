@@ -872,18 +872,27 @@ Widget showLabels(List<Label> labels, TextStyle lineTextStyle) => Visibility(
 
 Widget showDef(Def def, Script script, TextStyle lineTextStyle, Color linkColor,
         double rubyFontSize, bool isSingleDef, OnTapLink onTapLink) =>
-    Column(
-      children: [
-        showClause(script == Script.simplified ? def.yueSimp : def.yue, "(粵) ",
-            lineTextStyle, onTapLink),
-        def.eng == null
-            ? const SizedBox.shrink()
-            : showClause(def.eng!, "(英) ", lineTextStyle, onTapLink),
-        showEgs(def.egs, script, lineTextStyle, linkColor, rubyFontSize,
-            isSingleDef, onTapLink)
-      ],
-      crossAxisAlignment: CrossAxisAlignment.start,
-    );
+    Builder(builder: (context) {
+      return Column(
+        children: [
+          showClause(
+              script == Script.simplified ? def.yueSimp : def.yue,
+              "(" + AppLocalizations.of(context)!.cantonese + ") ",
+              lineTextStyle,
+              onTapLink),
+          def.eng == null
+              ? const SizedBox.shrink()
+              : showClause(
+                  def.eng!,
+                  "(" + AppLocalizations.of(context)!.english + ") ",
+                  lineTextStyle,
+                  onTapLink),
+          showEgs(def.egs, script, lineTextStyle, linkColor, rubyFontSize,
+              isSingleDef, onTapLink)
+        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+      );
+    });
 
 Widget showEgs(
     List<Eg> egs,
