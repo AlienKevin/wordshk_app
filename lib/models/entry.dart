@@ -788,8 +788,10 @@ Widget showTab(
               showVariants(entry.variants, entry.variantsSimp, script,
                   variantTextStyle, prTextStyle, lineTextStyle),
               showLabels(entry.labels, lineTextStyle),
-              showSimsOrAnts("[近義]", entry.sims, lineTextStyle, onTapLink),
-              showSimsOrAnts("[反義]", entry.ants, lineTextStyle, onTapLink),
+              showSimsOrAnts("[" + AppLocalizations.of(context)!.synonym + "]",
+                  entry.sims, lineTextStyle, onTapLink),
+              showSimsOrAnts("[" + AppLocalizations.of(context)!.antonym + "]",
+                  entry.ants, lineTextStyle, onTapLink),
             ])
           : showDef(entry.defs[index - 1], script, lineTextStyle, linkColor,
               rubyFontSize, entry.defs.length == 1, onTapLink),

@@ -40,6 +40,8 @@
     "posUnknown": "unknown",
 
     "label": "tag",
+    "synonym": "synonym",
+    "antonym": "antonym",
 
     "labelVulgar": "vulgar",
     "labelSlang": "slang",

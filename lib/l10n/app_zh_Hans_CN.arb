@@ -40,6 +40,8 @@
     "posUnknown": "未知",
 
     "label": "标签",
+    "synonym": "近义",
+    "antonym": "反义",
 
     "labelVulgar": "脏话",
     "labelSlang": "俚语",
