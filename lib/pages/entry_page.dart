@@ -26,6 +26,9 @@ class _EntryPageState extends State<EntryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final script = Localizations.localeOf(context).scriptCode == "Hans"
+        ? Script.simplified
+        : Script.traditional;
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -49,8 +52,7 @@ class _EntryPageState extends State<EntryPage> {
           }),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
-              return showEntry(
-                  context, snapshot.data, entryIndex, Script.simplified,
+              return showEntry(context, snapshot.data, entryIndex, script,
                   (index) {
                 setState(() {
                   entryIndex = index;
