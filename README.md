@@ -52,6 +52,7 @@ cargo ndk -o ../android/app/src/main/jniLibs build --release
 6. Show possible jyutping when search result is not found.
 7. Offer option to show entries in simplified
 8. Wait for fast2s to merge my 乾/干 PR and update to use the new version
+9. Make text selection in entries smoother
 
 # Legal
 
