@@ -838,7 +838,7 @@ Widget showLabels(List<Label> labels, TextStyle lineTextStyle) => Visibility(
               child: RichText(
                   textScaleFactor: MediaQuery.of(context).textScaleFactor,
                   text: TextSpan(
-                      text: "[標籤]",
+                      text: "[" + AppLocalizations.of(context)!.label + "]",
                       style: lineTextStyle.copyWith(
                           fontWeight: FontWeight.bold)))),
           ...labels

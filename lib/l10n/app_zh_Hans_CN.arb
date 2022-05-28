@@ -39,6 +39,8 @@
     "posOnomatopoeia": "拟声词",
     "posUnknown": "未知",
 
+    "label": "标签",
+
     "labelVulgar": "脏话",
     "labelSlang": "俚语",
     "labelControversial": "争议",

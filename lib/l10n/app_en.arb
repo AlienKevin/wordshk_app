@@ -39,6 +39,8 @@
     "posOnomatopoeia": "onomatopoeia",
     "posUnknown": "unknown",
 
+    "label": "tag",
+
     "labelVulgar": "vulgar",
     "labelSlang": "slang",
     "labelControversial": "controversial",
