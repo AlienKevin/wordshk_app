@@ -1,0 +1,4 @@
+enum Script {
+  simplified,
+  traditional,
+}

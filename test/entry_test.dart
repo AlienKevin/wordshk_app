@@ -13,6 +13,12 @@ void main() {
 			"prs": "ming6"
 		}
 	],
+	"variants_simp": [
+		{
+			"word": "命",
+			"prs": "ming6"
+		}
+	],
 	"poses": [
 		"語素"
 	],
@@ -33,6 +39,18 @@ void main() {
 					]
 				]
 			],
+			"yue_simp": [
+				[
+					[
+						"Link",
+						"命"
+					],
+					[
+						"Text",
+						"（meng6）嘅读书音，通常用喺配词"
+					]
+				]
+			],
 			"eng": [
 				[
 					[
@@ -45,7 +63,38 @@ void main() {
 			"egs": [
 				{
 					"zho": null,
+					"zho_simp": null,
 					"yue": {
+						"Ruby": [
+							{
+								"LinkedWord": [
+									[
+										[
+											[
+												"Normal",
+												"性"
+											]
+										],
+										[
+											"sing3"
+										]
+									],
+									[
+										[
+											[
+												"Bold",
+												"命"
+											]
+										],
+										[
+											"ming6"
+										]
+									]
+								]
+							}
+						]
+					},
+					"yue_simp": {
 						"Ruby": [
 							{
 								"LinkedWord": [
@@ -90,6 +139,7 @@ void main() {
     var expectedEntry = const Entry(
       id: 56534,
       variants: [Variant("命", "ming6")],
+      variantsSimp: [Variant("命", "ming6")],
       poses: [Pos.morpheme],
       labels: [],
       sims: [],
@@ -102,6 +152,12 @@ void main() {
                 Segment(SegmentType.text, "（meng6）嘅讀書音，通常用喺配詞")
               ])
             ]),
+            yueSimp: Clause([
+              Line([
+                Segment(SegmentType.link, "命"),
+                Segment(SegmentType.text, "（meng6）嘅读书音，通常用喺配词")
+              ])
+            ]),
             eng: Clause([
               Line([
                 Segment(SegmentType.text,
@@ -112,7 +168,24 @@ void main() {
             egs: [
               Eg(
                   zho: null,
+                  zhoSimp: null,
                   yue: RichLine(
+                      RichLineType.ruby,
+                      RubyLine([
+                        RubySegment(
+                            RubySegmentType.linkedWord,
+                            RubySegmentLinkedWord([
+                              RubySegmentWord(
+                                  EntryWord(
+                                      [EntryText(EntryTextStyle.normal, "性")]),
+                                  ["sing3"]),
+                              RubySegmentWord(
+                                  EntryWord(
+                                      [EntryText(EntryTextStyle.bold, "命")]),
+                                  ["ming6"])
+                            ]))
+                      ])),
+                  yueSimp: RichLine(
                       RichLineType.ruby,
                       RubyLine([
                         RubySegment(
@@ -138,16 +211,21 @@ void main() {
 
   test('Yue eg sentence no prs gloss', () {
     var json = """
-    {"id":108744,"variants":[{"word":"呢個","prs":"ni1 go3, li1 go3"},{"word":"哩個","prs":"ni1 go3, li1 go3"}],
+    {"id":108744,
+    "variants": [{"word":"呢個","prs":"ni1 go3, li1 go3"},{"word":"哩個","prs":"ni1 go3, li1 go3"}],
+    "variants_simp": [{"word":"呢个","prs":"ni1 go3, li1 go3"},{"word":"哩个","prs":"ni1 go3, li1 go3"}],
     "poses":["代詞"],"labels":[],"sims":[],"ants":[],
     "defs":[
       {"yue":[[["Text","指稱接近自己嘅嘢"]]],
+      "yue_simp":[[["Text","指称接近自己嘅嘢"]]],
       "eng":[[["Text","this; something close to the speaker"]]],
       "alts":[],
       "egs":[
       {
         "zho":null,
+        "zho_simp":null,
         "yue":{"Text":[["Text",[["Normal","我"]]],["Text",[["Bold","呢"]]]]},
+        "yue_simp":{"Text":[["Text",[["Normal","我"]]],["Text",[["Bold","呢"]]]]},
         "eng":[["Text","I think that this person is pretty suspicious."]]
       }
       ]}],
@@ -158,6 +236,10 @@ void main() {
       variants: [
         Variant("呢個", "ni1 go3, li1 go3"),
         Variant("哩個", "ni1 go3, li1 go3")
+      ],
+      variantsSimp: [
+        Variant("呢个", "ni1 go3, li1 go3"),
+        Variant("哩个", "ni1 go3, li1 go3")
       ],
       poses: [Pos.pronoun],
       labels: [],
@@ -170,6 +252,11 @@ void main() {
                 Segment(SegmentType.text, "指稱接近自己嘅嘢"),
               ])
             ]),
+            yueSimp: Clause([
+              Line([
+                Segment(SegmentType.text, "指称接近自己嘅嘢"),
+              ])
+            ]),
             eng: Clause([
               Line([
                 Segment(
@@ -180,7 +267,19 @@ void main() {
             egs: [
               Eg(
                   zho: null,
+                  zhoSimp: null,
                   yue: RichLine(
+                      RichLineType.word,
+                      WordLine([
+                        WordSegment(
+                            SegmentType.text,
+                            EntryWord([
+                              EntryText(EntryTextStyle.normal, "我"),
+                            ])),
+                        WordSegment(SegmentType.text,
+                            EntryWord([EntryText(EntryTextStyle.bold, "呢")]))
+                      ])),
+                  yueSimp: RichLine(
                       RichLineType.word,
                       WordLine([
                         WordSegment(

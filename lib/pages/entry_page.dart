@@ -7,6 +7,7 @@ import 'package:wordshk/custom_page_route.dart';
 
 import '../main.dart';
 import '../models/entry.dart';
+import '../models/script.dart';
 import '../models/search_mode.dart';
 import '../utils.dart';
 import 'entry_not_published_page.dart';
@@ -51,7 +52,9 @@ class _EntryPageState extends State<EntryPage> {
           }),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
-              return showEntry(context, snapshot.data, entryIndex, (index) {
+              return showEntry(
+                  context, snapshot.data, entryIndex, Script.simplified,
+                  (index) {
                 setState(() {
                   entryIndex = index;
                 });

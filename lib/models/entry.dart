@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:wordshk/models/script.dart';
 import 'package:wordshk/widgets/entry_banner.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
@@ -16,6 +17,7 @@ typedef EntryGroup = List<Entry>;
 class Entry extends Equatable {
   final int id;
   final List<Variant> variants;
+  final List<Variant> variantsSimp;
   final List<Pos> poses;
   final List<Label> labels;
   final List<String> sims;
@@ -26,6 +28,7 @@ class Entry extends Equatable {
   const Entry({
     required this.id,
     required this.variants,
+    required this.variantsSimp,
     required this.poses,
     required this.labels,
     required this.sims,
@@ -37,6 +40,9 @@ class Entry extends Equatable {
   Entry.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         variants = List.from(json['variants']).map((variant) {
+          return Variant.fromJson(variant);
+        }).toList(),
+        variantsSimp = List.from(json['variants_simp']).map((variant) {
           return Variant.fromJson(variant);
         }).toList(),
         poses =
@@ -57,12 +63,14 @@ class Entry extends Equatable {
 
 class Def extends Equatable {
   final Clause yue;
+  final Clause yueSimp;
   final Clause? eng;
   final List<AltClause> alts;
   final List<Eg> egs;
 
   const Def({
     required this.yue,
+    required this.yueSimp,
     required this.eng,
     required this.alts,
     required this.egs,
@@ -70,6 +78,7 @@ class Def extends Equatable {
 
   Def.fromJson(Map<String, dynamic> json)
       : yue = Clause.fromJson(json['yue']),
+        yueSimp = Clause.fromJson(json['yue_simp']),
         eng = json['eng'] == null ? null : Clause.fromJson(json['eng']),
         alts = List.from(json['alts']).map((alt) {
           return AltClause.fromJson(alt);
@@ -294,18 +303,28 @@ class EntryText extends Equatable {
 
 class Eg extends Equatable {
   final RichLine? zho;
+  final RichLine? zhoSimp;
   final RichLine? yue;
+  final RichLine? yueSimp;
   final Line? eng;
 
   const Eg({
     required this.zho,
+    required this.zhoSimp,
     required this.yue,
+    required this.yueSimp,
     required this.eng,
   });
 
   Eg.fromJson(Map<String, dynamic> json)
       : zho = json['zho'] == null ? null : RichLine.fromJson(json['zho']),
+        zhoSimp = json['zho_simp'] == null
+            ? null
+            : RichLine.fromJson(json['zho_simp']),
         yue = json['yue'] == null ? null : RichLine.fromJson(json['yue']),
+        yueSimp = json['yue_simp'] == null
+            ? null
+            : RichLine.fromJson(json['yue_simp']),
         eng = json['eng'] == null ? null : Line.fromJson(json['eng']);
 
   @override
@@ -585,7 +604,7 @@ translateLabel(Label label, AppLocalizations context) {
 }
 
 Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
-    void Function(int) updateEntryIndex, OnTapLink onTapLink) {
+    Script script, void Function(int) updateEntryIndex, OnTapLink onTapLink) {
   double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
@@ -632,6 +651,7 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: padding),
                 child: showTab(
                     entryGroup[entryIndex],
+                    script,
                     Theme.of(context).textTheme.headlineSmall!,
                     Theme.of(context).textTheme.bodySmall!,
                     lineTextStyle,
@@ -646,12 +666,21 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
   );
 }
 
-Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
-        TextStyle prTextStyle, TextStyle lineTextStyle) =>
+Widget showVariants(
+  List<Variant> variants,
+  List<Variant> variantsSimp,
+  Script script,
+  TextStyle variantTextStyle,
+  TextStyle prTextStyle,
+  TextStyle lineTextStyle,
+) =>
     variants.length <= 1
         ? SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: showVariant(variants[0], variantTextStyle, prTextStyle))
+            child: showVariant(
+                script == Script.simplified ? variantsSimp[0] : variants[0],
+                variantTextStyle,
+                prTextStyle))
         : ExpandableNotifier(
             child: applyExpandableTheme(Expandable(
                 collapsed: SingleChildScrollView(
@@ -660,7 +689,11 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           showVariant(
-                              variants[0], variantTextStyle, prTextStyle),
+                              script == Script.simplified
+                                  ? variantsSimp[0]
+                                  : variants[0],
+                              variantTextStyle,
+                              prTextStyle),
                           Builder(builder: (context) {
                             return expandButton(
                                 AppLocalizations.of(context)!.entryMoreVariants,
@@ -679,8 +712,14 @@ Widget showVariants(List<Variant> variants, TextStyle variantTextStyle,
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: variants
+                                  .asMap()
+                                  .entries
                                   .map((variant) => showVariant(
-                                      variant, variantTextStyle, prTextStyle))
+                                      script == Script.simplified
+                                          ? variantsSimp[variant.key]
+                                          : variant.value,
+                                      variantTextStyle,
+                                      prTextStyle))
                                   .toList())),
                       Builder(builder: (context) {
                         return expandButton(
@@ -735,6 +774,7 @@ Widget showVariant(
 
 Widget showTab(
         Entry entry,
+        Script script,
         TextStyle variantTextStyle,
         TextStyle prTextStyle,
         TextStyle lineTextStyle,
@@ -745,13 +785,13 @@ Widget showTab(
       itemBuilder: (context, index) => index == 0
           ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               showUnpublishedWarning(entry.published),
-              showVariants(
-                  entry.variants, variantTextStyle, prTextStyle, lineTextStyle),
+              showVariants(entry.variants, entry.variantsSimp, script,
+                  variantTextStyle, prTextStyle, lineTextStyle),
               showLabels(entry.labels, lineTextStyle),
               showSimsOrAnts("[近義]", entry.sims, lineTextStyle, onTapLink),
               showSimsOrAnts("[反義]", entry.ants, lineTextStyle, onTapLink),
             ])
-          : showDef(entry.defs[index - 1], lineTextStyle, linkColor,
+          : showDef(entry.defs[index - 1], script, lineTextStyle, linkColor,
               rubyFontSize, entry.defs.length == 1, onTapLink),
       separatorBuilder: (_, index) => index == 0
           ? SizedBox(height: lineTextStyle.fontSize!)
@@ -828,32 +868,40 @@ Widget showLabels(List<Label> labels, TextStyle lineTextStyle) => Visibility(
       }),
     );
 
-Widget showDef(Def def, TextStyle lineTextStyle, Color linkColor,
+Widget showDef(Def def, Script script, TextStyle lineTextStyle, Color linkColor,
         double rubyFontSize, bool isSingleDef, OnTapLink onTapLink) =>
     Column(
       children: [
-        showClause(def.yue, "(粵) ", lineTextStyle, onTapLink),
+        showClause(script == Script.simplified ? def.yueSimp : def.yue, "(粵) ",
+            lineTextStyle, onTapLink),
         def.eng == null
             ? const SizedBox.shrink()
             : showClause(def.eng!, "(英) ", lineTextStyle, onTapLink),
-        showEgs(def.egs, lineTextStyle, linkColor, rubyFontSize, isSingleDef,
-            onTapLink)
+        showEgs(def.egs, script, lineTextStyle, linkColor, rubyFontSize,
+            isSingleDef, onTapLink)
       ],
       crossAxisAlignment: CrossAxisAlignment.start,
     );
 
-Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, Color linkColor,
-    double rubyFontSize, bool isSingleDef, OnTapLink onTapLink) {
+Widget showEgs(
+    List<Eg> egs,
+    Script script,
+    TextStyle lineTextStyle,
+    Color linkColor,
+    double rubyFontSize,
+    bool isSingleDef,
+    OnTapLink onTapLink) {
   if (egs.isEmpty) {
     return Container();
   } else if (egs.length == 1) {
-    return showEg(egs[0], lineTextStyle, linkColor, rubyFontSize, onTapLink);
+    return showEg(
+        egs[0], script, lineTextStyle, linkColor, rubyFontSize, onTapLink);
   } else if (isSingleDef) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: egs
-            .map((eg) =>
-                showEg(eg, lineTextStyle, linkColor, rubyFontSize, onTapLink))
+            .map((eg) => showEg(
+                eg, script, lineTextStyle, linkColor, rubyFontSize, onTapLink))
             .toList());
   } else {
     return ExpandableNotifier(
@@ -863,7 +911,8 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, Color linkColor,
         Expandable(
             collapsed:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              showEg(egs[0], lineTextStyle, linkColor, rubyFontSize, onTapLink),
+              showEg(egs[0], script, lineTextStyle, linkColor, rubyFontSize,
+                  onTapLink),
               Builder(builder: (context) {
                 return expandButton(
                     AppLocalizations.of(context)!.entryMoreExamples,
@@ -875,8 +924,8 @@ Widget showEgs(List<Eg> egs, TextStyle lineTextStyle, Color linkColor,
             expanded:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               ...egs
-                  .map((eg) => showEg(
-                      eg, lineTextStyle, linkColor, rubyFontSize, onTapLink))
+                  .map((eg) => showEg(eg, script, lineTextStyle, linkColor,
+                      rubyFontSize, onTapLink))
                   .toList(),
               Builder(builder: (context) {
                 return expandButton(
@@ -948,7 +997,7 @@ TextSpan showSegment(Segment segment, Color linkColor, OnTapLink onTapLink) {
   }
 }
 
-Widget showEg(Eg eg, TextStyle lineTextStyle, Color linkColor,
+Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
     double rubyFontSize, OnTapLink onTapLink) {
   return Padding(
       padding: EdgeInsets.only(top: lineTextStyle.fontSize!),
@@ -968,11 +1017,19 @@ Widget showEg(Eg eg, TextStyle lineTextStyle, Color linkColor,
             eg.zho == null
                 ? const SizedBox.shrink()
                 : showRichLine(
-                    eg.zho!, lineTextStyle, linkColor, rubyFontSize, onTapLink),
+                    script == Script.simplified ? eg.zhoSimp! : eg.zho!,
+                    lineTextStyle,
+                    linkColor,
+                    rubyFontSize,
+                    onTapLink),
             eg.yue == null
                 ? const SizedBox.shrink()
                 : showRichLine(
-                    eg.yue!, lineTextStyle, linkColor, rubyFontSize, onTapLink),
+                    script == Script.simplified ? eg.yueSimp! : eg.yue!,
+                    lineTextStyle,
+                    linkColor,
+                    rubyFontSize,
+                    onTapLink),
             eg.eng == null
                 ? const SizedBox.shrink()
                 : showLine(eg.eng!, "", lineTextStyle, onTapLink),
