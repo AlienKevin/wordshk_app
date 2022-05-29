@@ -21,19 +21,31 @@ void wire_init_api(int64_t port_,
                    struct wire_uint_8_list *api_json,
                    struct wire_uint_8_list *english_index_json);
 
-void wire_pr_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
+void wire_pr_search(int64_t port_,
+                    uint32_t capacity,
+                    struct wire_uint_8_list *query,
+                    int32_t script);
 
-void wire_variant_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
+void wire_variant_search(int64_t port_,
+                         uint32_t capacity,
+                         struct wire_uint_8_list *query,
+                         int32_t script);
 
-void wire_combined_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
+void wire_combined_search(int64_t port_,
+                          uint32_t capacity,
+                          struct wire_uint_8_list *query,
+                          int32_t script);
 
-void wire_english_search(int64_t port_, uint32_t capacity, struct wire_uint_8_list *query);
+void wire_english_search(int64_t port_,
+                         uint32_t capacity,
+                         struct wire_uint_8_list *query,
+                         int32_t script);
 
 void wire_get_entry_json(int64_t port_, uint32_t id);
 
 void wire_get_entry_group_json(int64_t port_, uint32_t id);
 
-void wire_get_entry_id(int64_t port_, struct wire_uint_8_list *query);
+void wire_get_entry_id(int64_t port_, struct wire_uint_8_list *query, int32_t script);
 
 struct wire_uint_8_list *new_uint_8_list(int32_t len);
 

@@ -202,9 +202,11 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({Key? key, required this.title, this.script})
+      : super(key: key);
 
   final String title;
+  final Script? script;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -258,6 +260,7 @@ class _HomePageState extends State<HomePage> {
   bool queryEmptied = true;
   bool showSearchModeSelector = false;
   OverlayEntry? searchModeSelectors;
+  Script? script;
 
   @override
   void initState() {
@@ -271,11 +274,11 @@ class _HomePageState extends State<HomePage> {
     final query = context.read<SearchQueryState>().query;
     if (query.isNotEmpty) {
       queryEmptied = false;
-      doSearch(query, context.read<SearchModeState>().mode);
+      doSearch(query, context.read<SearchModeState>().mode, widget.script!);
     }
     context.read<SearchModeState>().addListener(() {
       final query = context.read<SearchQueryState>().query;
-      doSearch(query, context.read<SearchModeState>().mode);
+      doSearch(query, context.read<SearchModeState>().mode, script!);
     });
   }
 
@@ -299,6 +302,11 @@ class _HomePageState extends State<HomePage> {
         break;
     }
 
+    script = script ??
+        (Localizations.localeOf(context).scriptCode == "Hans"
+            ? Script.Simplified
+            : Script.Traditional);
+
     return Scaffold(
         appBar: SearchBar(onChanged: (query) {
           if (query.isEmpty) {
@@ -312,7 +320,7 @@ class _HomePageState extends State<HomePage> {
               finishedSearch = false;
             });
           }
-          doSearch(query, context.read<SearchModeState>().mode);
+          doSearch(query, context.read<SearchModeState>().mode, script!);
         }, onCleared: () {
           setState(() {
             // TODO: hide search results
@@ -356,7 +364,7 @@ class _HomePageState extends State<HomePage> {
                   }))));
   }
 
-  void doSearch(String query, SearchMode searchMode) {
+  void doSearch(String query, SearchMode searchMode, Script script) {
     if (query.isEmpty) {
       setState(() {
         variantSearchResults.clear();
@@ -367,7 +375,9 @@ class _HomePageState extends State<HomePage> {
     } else {
       switch (searchMode) {
         case SearchMode.pr:
-          api.prSearch(capacity: 10, query: query).then((results) {
+          api
+              .prSearch(capacity: 10, query: query, script: script)
+              .then((results) {
             setState(() {
               prSearchResults = results.unique((result) => result.variant);
               finishedSearch = true;
@@ -375,7 +385,9 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case SearchMode.variant:
-          api.variantSearch(capacity: 10, query: query).then((results) {
+          api
+              .variantSearch(capacity: 10, query: query, script: script)
+              .then((results) {
             setState(() {
               variantSearchResults = results.unique((result) => result.variant);
               finishedSearch = true;
@@ -383,7 +395,9 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case SearchMode.combined:
-          api.combinedSearch(capacity: 10, query: query).then((results) {
+          api
+              .combinedSearch(capacity: 10, query: query, script: script)
+              .then((results) {
             setState(() {
               prSearchResults =
                   results.prSearchResults.unique((result) => result.variant);
@@ -394,7 +408,9 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case SearchMode.english:
-          api.englishSearch(capacity: 10, query: query).then((results) {
+          api
+              .englishSearch(capacity: 10, query: query, script: script)
+              .then((results) {
             setState(() {
               englishSearchResults = results;
               finishedSearch = true;

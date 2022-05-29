@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/custom_page_route.dart';
 
+import '../bridge_generated.dart' show Script;
 import '../main.dart';
 import '../models/entry.dart';
-import '../models/script.dart';
 import '../utils.dart';
 import 'entry_not_published_page.dart';
 
@@ -27,8 +27,8 @@ class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
     final script = Localizations.localeOf(context).scriptCode == "Hans"
-        ? Script.simplified
-        : Script.traditional;
+        ? Script.Simplified
+        : Script.Traditional;
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -59,7 +59,7 @@ class _EntryPageState extends State<EntryPage> {
                 });
               }, (entryVariant) {
                 log("Tapped on link $entryVariant");
-                api.getEntryId(query: entryVariant).then((id) {
+                api.getEntryId(query: entryVariant, script: script).then((id) {
                   if (id == null) {
                     Navigator.push(
                       context,

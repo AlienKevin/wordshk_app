@@ -6,10 +6,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:wordshk/models/script.dart';
 import 'package:wordshk/widgets/entry_banner.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
+import '../bridge_generated.dart' show Script;
 import '../constants.dart';
 import '../widgets/expandable.dart';
 
@@ -680,7 +680,7 @@ Widget showVariants(
         ? SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: showVariant(
-                script == Script.simplified ? variantsSimp[0] : variants[0],
+                script == Script.Simplified ? variantsSimp[0] : variants[0],
                 variantTextStyle,
                 prTextStyle))
         : ExpandableNotifier(
@@ -691,7 +691,7 @@ Widget showVariants(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           showVariant(
-                              script == Script.simplified
+                              script == Script.Simplified
                                   ? variantsSimp[0]
                                   : variants[0],
                               variantTextStyle,
@@ -717,7 +717,7 @@ Widget showVariants(
                                   .asMap()
                                   .entries
                                   .map((variant) => showVariant(
-                                      script == Script.simplified
+                                      script == Script.Simplified
                                           ? variantsSimp[variant.key]
                                           : variant.value,
                                       variantTextStyle,
@@ -879,7 +879,7 @@ Widget showDef(Def def, Script script, TextStyle lineTextStyle, Color linkColor,
       return Column(
         children: [
           showClause(
-              script == Script.simplified ? def.yueSimp : def.yue,
+              script == Script.Simplified ? def.yueSimp : def.yue,
               "(" + AppLocalizations.of(context)!.cantonese + ") ",
               lineTextStyle,
               onTapLink),
@@ -1031,7 +1031,7 @@ Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
             eg.zho == null
                 ? const SizedBox.shrink()
                 : showRichLine(
-                    script == Script.simplified ? eg.zhoSimp! : eg.zho!,
+                    script == Script.Simplified ? eg.zhoSimp! : eg.zho!,
                     lineTextStyle,
                     linkColor,
                     rubyFontSize,
@@ -1039,7 +1039,7 @@ Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
             eg.yue == null
                 ? const SizedBox.shrink()
                 : showRichLine(
-                    script == Script.simplified ? eg.yueSimp! : eg.yue!,
+                    script == Script.Simplified ? eg.yueSimp! : eg.yue!,
                     lineTextStyle,
                     linkColor,
                     rubyFontSize,

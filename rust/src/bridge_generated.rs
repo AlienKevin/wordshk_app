@@ -38,7 +38,12 @@ pub extern "C" fn wire_init_api(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_pr_search(port_: i64, capacity: u32, query: *mut wire_uint_8_list) {
+pub extern "C" fn wire_pr_search(
+    port_: i64,
+    capacity: u32,
+    query: *mut wire_uint_8_list,
+    script: i32,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "pr_search",
@@ -48,13 +53,19 @@ pub extern "C" fn wire_pr_search(port_: i64, capacity: u32, query: *mut wire_uin
         move || {
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
-            move |task_callback| pr_search(api_capacity, api_query)
+            let api_script = script.wire2api();
+            move |task_callback| pr_search(api_capacity, api_query, api_script)
         },
     )
 }
 
 #[no_mangle]
-pub extern "C" fn wire_variant_search(port_: i64, capacity: u32, query: *mut wire_uint_8_list) {
+pub extern "C" fn wire_variant_search(
+    port_: i64,
+    capacity: u32,
+    query: *mut wire_uint_8_list,
+    script: i32,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "variant_search",
@@ -64,13 +75,19 @@ pub extern "C" fn wire_variant_search(port_: i64, capacity: u32, query: *mut wir
         move || {
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
-            move |task_callback| variant_search(api_capacity, api_query)
+            let api_script = script.wire2api();
+            move |task_callback| variant_search(api_capacity, api_query, api_script)
         },
     )
 }
 
 #[no_mangle]
-pub extern "C" fn wire_combined_search(port_: i64, capacity: u32, query: *mut wire_uint_8_list) {
+pub extern "C" fn wire_combined_search(
+    port_: i64,
+    capacity: u32,
+    query: *mut wire_uint_8_list,
+    script: i32,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "combined_search",
@@ -80,13 +97,19 @@ pub extern "C" fn wire_combined_search(port_: i64, capacity: u32, query: *mut wi
         move || {
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
-            move |task_callback| combined_search(api_capacity, api_query)
+            let api_script = script.wire2api();
+            move |task_callback| combined_search(api_capacity, api_query, api_script)
         },
     )
 }
 
 #[no_mangle]
-pub extern "C" fn wire_english_search(port_: i64, capacity: u32, query: *mut wire_uint_8_list) {
+pub extern "C" fn wire_english_search(
+    port_: i64,
+    capacity: u32,
+    query: *mut wire_uint_8_list,
+    script: i32,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "english_search",
@@ -96,7 +119,8 @@ pub extern "C" fn wire_english_search(port_: i64, capacity: u32, query: *mut wir
         move || {
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
-            move |task_callback| english_search(api_capacity, api_query)
+            let api_script = script.wire2api();
+            move |task_callback| english_search(api_capacity, api_query, api_script)
         },
     )
 }
@@ -132,7 +156,7 @@ pub extern "C" fn wire_get_entry_group_json(port_: i64, id: u32) {
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_uint_8_list) {
+pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_uint_8_list, script: i32) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "get_entry_id",
@@ -141,7 +165,8 @@ pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_uint_8_list) {
         },
         move || {
             let api_query = query.wire2api();
-            move |task_callback| Ok(get_entry_id(api_query))
+            let api_script = script.wire2api();
+            move |task_callback| Ok(get_entry_id(api_query, api_script))
         },
     )
 }
@@ -193,6 +218,16 @@ impl Wire2Api<String> for *mut wire_uint_8_list {
     fn wire2api(self) -> String {
         let vec: Vec<u8> = self.wire2api();
         String::from_utf8_lossy(&vec).into_owned()
+    }
+}
+
+impl Wire2Api<Script> for i32 {
+    fn wire2api(self) -> Script {
+        match self {
+            0 => Script::Simplified,
+            1 => Script::Traditional,
+            _ => unreachable!("Invalid variant for Script: {}", self),
+        }
     }
 }
 
