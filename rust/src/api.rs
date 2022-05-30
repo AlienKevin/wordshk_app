@@ -1,4 +1,3 @@
-use std::cmp::min;
 use wordshk_tools::rich_dict::{RichDict};
 use wordshk_tools::lean_rich_dict::{to_lean_rich_entry};
 use wordshk_tools::search;
@@ -9,8 +8,8 @@ use serde::{Deserialize, Serialize};
 use parking_lot::Mutex;
 use lazy_static::lazy_static;
 use anyhow::{Result};
-use wordshk_tools::dict::clause_to_string;
 use flutter_rust_bridge::frb;
+use wordshk_tools::dict::clause_to_string;
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
 
@@ -127,18 +126,24 @@ impl Api {
     }
 
     pub fn english_search(&self, capacity: u32, query: &str, script: Script) -> Vec<EnglishSearchResult> {
-        match self.english_index.get(query) {
-            Some(entries) => entries[..min(capacity as usize, entries.len())].iter().map(|entry| {
-                let variant = &search::pick_variants(self.variants_map.get(&entry.entry_id).unwrap(), script).0[0];
+        let entries = search::english_search(&self.english_index, query);
+        entries[..std::cmp::min(capacity as usize, entries.len())]
+            .iter()
+            .map(|entry| {
+                let variant = &search::pick_variants(&self.variants_map.get(&entry.entry_id).unwrap(), script).0[0];
                 EnglishSearchResult {
                     id: entry.entry_id as u32,
                     variant: variant.word.clone(),
                     pr: variant.prs.0[0].to_string(),
-                    eng: clause_to_string(&self.dict.get(&entry.entry_id).unwrap().defs[entry.def_index].eng.as_ref().unwrap()),
+                    eng: clause_to_string(
+                        &self.dict.get(&entry.entry_id).unwrap().defs[entry.def_index]
+                            .eng
+                            .as_ref()
+                            .unwrap(),
+                    ),
                 }
-            }).collect(),
-            None => vec![]
-        }
+            })
+            .collect()
     }
 
     pub fn get_entry_json(&self, id: usize) -> String {
