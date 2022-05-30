@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/widgets/search_bar.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'custom_page_route.dart';
+import 'models/language.dart';
 import 'models/search_mode.dart';
 import 'pages/entry_page.dart';
 import 'widgets/navigation_drawer.dart';
@@ -40,6 +42,7 @@ void main() {
             create: (_) => SearchModeState()),
         ChangeNotifierProvider<SearchQueryState>(
             create: (_) => SearchQueryState()),
+        ChangeNotifierProvider<LanguageState>(create: (_) => LanguageState()),
       ],
       child: MyApp(),
     ),
@@ -148,6 +151,7 @@ class MyApp extends StatelessWidget {
     );
     return Portal(
         child: MaterialApp(
+      locale: context.watch<LanguageState>().language?.toLocale,
       title: 'words.hk',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       localeResolutionCallback: (
@@ -159,9 +163,16 @@ class MyApp extends StatelessWidget {
               languageCode: 'zh',
               scriptCode: 'Hant',
               countryCode: 'HK'); // 'zh_Hant_HK'
-        } else if (supportedLocales.contains(locale) ||
-            locale?.languageCode == 'zh') {
+        } else if (supportedLocales.contains(locale)) {
           return locale;
+        } else if (locale?.languageCode == 'zh') {
+          if (locale?.scriptCode == 'Hant') {
+            return const Locale.fromSubtags(
+                languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW');
+          } else {
+            return const Locale.fromSubtags(
+                languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN');
+          }
         } else {
           return const Locale.fromSubtags(languageCode: 'en');
         }
@@ -252,6 +263,18 @@ class SearchQueryState with ChangeNotifier {
   }
 }
 
+class LanguageState with ChangeNotifier {
+  Language? language;
+
+  void updateLanguage(Language newLanguage) {
+    language = newLanguage;
+    notifyListeners();
+    SharedPreferences.getInstance().then((prefs) async {
+      prefs.setInt("language", newLanguage.index);
+    });
+  }
+}
+
 class _HomePageState extends State<HomePage> {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
@@ -280,6 +303,24 @@ class _HomePageState extends State<HomePage> {
       final query = context.read<SearchQueryState>().query;
       doSearch(query, context.read<SearchModeState>().mode, script!);
     });
+    final languageState = context.read<LanguageState>();
+    if (languageState.language == null) {
+      SharedPreferences.getInstance().then((prefs) async {
+        final languageIndex = prefs.getInt("language");
+        if (languageIndex == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final languageCode = Localizations.localeOf(context).toString();
+            final language =
+                Language.values.byName(languageCode.replaceAll("_", ""));
+            context.read<LanguageState>().updateLanguage(language);
+          });
+        } else {
+          context
+              .read<LanguageState>()
+              .updateLanguage(Language.values[languageIndex]);
+        }
+      });
+    }
   }
 
   @override

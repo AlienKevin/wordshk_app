@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:wordshk/pages/preferences_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/pages/software_licenses_page.dart';
 
@@ -92,6 +93,9 @@ class NavigationDrawer extends StatelessWidget {
                   AppLocalizations.of(context)!.qualityControl,
                   Icons.check,
                   (_) => const QualityControlPage(useBackNavigation: false)),
+              const Divider(),
+              drawerButton(AppLocalizations.of(context)!.preferences,
+                  Icons.settings_outlined, (_) => const PreferencesPage()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.dictionaryLicense,
