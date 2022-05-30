@@ -63,16 +63,16 @@ See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_andro
 
 # TODO
 
-1. Show jyutping help before search or suggestions for fix during search
-2. Add spell checker suggestion to english search
-3. Use word match percent instead of direct lookup for phrases with >1 words
-4. Test multi-language support for entries
-5. Add auto language detection for searches
-6. Show possible jyutping when search result is not found.
-7. Offer option to show entries in simplified
-8. Wait for fast2s to merge my 乾/干 PR and update to use the new version
-9. Make text selection in entries smoother
-10. Fix ruby positioning in Entry M/jam's <eg>: "好M唔M，M套？"
+- [ ] Show jyutping help before search or suggestions for fix during search
+- [ ] Add spell checker suggestion to english search
+- [ ] Use word match percent instead of direct lookup for phrases with >1 words
+- [ ] Test multi-language support for entries
+- [ ] Add auto language detection for searches
+- [ ] Show possible jyutping when search result is not found.
+- [x] Offer option to show entries in simplified
+- [ ] Wait for fast2s to merge my 乾/干 PR and update to use the new version
+- [ ] Make text selection in entries smoother
+- [ ] Fix ruby positioning in Entry M/jam's <eg>: "好M唔M，M套？"
 
 # Legal
 
