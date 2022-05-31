@@ -65,7 +65,7 @@ See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_andro
 
 - [ ] Show jyutping help before search or suggestions for fix during search
 - [ ] Add spell checker suggestion to english search
-- [ ] Use word match percent instead of direct lookup for phrases with >1 words
+- [x] Use word match percent instead of direct lookup for phrases with >1 words
 - [ ] Test multi-language support for entries
 - [ ] Add auto language detection for searches
 - [ ] Show possible jyutping when search result is not found.
