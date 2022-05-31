@@ -1124,8 +1124,12 @@ Widget showLine(
 ttsPronunciationButton(FlutterTts player, String text) => PronunciationButton(
     player: player,
     play: (player) async {
+      final completer = Completer<void>();
       await (player as FlutterTts).speak(text);
-      await player.awaitSpeakCompletion(true);
+      player.setCompletionHandler(() {
+        completer.complete();
+      });
+      return completer.future;
     },
     stop: (player) async {
       await (player as FlutterTts).stop();
