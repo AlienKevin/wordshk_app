@@ -781,6 +781,7 @@ Widget showTab(
     Color linkColor,
     double rubyFontSize,
     OnTapLink onTapLink) {
+  final itemCount = (entry.defs.length + 1) * 2;
   final tab = Expanded(
     child: ScrollablePositionedList.builder(
       itemBuilder: (context, index) => index.isEven
@@ -803,10 +804,12 @@ Widget showTab(
                 ])
               : showDef(entry.defs[index ~/ 2 - 1], script, lineTextStyle,
                   linkColor, rubyFontSize, entry.defs.length == 1, onTapLink))
-          : (index == 0
+          : (index == 1
               ? SizedBox(height: lineTextStyle.fontSize!)
-              : Divider(height: lineTextStyle.fontSize! * 2)),
-      itemCount: entry.defs.length * 2 + 1,
+              : (index == itemCount - 1
+                  ? SizedBox(height: lineTextStyle.fontSize! * 2)
+                  : Divider(height: lineTextStyle.fontSize! * 2))),
+      itemCount: itemCount,
       semanticChildCount: entry.defs.length + 1,
       initialScrollIndex: defIndex * 2,
     ),
