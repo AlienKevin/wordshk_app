@@ -124,7 +124,7 @@ class Line extends Equatable {
         }).toList();
 
   @override
-  String toString() => segments.map((seg) => seg.toString()).join("");
+  String toString() => segments.join("");
 
   @override
   List<Object?> get props => [segments];
@@ -188,6 +188,9 @@ class RubyLine extends Equatable {
         }).toList();
 
   @override
+  String toString() => segments.map((seg) => seg.toString()).join("");
+
+  @override
   List<Object?> get props => [segments];
 }
 
@@ -215,6 +218,9 @@ class RubySegment extends Equatable {
                 : RubySegmentLinkedWord.fromJson(json['LinkedWord']));
 
   @override
+  String toString() => segment.toString();
+
+  @override
   List<Object?> get props => [type, segment];
 }
 
@@ -227,6 +233,9 @@ class RubySegmentWord extends Equatable {
   RubySegmentWord.fromJson(List<dynamic> json)
       : word = EntryWord.fromJson(json[0]),
         prs = List.from(json[1]);
+
+  @override
+  String toString() => word.toString();
 
   @override
   List<Object?> get props => [word, prs];
@@ -262,6 +271,9 @@ class WordLine extends Equatable {
         }).toList();
 
   @override
+  String toString() => segments.join("");
+
+  @override
   List<Object?> get props => [segments];
 }
 
@@ -274,6 +286,9 @@ class WordSegment extends Equatable {
   WordSegment.fromJson(List<dynamic> json)
       : type = segmentTypeFromString(json[0]),
         word = EntryWord.fromJson(json[1]);
+
+  @override
+  String toString() => word.toString();
 
   @override
   List<Object?> get props => [type, word];
@@ -618,14 +633,14 @@ translateLabel(Label label, AppLocalizations context) {
 }
 
 Widget showEntry(
-  BuildContext context,
-  List<Entry> entryGroup,
-  int entryIndex,
-  Script script,
-  void Function(int) updateEntryIndex,
-  OnTapLink onTapLink,
-  AutoScrollController scrollController,
-) {
+    BuildContext context,
+    List<Entry> entryGroup,
+    int entryIndex,
+    Script script,
+    void Function(int) updateEntryIndex,
+    OnTapLink onTapLink,
+    AutoScrollController scrollController,
+    FlutterTts player) {
   double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
   final localizationContext = AppLocalizations.of(context)!;
@@ -661,15 +676,17 @@ Widget showEntry(
                   .toList(),
             ),
             showTab(
-                entryGroup[entryIndex],
-                script,
-                Theme.of(context).textTheme.headlineSmall!,
-                Theme.of(context).textTheme.bodySmall!,
-                lineTextStyle,
-                Theme.of(context).colorScheme.secondary,
-                rubyFontSize,
-                onTapLink,
-                scrollController)
+              entryGroup[entryIndex],
+              script,
+              Theme.of(context).textTheme.headlineSmall!,
+              Theme.of(context).textTheme.bodySmall!,
+              lineTextStyle,
+              Theme.of(context).colorScheme.secondary,
+              rubyFontSize,
+              onTapLink,
+              scrollController,
+              player,
+            )
           ]),
         ),
       ),
@@ -801,6 +818,7 @@ Widget showTab(
   double rubyFontSize,
   OnTapLink onTapLink,
   AutoScrollController scrollController,
+  FlutterTts player,
 ) {
   final itemCount = entry.defs.length + 1;
   final tab = Expanded(
@@ -851,7 +869,8 @@ Widget showTab(
                           linkColor,
                           rubyFontSize,
                           entry.defs.length == 1,
-                          onTapLink),
+                          onTapLink,
+                          player),
                     ));
                 return index == itemCount - 1
                     ? Column(
@@ -937,14 +956,21 @@ Widget showLabels(List<Label> labels, TextStyle lineTextStyle) => Visibility(
       }),
     );
 
-Widget showDef(Def def, Script script, TextStyle lineTextStyle, Color linkColor,
-        double rubyFontSize, bool isSingleDef, OnTapLink onTapLink) =>
+Widget showDef(
+        Def def,
+        Script script,
+        TextStyle lineTextStyle,
+        Color linkColor,
+        double rubyFontSize,
+        bool isSingleDef,
+        OnTapLink onTapLink,
+        FlutterTts player) =>
     Builder(builder: (context) {
       return Column(
         children: [
           showClause(
               script == Script.Simplified ? def.yueSimp : def.yue,
-              isCantonese: true,
+              player: player,
               "(" + AppLocalizations.of(context)!.cantonese + ") ",
               lineTextStyle,
               onTapLink),
@@ -952,12 +978,11 @@ Widget showDef(Def def, Script script, TextStyle lineTextStyle, Color linkColor,
               ? const SizedBox.shrink()
               : showClause(
                   def.eng!,
-                  isCantonese: false,
                   "(" + AppLocalizations.of(context)!.english + ") ",
                   lineTextStyle,
                   onTapLink),
           showEgs(def.egs, script, lineTextStyle, linkColor, rubyFontSize,
-              isSingleDef, onTapLink)
+              isSingleDef, onTapLink, player)
         ],
         crossAxisAlignment: CrossAxisAlignment.start,
       );
@@ -970,18 +995,19 @@ Widget showEgs(
     Color linkColor,
     double rubyFontSize,
     bool isSingleDef,
-    OnTapLink onTapLink) {
+    OnTapLink onTapLink,
+    FlutterTts player) {
   if (egs.isEmpty) {
     return Container();
   } else if (egs.length == 1) {
-    return showEg(
-        egs[0], script, lineTextStyle, linkColor, rubyFontSize, onTapLink);
+    return showEg(egs[0], script, lineTextStyle, linkColor, rubyFontSize,
+        onTapLink, player);
   } else if (isSingleDef) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: egs
-            .map((eg) => showEg(
-                eg, script, lineTextStyle, linkColor, rubyFontSize, onTapLink))
+            .map((eg) => showEg(eg, script, lineTextStyle, linkColor,
+                rubyFontSize, onTapLink, player))
             .toList());
   } else {
     return ExpandableNotifier(
@@ -992,7 +1018,7 @@ Widget showEgs(
             collapsed:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               showEg(egs[0], script, lineTextStyle, linkColor, rubyFontSize,
-                  onTapLink),
+                  onTapLink, player),
               Builder(builder: (context) {
                 return expandButton(
                     AppLocalizations.of(context)!.entryMoreExamples,
@@ -1005,7 +1031,7 @@ Widget showEgs(
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               ...egs
                   .map((eg) => showEg(eg, script, lineTextStyle, linkColor,
-                      rubyFontSize, onTapLink))
+                      rubyFontSize, onTapLink, player))
                   .toList(),
               Builder(builder: (context) {
                 return expandButton(
@@ -1031,12 +1057,12 @@ Widget showEgs(
 
 Widget showClause(
     Clause clause, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink,
-    {required bool isCantonese}) {
+    {FlutterTts? player}) {
   return Column(
     children: clause.lines.asMap().keys.toList().map((index) {
       return showLine(
           clause.lines[index],
-          isCantonese: isCantonese,
+          player: player,
           index == 0 ? tag : null,
           lineTextStyle,
           onTapLink);
@@ -1047,7 +1073,7 @@ Widget showClause(
 
 Widget showLine(
     Line line, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink,
-    {required bool isCantonese}) {
+    {FlutterTts? player}) {
   if (line.segments.length == 1 &&
       line.segments[0] == const Segment(SegmentType.text, "")) {
     return const SizedBox(height: 10);
@@ -1062,35 +1088,11 @@ Widget showLine(
                 .map((segment) => showSegment(segment,
                     Theme.of(context).colorScheme.secondary, onTapLink))
                 .toList(),
-            ...isCantonese
+            ...player != null
                 ? [
                     WidgetSpan(
                         alignment: PlaceholderAlignment.middle,
-                        child: FutureBuilder<FlutterTts>(future: () async {
-                          FlutterTts flutterTts = FlutterTts();
-                          await flutterTts.setLanguage("zh-HK");
-                          await flutterTts.setSpeechRate(0.5);
-                          await flutterTts.setVolume(0.8);
-                          await flutterTts.setPitch(1.0);
-                          await flutterTts.isLanguageAvailable("zh-HK");
-                          return flutterTts;
-                        }(), builder: (BuildContext context,
-                            AsyncSnapshot<FlutterTts> snapshot) {
-                          if (snapshot.hasData) {
-                            return PronunciationButton(
-                                player: snapshot.data!,
-                                play: (player) async {
-                                  await (player as FlutterTts)
-                                      .speak(line.toString());
-                                  await player.awaitSpeakCompletion(true);
-                                },
-                                stop: (player) async {
-                                  await (player as FlutterTts).stop();
-                                });
-                          } else {
-                            return Container();
-                          }
-                        }))
+                        child: ttsPronunciationButton(player, line.toString()))
                   ]
                 : []
           ],
@@ -1100,6 +1102,16 @@ Widget showLine(
     });
   }
 }
+
+ttsPronunciationButton(FlutterTts player, String text) => PronunciationButton(
+    player: player,
+    play: (player) async {
+      await (player as FlutterTts).speak(text);
+      await player.awaitSpeakCompletion(true);
+    },
+    stop: (player) async {
+      await (player as FlutterTts).stop();
+    });
 
 TextSpan showSegment(Segment segment, Color linkColor, OnTapLink onTapLink) {
   switch (segment.type) {
@@ -1115,7 +1127,7 @@ TextSpan showSegment(Segment segment, Color linkColor, OnTapLink onTapLink) {
 }
 
 Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
-    double rubyFontSize, OnTapLink onTapLink) {
+    double rubyFontSize, OnTapLink onTapLink, FlutterTts player) {
   return Padding(
       padding: EdgeInsets.only(top: lineTextStyle.fontSize!),
       child: Container(
@@ -1138,7 +1150,9 @@ Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
                     lineTextStyle,
                     linkColor,
                     rubyFontSize,
-                    onTapLink),
+                    onTapLink,
+                    player,
+                  ),
             eg.yue == null
                 ? const SizedBox.shrink()
                 : showRichLine(
@@ -1146,11 +1160,12 @@ Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
                     lineTextStyle,
                     linkColor,
                     rubyFontSize,
-                    onTapLink),
+                    onTapLink,
+                    player,
+                  ),
             eg.eng == null
                 ? const SizedBox.shrink()
-                : showLine(
-                    eg.eng!, isCantonese: false, "", lineTextStyle, onTapLink),
+                : showLine(eg.eng!, "", lineTextStyle, onTapLink),
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
@@ -1158,38 +1173,40 @@ Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
 }
 
 Widget showRichLine(RichLine line, TextStyle lineTextStyle, Color linkColor,
-    double rubyFontSize, OnTapLink onTapLink) {
+    double rubyFontSize, OnTapLink onTapLink, FlutterTts player) {
   switch (line.type) {
     case RichLineType.ruby:
-      return showRubyLine(
-          line.line, lineTextStyle.color!, linkColor, rubyFontSize, onTapLink);
+      return showRubyLine(line.line, lineTextStyle.color!, linkColor,
+          rubyFontSize, onTapLink, player);
     case RichLineType.word:
-      return showWordLine(
-          line.line, lineTextStyle.color!, linkColor, rubyFontSize, onTapLink);
+      return showWordLine(line.line, lineTextStyle.color!, linkColor,
+          rubyFontSize, onTapLink, player);
   }
 }
 
 Widget showRubyLine(RubyLine line, Color textColor, Color linkColor,
-    double rubyFontSize, OnTapLink onTapLink) {
+    double rubyFontSize, OnTapLink onTapLink, FlutterTts player) {
   return Builder(builder: (context) {
     final textScaleFactor = MediaQuery.of(context).textScaleFactor;
     return Padding(
       padding: EdgeInsets.only(top: rubyFontSize * textScaleFactor / 1.5),
       child: Wrap(
-        runSpacing: rubyFontSize * textScaleFactor / 1.4,
-        children: line.segments
-            .map((segment) => showRubySegment(segment, textColor, linkColor,
-                rubyFontSize, textScaleFactor, onTapLink))
-            .expand((i) => i)
-            .toList()
-            .map((e) => Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  textBaseline: TextBaseline.alphabetic,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [e],
-                ))
-            .toList(),
-      ),
+          runSpacing: rubyFontSize * textScaleFactor / 1.4,
+          children: [
+            ...line.segments
+                .map((segment) => showRubySegment(segment, textColor, linkColor,
+                    rubyFontSize, textScaleFactor, onTapLink))
+                .expand((i) => i)
+                .toList(),
+            ttsPronunciationButton(player, line.toString())
+          ]
+              .map((e) => Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    textBaseline: TextBaseline.alphabetic,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [e],
+                  ))
+              .toList()),
     );
   });
 }
@@ -1261,15 +1278,20 @@ List<Widget> showRubySegment(
 }
 
 Widget showWordLine(WordLine line, Color textColor, Color linkColor,
-    double fontSize, OnTapLink onTapLink) {
+    double fontSize, OnTapLink onTapLink, FlutterTts player) {
   return Builder(builder: (context) {
     return RichText(
       textScaleFactor: MediaQuery.of(context).textScaleFactor,
       text: TextSpan(
-        children: line.segments
-            .map((segment) =>
-                showWordSegment(segment, linkColor, fontSize, onTapLink))
-            .toList(),
+        children: [
+          ...line.segments
+              .map((segment) =>
+                  showWordSegment(segment, linkColor, fontSize, onTapLink))
+              .toList(),
+          WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: ttsPronunciationButton(player, line.toString()))
+        ],
         style: TextStyle(fontSize: fontSize, height: 1.2, color: textColor),
       ),
     );

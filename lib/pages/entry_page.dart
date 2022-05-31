@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 
@@ -28,6 +29,7 @@ class _EntryPageState extends State<EntryPage> {
   late List<Entry> entryGroup;
   late final AutoScrollController scrollController;
   bool scrolledToInitialDef = false;
+  FlutterTts player = FlutterTts();
 
   @override
   void initState() {
@@ -36,6 +38,23 @@ class _EntryPageState extends State<EntryPage> {
         viewportBoundaryGetter: () =>
             Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
         axis: Axis.vertical);
+    () async {
+      await player.setSharedInstance(true);
+      await player.setIosAudioCategory(
+          IosTextToSpeechAudioCategory.ambient,
+          [
+            IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+            IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+            IosTextToSpeechAudioCategoryOptions.mixWithOthers
+          ],
+          IosTextToSpeechAudioMode.voicePrompt);
+
+      await player.setLanguage("zh-HK");
+      await player.setSpeechRate(0.5);
+      await player.setVolume(0.8);
+      await player.setPitch(1.0);
+      await player.isLanguageAvailable("zh-HK");
+    }();
   }
 
   @override
@@ -106,6 +125,7 @@ class _EntryPageState extends State<EntryPage> {
                     });
                   },
                   scrollController,
+                  player,
                 ),
               );
             } else if (snapshot.hasError) {

@@ -28,9 +28,11 @@ class _PronunciationButtonState extends State<PronunciationButton> {
           isPlaying
               ? widget.stop(widget.player)
               : widget.play(widget.player).then((_) {
-                  setState(() {
-                    isPlaying = false;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      isPlaying = false;
+                    });
+                  }
                 });
           setState(() {
             isPlaying = !isPlaying;
