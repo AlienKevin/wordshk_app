@@ -46,7 +46,7 @@ class _EntryPageState extends State<EntryPage> {
       await player.setSharedInstance(true);
       await player.setLanguage("zh-HK");
       await player.setSpeechRate(0.5);
-      await player.setVolume(0.8);
+      await player.setVolume(0.5);
       await player.setPitch(1.0);
       await player.isLanguageAvailable("zh-HK");
     }();
