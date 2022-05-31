@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:equatable/equatable.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
@@ -607,61 +605,51 @@ translateLabel(Label label, AppLocalizations context) {
 
 Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
     Script script, void Function(int) updateEntryIndex, OnTapLink onTapLink) {
-  double titleFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
-  double padding = titleFontSize / 2;
-  double definitionHeight = MediaQuery.of(context).size.height -
-      AppBar().preferredSize.height -
-      MediaQuery.of(context).padding.top -
-      MediaQuery.of(context).padding.bottom -
-      titleFontSize * 3;
   final localizationContext = AppLocalizations.of(context)!;
   return Column(
     children: [
       DefaultTabController(
         length: entryGroup.length,
-        child: Column(children: [
-          TabBar(
-            onTap: updateEntryIndex,
-            isScrollable: true, // Required
-            labelColor: lineTextStyle.color,
-            unselectedLabelColor: lineTextStyle.color, // Other tabs color
-            labelPadding: const EdgeInsets.symmetric(
-                horizontal: 30), // Space between tabs
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(
-                  color: lineTextStyle.color!, width: 2), // Indicator height
-              insets:
-                  const EdgeInsets.symmetric(horizontal: 30), // Indicator width
+        child: Expanded(
+          child: Column(children: [
+            TabBar(
+              onTap: updateEntryIndex,
+              isScrollable: true, // Required
+              labelColor: lineTextStyle.color,
+              unselectedLabelColor: lineTextStyle.color, // Other tabs color
+              labelPadding: const EdgeInsets.symmetric(
+                  horizontal: 30), // Space between tabs
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(
+                    color: lineTextStyle.color!, width: 2), // Indicator height
+                insets: const EdgeInsets.symmetric(
+                    horizontal: 30), // Indicator width
+              ),
+              tabs: entryGroup
+                  .asMap()
+                  .entries
+                  .map((entry) => Tab(
+                      text: (entry.key + 1).toString() +
+                          " " +
+                          entry.value.poses
+                              .map((pos) =>
+                                  translatePos(pos, localizationContext))
+                              .join("/")))
+                  .toList(),
             ),
-            tabs: entryGroup
-                .asMap()
-                .entries
-                .map((entry) => Tab(
-                    text: (entry.key + 1).toString() +
-                        " " +
-                        entry.value.poses
-                            .map(
-                                (pos) => translatePos(pos, localizationContext))
-                            .join("/")))
-                .toList(),
-          ),
-          SizedBox(
-              height: definitionHeight,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: padding),
-                child: showTab(
-                    entryGroup[entryIndex],
-                    script,
-                    Theme.of(context).textTheme.headlineSmall!,
-                    Theme.of(context).textTheme.bodySmall!,
-                    lineTextStyle,
-                    Theme.of(context).colorScheme.secondary,
-                    rubyFontSize,
-                    onTapLink),
-              ))
-        ]),
+            showTab(
+                entryGroup[entryIndex],
+                script,
+                Theme.of(context).textTheme.headlineSmall!,
+                Theme.of(context).textTheme.bodySmall!,
+                lineTextStyle,
+                Theme.of(context).colorScheme.secondary,
+                rubyFontSize,
+                onTapLink)
+          ]),
+        ),
       ),
     ],
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -784,24 +772,32 @@ Widget showTab(
         Color linkColor,
         double rubyFontSize,
         OnTapLink onTapLink) =>
-    ListView.separated(
-      itemBuilder: (context, index) => index == 0
-          ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              showUnpublishedWarning(entry.published),
-              showVariants(entry.variants, entry.variantsSimp, script,
-                  variantTextStyle, prTextStyle, lineTextStyle),
-              showLabels(entry.labels, lineTextStyle),
-              showSimsOrAnts("[" + AppLocalizations.of(context)!.synonym + "]",
-                  entry.sims, lineTextStyle, onTapLink),
-              showSimsOrAnts("[" + AppLocalizations.of(context)!.antonym + "]",
-                  entry.ants, lineTextStyle, onTapLink),
-            ])
-          : showDef(entry.defs[index - 1], script, lineTextStyle, linkColor,
-              rubyFontSize, entry.defs.length == 1, onTapLink),
-      separatorBuilder: (_, index) => index == 0
-          ? SizedBox(height: lineTextStyle.fontSize!)
-          : Divider(height: lineTextStyle.fontSize! * 2),
-      itemCount: entry.defs.length + 1,
+    Expanded(
+      child: ListView.separated(
+        itemBuilder: (context, index) => index == 0
+            ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                showUnpublishedWarning(entry.published),
+                showVariants(entry.variants, entry.variantsSimp, script,
+                    variantTextStyle, prTextStyle, lineTextStyle),
+                showLabels(entry.labels, lineTextStyle),
+                showSimsOrAnts(
+                    "[" + AppLocalizations.of(context)!.synonym + "]",
+                    entry.sims,
+                    lineTextStyle,
+                    onTapLink),
+                showSimsOrAnts(
+                    "[" + AppLocalizations.of(context)!.antonym + "]",
+                    entry.ants,
+                    lineTextStyle,
+                    onTapLink),
+              ])
+            : showDef(entry.defs[index - 1], script, lineTextStyle, linkColor,
+                rubyFontSize, entry.defs.length == 1, onTapLink),
+        separatorBuilder: (_, index) => index == 0
+            ? SizedBox(height: lineTextStyle.fontSize!)
+            : Divider(height: lineTextStyle.fontSize! * 2),
+        itemCount: entry.defs.length + 1,
+      ),
     );
 
 Widget showUnpublishedWarning(bool published) =>

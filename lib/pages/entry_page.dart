@@ -52,29 +52,35 @@ class _EntryPageState extends State<EntryPage> {
           }),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
-              return showEntry(context, snapshot.data, entryIndex, script,
-                  (index) {
-                setState(() {
-                  entryIndex = index;
-                });
-              }, (entryVariant) {
-                log("Tapped on link $entryVariant");
-                api.getEntryId(query: entryVariant, script: script).then((id) {
-                  if (id == null) {
-                    Navigator.push(
-                      context,
-                      CustomPageRoute(
-                          builder: (context) => EntryNotPublishedPage(
-                              entryVariant: entryVariant)),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      CustomPageRoute(builder: (context) => EntryPage(id: id)),
-                    );
-                  }
-                });
-              });
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: showEntry(context, snapshot.data, entryIndex, script,
+                    (index) {
+                  setState(() {
+                    entryIndex = index;
+                  });
+                }, (entryVariant) {
+                  log("Tapped on link $entryVariant");
+                  api
+                      .getEntryId(query: entryVariant, script: script)
+                      .then((id) {
+                    if (id == null) {
+                      Navigator.push(
+                        context,
+                        CustomPageRoute(
+                            builder: (context) => EntryNotPublishedPage(
+                                entryVariant: entryVariant)),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        CustomPageRoute(
+                            builder: (context) => EntryPage(id: id)),
+                      );
+                    }
+                  });
+                }),
+              );
             } else if (snapshot.hasError) {
               log("Entry page failed to load due to an error.");
               log(snapshot.error.toString());
