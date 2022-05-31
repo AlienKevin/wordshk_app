@@ -3,6 +3,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/widgets/entry_banner.dart';
@@ -103,6 +104,9 @@ class Clause extends Equatable {
         }).toList();
 
   @override
+  String toString() => lines.map((line) => line.toString()).join("\n");
+
+  @override
   List<Object?> get props => [lines];
 }
 
@@ -115,6 +119,9 @@ class Line extends Equatable {
       : segments = List.from(json).map((segment) {
           return Segment.fromJson(segment);
         }).toList();
+
+  @override
+  String toString() => segments.map((seg) => seg.toString()).join("");
 
   @override
   List<Object?> get props => [segments];
@@ -138,6 +145,9 @@ class Segment extends Equatable {
   Segment.fromJson(List<dynamic> json)
       : type = segmentTypeFromString(json[0]),
         segment = json[1];
+
+  @override
+  String toString() => segment;
 
   @override
   List<Object?> get props => [type, segment];
@@ -925,6 +935,7 @@ Widget showDef(Def def, Script script, TextStyle lineTextStyle, Color linkColor,
         children: [
           showClause(
               script == Script.Simplified ? def.yueSimp : def.yue,
+              isCantonese: true,
               "(" + AppLocalizations.of(context)!.cantonese + ") ",
               lineTextStyle,
               onTapLink),
@@ -932,6 +943,7 @@ Widget showDef(Def def, Script script, TextStyle lineTextStyle, Color linkColor,
               ? const SizedBox.shrink()
               : showClause(
                   def.eng!,
+                  isCantonese: false,
                   "(" + AppLocalizations.of(context)!.english + ") ",
                   lineTextStyle,
                   onTapLink),
@@ -1009,18 +1021,24 @@ Widget showEgs(
 }
 
 Widget showClause(
-    Clause clause, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink) {
+    Clause clause, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink,
+    {required bool isCantonese}) {
   return Column(
     children: clause.lines.asMap().keys.toList().map((index) {
-      return showLine(clause.lines[index], index == 0 ? tag : null,
-          lineTextStyle, onTapLink);
+      return showLine(
+          clause.lines[index],
+          isCantonese: isCantonese,
+          index == 0 ? tag : null,
+          lineTextStyle,
+          onTapLink);
     }).toList(),
     crossAxisAlignment: CrossAxisAlignment.start,
   );
 }
 
 Widget showLine(
-    Line line, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink) {
+    Line line, String? tag, TextStyle lineTextStyle, OnTapLink onTapLink,
+    {required bool isCantonese}) {
   if (line.segments.length == 1 &&
       line.segments[0] == const Segment(SegmentType.text, "")) {
     return const SizedBox(height: 10);
@@ -1034,7 +1052,33 @@ Widget showLine(
             ...line.segments
                 .map((segment) => showSegment(segment,
                     Theme.of(context).colorScheme.secondary, onTapLink))
-                .toList()
+                .toList(),
+            ...isCantonese
+                ? [
+                    WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: IconButton(
+                          visualDensity: VisualDensity.compact,
+                          tooltip: "Pronunciation",
+                          alignment: Alignment.bottomLeft,
+                          icon: Icon(Icons.volume_up,
+                              size: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .fontSize),
+                          color: Theme.of(context).colorScheme.secondary,
+                          onPressed: () async {
+                            FlutterTts flutterTts = FlutterTts();
+                            await flutterTts.setLanguage("zh-HK");
+                            await flutterTts.setSpeechRate(0.5);
+                            await flutterTts.setVolume(0.8);
+                            await flutterTts.setPitch(1.0);
+                            await flutterTts.isLanguageAvailable("zh-HK");
+                            await flutterTts.speak(line.toString());
+                          },
+                        ))
+                  ]
+                : []
           ],
         ),
         style: lineTextStyle,
@@ -1091,7 +1135,8 @@ Widget showEg(Eg eg, Script script, TextStyle lineTextStyle, Color linkColor,
                     onTapLink),
             eg.eng == null
                 ? const SizedBox.shrink()
-                : showLine(eg.eng!, "", lineTextStyle, onTapLink),
+                : showLine(
+                    eg.eng!, isCantonese: false, "", lineTextStyle, onTapLink),
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
