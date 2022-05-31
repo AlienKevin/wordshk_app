@@ -126,7 +126,7 @@ class IsSearching extends State<SearchBar> {
   @override
   AppBar build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    Color? buttonColor = theme.iconTheme.color;
+    Color? buttonColor = theme.textTheme.bodyMedium!.color;
     final textColor = theme.textTheme.bodyMedium!.color;
 
     searchModeRadioListTile(
