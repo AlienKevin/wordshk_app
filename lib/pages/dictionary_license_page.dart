@@ -21,6 +21,18 @@ class DictionaryLicensePage extends StatelessWidget {
                 Text(AppLocalizations.of(context)!.dictionaryLicenseSummary,
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 20),
+                ...(Localizations.localeOf(context).languageCode != "en"
+                    ? [
+                        Text(AppLocalizations.of(context)!
+                            .dictionaryLicenseText),
+                        const SizedBox(height: 40),
+                        Text(
+                            AppLocalizations.of(context)!
+                                .dictionaryLicenseEnglishVersion,
+                            style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 20),
+                      ]
+                    : []),
                 Text("""
 Copyright (c) 2015-2022, Hong Kong Lexicography Limited. All rights reserved.
 You may be eligible for a license to use this work under the Non-Commercial

@@ -91,6 +91,8 @@
 
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",
+    "dictionaryLicenseText": "ALREADY INCLUDED IN CODE",
+    "dictionaryLicenseEnglishVersion": "Legally Binding English License",
 
     "softwareLicenses": "Software Licenses",
     "softwareLicensesShowLicense": "Show License",
