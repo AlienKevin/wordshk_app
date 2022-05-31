@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/gestures.dart';
@@ -12,6 +14,7 @@ import 'package:wordshk/widgets/scalable_text_span.dart';
 import '../bridge_generated.dart' show Script;
 import '../constants.dart';
 import '../widgets/expandable.dart';
+import '../widgets/pronunciation_button.dart';
 
 typedef OnTapLink = void Function(String entryVariant);
 typedef EntryGroup = List<Entry>;
@@ -758,22 +761,28 @@ Widget showVariant(
           Visibility(
             visible: jyutpingFemaleSyllableNames.containsAll(pr.split(" ")),
             child: Builder(builder: (context) {
-              return IconButton(
-                visualDensity: VisualDensity.compact,
-                tooltip: "Pronunciation",
-                alignment: Alignment.bottomLeft,
-                icon: const Icon(Icons.volume_up),
-                color: Theme.of(context).colorScheme.secondary,
-                onPressed: () async {
-                  var player = AudioPlayer();
-                  await player.setAudioSource(ConcatenatingAudioSource(
-                      children: pr
-                          .split(" ")
-                          .map((syllable) => AudioSource.uri(Uri.parse(
-                              "asset:///assets/jyutping_female/$syllable.mp3")))
-                          .toList()));
+              return PronunciationButton(
+                player: AudioPlayer(),
+                play: (player) async {
+                  final completer = Completer<void>();
+                  await (player as AudioPlayer).setAudioSource(
+                      ConcatenatingAudioSource(
+                          children: pr
+                              .split(" ")
+                              .map((syllable) => AudioSource.uri(Uri.parse(
+                                  "asset:///assets/jyutping_female/$syllable.mp3")))
+                              .toList()));
+                  player.playerStateStream.listen((state) {
+                    if (state.processingState == ProcessingState.completed) {
+                      completer.complete();
+                    }
+                  });
                   await player.seek(Duration.zero, index: 0);
                   await player.play();
+                  return completer.future;
+                },
+                stop: (player) async {
+                  await (player as AudioPlayer).stop();
                 },
               );
             }),
@@ -1057,26 +1066,31 @@ Widget showLine(
                 ? [
                     WidgetSpan(
                         alignment: PlaceholderAlignment.middle,
-                        child: IconButton(
-                          visualDensity: VisualDensity.compact,
-                          tooltip: "Pronunciation",
-                          alignment: Alignment.bottomLeft,
-                          icon: Icon(Icons.volume_up,
-                              size: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .fontSize),
-                          color: Theme.of(context).colorScheme.secondary,
-                          onPressed: () async {
-                            FlutterTts flutterTts = FlutterTts();
-                            await flutterTts.setLanguage("zh-HK");
-                            await flutterTts.setSpeechRate(0.5);
-                            await flutterTts.setVolume(0.8);
-                            await flutterTts.setPitch(1.0);
-                            await flutterTts.isLanguageAvailable("zh-HK");
-                            await flutterTts.speak(line.toString());
-                          },
-                        ))
+                        child: FutureBuilder<FlutterTts>(future: () async {
+                          FlutterTts flutterTts = FlutterTts();
+                          await flutterTts.setLanguage("zh-HK");
+                          await flutterTts.setSpeechRate(0.5);
+                          await flutterTts.setVolume(0.8);
+                          await flutterTts.setPitch(1.0);
+                          await flutterTts.isLanguageAvailable("zh-HK");
+                          return flutterTts;
+                        }(), builder: (BuildContext context,
+                            AsyncSnapshot<FlutterTts> snapshot) {
+                          if (snapshot.hasData) {
+                            return PronunciationButton(
+                                player: snapshot.data!,
+                                play: (player) async {
+                                  await (player as FlutterTts)
+                                      .speak(line.toString());
+                                  await player.awaitSpeakCompletion(true);
+                                },
+                                stop: (player) async {
+                                  await (player as FlutterTts).stop();
+                                });
+                          } else {
+                            return Container();
+                          }
+                        }))
                   ]
                 : []
           ],
