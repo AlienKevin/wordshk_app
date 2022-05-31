@@ -28,7 +28,7 @@ class AboutPage extends StatelessWidget {
               text: paragraph),
         ]);
 
-    linkedTextSpan(IconData icon, String text, String link) {
+    linkedTextSpan(String text, String link, {IconData? icon}) {
       final color = Theme.of(context).colorScheme.secondary;
       return WidgetSpan(
           child: GestureDetector(
@@ -39,13 +39,41 @@ class AboutPage extends StatelessWidget {
                     text: ScalableTextSpan(
                       context,
                       children: [
-                        WidgetSpan(child: Icon(icon, color: color)),
+                        icon == null
+                            ? const TextSpan()
+                            : WidgetSpan(child: Icon(icon, color: color)),
                         TextSpan(text: text),
                       ],
                       style: TextStyle(color: color),
                     ));
               })));
     }
+
+    bulletTextSpan(String text, String link) => [
+          const TextSpan(text: "   "),
+          WidgetSpan(
+              baseline: TextBaseline.alphabetic,
+              alignment: PlaceholderAlignment.aboveBaseline,
+              child: Icon(Icons.circle,
+                  size: 12,
+                  color: Theme.of(context).textTheme.bodyMedium?.color)),
+          const TextSpan(text: " "),
+          linkedTextSpan(
+            text,
+            link,
+          )
+        ];
+
+    final specialCreditsTextList =
+        AppLocalizations.of(context)!.aboutWordshkSpecialCreditsText.split(":");
+    final specialCreditsLinkList = [
+      "http://compling.hss.ntu.edu.sg/hkcancor/",
+      "http://www.linguistics.hku.hk/",
+      "https://www.facebook.com/o.indicum",
+      "https://twitter.com/cancheng",
+      "https://chiron-fonts.github.io/",
+      "https://repository.eduhk.hk/en/persons/chaak-ming%E5%8A%89%E6%93%87%E6%98%8E-lau"
+    ];
 
     return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.aboutWordshk)),
@@ -89,16 +117,34 @@ class AboutPage extends StatelessWidget {
                               text: AppLocalizations.of(context)!
                                   .aboutWordshkWantToHelpText),
                           linkedTextSpan(
-                            Icons.email_outlined,
+                            icon: Icons.email_outlined,
                             AppLocalizations.of(context)!.email,
                             "mailto:join@words.hk",
                           ),
                           const TextSpan(text: "  "),
                           linkedTextSpan(
-                            Icons.facebook_outlined,
+                            icon: Icons.facebook_outlined,
                             AppLocalizations.of(context)!.facebook,
                             "https://www.facebook.com/www.words.hk",
                           )
+                        ])),
+                const SizedBox(height: 40),
+                section(
+                    AppLocalizations.of(context)!
+                        .aboutWordshkSpecialCreditsTitle,
+                    TextSpan(
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: [
+                          for (int i = 0;
+                              i < specialCreditsTextList.length;
+                              i += 1) ...[
+                            ...bulletTextSpan(specialCreditsTextList[i],
+                                specialCreditsLinkList[i]),
+                            TextSpan(
+                                text: i == specialCreditsTextList.length - 1
+                                    ? ""
+                                    : "\n")
+                          ]
                         ])),
                 SizedBox(
                     height: Theme.of(context).textTheme.bodyMedium!.fontSize),
