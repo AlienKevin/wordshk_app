@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:expandable/expandable.dart';
@@ -190,6 +191,8 @@ class RubyLine extends Equatable {
   @override
   String toString() => segments.map((seg) => seg.toString()).join("");
 
+  String toPrs() => segments.map((seg) => seg.toPrs()).join(" ");
+
   @override
   List<Object?> get props => [segments];
 }
@@ -220,6 +223,17 @@ class RubySegment extends Equatable {
   @override
   String toString() => segment.toString();
 
+  String toPrs() {
+    switch (type) {
+      case RubySegmentType.punc:
+        return segment;
+      case RubySegmentType.word:
+        return segment.toPrs();
+      case RubySegmentType.linkedWord:
+        return segment.toPrs();
+    }
+  }
+
   @override
   List<Object?> get props => [type, segment];
 }
@@ -236,6 +250,8 @@ class RubySegmentWord extends Equatable {
 
   @override
   String toString() => word.toString();
+
+  String toPrs() => prs.join(" ");
 
   @override
   List<Object?> get props => [word, prs];
@@ -258,6 +274,8 @@ class RubySegmentLinkedWord extends Equatable {
   String toString() {
     return words.map((segmentWord) => segmentWord.word.toString()).join("");
   }
+
+  String toPrs() => words.map((word) => word.toPrs()).join(" ");
 }
 
 class WordLine extends Equatable {
@@ -1186,6 +1204,7 @@ Widget showRichLine(RichLine line, TextStyle lineTextStyle, Color linkColor,
 
 Widget showRubyLine(RubyLine line, Color textColor, Color linkColor,
     double rubyFontSize, OnTapLink onTapLink, FlutterTts player) {
+  print("line.toPrs(): ${line.toPrs()}");
   return Builder(builder: (context) {
     final textScaleFactor = MediaQuery.of(context).textScaleFactor;
     return Padding(
@@ -1198,7 +1217,8 @@ Widget showRubyLine(RubyLine line, Color textColor, Color linkColor,
                     rubyFontSize, textScaleFactor, onTapLink))
                 .expand((i) => i)
                 .toList(),
-            ttsPronunciationButton(player, line.toString())
+            ttsPronunciationButton(
+                player, Platform.isIOS ? line.toPrs() : line.toString())
           ]
               .map((e) => Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
