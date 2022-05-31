@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -39,16 +40,10 @@ class _EntryPageState extends State<EntryPage> {
             Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
         axis: Axis.vertical);
     () async {
-      await player.setSharedInstance(true);
-      await player.setIosAudioCategory(
-          IosTextToSpeechAudioCategory.ambient,
-          [
-            IosTextToSpeechAudioCategoryOptions.allowBluetooth,
-            IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
-            IosTextToSpeechAudioCategoryOptions.mixWithOthers
-          ],
-          IosTextToSpeechAudioMode.voicePrompt);
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.speech());
 
+      await player.setSharedInstance(true);
       await player.setLanguage("zh-HK");
       await player.setSpeechRate(0.5);
       await player.setVolume(0.8);
