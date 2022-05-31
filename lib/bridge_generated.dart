@@ -61,12 +61,14 @@ class CombinedSearchResults {
 
 class EnglishSearchResult {
   final int id;
+  final int defIndex;
   final String variant;
   final String pr;
   final String eng;
 
   EnglishSearchResult({
     required this.id,
+    required this.defIndex,
     required this.variant,
     required this.pr,
     required this.eng,
@@ -291,13 +293,14 @@ CombinedSearchResults _wire2api_combined_search_results(dynamic raw) {
 
 EnglishSearchResult _wire2api_english_search_result(dynamic raw) {
   final arr = raw as List<dynamic>;
-  if (arr.length != 4)
-    throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+  if (arr.length != 5)
+    throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
   return EnglishSearchResult(
     id: _wire2api_u32(arr[0]),
-    variant: _wire2api_String(arr[1]),
-    pr: _wire2api_String(arr[2]),
-    eng: _wire2api_String(arr[3]),
+    defIndex: _wire2api_u32(arr[1]),
+    variant: _wire2api_String(arr[2]),
+    pr: _wire2api_String(arr[3]),
+    eng: _wire2api_String(arr[4]),
   );
 }
 

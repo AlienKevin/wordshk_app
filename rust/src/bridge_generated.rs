@@ -281,6 +281,7 @@ impl support::IntoDart for EnglishSearchResult {
     fn into_dart(self) -> support::DartCObject {
         vec![
             self.id.into_dart(),
+            self.def_index.into_dart(),
             self.variant.into_dart(),
             self.pr.into_dart(),
             self.eng.into_dart(),

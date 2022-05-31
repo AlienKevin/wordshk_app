@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wordshk/widgets/entry_banner.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
@@ -603,8 +604,14 @@ translateLabel(Label label, AppLocalizations context) {
   }
 }
 
-Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
-    Script script, void Function(int) updateEntryIndex, OnTapLink onTapLink) {
+Widget showEntry(
+    BuildContext context,
+    List<Entry> entryGroup,
+    int entryIndex,
+    int defIndex,
+    Script script,
+    void Function(int) updateEntryIndex,
+    OnTapLink onTapLink) {
   double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
   TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
   final localizationContext = AppLocalizations.of(context)!;
@@ -641,6 +648,7 @@ Widget showEntry(BuildContext context, List<Entry> entryGroup, int entryIndex,
             ),
             showTab(
                 entryGroup[entryIndex],
+                defIndex,
                 script,
                 Theme.of(context).textTheme.headlineSmall!,
                 Theme.of(context).textTheme.bodySmall!,
@@ -764,41 +772,47 @@ Widget showVariant(
 }
 
 Widget showTab(
-        Entry entry,
-        Script script,
-        TextStyle variantTextStyle,
-        TextStyle prTextStyle,
-        TextStyle lineTextStyle,
-        Color linkColor,
-        double rubyFontSize,
-        OnTapLink onTapLink) =>
-    Expanded(
-      child: ListView.separated(
-        itemBuilder: (context, index) => index == 0
-            ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                showUnpublishedWarning(entry.published),
-                showVariants(entry.variants, entry.variantsSimp, script,
-                    variantTextStyle, prTextStyle, lineTextStyle),
-                showLabels(entry.labels, lineTextStyle),
-                showSimsOrAnts(
-                    "[" + AppLocalizations.of(context)!.synonym + "]",
-                    entry.sims,
-                    lineTextStyle,
-                    onTapLink),
-                showSimsOrAnts(
-                    "[" + AppLocalizations.of(context)!.antonym + "]",
-                    entry.ants,
-                    lineTextStyle,
-                    onTapLink),
-              ])
-            : showDef(entry.defs[index - 1], script, lineTextStyle, linkColor,
-                rubyFontSize, entry.defs.length == 1, onTapLink),
-        separatorBuilder: (_, index) => index == 0
-            ? SizedBox(height: lineTextStyle.fontSize!)
-            : Divider(height: lineTextStyle.fontSize! * 2),
-        itemCount: entry.defs.length + 1,
-      ),
-    );
+    Entry entry,
+    int defIndex,
+    Script script,
+    TextStyle variantTextStyle,
+    TextStyle prTextStyle,
+    TextStyle lineTextStyle,
+    Color linkColor,
+    double rubyFontSize,
+    OnTapLink onTapLink) {
+  final tab = Expanded(
+    child: ScrollablePositionedList.builder(
+      itemBuilder: (context, index) => index.isEven
+          ? (index == 0
+              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  showUnpublishedWarning(entry.published),
+                  showVariants(entry.variants, entry.variantsSimp, script,
+                      variantTextStyle, prTextStyle, lineTextStyle),
+                  showLabels(entry.labels, lineTextStyle),
+                  showSimsOrAnts(
+                      "[" + AppLocalizations.of(context)!.synonym + "]",
+                      entry.sims,
+                      lineTextStyle,
+                      onTapLink),
+                  showSimsOrAnts(
+                      "[" + AppLocalizations.of(context)!.antonym + "]",
+                      entry.ants,
+                      lineTextStyle,
+                      onTapLink),
+                ])
+              : showDef(entry.defs[index ~/ 2 - 1], script, lineTextStyle,
+                  linkColor, rubyFontSize, entry.defs.length == 1, onTapLink))
+          : (index == 0
+              ? SizedBox(height: lineTextStyle.fontSize!)
+              : Divider(height: lineTextStyle.fontSize! * 2)),
+      itemCount: entry.defs.length * 2 + 1,
+      semanticChildCount: entry.defs.length + 1,
+      initialScrollIndex: defIndex * 2,
+    ),
+  );
+  return tab;
+}
 
 Widget showUnpublishedWarning(bool published) =>
     EntryBanner(published: published);

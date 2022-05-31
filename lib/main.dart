@@ -479,6 +479,7 @@ class _HomePageState extends State<HomePage> {
     return englishSearchResults.map((result) {
       return showSearchResult(
           result.id,
+          defIndex: result.defIndex,
           TextSpan(
             children: [
               TextSpan(text: result.variant + " ", style: textStyle),
@@ -519,7 +520,7 @@ class _HomePageState extends State<HomePage> {
         .toList();
   }
 
-  Widget showSearchResult(int id, TextSpan resultText) {
+  Widget showSearchResult(int id, TextSpan resultText, {int defIndex = 0}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -531,7 +532,8 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              CustomPageRoute(builder: (context) => EntryPage(id: id)),
+              CustomPageRoute(
+                  builder: (context) => EntryPage(id: id, defIndex: defIndex)),
             );
           },
           child: Padding(

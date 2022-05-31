@@ -133,6 +133,7 @@ impl Api {
                 let variant = &search::pick_variants(&self.variants_map.get(&entry.entry_id).unwrap(), script).0[0];
                 EnglishSearchResult {
                     id: entry.entry_id as u32,
+                    def_index: entry.def_index as u32,
                     variant: variant.word.clone(),
                     pr: variant.prs.0[0].to_string(),
                     eng: clause_to_string(
@@ -177,6 +178,7 @@ pub struct VariantSearchResult {
 
 pub struct EnglishSearchResult {
     pub id: u32,
+    pub def_index: u32,
     pub variant: String,
     pub pr: String,
     pub eng: String,

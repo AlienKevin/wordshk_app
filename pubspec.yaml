@@ -24,6 +24,7 @@ dependencies:
   flutter_portal: ^1.1.0
   flutter_web_browser: ^0.17.1
   shared_preferences: ^2.0.15
+  scrollable_positioned_list: ^0.3.2
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:

@@ -13,8 +13,10 @@ import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;
+  final int defIndex;
 
-  const EntryPage({Key? key, required this.id}) : super(key: key);
+  const EntryPage({Key? key, required this.id, this.defIndex = 0})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _EntryPageState();
@@ -54,7 +56,8 @@ class _EntryPageState extends State<EntryPage> {
             if (snapshot.hasData) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: showEntry(context, snapshot.data, entryIndex, script,
+                child: showEntry(
+                    context, snapshot.data, entryIndex, widget.defIndex, script,
                     (index) {
                   setState(() {
                     entryIndex = index;
