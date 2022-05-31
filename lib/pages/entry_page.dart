@@ -14,9 +14,9 @@ import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;
-  final int defIndex;
+  final int? defIndex;
 
-  const EntryPage({Key? key, required this.id, this.defIndex = 0})
+  const EntryPage({Key? key, required this.id, this.defIndex})
       : super(key: key);
 
   @override
@@ -65,10 +65,12 @@ class _EntryPageState extends State<EntryPage> {
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               WidgetsBinding.instance.addPostFrameCallback((_) async {
-                print("scroll to ${widget.defIndex}");
-                await scrollController.scrollToIndex(widget.defIndex,
-                    preferPosition: AutoScrollPosition.begin);
-                scrollController.highlight(widget.defIndex);
+                if (widget.defIndex != null) {
+                  print("scroll to ${widget.defIndex}");
+                  await scrollController.scrollToIndex(widget.defIndex!,
+                      preferPosition: AutoScrollPosition.begin);
+                  scrollController.highlight(widget.defIndex!);
+                }
               });
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -76,7 +78,6 @@ class _EntryPageState extends State<EntryPage> {
                   context,
                   snapshot.data,
                   entryIndex,
-                  widget.defIndex,
                   script,
                   (index) {
                     setState(() {

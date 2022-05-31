@@ -520,7 +520,7 @@ class _HomePageState extends State<HomePage> {
         .toList();
   }
 
-  Widget showSearchResult(int id, TextSpan resultText, {int defIndex = 0}) {
+  Widget showSearchResult(int id, TextSpan resultText, {int? defIndex}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

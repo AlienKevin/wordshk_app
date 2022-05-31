@@ -608,7 +608,6 @@ Widget showEntry(
   BuildContext context,
   List<Entry> entryGroup,
   int entryIndex,
-  int defIndex,
   Script script,
   void Function(int) updateEntryIndex,
   OnTapLink onTapLink,
@@ -650,7 +649,6 @@ Widget showEntry(
             ),
             showTab(
                 entryGroup[entryIndex],
-                defIndex,
                 script,
                 Theme.of(context).textTheme.headlineSmall!,
                 Theme.of(context).textTheme.bodySmall!,
@@ -775,16 +773,16 @@ Widget showVariant(
 }
 
 Widget showTab(
-    Entry entry,
-    int defIndex,
-    Script script,
-    TextStyle variantTextStyle,
-    TextStyle prTextStyle,
-    TextStyle lineTextStyle,
-    Color linkColor,
-    double rubyFontSize,
-    OnTapLink onTapLink,
-    AutoScrollController scrollController) {
+  Entry entry,
+  Script script,
+  TextStyle variantTextStyle,
+  TextStyle prTextStyle,
+  TextStyle lineTextStyle,
+  Color linkColor,
+  double rubyFontSize,
+  OnTapLink onTapLink,
+  AutoScrollController scrollController,
+) {
   final itemCount = entry.defs.length + 1;
   final tab = Expanded(
     child: ListView.separated(
