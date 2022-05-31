@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 
 import '../bridge_generated.dart' show Script;
@@ -25,6 +26,17 @@ class EntryPage extends StatefulWidget {
 class _EntryPageState extends State<EntryPage> {
   int entryIndex = 0;
   late List<Entry> entryGroup;
+  late final AutoScrollController scrollController;
+  bool scrolledToInitialDef = false;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController = AutoScrollController(
+        viewportBoundaryGetter: () =>
+            Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+        axis: Axis.vertical);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,42 +59,53 @@ class _EntryPageState extends State<EntryPage> {
             var newEntryGroup = json
                 .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
                 .toList();
-            setState(() {
-              entryGroup = newEntryGroup;
-            });
+            entryGroup = newEntryGroup;
             return newEntryGroup;
           }),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                print("scroll to ${widget.defIndex}");
+                await scrollController.scrollToIndex(widget.defIndex,
+                    preferPosition: AutoScrollPosition.begin);
+                scrollController.highlight(widget.defIndex);
+              });
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: showEntry(
-                    context, snapshot.data, entryIndex, widget.defIndex, script,
-                    (index) {
-                  setState(() {
-                    entryIndex = index;
-                  });
-                }, (entryVariant) {
-                  log("Tapped on link $entryVariant");
-                  api
-                      .getEntryId(query: entryVariant, script: script)
-                      .then((id) {
-                    if (id == null) {
-                      Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) => EntryNotPublishedPage(
-                                entryVariant: entryVariant)),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) => EntryPage(id: id)),
-                      );
-                    }
-                  });
-                }),
+                  context,
+                  snapshot.data,
+                  entryIndex,
+                  widget.defIndex,
+                  script,
+                  (index) {
+                    setState(() {
+                      entryIndex = index;
+                    });
+                  },
+                  (entryVariant) {
+                    log("Tapped on link $entryVariant");
+                    api
+                        .getEntryId(query: entryVariant, script: script)
+                        .then((id) {
+                      if (id == null) {
+                        Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) => EntryNotPublishedPage(
+                                  entryVariant: entryVariant)),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) => EntryPage(id: id)),
+                        );
+                      }
+                    });
+                  },
+                  scrollController,
+                ),
               );
             } else if (snapshot.hasError) {
               log("Entry page failed to load due to an error.");
