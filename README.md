@@ -61,6 +61,17 @@ cargo ndk -o ../android/app/src/main/jniLibs build
 
 See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_android.html) to set up Android.
 
+# Generate App Store images
+Run snapshot:
+```
+bundle exec fastlane snapshot --configuration "Release" --stop_after_first_error
+```
+
+Reset all simulators in case of errors during snapshot:
+```
+bundle exec fastlane fastlane snapshot reset_simulators
+```
+
 # TODO
 
 - [ ] Show jyutping help before search or suggestions for fix during search
