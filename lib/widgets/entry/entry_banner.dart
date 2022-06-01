@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 
-import '../custom_page_route.dart';
+import '../../custom_page_route.dart';
 
 class EntryBanner extends StatefulWidget {
   final bool published;

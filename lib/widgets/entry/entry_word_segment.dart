@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
-import '../models/entry.dart';
+import '../../models/entry.dart';
 import 'entry_word.dart';
 
 InlineSpan showWordSegment(WordSegment segment, Color linkColor,

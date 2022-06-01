@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/entry.dart';
+import '../../models/entry.dart';
 
 List<TextSpan> showWord(EntryWord word) => word.texts.map(showText).toList();
 

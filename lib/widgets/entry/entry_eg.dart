@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import '../bridge_generated.dart' show Script;
-import '../constants.dart';
-import '../models/entry.dart';
+import '../../bridge_generated.dart' show Script;
+import '../../constants.dart';
+import '../../models/entry.dart';
 import 'entry_line.dart';
 import 'entry_rich_line.dart';
 

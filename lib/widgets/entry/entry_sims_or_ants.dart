@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
-import '../models/entry.dart';
+import '../../models/entry.dart';
 
 class EntrySimsOrAnts extends StatelessWidget {
   final String label;

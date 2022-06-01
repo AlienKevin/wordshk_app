@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../models/entry.dart';
+import '../../models/entry.dart';
 
 TextSpan showSegment(Segment segment, Color linkColor, OnTapLink onTapLink) {
   switch (segment.type) {

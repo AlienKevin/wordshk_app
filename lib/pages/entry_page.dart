@@ -12,7 +12,7 @@ import '../bridge_generated.dart' show Script;
 import '../main.dart';
 import '../models/entry.dart';
 import '../utils.dart';
-import '../widgets/entry.dart';
+import '../widgets/entry/entry.dart';
 import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {

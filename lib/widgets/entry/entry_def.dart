@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import '../bridge_generated.dart' show Script;
-import '../models/entry.dart';
+import '../../bridge_generated.dart' show Script;
+import '../../models/entry.dart';
 import 'entry_clause.dart';
 import 'entry_egs.dart';
 

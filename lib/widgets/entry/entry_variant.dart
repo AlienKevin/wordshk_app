@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wordshk/widgets/pronunciation_button.dart';
 
-import '../constants.dart';
-import '../models/entry.dart';
+import '../../constants.dart';
+import '../../models/entry.dart';
 
 class EntryVariant extends StatelessWidget {
   final Variant variant;

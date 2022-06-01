@@ -2,10 +2,10 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../bridge_generated.dart' show Script;
-import '../models/entry.dart';
+import '../../bridge_generated.dart' show Script;
+import '../../models/entry.dart';
+import '../expandable.dart';
 import 'entry_variant.dart';
-import 'expandable.dart';
 
 class EntryVariants extends StatelessWidget {
   final List<Variant> variants;

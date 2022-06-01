@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
-import '../models/entry.dart';
+import '../../models/entry.dart';
 import 'entry_ruby_segment.dart';
 
 class EntryRubyLine extends StatelessWidget {

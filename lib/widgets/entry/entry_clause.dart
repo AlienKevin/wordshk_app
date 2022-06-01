@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import '../models/entry.dart';
+import '../../models/entry.dart';
 import 'entry_line.dart';
 
 class EntryClause extends StatelessWidget {

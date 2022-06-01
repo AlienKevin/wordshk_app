@@ -3,8 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
-import '../bridge_generated.dart' show Script;
-import '../models/entry.dart';
+import '../../bridge_generated.dart' show Script;
+import '../../models/entry.dart';
 import 'entry_tab.dart';
 
 class EntryWidget extends StatelessWidget {
