@@ -4,7 +4,6 @@ import 'package:wordshk/pages/preferences_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/pages/software_licenses_page.dart';
 
-import '../bridge_generated.dart' show Script;
 import '../constants.dart';
 import '../custom_page_route.dart';
 import '../main.dart';
@@ -76,15 +75,8 @@ class NavigationDrawer extends StatelessWidget {
                       ]),
                 ),
               ),
-              drawerButton(
-                  AppLocalizations.of(context)!.dictionary,
-                  Icons.search,
-                  (_) => HomePage(
-                      title: 'words.hk',
-                      script:
-                          Localizations.localeOf(context).scriptCode == "Hans"
-                              ? Script.Simplified
-                              : Script.Traditional)),
+              drawerButton(AppLocalizations.of(context)!.dictionary,
+                  Icons.search, (_) => const HomePage(title: 'words.hk')),
               const Divider(),
               drawerButton(AppLocalizations.of(context)!.aboutWordshk,
                   Icons.info_outline, (_) => const AboutPage()),

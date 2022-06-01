@@ -216,11 +216,9 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title, this.script})
-      : super(key: key);
+  const HomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
-  final Script? script;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -298,7 +296,6 @@ class _HomePageState extends State<HomePage> {
   bool queryEmptied = true;
   bool showSearchModeSelector = false;
   OverlayEntry? searchModeSelectors;
-  Script? script;
 
   @override
   void initState() {
@@ -312,11 +309,11 @@ class _HomePageState extends State<HomePage> {
     final query = context.read<SearchQueryState>().query;
     if (query.isNotEmpty) {
       queryEmptied = false;
-      doSearch(query, context.read<SearchModeState>().mode, widget.script!);
+      doSearch(query, context);
     }
     context.read<SearchModeState>().addListener(() {
       final query = context.read<SearchQueryState>().query;
-      doSearch(query, context.read<SearchModeState>().mode, script!);
+      doSearch(query, context);
     });
 
     final languageState = context.read<LanguageState>();
@@ -373,11 +370,6 @@ class _HomePageState extends State<HomePage> {
         break;
     }
 
-    script = script ??
-        (Localizations.localeOf(context).scriptCode == "Hans"
-            ? Script.Simplified
-            : Script.Traditional);
-
     return Scaffold(
         appBar: SearchBar(onChanged: (query) {
           if (query.isEmpty) {
@@ -391,7 +383,7 @@ class _HomePageState extends State<HomePage> {
               finishedSearch = false;
             });
           }
-          doSearch(query, context.read<SearchModeState>().mode, script!);
+          doSearch(query, context);
         }, onCleared: () {
           setState(() {
             // TODO: hide search results
@@ -435,7 +427,7 @@ class _HomePageState extends State<HomePage> {
                   }))));
   }
 
-  void doSearch(String query, SearchMode searchMode, Script script) {
+  void doSearch(String query, BuildContext context) {
     if (query.isEmpty) {
       setState(() {
         variantSearchResults.clear();
@@ -444,6 +436,10 @@ class _HomePageState extends State<HomePage> {
         finishedSearch = false;
       });
     } else {
+      final searchMode = context.read<SearchModeState>().mode;
+      final script = context.read<LanguageState>().language == Language.zhHansCN
+          ? Script.Simplified
+          : Script.Traditional;
       switch (searchMode) {
         case SearchMode.pr:
           api
