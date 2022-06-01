@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:wordshk/main.dart';
 
 import '../../bridge_generated.dart' show Script;
 import '../../constants.dart';
@@ -92,14 +94,17 @@ class EntryTab extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: EntryDef(
-                            def: entry.defs[index - 1],
-                            script: script,
-                            lineTextStyle: lineTextStyle,
-                            linkColor: linkColor,
-                            rubyFontSize: rubyFontSize,
-                            isSingleDef: entry.defs.length == 1,
-                            onTapLink: onTapLink,
-                            player: player),
+                          def: entry.defs[index - 1],
+                          entryLanguage:
+                              context.watch<EntryLanguageState>().language!,
+                          script: script,
+                          lineTextStyle: lineTextStyle,
+                          linkColor: linkColor,
+                          rubyFontSize: rubyFontSize,
+                          isSingleDef: entry.defs.length == 1,
+                          onTapLink: onTapLink,
+                          player: player,
+                        ),
                       ));
                   return index == itemCount - 1
                       ? Column(

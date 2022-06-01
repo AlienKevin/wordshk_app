@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:wordshk/models/entry_language.dart';
 
 import '../../bridge_generated.dart' show Script;
 import '../../models/entry.dart';
@@ -9,6 +10,7 @@ import 'entry_egs.dart';
 
 class EntryDef extends StatelessWidget {
   final Def def;
+  final EntryLanguage entryLanguage;
   final Script script;
   final TextStyle lineTextStyle;
   final Color linkColor;
@@ -20,6 +22,7 @@ class EntryDef extends StatelessWidget {
   const EntryDef(
       {Key? key,
       required this.def,
+      required this.entryLanguage,
       required this.script,
       required this.lineTextStyle,
       required this.linkColor,
@@ -33,19 +36,34 @@ class EntryDef extends StatelessWidget {
   Widget build(BuildContext context) => Builder(builder: (context) {
         return Column(
           children: [
-            EntryClause(
-                clause: script == Script.Simplified ? def.yueSimp : def.yue,
-                player: player,
-                tag: "(" + AppLocalizations.of(context)!.cantonese + ") ",
-                lineTextStyle: lineTextStyle,
-                onTapLink: onTapLink),
-            def.eng == null
-                ? const SizedBox.shrink()
-                : EntryClause(
-                    clause: def.eng!,
-                    tag: "(" + AppLocalizations.of(context)!.english + ") ",
-                    lineTextStyle: lineTextStyle,
-                    onTapLink: onTapLink),
+            ...entryLanguage == EntryLanguage.cantonese ||
+                    entryLanguage == EntryLanguage.both
+                ? [
+                    EntryClause(
+                        clause:
+                            script == Script.Simplified ? def.yueSimp : def.yue,
+                        player: player,
+                        tag: "(" +
+                            AppLocalizations.of(context)!.cantonese +
+                            ") ",
+                        lineTextStyle: lineTextStyle,
+                        onTapLink: onTapLink)
+                  ]
+                : [],
+            ...entryLanguage == EntryLanguage.english ||
+                    entryLanguage == EntryLanguage.both
+                ? [
+                    def.eng == null
+                        ? const SizedBox.shrink()
+                        : EntryClause(
+                            clause: def.eng!,
+                            tag: "(" +
+                                AppLocalizations.of(context)!.english +
+                                ") ",
+                            lineTextStyle: lineTextStyle,
+                            onTapLink: onTapLink)
+                  ]
+                : [],
             EntryEgs(
                 egs: def.egs,
                 script: script,
