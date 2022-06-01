@@ -66,6 +66,7 @@ class EntryDef extends StatelessWidget {
                 : [],
             EntryEgs(
                 egs: def.egs,
+                entryLanguage: entryLanguage,
                 script: script,
                 lineTextStyle: lineTextStyle,
                 linkColor: linkColor,

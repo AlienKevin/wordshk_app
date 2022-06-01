@@ -4,11 +4,13 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '../../bridge_generated.dart' show Script;
 import '../../constants.dart';
 import '../../models/entry.dart';
+import '../../models/entry_language.dart';
 import 'entry_line.dart';
 import 'entry_rich_line.dart';
 
 class EntryEg extends StatelessWidget {
   final Eg eg;
+  final EntryLanguage entryLanguage;
   final Script script;
   final TextStyle lineTextStyle;
   final Color linkColor;
@@ -19,6 +21,7 @@ class EntryEg extends StatelessWidget {
   const EntryEg(
       {Key? key,
       required this.eg,
+      required this.entryLanguage,
       required this.script,
       required this.lineTextStyle,
       required this.linkColor,
@@ -63,14 +66,18 @@ class EntryEg extends StatelessWidget {
                     onTapLink: onTapLink,
                     player: player,
                   ),
-            eg.eng == null
-                ? const SizedBox.shrink()
-                : EntryLine(
-                    line: eg.eng!,
-                    tag: "",
-                    lineTextStyle: lineTextStyle,
-                    onTapLink: onTapLink,
-                  ),
+            ...(entryLanguage == EntryLanguage.english ||
+                        entryLanguage == EntryLanguage.both) &&
+                    eg.eng != null
+                ? [
+                    EntryLine(
+                      line: eg.eng!,
+                      tag: "",
+                      lineTextStyle: lineTextStyle,
+                      onTapLink: onTapLink,
+                    )
+                  ]
+                : [],
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),

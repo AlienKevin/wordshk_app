@@ -5,11 +5,13 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 import '../../bridge_generated.dart' show Script;
 import '../../models/entry.dart';
+import '../../models/entry_language.dart';
 import '../expandable.dart';
 import 'entry_eg.dart';
 
 class EntryEgs extends StatelessWidget {
   final List<Eg> egs;
+  final EntryLanguage entryLanguage;
   final Script script;
   final TextStyle lineTextStyle;
   final Color linkColor;
@@ -21,6 +23,7 @@ class EntryEgs extends StatelessWidget {
   const EntryEgs(
       {Key? key,
       required this.egs,
+      required this.entryLanguage,
       required this.script,
       required this.lineTextStyle,
       required this.linkColor,
@@ -37,6 +40,7 @@ class EntryEgs extends StatelessWidget {
     } else if (egs.length == 1) {
       return EntryEg(
           eg: egs[0],
+          entryLanguage: entryLanguage,
           script: script,
           lineTextStyle: lineTextStyle,
           linkColor: linkColor,
@@ -49,6 +53,7 @@ class EntryEgs extends StatelessWidget {
           children: egs
               .map((eg) => EntryEg(
                   eg: eg,
+                  entryLanguage: entryLanguage,
                   script: script,
                   lineTextStyle: lineTextStyle,
                   linkColor: linkColor,
@@ -67,6 +72,7 @@ class EntryEgs extends StatelessWidget {
                   children: [
                     EntryEg(
                         eg: egs[0],
+                        entryLanguage: entryLanguage,
                         script: script,
                         lineTextStyle: lineTextStyle,
                         linkColor: linkColor,
@@ -87,6 +93,7 @@ class EntryEgs extends StatelessWidget {
                     ...egs
                         .map((eg) => EntryEg(
                             eg: eg,
+                            entryLanguage: entryLanguage,
                             script: script,
                             lineTextStyle: lineTextStyle,
                             linkColor: linkColor,
