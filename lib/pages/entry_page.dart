@@ -12,6 +12,7 @@ import '../bridge_generated.dart' show Script;
 import '../main.dart';
 import '../models/entry.dart';
 import '../utils.dart';
+import '../widgets/entry.dart';
 import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
@@ -88,17 +89,16 @@ class _EntryPageState extends State<EntryPage> {
               });
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: showEntry(
-                  context,
-                  snapshot.data,
-                  entryIndex,
-                  script,
-                  (index) {
+                child: EntryWidget(
+                  entryGroup: snapshot.data,
+                  entryIndex: entryIndex,
+                  script: script,
+                  updateEntryIndex: (index) {
                     setState(() {
                       entryIndex = index;
                     });
                   },
-                  (entryVariant) {
+                  onTapLink: (entryVariant) {
                     log("Tapped on link $entryVariant");
                     api
                         .getEntryId(query: entryVariant, script: script)
@@ -119,8 +119,8 @@ class _EntryPageState extends State<EntryPage> {
                       }
                     });
                   },
-                  scrollController,
-                  player,
+                  scrollController: scrollController,
+                  player: player,
                 ),
               );
             } else if (snapshot.hasError) {
