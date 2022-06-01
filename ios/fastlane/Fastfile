@@ -19,4 +19,11 @@ platform :ios do
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
     upload_to_testflight
   end
+
+  desc "Release a new build to App Store"
+  lane :release do
+      bump
+      build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+      upload_to_app_store
+    end
 end
