@@ -88,6 +88,10 @@
 
     "preferences": "Preferences",
     "language": "Language",
+    "entryExplanationsLanguage": "Language(s) of Explanations",
+    "entryLanguageCantonese": "Cantonese",
+    "entryLanguageEnglish": "English",
+    "entryLanguageBoth": "Bilingual",
 
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",

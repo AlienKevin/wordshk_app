@@ -83,6 +83,10 @@
 
     "preferences": "設定",
     "language": "語言",
+    "entryExplanationsLanguage": "詞條的解釋使用：",
+    "entryLanguageCantonese": "粵語",
+    "entryLanguageEnglish": "英文",
+    "entryLanguageBoth": "雙語",
 
     "dictionaryLicense": "字典授權協議",
     "dictionaryLicenseSummary": "《粵典》軟體中的內容會用以下的授權協議開放給公眾使用：",

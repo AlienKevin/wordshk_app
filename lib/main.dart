@@ -11,6 +11,7 @@ import 'package:wordshk/widgets/search_bar.dart';
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'custom_page_route.dart';
+import 'models/entry_language.dart';
 import 'models/language.dart';
 import 'models/search_mode.dart';
 import 'pages/entry_page.dart';
@@ -43,6 +44,8 @@ void main() {
         ChangeNotifierProvider<SearchQueryState>(
             create: (_) => SearchQueryState()),
         ChangeNotifierProvider<LanguageState>(create: (_) => LanguageState()),
+        ChangeNotifierProvider<EntryLanguageState>(
+            create: (_) => EntryLanguageState()),
       ],
       child: MyApp(),
     ),
@@ -275,6 +278,18 @@ class LanguageState with ChangeNotifier {
   }
 }
 
+class EntryLanguageState with ChangeNotifier {
+  EntryLanguage? language;
+
+  void updateLanguage(EntryLanguage newLanguage) {
+    language = newLanguage;
+    notifyListeners();
+    SharedPreferences.getInstance().then((prefs) async {
+      prefs.setInt("entryLanguage", newLanguage.index);
+    });
+  }
+}
+
 class _HomePageState extends State<HomePage> {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
@@ -303,6 +318,7 @@ class _HomePageState extends State<HomePage> {
       final query = context.read<SearchQueryState>().query;
       doSearch(query, context.read<SearchModeState>().mode, script!);
     });
+
     final languageState = context.read<LanguageState>();
     if (languageState.language == null) {
       SharedPreferences.getInstance().then((prefs) async {
@@ -318,6 +334,20 @@ class _HomePageState extends State<HomePage> {
           context
               .read<LanguageState>()
               .updateLanguage(Language.values[languageIndex]);
+        }
+      });
+    }
+
+    final entryLanguageState = context.read<EntryLanguageState>();
+    if (entryLanguageState.language == null) {
+      SharedPreferences.getInstance().then((prefs) async {
+        final languageIndex = prefs.getInt("entryLanguage");
+        if (languageIndex == null) {
+          context.read<EntryLanguageState>().updateLanguage(EntryLanguage.both);
+        } else {
+          context
+              .read<EntryLanguageState>()
+              .updateLanguage(EntryLanguage.values[languageIndex]);
         }
       });
     }
