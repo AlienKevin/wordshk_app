@@ -819,6 +819,7 @@ Widget showVariant(
                 stop: (player) async {
                   await (player as AudioPlayer).stop();
                 },
+                alignment: Alignment.center,
               );
             }),
           )
@@ -1110,7 +1111,8 @@ Widget showLine(
                 ? [
                     WidgetSpan(
                         alignment: PlaceholderAlignment.middle,
-                        child: ttsPronunciationButton(player, line.toString()))
+                        child: ttsPronunciationButton(
+                            player, line.toString(), Alignment.center))
                   ]
                 : []
           ],
@@ -1121,19 +1123,22 @@ Widget showLine(
   }
 }
 
-ttsPronunciationButton(FlutterTts player, String text) => PronunciationButton(
-    player: player,
-    play: (player) async {
-      final completer = Completer<void>();
-      await (player as FlutterTts).speak(text);
-      player.setCompletionHandler(() {
-        completer.complete();
-      });
-      return completer.future;
-    },
-    stop: (player) async {
-      await (player as FlutterTts).stop();
-    });
+ttsPronunciationButton(FlutterTts player, String text, Alignment alignment) =>
+    PronunciationButton(
+      player: player,
+      play: (player) async {
+        final completer = Completer<void>();
+        await (player as FlutterTts).speak(text);
+        player.setCompletionHandler(() {
+          completer.complete();
+        });
+        return completer.future;
+      },
+      stop: (player) async {
+        await (player as FlutterTts).stop();
+      },
+      alignment: alignment,
+    );
 
 TextSpan showSegment(Segment segment, Color linkColor, OnTapLink onTapLink) {
   switch (segment.type) {
@@ -1222,7 +1227,10 @@ Widget showRubyLine(RubyLine line, Color textColor, Color linkColor,
                 .expand((i) => i)
                 .toList(),
             ttsPronunciationButton(
-                player, Platform.isIOS ? line.toPrs() : line.toString())
+              player,
+              Platform.isIOS ? line.toPrs() : line.toString(),
+              Alignment.topCenter,
+            ),
           ]
               .map((e) => Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -1314,7 +1322,8 @@ Widget showWordLine(WordLine line, Color textColor, Color linkColor,
               .toList(),
           WidgetSpan(
               alignment: PlaceholderAlignment.middle,
-              child: ttsPronunciationButton(player, line.toString()))
+              child: ttsPronunciationButton(
+                  player, line.toString(), Alignment.center))
         ],
         style: TextStyle(fontSize: fontSize, height: 1.2, color: textColor),
       ),

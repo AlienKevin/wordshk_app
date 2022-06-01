@@ -4,9 +4,14 @@ class PronunciationButton<Player> extends StatefulWidget {
   final Future<void> Function(Player) play;
   final void Function(Player) stop;
   final Player player;
+  final Alignment alignment;
 
   const PronunciationButton(
-      {Key? key, required this.player, required this.play, required this.stop})
+      {Key? key,
+      required this.player,
+      required this.play,
+      required this.stop,
+      required this.alignment})
       : super(key: key);
 
   @override
@@ -21,9 +26,10 @@ class _PronunciationButtonState extends State<PronunciationButton> {
     return IconButton(
         visualDensity: VisualDensity.compact,
         tooltip: "Pronunciation",
-        alignment: Alignment.bottomLeft,
+        alignment: widget.alignment,
         icon: Icon(isPlaying ? Icons.stop_circle : Icons.volume_up),
         color: Theme.of(context).colorScheme.secondary,
+        padding: EdgeInsets.zero,
         onPressed: () {
           isPlaying
               ? widget.stop(widget.player)
