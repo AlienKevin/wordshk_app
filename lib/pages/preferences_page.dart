@@ -5,6 +5,7 @@ import 'package:wordshk/models/language.dart';
 
 import '../main.dart';
 import '../models/entry_language.dart';
+import '../models/pronunciation_method.dart';
 import '../widgets/navigation_drawer.dart';
 
 class PreferencesPage extends StatelessWidget {
@@ -14,6 +15,8 @@ class PreferencesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final language = context.watch<LanguageState>().language;
     final entryLanguage = context.watch<EntryLanguageState>().language;
+    final egPronunciationMethod =
+        context.watch<PronunciationMethodState>().entryEgMethod;
 
     onLanguageChange(Language? newLanguage) {
       if (newLanguage != null) {
@@ -24,6 +27,14 @@ class PreferencesPage extends StatelessWidget {
     onEntryLanguageChange(EntryLanguage? newLanguage) {
       if (newLanguage != null) {
         context.read<EntryLanguageState>().updateLanguage(newLanguage);
+      }
+    }
+
+    onEntryEgPronunciationMethodChange(PronunciationMethod? newMethod) {
+      if (newMethod != null) {
+        context
+            .read<PronunciationMethodState>()
+            .updatePronunciationMethod(newMethod);
       }
     }
 
@@ -44,6 +55,18 @@ class PreferencesPage extends StatelessWidget {
           value: value,
           groupValue: entryLanguage,
           onChanged: onEntryLanguageChange,
+          visualDensity: VisualDensity.compact,
+          contentPadding: EdgeInsets.zero,
+          activeColor: Theme.of(context).colorScheme.secondary,
+        );
+
+    entryPronunciationMethodRadioListTile(
+            String title, PronunciationMethod value) =>
+        RadioListTile<PronunciationMethod>(
+          title: Text(title),
+          value: value,
+          groupValue: egPronunciationMethod,
+          onChanged: onEntryEgPronunciationMethodChange,
           visualDensity: VisualDensity.compact,
           contentPadding: EdgeInsets.zero,
           activeColor: Theme.of(context).colorScheme.secondary,
@@ -75,6 +98,15 @@ class PreferencesPage extends StatelessWidget {
               entryLanguageRadioListTile(
                   AppLocalizations.of(context)!.entryLanguageBoth,
                   EntryLanguage.both),
+              Text(AppLocalizations.of(context)!.entryEgPronunciationMethod,
+                  style: Theme.of(context).textTheme.titleLarge),
+              entryPronunciationMethodRadioListTile(
+                  AppLocalizations.of(context)!.pronunciationMethodTts,
+                  PronunciationMethod.tts),
+              entryPronunciationMethodRadioListTile(
+                  AppLocalizations.of(context)!
+                      .pronunciationMethodSyllableRecordings,
+                  PronunciationMethod.syllableRecordings)
             ])),
       ),
     );

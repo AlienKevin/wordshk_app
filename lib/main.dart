@@ -14,6 +14,7 @@ import 'constants.dart';
 import 'custom_page_route.dart';
 import 'models/entry_language.dart';
 import 'models/language.dart';
+import 'models/pronunciation_method.dart';
 import 'models/search_mode.dart';
 import 'pages/entry_page.dart';
 import 'widgets/navigation_drawer.dart';
@@ -47,6 +48,8 @@ void main() {
         ChangeNotifierProvider<LanguageState>(create: (_) => LanguageState()),
         ChangeNotifierProvider<EntryLanguageState>(
             create: (_) => EntryLanguageState()),
+        ChangeNotifierProvider<PronunciationMethodState>(
+            create: (_) => PronunciationMethodState()),
       ],
       child: MyApp(),
     ),
@@ -290,6 +293,18 @@ class EntryLanguageState with ChangeNotifier {
   }
 }
 
+class PronunciationMethodState with ChangeNotifier {
+  PronunciationMethod? entryEgMethod;
+
+  void updatePronunciationMethod(PronunciationMethod newMethod) {
+    entryEgMethod = newMethod;
+    notifyListeners();
+    SharedPreferences.getInstance().then((prefs) async {
+      prefs.setInt("entryEgPronunciationMethod", newMethod.index);
+    });
+  }
+}
+
 class _HomePageState extends State<HomePage> {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
@@ -347,6 +362,22 @@ class _HomePageState extends State<HomePage> {
           context
               .read<EntryLanguageState>()
               .updateLanguage(EntryLanguage.values[languageIndex]);
+        }
+      });
+    }
+
+    final pronunciationMethodState = context.read<PronunciationMethodState>();
+    if (pronunciationMethodState.entryEgMethod == null) {
+      SharedPreferences.getInstance().then((prefs) async {
+        final methodIndex = prefs.getInt("entryEgPronunciationMethod");
+        if (methodIndex == null) {
+          context.read<PronunciationMethodState>().updatePronunciationMethod(
+              Platform.isIOS
+                  ? PronunciationMethod.tts
+                  : PronunciationMethod.syllableRecordings);
+        } else {
+          context.read<PronunciationMethodState>().updatePronunciationMethod(
+              PronunciationMethod.values[methodIndex]);
         }
       });
     }

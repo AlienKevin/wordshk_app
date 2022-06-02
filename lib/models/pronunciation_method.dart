@@ -1,0 +1,4 @@
+enum PronunciationMethod {
+  syllableRecordings,
+  tts,
+}

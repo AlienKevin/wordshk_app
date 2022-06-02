@@ -92,6 +92,9 @@
     "entryLanguageCantonese": "Cantonese",
     "entryLanguageEnglish": "English",
     "entryLanguageBoth": "Bilingual",
+    "entryEgPronunciationMethod": "Pronunciation Methods of Entry Examples",
+    "pronunciationMethodSyllableRecordings": "Syllable recordings",
+    "pronunciationMethodTts": "System Text-to-speech",
 
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",

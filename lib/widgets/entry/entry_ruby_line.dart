@@ -2,9 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:provider/provider.dart';
+import 'package:wordshk/main.dart';
+import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';
+import '../../models/pronunciation_method.dart';
 import 'entry_ruby_segment.dart';
 
 class EntryRubyLine extends StatelessWidget {
@@ -37,11 +41,24 @@ class EntryRubyLine extends StatelessWidget {
                         linkColor, rubyFontSize, textScaleFactor, onTapLink))
                     .expand((i) => i)
                     .toList(),
-                TtsPronunciationButton(
-                  player: player,
-                  text: Platform.isIOS ? line.toPrs() : line.toString(),
-                  alignment: Alignment.topCenter,
-                ),
+                Consumer<PronunciationMethodState>(
+                    builder: (context, pronunciationMethodState, child) =>
+                        pronunciationMethodState.entryEgMethod ==
+                                PronunciationMethod.syllableRecordings
+                            ? SyllablePronunciationButton(
+                                prs: line
+                                    .toPrs()
+                                    .replaceAll(RegExp(r"[^a-z0-6 ]"), "")
+                                    .trim()
+                                    .split(RegExp(r"\s+")),
+                                alignment: Alignment.topCenter)
+                            : TtsPronunciationButton(
+                                player: player,
+                                text: Platform.isIOS
+                                    ? line.toPrs()
+                                    : line.toString(),
+                                alignment: Alignment.topCenter,
+                              )),
               ]
                   .map((e) => Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
