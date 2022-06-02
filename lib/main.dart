@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -154,6 +155,7 @@ class MyApp extends StatelessWidget {
     );
     return Portal(
         child: MaterialApp(
+      debugShowCheckedModeBanner: false,
       locale: context.watch<LanguageState>().language?.toLocale,
       title: 'words.hk',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -352,7 +354,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var watermarkSize = MediaQuery.of(context).size.width * 0.8;
+    double watermarkSize = min(MediaQuery.of(context).size.width * 0.8, 500);
     final bool isSearchResultsEmpty;
     switch (context.watch<SearchModeState>().mode) {
       case SearchMode.pr:
