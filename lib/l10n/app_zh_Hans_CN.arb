@@ -83,7 +83,7 @@
 
     "preferences": "设置",
     "language": "语言",
-    "entryExplanationsLanguage": "词条的解释使用：",
+    "entryExplanationsLanguage": "词条解释语言",
     "entryLanguageCantonese": "粤语",
     "entryLanguageEnglish": "英语",
     "entryLanguageBoth": "双语",
