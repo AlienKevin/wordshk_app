@@ -85,7 +85,8 @@ bundle exec fastlane fastlane snapshot reset_simulators
 - [ ] Make text selection in entries smoother
 - [ ] Fix ruby positioning in Entry M/jam's <eg>: "好M唔M，M套？"
 - [ ] Customize keyboard bar for iOS and Android using https://pub.dev/packages/keyboard_actions
-- [ ] Cut off audio when switching audio or exiting page 
+- [ ] Cut off audio when switching audio or exiting page
+- [ ] Add Yale romanization support
 
 # Legal
 
