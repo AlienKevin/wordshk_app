@@ -403,9 +403,7 @@ class _HomePageState extends State<HomePage> {
                 ? Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
-                      padding: EdgeInsets.only(
-                          top: (MediaQuery.of(context).size.height / 2 -
-                              watermarkSize * 1.2)),
+                      padding: const EdgeInsets.only(top: appBarHeight),
                       child: MediaQuery.of(context).platformBrightness ==
                               Brightness.light
                           ? Image(
