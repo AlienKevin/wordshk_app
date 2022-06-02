@@ -5,32 +5,32 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: update_fastlane" time="1.932233">
+      <testcase classname="fastlane.lanes" name="0: update_fastlane" time="3.137498">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: default_platform" time="0.000233">
+      <testcase classname="fastlane.lanes" name="1: default_platform" time="0.000108">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: Switch to ios bump lane" time="0.000136">
+      <testcase classname="fastlane.lanes" name="2: Switch to ios prompt_for_marketing_version lane" time="0.000104">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: increment_version_number_in_xcodeproj" time="0.04298">
+      <testcase classname="fastlane.lanes" name="3: get_version_number" time="8.150716">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: build_app" time="85.321157">
+      <testcase classname="fastlane.lanes" name="4: build_app" time="70.138933">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: upload_to_testflight" time="1390.072159">
+      <testcase classname="fastlane.lanes" name="5: upload_to_testflight" time="1456.946513">
         
       </testcase>
     
