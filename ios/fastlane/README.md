@@ -15,13 +15,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios bump
+### ios prompt_for_marketing_version
 
 ```sh
-[bundle exec] fastlane ios bump
+[bundle exec] fastlane ios prompt_for_marketing_version
 ```
 
-Increment version number
+
 
 ### ios beta
 

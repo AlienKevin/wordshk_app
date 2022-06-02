@@ -5,24 +5,26 @@ update_fastlane
 default_platform(:ios)
 
 platform :ios do
-  desc "Increment version number"
-  lane :bump do
-    # Source: https://spin.atomicobject.com/2022/02/10/version-fastlane/
-    increment_version_number(
-      version_number: YAML.load_file("../../pubspec.yaml")["version"]
-    )
-  end
+    lane :prompt_for_marketing_version do |options|
+      marketing_version = get_version_number
+      new_version = UI.input("What marketing version? <enter to keep it at #{marketing_version}>")
+      unless new_version.strip == ""
+        increment_version_number(version_number: new_version)
+        UI.message("Version number set to #{new_version}")
+        marketing_version = new_version
+      end
+    end
 
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    bump
+    prompt_for_marketing_version
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
     upload_to_testflight
   end
 
   desc "Release a new build to App Store"
   lane :release do
-      bump
+      prompt_for_marketing_version
       build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
       upload_to_app_store
     end
