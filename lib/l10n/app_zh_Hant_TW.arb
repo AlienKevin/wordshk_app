@@ -1,6 +1,7 @@
 {
     "searchDictionary": "查字典",
     "searchDictionaryNoResultsFound": "抱歉，詞典裡找不到相關資料",
+    "searchDictionaryOnlyPronunciationFound": "抱歉，我們只找到了這個詞的發音：",
 
     "searchModeVariant": "字詞",
     "searchModePr": "粵語拼音",

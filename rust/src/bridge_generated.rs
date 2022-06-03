@@ -22,6 +22,7 @@ pub extern "C" fn wire_init_api(
     port_: i64,
     api_json: *mut wire_uint_8_list,
     english_index_json: *mut wire_uint_8_list,
+    word_list: *mut wire_uint_8_list,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
@@ -32,7 +33,8 @@ pub extern "C" fn wire_init_api(
         move || {
             let api_api_json = api_json.wire2api();
             let api_english_index_json = english_index_json.wire2api();
-            move |task_callback| init_api(api_api_json, api_english_index_json)
+            let api_word_list = word_list.wire2api();
+            move |task_callback| init_api(api_api_json, api_english_index_json, api_word_list)
         },
     )
 }
@@ -167,6 +169,21 @@ pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_uint_8_list, sc
             let api_query = query.wire2api();
             let api_script = script.wire2api();
             move |task_callback| Ok(get_entry_id(api_query, api_script))
+        },
+    )
+}
+
+#[no_mangle]
+pub extern "C" fn wire_get_jyutping(port_: i64, query: *mut wire_uint_8_list) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "get_jyutping",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_query = query.wire2api();
+            move |task_callback| Ok(get_jyutping(api_query))
         },
     )
 }

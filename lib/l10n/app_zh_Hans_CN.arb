@@ -1,6 +1,7 @@
 {
     "searchDictionary": "查字典",
     "searchDictionaryNoResultsFound": "抱歉，词典里找不到相关数据",
+    "searchDictionaryOnlyPronunciationFound": "抱歉，我们只找到了这个词的发音：",
 
     "searchModeVariant": "字词",
     "searchModePr": "粤语拼音",

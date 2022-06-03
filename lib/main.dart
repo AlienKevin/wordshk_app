@@ -8,6 +8,7 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/widgets/search_bar.dart';
+import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
@@ -319,9 +320,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     Future.wait([
       DefaultAssetBundle.of(context).loadString("assets/api.json"),
-      DefaultAssetBundle.of(context).loadString("assets/english_index.json")
-    ]).then((jsons) {
-      api.initApi(apiJson: jsons[0], englishIndexJson: jsons[1]);
+      DefaultAssetBundle.of(context).loadString("assets/english_index.json"),
+      DefaultAssetBundle.of(context).loadString("assets/word_list.tsv"),
+    ]).then((files) {
+      api.initApi(
+          apiJson: files[0], englishIndexJson: files[1], wordList: files[2]);
     });
     final query = context.read<SearchQueryState>().query;
     if (query.isNotEmpty) {
@@ -425,11 +428,55 @@ class _HomePageState extends State<HomePage> {
         }),
         drawer: const NavigationDrawer(),
         body: ((finishedSearch && isSearchResultsEmpty)
-            ? Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
-                child: Text(AppLocalizations.of(context)!
-                    .searchDictionaryNoResultsFound))
+            ? FutureBuilder<List<String>>(
+                future: api.getJyutping(
+                    query: context
+                        .watch<SearchQueryState>()
+                        .query), // a previously-obtained Future<String> or null
+                builder: (BuildContext context,
+                        AsyncSnapshot<List<String>> snapshot) =>
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10.0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: snapshot.hasData
+                                ? (snapshot.data!.isNotEmpty
+                                    ? [
+                                        Text(AppLocalizations.of(context)!
+                                            .searchDictionaryOnlyPronunciationFound),
+                                        RichText(
+                                            textScaleFactor:
+                                                MediaQuery.of(context)
+                                                    .textScaleFactor,
+                                            text: TextSpan(
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                                children: snapshot.data!
+                                                    .map((pr) => [
+                                                          TextSpan(text: pr),
+                                                          WidgetSpan(
+                                                              child: SyllablePronunciationButton(
+                                                                  prs: pr.split(
+                                                                      " "),
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .bottomCenter))
+                                                        ])
+                                                    .expand((i) => i)
+                                                    .toList()))
+                                      ]
+                                    : [
+                                        Text(AppLocalizations.of(context)!
+                                            .searchDictionaryNoResultsFound)
+                                      ])
+                                : snapshot.hasError
+                                    ? [
+                                        const Text(
+                                            "Error loading jyutping data.")
+                                      ]
+                                    : [])))
             : (queryEmptied
                 ? Align(
                     alignment: Alignment.topCenter,

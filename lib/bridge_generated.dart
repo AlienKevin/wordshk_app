@@ -15,6 +15,7 @@ abstract class WordshkApi {
   Future<void> initApi(
       {required String apiJson,
       required String englishIndexJson,
+      required String wordList,
       dynamic hint});
 
   Future<List<PrSearchResult>> prSearch(
@@ -47,6 +48,8 @@ abstract class WordshkApi {
 
   Future<int?> getEntryId(
       {required String query, required Script script, dynamic hint});
+
+  Future<List<String>> getJyutping({required String query, dynamic hint});
 }
 
 class CombinedSearchResults {
@@ -112,16 +115,20 @@ class WordshkApiImpl extends FlutterRustBridgeBase<WordshkApiWire>
   Future<void> initApi(
           {required String apiJson,
           required String englishIndexJson,
+          required String wordList,
           dynamic hint}) =>
       executeNormal(FlutterRustBridgeTask(
-        callFfi: (port_) => inner.wire_init_api(port_,
-            _api2wire_String(apiJson), _api2wire_String(englishIndexJson)),
+        callFfi: (port_) => inner.wire_init_api(
+            port_,
+            _api2wire_String(apiJson),
+            _api2wire_String(englishIndexJson),
+            _api2wire_String(wordList)),
         parseSuccessData: _wire2api_unit,
         constMeta: const FlutterRustBridgeTaskConstMeta(
           debugName: "init_api",
-          argNames: ["apiJson", "englishIndexJson"],
+          argNames: ["apiJson", "englishIndexJson", "wordList"],
         ),
-        argValues: [apiJson, englishIndexJson],
+        argValues: [apiJson, englishIndexJson, wordList],
         hint: hint,
       ));
 
@@ -238,6 +245,19 @@ class WordshkApiImpl extends FlutterRustBridgeBase<WordshkApiWire>
           argNames: ["query", "script"],
         ),
         argValues: [query, script],
+        hint: hint,
+      ));
+
+  Future<List<String>> getJyutping({required String query, dynamic hint}) =>
+      executeNormal(FlutterRustBridgeTask(
+        callFfi: (port_) =>
+            inner.wire_get_jyutping(port_, _api2wire_String(query)),
+        parseSuccessData: _wire2api_StringList,
+        constMeta: const FlutterRustBridgeTaskConstMeta(
+          debugName: "get_jyutping",
+          argNames: ["query"],
+        ),
+        argValues: [query],
         hint: hint,
       ));
 
@@ -383,21 +403,26 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
     int port_,
     ffi.Pointer<wire_uint_8_list> api_json,
     ffi.Pointer<wire_uint_8_list> english_index_json,
+    ffi.Pointer<wire_uint_8_list> word_list,
   ) {
     return _wire_init_api(
       port_,
       api_json,
       english_index_json,
+      word_list,
     );
   }
 
   late final _wire_init_apiPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>)>>('wire_init_api');
   late final _wire_init_api = _wire_init_apiPtr.asFunction<
-      void Function(
-          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+      void Function(int, ffi.Pointer<wire_uint_8_list>,
+          ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_pr_search(
     int port_,
@@ -542,6 +567,23 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
               ffi.Int32)>>('wire_get_entry_id');
   late final _wire_get_entry_id = _wire_get_entry_idPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>, int)>();
+
+  void wire_get_jyutping(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> query,
+  ) {
+    return _wire_get_jyutping(
+      port_,
+      query,
+    );
+  }
+
+  late final _wire_get_jyutpingPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_get_jyutping');
+  late final _wire_get_jyutping = _wire_get_jyutpingPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list(
     int len,

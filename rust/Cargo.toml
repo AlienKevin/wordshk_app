@@ -15,6 +15,7 @@ lazy_static = "1.4.0"
 #oslog = { version = "0.1.0" }
 #log = "0.4.14"
 openssl = { version = "*", features = ["vendored"] }
+csv = "1.1.6"
 
 [lib]
 name = "wordshk_api"

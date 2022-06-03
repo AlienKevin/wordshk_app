@@ -1,6 +1,7 @@
 {
     "searchDictionary": "Search",
     "searchDictionaryNoResultsFound": "Sorry, no results found",
+    "searchDictionaryOnlyPronunciationFound": "Sorry, we only know the pronunciation of this word:",
 
     "searchModeVariant": "Word",
     "searchModePr": "Jyutping",

@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use wordshk_tools::rich_dict::{RichDict};
 use wordshk_tools::lean_rich_dict::{to_lean_rich_entry};
 use wordshk_tools::search;
@@ -20,6 +21,8 @@ struct Api {
     pub english_index: EnglishIndex,
     #[serde(skip)]
     pub variants_map: search::VariantsMap,
+    #[serde(skip)]
+    pub word_list: HashMap<String, Vec<String>>,
     pub release_time: DateTime<Utc>,
 }
 
@@ -35,7 +38,7 @@ pub enum _Script {
 }
 
 impl Api {
-    pub fn new(api_json: String, english_index_json: String) -> Self {
+    pub fn new(api_json: String, english_index_json: String, word_list: String) -> Self {
         // if !*IS_LOG_INITIALIZED.lock() {
         //     OsLogger::new("hk.words")
         //         .level_filter(LevelFilter::Debug)
@@ -49,6 +52,15 @@ impl Api {
         api.variants_map = search::rich_dict_to_variants_map(&api.dict);
         let english_index: EnglishIndex = serde_json::from_str(&english_index_json).unwrap();
         api.english_index = english_index;
+        let mut rdr = csv::ReaderBuilder::new()
+            .has_headers(false)
+            .delimiter(b'\t')
+            .from_reader(word_list.as_bytes());
+        api.word_list = HashMap::new();
+        for result in rdr.records() {
+            let record = result.unwrap();
+            api.word_list.entry(record[0].to_string()).or_insert(vec![]).push(record[1].to_string());
+        }
         api
     }
 
@@ -163,6 +175,10 @@ impl Api {
     pub fn get_entry_id(&self, query: &str, script: Script) -> Option<u32> {
         search::get_entry_id(&self.variants_map, query, script).map(|id| id as u32)
     }
+
+    pub fn get_jyutping(&self, query: &str) -> Vec<String> {
+        self.word_list.get(query).unwrap_or(&vec![]).clone()
+    }
 }
 
 pub struct PrSearchResult {
@@ -189,9 +205,9 @@ lazy_static! {
     static ref IS_LOG_INITIALIZED: Mutex<bool> = Mutex::new(false);
 }
 
-pub fn init_api(api_json: String, english_index_json: String) -> Result<()> {
+pub fn init_api(api_json: String, english_index_json: String, word_list: String) -> Result<()> {
     // info!("Calling init_api()...");
-    *API.lock() = Some(Api::new(api_json, english_index_json));
+    *API.lock() = Some(Api::new(api_json, english_index_json, word_list));
     Ok(())
 }
 
@@ -221,4 +237,8 @@ pub fn get_entry_group_json(id: u32) -> Result<Vec<String>> {
 
 pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
     (*API.lock()).as_ref().unwrap().get_entry_id(&query, script)
+}
+
+pub fn get_jyutping(query: String) -> Vec<String> {
+    (*API.lock()).as_ref().unwrap().get_jyutping(&query)
 }

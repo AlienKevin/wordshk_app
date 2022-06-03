@@ -79,7 +79,7 @@ bundle exec fastlane fastlane snapshot reset_simulators
 - [x] Use word match percent instead of direct lookup for phrases with >1 words
 - [ ] Test multi-language support for entries
 - [ ] Add auto language detection for searches
-- [ ] Show possible jyutping when search result is not found.
+- [x] Show possible jyutping when search result is not found.
 - [x] Offer option to show entries in simplified
 - [ ] Wait for fast2s to merge my 乾/干 PR and update to use the new version
 - [ ] Make text selection in entries smoother

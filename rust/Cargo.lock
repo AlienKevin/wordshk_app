@@ -1507,6 +1507,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "csv",
  "flutter_rust_bridge",
  "lazy_static",
  "openssl",
