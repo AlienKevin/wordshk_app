@@ -55,14 +55,12 @@ class Def extends Equatable {
   final Clause yue;
   final Clause yueSimp;
   final Clause? eng;
-  final List<AltClause> alts;
   final List<Eg> egs;
 
   const Def({
     required this.yue,
     required this.yueSimp,
     required this.eng,
-    required this.alts,
     required this.egs,
   });
 
@@ -70,15 +68,12 @@ class Def extends Equatable {
       : yue = Clause.fromJson(json['yue']),
         yueSimp = Clause.fromJson(json['yue_simp']),
         eng = json['eng'] == null ? null : Clause.fromJson(json['eng']),
-        alts = List.from(json['alts']).map((alt) {
-          return AltClause.fromJson(alt);
-        }).toList(),
         egs = List.from(json['egs']).map((eg) {
           return Eg.fromJson(eg);
         }).toList();
 
   @override
-  List<Object?> get props => [yue, eng, alts, egs];
+  List<Object?> get props => [yue, eng, egs];
 }
 
 class Clause extends Equatable {
@@ -121,7 +116,7 @@ enum SegmentType {
 }
 
 SegmentType segmentTypeFromString(String string) {
-  return string == 'Text' ? SegmentType.text : SegmentType.link;
+  return string == 'T' ? SegmentType.text : SegmentType.link;
 }
 
 class Segment extends Equatable {
@@ -153,10 +148,10 @@ class RichLine extends Equatable {
   const RichLine(this.type, this.line);
 
   RichLine.fromJson(Map<String, dynamic> json)
-      : type = json['Ruby'] != null ? RichLineType.ruby : RichLineType.word,
-        line = json['Ruby'] != null
-            ? RubyLine.fromJson(json['Ruby'])
-            : WordLine.fromJson(json['Text']);
+      : type = json['R'] != null ? RichLineType.ruby : RichLineType.word,
+        line = json['R'] != null
+            ? RubyLine.fromJson(json['R'])
+            : WordLine.fromJson(json['T']);
 
   @override
   List<Object?> get props => [type, line];
@@ -194,15 +189,15 @@ class RubySegment extends Equatable {
   const RubySegment(this.type, this.segment);
 
   RubySegment.fromJson(Map<String, dynamic> json)
-      : type = json['Punc'] != null
+      : type = json['P'] != null
             ? RubySegmentType.punc
-            : (json['Word'] != null
+            : (json['W'] != null
                 ? RubySegmentType.word
                 : RubySegmentType.linkedWord),
-        segment = json['Punc'] ??
-            (json['Word'] != null
-                ? RubySegmentWord.fromJson(json['Word'])
-                : RubySegmentLinkedWord.fromJson(json['LinkedWord']));
+        segment = json['P'] ??
+            (json['W'] != null
+                ? RubySegmentWord.fromJson(json['W'])
+                : RubySegmentLinkedWord.fromJson(json['L']));
 
   @override
   String toString() => segment.toString();
@@ -325,7 +320,7 @@ class EntryText extends Equatable {
   const EntryText(this.style, this.text);
 
   EntryText.fromJson(List<dynamic> json)
-      : style = json[0] == 'Bold' ? EntryTextStyle.bold : EntryTextStyle.normal,
+      : style = json[0] == 'B' ? EntryTextStyle.bold : EntryTextStyle.normal,
         text = json[1];
 
   @override

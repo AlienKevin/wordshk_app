@@ -81,7 +81,6 @@ class _EntryPageState extends State<EntryPage> {
             if (snapshot.hasData) {
               WidgetsBinding.instance.addPostFrameCallback((_) async {
                 if (widget.defIndex != null) {
-                  print("scroll to ${widget.defIndex}");
                   await scrollController.scrollToIndex(widget.defIndex!,
                       preferPosition: AutoScrollPosition.begin);
                   scrollController.highlight(widget.defIndex!);

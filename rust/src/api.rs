@@ -4,7 +4,6 @@ use wordshk_tools::lean_rich_dict::{to_lean_rich_entry};
 use wordshk_tools::search;
 pub use wordshk_tools::search::Script;
 use wordshk_tools::english_index::EnglishIndex;
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use parking_lot::Mutex;
 use lazy_static::lazy_static;
@@ -23,7 +22,6 @@ struct Api {
     pub variants_map: search::VariantsMap,
     #[serde(skip)]
     pub word_list: HashMap<String, Vec<String>>,
-    pub release_time: DateTime<Utc>,
 }
 
 pub struct CombinedSearchResults {
