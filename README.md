@@ -87,6 +87,7 @@ bundle exec fastlane fastlane snapshot reset_simulators
 - [ ] Customize keyboard bar for iOS and Android using https://pub.dev/packages/keyboard_actions
 - [ ] Cut off audio when switching audio or exiting page
 - [ ] Add Yale romanization support
+- [ ] Convert traditional characters in links of eng explanation to simplified
 
 # Legal
 
