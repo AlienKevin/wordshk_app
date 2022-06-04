@@ -88,6 +88,7 @@ bundle exec fastlane fastlane snapshot reset_simulators
 - [ ] Cut off audio when switching audio or exiting page
 - [ ] Add Yale romanization support
 - [ ] Convert traditional characters in links of eng explanation to simplified
+- [ ] Convert traditional characters in result not found to simplified
 
 # Legal
 
