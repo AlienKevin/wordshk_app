@@ -67,12 +67,16 @@ class EntryTab extends StatelessWidget {
                           label:
                               "[" + AppLocalizations.of(context)!.synonym + "]",
                           simsOrAnts: entry.sims,
+                          simsOrAntsSimp: entry.simsSimp,
+                          script: script,
                           lineTextStyle: lineTextStyle,
                           onTapLink: onTapLink),
                       EntrySimsOrAnts(
                           label:
                               "[" + AppLocalizations.of(context)!.antonym + "]",
                           simsOrAnts: entry.ants,
+                          simsOrAntsSimp: entry.antsSimp,
+                          script: script,
                           lineTextStyle: lineTextStyle,
                           onTapLink: onTapLink),
                     ]))

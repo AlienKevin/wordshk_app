@@ -5,12 +5,14 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 
 import '../bridge_generated.dart' show Script;
 import '../main.dart';
 import '../models/entry.dart';
+import '../models/language.dart';
 import '../utils.dart';
 import '../widgets/entry/entry.dart';
 import 'entry_not_published_page.dart';
@@ -55,7 +57,7 @@ class _EntryPageState extends State<EntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final script = Localizations.localeOf(context).scriptCode == "Hans"
+    final script = context.read<LanguageState>().language == Language.zhHansCN
         ? Script.Simplified
         : Script.Traditional;
     return Scaffold(

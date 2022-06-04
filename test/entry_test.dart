@@ -7,7 +7,9 @@ void main() {
   test('simple', () {
     var json = """{"id":56534,"variants":[{"word":"命","prs":"ming6"}],
         "variants_simp":[{"word":"命","prs":"ming6"}],
-        "poses":["語素"],"labels":[],"sims":[],"ants":[],
+        "poses":["語素"],"labels":[],
+        "sims":["s"],"ants":["a"],
+        "sims_simp":["ss"],"ants_simp":["as"],
         "defs":[
           {"yue":[[["L","命"],["T","（meng6）嘅讀書音，通常用喺配詞"]]],
           "yue_simp":[[["L","命"],["T","（meng6）嘅读书音，通常用喺配词"]]],
@@ -28,8 +30,10 @@ void main() {
       variantsSimp: [Variant("命", "ming6")],
       poses: [Pos.morpheme],
       labels: [],
-      sims: [],
-      ants: [],
+      sims: ["s"],
+      simsSimp: ["ss"],
+      ants: ["a"],
+      antsSimp: ["as"],
       defs: [
         Def(
             yue: Clause([
@@ -99,7 +103,8 @@ void main() {
     {"id":108744,
     "variants": [{"word":"呢個","prs":"ni1 go3, li1 go3"},{"word":"哩個","prs":"ni1 go3, li1 go3"}],
     "variants_simp": [{"word":"呢个","prs":"ni1 go3, li1 go3"},{"word":"哩个","prs":"ni1 go3, li1 go3"}],
-    "poses":["代詞"],"labels":[],"sims":[],"ants":[],
+    "poses":["代詞"],"labels":[],
+    "sims":[], "simsSimp":[], "ants":[], "antsSimp":[],
     "defs":[
       {"yue":[[["T","指稱接近自己嘅嘢"]]],
       "yue_simp":[[["T","指称接近自己嘅嘢"]]],
@@ -129,7 +134,9 @@ void main() {
       poses: [Pos.pronoun],
       labels: [],
       sims: [],
+      simsSimp: [],
       ants: [],
+      antsSimp: [],
       defs: [
         Def(
             yue: Clause([

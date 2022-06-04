@@ -11,7 +11,9 @@ class Entry extends Equatable {
   final List<Pos> poses;
   final List<Label> labels;
   final List<String> sims;
+  final List<String> simsSimp;
   final List<String> ants;
+  final List<String> antsSimp;
   final List<Def> defs;
   final bool published;
 
@@ -22,7 +24,9 @@ class Entry extends Equatable {
     required this.poses,
     required this.labels,
     required this.sims,
+    required this.simsSimp,
     required this.ants,
+    required this.antsSimp,
     required this.defs,
     required this.published,
   });
@@ -41,7 +45,9 @@ class Entry extends Equatable {
             .map((label) => stringToLabel(label))
             .toList(),
         sims = List.from(json['sims']),
+        simsSimp = List.from(json['sims_simp']),
         ants = List.from(json['ants']),
+        antsSimp = List.from(json['ants_simp']),
         defs = List.from(json['defs']).map((def) {
           return Def.fromJson(def);
         }).toList(),

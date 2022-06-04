@@ -2,11 +2,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
+import '../../bridge_generated.dart';
 import '../../models/entry.dart';
 
 class EntrySimsOrAnts extends StatelessWidget {
   final String label;
   final List<String> simsOrAnts;
+  final List<String> simsOrAntsSimp;
+  final Script script;
   final TextStyle lineTextStyle;
   final OnTapLink onTapLink;
 
@@ -14,6 +17,8 @@ class EntrySimsOrAnts extends StatelessWidget {
       {Key? key,
       required this.label,
       required this.simsOrAnts,
+      required this.simsOrAntsSimp,
+      required this.script,
       required this.lineTextStyle,
       required this.onTapLink})
       : super(key: key);
@@ -32,15 +37,19 @@ class EntrySimsOrAnts extends StatelessWidget {
                       style: lineTextStyle.copyWith(
                           fontWeight: FontWeight.bold)))),
           const WidgetSpan(child: SizedBox(width: 10)),
-          ...simsOrAnts.asMap().entries.map((sim) => TextSpan(children: [
-                ScalableTextSpan(context,
-                    text: sim.value,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => onTapLink(sim.value)),
-                TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
-              ]))
+          ...(script == Script.Traditional ? simsOrAnts : simsOrAntsSimp)
+              .asMap()
+              .entries
+              .map((sim) => TextSpan(children: [
+                    ScalableTextSpan(context,
+                        text: sim.value,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => onTapLink(sim.value)),
+                    TextSpan(
+                        text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
+                  ]))
         ]));
       }));
 }
