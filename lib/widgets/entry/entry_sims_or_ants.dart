@@ -7,7 +7,7 @@ import '../../models/entry.dart';
 
 class EntrySimsOrAnts extends StatelessWidget {
   final String label;
-  final List<String> simsOrAnts;
+  final List<Segment> simsOrAnts;
   final List<String> simsOrAntsSimp;
   final Script script;
   final TextStyle lineTextStyle;
@@ -40,16 +40,20 @@ class EntrySimsOrAnts extends StatelessWidget {
           ...(script == Script.Traditional ? simsOrAnts : simsOrAntsSimp)
               .asMap()
               .entries
-              .map((sim) => TextSpan(children: [
-                    ScalableTextSpan(context,
-                        text: sim.value,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => onTapLink(sim.value)),
-                    TextSpan(
-                        text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
-                  ]))
+              .map((sim) {
+            final seg = (sim.value as Segment);
+            return TextSpan(children: [
+              seg.type == SegmentType.link
+                  ? ScalableTextSpan(context,
+                      text: seg.segment,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => onTapLink(seg.segment))
+                  : ScalableTextSpan(context, text: seg.segment),
+              TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
+            ]);
+          })
         ]));
       }));
 }

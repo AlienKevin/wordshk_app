@@ -8,8 +8,8 @@ void main() {
     var json = """{"id":56534,"variants":[{"word":"命","prs":"ming6"}],
         "variants_simp":[{"word":"命","prs":"ming6"}],
         "poses":["語素"],"labels":[],
-        "sims":["s"],"ants":["a"],
-        "sims_simp":["ss"],"ants_simp":["as"],
+        "sims":[["L","s1"],["T","s2"]],"ants":[["L","a1"],["T","a2"]],
+        "sims_simp":["ss1","ss2"],"ants_simp":["as1","as2"],
         "defs":[
           {"yue":[[["L","命"],["T","（meng6）嘅讀書音，通常用喺配詞"]]],
           "yue_simp":[[["L","命"],["T","（meng6）嘅读书音，通常用喺配词"]]],
@@ -30,10 +30,10 @@ void main() {
       variantsSimp: [Variant("命", "ming6")],
       poses: [Pos.morpheme],
       labels: [],
-      sims: ["s"],
-      simsSimp: ["ss"],
-      ants: ["a"],
-      antsSimp: ["as"],
+      sims: [Segment(SegmentType.link, "s1"), Segment(SegmentType.text, "s2")],
+      simsSimp: ["ss1", "ss2"],
+      ants: [Segment(SegmentType.link, "a1"), Segment(SegmentType.text, "a2")],
+      antsSimp: ["as1", "as2"],
       defs: [
         Def(
             yue: Clause([

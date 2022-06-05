@@ -10,9 +10,9 @@ class Entry extends Equatable {
   final List<Variant> variantsSimp;
   final List<Pos> poses;
   final List<Label> labels;
-  final List<String> sims;
+  final List<Segment> sims;
   final List<String> simsSimp;
-  final List<String> ants;
+  final List<Segment> ants;
   final List<String> antsSimp;
   final List<Def> defs;
   final bool published;
@@ -44,9 +44,13 @@ class Entry extends Equatable {
         labels = List.from(json['labels'])
             .map((label) => stringToLabel(label))
             .toList(),
-        sims = List.from(json['sims']),
+        sims = List.from(json['sims']).map((segment) {
+          return Segment.fromJson(segment);
+        }).toList(),
         simsSimp = List.from(json['sims_simp']),
-        ants = List.from(json['ants']),
+        ants = List.from(json['ants']).map((segment) {
+          return Segment.fromJson(segment);
+        }).toList(),
         antsSimp = List.from(json['ants_simp']),
         defs = List.from(json['defs']).map((def) {
           return Def.fromJson(def);
