@@ -104,7 +104,7 @@ void main() {
     "variants": [{"word":"呢個","prs":"ni1 go3, li1 go3"},{"word":"哩個","prs":"ni1 go3, li1 go3"}],
     "variants_simp": [{"word":"呢个","prs":"ni1 go3, li1 go3"},{"word":"哩个","prs":"ni1 go3, li1 go3"}],
     "poses":["代詞"],"labels":[],
-    "sims":[], "simsSimp":[], "ants":[], "antsSimp":[],
+    "sims":[], "sims_simp":[], "ants":[], "ants_simp":[],
     "defs":[
       {"yue":[[["T","指稱接近自己嘅嘢"]]],
       "yue_simp":[[["T","指称接近自己嘅嘢"]]],
