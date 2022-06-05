@@ -84,7 +84,7 @@ bundle exec fastlane fastlane snapshot reset_simulators
 - [ ] Wait for fast2s to merge my 乾/干 PR and update to use the new version
 - [ ] Make text selection in entries smoother
 - [ ] Fix ruby positioning in Entry M/jam's <eg>: "好M唔M，M套？"
-- [ ] Customize keyboard bar for iOS and Android using https://pub.dev/packages/keyboard_actions
+- [x] Customize keyboard bar for iOS and Android using https://pub.dev/packages/keyboard_actions
 - [ ] Cut off audio when switching audio or exiting page
 - [ ] Add Yale romanization support
 - [ ] Convert traditional characters in links of eng explanation to simplified

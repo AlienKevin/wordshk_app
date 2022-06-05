@@ -28,6 +28,7 @@ dependencies:
   scroll_to_index: ^3.0.1
   flutter_tts: ^3.4.0
   audio_session: ^0.1.7
+  keyboard_actions: ^4.0.0
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:
