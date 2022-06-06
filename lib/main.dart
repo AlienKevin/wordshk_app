@@ -335,7 +335,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double watermarkSize = min(MediaQuery.of(context).size.width * 0.8, 500);
     final bool isSearchResultsEmpty;
     switch (context.watch<SearchModeState>().mode) {
       case SearchMode.pr:
@@ -376,84 +375,70 @@ class _HomePageState extends State<HomePage> {
             }),
             drawer: const NavigationDrawer(),
             body: ((finishedSearch && isSearchResultsEmpty)
-                ? FutureBuilder<List<String>>(
-                    future: api.getJyutping(
-                        query: context
-                            .watch<SearchQueryState>()
-                            .query), // a previously-obtained Future<String> or null
-                    builder: (BuildContext context,
-                            AsyncSnapshot<List<String>> snapshot) =>
-                        Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10.0),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: snapshot.hasData
-                                    ? (snapshot.data!.isNotEmpty
-                                        ? [
-                                            Text(AppLocalizations.of(context)!
-                                                .searchDictionaryOnlyPronunciationFound),
-                                            RichText(
-                                                textScaleFactor:
-                                                    MediaQuery.of(context)
-                                                        .textScaleFactor,
-                                                text: TextSpan(
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium,
-                                                    children: snapshot.data!
-                                                        .map((pr) => [
-                                                              TextSpan(
-                                                                  text: pr),
-                                                              WidgetSpan(
-                                                                  child: SyllablePronunciationButton(
-                                                                      prs: pr.split(
-                                                                          " "),
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .bottomCenter))
-                                                            ])
-                                                        .expand((i) => i)
-                                                        .toList()))
-                                          ]
-                                        : [
-                                            Text(AppLocalizations.of(context)!
-                                                .searchDictionaryNoResultsFound)
-                                          ])
-                                    : snapshot.hasError
-                                        ? [
-                                            const Text(
-                                                "Error loading jyutping data.")
-                                          ]
-                                        : [])))
-                : (queryEmptied
-                    ? Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: appBarHeight),
-                          child: MediaQuery.of(context).platformBrightness ==
-                                  Brightness.light
-                              ? Image(
-                                  width: watermarkSize,
-                                  image: const AssetImage('assets/icon.png'))
-                              : Image(
-                                  width: watermarkSize,
-                                  image:
-                                      const AssetImage('assets/icon_grey.png')),
-                        ),
-                      )
-                    : Consumer<SearchModeState>(
-                        builder: (context, searchModeState, child) {
-                        final results = showSearchResults(
-                            Theme.of(context).textTheme.bodyLarge!,
-                            searchModeState.mode);
-                        return ListView.separated(
-                          separatorBuilder: (_, __) => const Divider(),
-                          itemBuilder: (_, index) => results[index],
-                          itemCount: results.length,
-                        );
-                      })))));
+                ? showResultsNotFound()
+                : (queryEmptied ? showWatermark() : showSearchResults()))));
   }
+
+  Widget showWatermark() {
+    double watermarkSize = min(MediaQuery.of(context).size.width * 0.8, 500);
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(top: appBarHeight),
+        child: MediaQuery.of(context).platformBrightness == Brightness.light
+            ? Image(
+                width: watermarkSize,
+                image: const AssetImage('assets/icon.png'))
+            : Image(
+                width: watermarkSize,
+                image: const AssetImage('assets/icon_grey.png')),
+      ),
+    );
+  }
+
+  Widget showResultsNotFound() => FutureBuilder<List<String>>(
+      future: api.getJyutping(
+          query: context
+              .watch<SearchQueryState>()
+              .query), // a previously-obtained Future<String> or null
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) =>
+          Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: snapshot.hasData
+                      ? (snapshot.data!.isNotEmpty
+                          ? [
+                              Text(AppLocalizations.of(context)!
+                                  .searchDictionaryOnlyPronunciationFound),
+                              RichText(
+                                  textScaleFactor:
+                                      MediaQuery.of(context).textScaleFactor,
+                                  text: TextSpan(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                      children: snapshot.data!
+                                          .map((pr) => [
+                                                TextSpan(text: pr),
+                                                WidgetSpan(
+                                                    child:
+                                                        SyllablePronunciationButton(
+                                                            prs: pr.split(" "),
+                                                            alignment: Alignment
+                                                                .bottomCenter))
+                                              ])
+                                          .expand((i) => i)
+                                          .toList()))
+                            ]
+                          : [
+                              Text(AppLocalizations.of(context)!
+                                  .searchDictionaryNoResultsFound)
+                            ])
+                      : snapshot.hasError
+                          ? [const Text("Error loading jyutping data.")]
+                          : [])));
 
   void doSearch(String query, BuildContext context) {
     if (query.isEmpty) {
@@ -516,7 +501,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  List<Widget> showSearchResults(TextStyle textStyle, SearchMode searchMode) {
+  Widget showSearchResults() =>
+      Consumer<SearchModeState>(builder: (context, searchModeState, child) {
+        final results = showSearchResultsHelper(
+            Theme.of(context).textTheme.bodyLarge!, searchModeState.mode);
+        return ListView.separated(
+          separatorBuilder: (_, __) => const Divider(),
+          itemBuilder: (_, index) => results[index],
+          itemCount: results.length,
+        );
+      });
+
+  List<Widget> showSearchResultsHelper(
+      TextStyle textStyle, SearchMode searchMode) {
     switch (searchMode) {
       case SearchMode.pr:
         return showPrSearchResults(textStyle);
