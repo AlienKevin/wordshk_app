@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/main.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
 import '../../models/entry.dart';
+import '../../states/romanization_state.dart';
 import 'entry_word.dart';
 
 List<Widget> showRubySegment(

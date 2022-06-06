@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../main.dart';
 import '../../models/entry.dart';
+import '../../states/romanization_state.dart';
 import '../syllable_pronunciation_button.dart';
 
 class EntryVariant extends StatelessWidget {

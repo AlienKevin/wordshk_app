@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/main.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';
 import '../../models/pronunciation_method.dart';
+import '../../states/pronunciation_method_state.dart';
 import 'entry_ruby_segment.dart';
 
 class EntryRubyLine extends StatelessWidget {

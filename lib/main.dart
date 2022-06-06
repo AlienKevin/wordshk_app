@@ -2,13 +2,17 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshk/states/entry_language_state.dart';
+import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/states/pronunciation_method_state.dart';
+import 'package:wordshk/states/romanization_state.dart';
+import 'package:wordshk/states/search_mode_state.dart';
+import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/widgets/search_bar.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
@@ -233,134 +237,6 @@ class HomePage extends StatefulWidget {
 
   @override
   State<HomePage> createState() => _HomePageState();
-}
-
-class SearchModeState with ChangeNotifier {
-  SearchMode mode = SearchMode.combined;
-  bool showSearchModeSelector = false;
-
-  void updateSearchModeAndCloseSelector(
-      SearchMode newMode, FocusNode focusNode) {
-    switchKeyboardType(focusNode);
-    mode = newMode;
-    showSearchModeSelector = false;
-    notifyListeners();
-  }
-
-  void updateSearchMode(SearchMode newMode, FocusNode focusNode) {
-    switchKeyboardType(focusNode);
-    mode = newMode;
-    notifyListeners();
-  }
-
-  void toggleSearchModeSelector() {
-    showSearchModeSelector = !showSearchModeSelector;
-    notifyListeners();
-  }
-}
-
-switchKeyboardType(FocusNode focusNode) {
-  focusNode.unfocus();
-  WidgetsBinding.instance.addPostFrameCallback(
-    (_) => focusNode.requestFocus(),
-  );
-}
-
-class SearchQueryState with ChangeNotifier {
-  String query = "";
-
-  void updateSearchQuery(String newQuery) {
-    query = newQuery;
-    notifyListeners();
-  }
-}
-
-class LanguageState with ChangeNotifier {
-  Language? language;
-
-  void updateLanguage(Language newLanguage) {
-    language = newLanguage;
-    notifyListeners();
-    SharedPreferences.getInstance().then((prefs) async {
-      prefs.setInt("language", newLanguage.index);
-    });
-  }
-}
-
-class EntryLanguageState with ChangeNotifier {
-  EntryLanguage? language;
-
-  void updateLanguage(EntryLanguage newLanguage) {
-    language = newLanguage;
-    notifyListeners();
-    SharedPreferences.getInstance().then((prefs) async {
-      prefs.setInt("entryLanguage", newLanguage.index);
-    });
-  }
-}
-
-class PronunciationMethodState with ChangeNotifier {
-  PronunciationMethod? entryEgMethod;
-
-  void updatePronunciationMethod(PronunciationMethod newMethod) {
-    entryEgMethod = newMethod;
-    notifyListeners();
-    SharedPreferences.getInstance().then((prefs) async {
-      prefs.setInt("entryEgPronunciationMethod", newMethod.index);
-    });
-  }
-}
-
-class RomanizationState with ChangeNotifier {
-  Romanization? romanization;
-  Map<String, List<String>> romanizationMap = {};
-
-  void updateRomanization(Romanization newRomanization) async {
-    romanization = newRomanization;
-    if (newRomanization != Romanization.jyutping && romanizationMap.isEmpty) {
-      final tsv =
-          await rootBundle.loadString("assets/cantonese_romanizations.tsv");
-      final List<List<String>> rows = const CsvToListConverter(
-              fieldDelimiter: "\t", shouldParseNumbers: false, eol: "\n")
-          .convert(tsv);
-      romanizationMap.addEntries(rows.map((row) {
-        final jyutping = row[Romanization.jyutping.tsvColumn];
-        return MapEntry(jyutping, row);
-      }));
-    }
-    notifyListeners();
-    SharedPreferences.getInstance().then((prefs) async {
-      prefs.setInt("romanization", newRomanization.index);
-    });
-  }
-
-  String showPr(String jyutping) {
-    if (romanization == Romanization.jyutping) {
-      return jyutping;
-    } else {
-      final romanizations = romanizationMap[jyutping];
-      if (romanizations == null) {
-        return "[$jyutping]";
-      } else {
-        return romanizations[romanization!.tsvColumn];
-      }
-    }
-  }
-
-  String showPrs(List<String> jyutpings) {
-    if (romanization == Romanization.jyutping) {
-      return jyutpings.join(" ");
-    } else {
-      return jyutpings.map((jyutping) {
-        final romanizations = romanizationMap[jyutping];
-        if (romanizations == null) {
-          return "[$jyutping]";
-        } else {
-          return romanizations[romanization!.tsvColumn];
-        }
-      }).join(" ");
-    }
-  }
 }
 
 class _HomePageState extends State<HomePage> {

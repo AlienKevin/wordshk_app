@@ -10,8 +10,9 @@ import 'package:wordshk/widgets/search_mode_button.dart';
 import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
 
 import '../constants.dart';
-import '../main.dart';
 import '../models/search_mode.dart';
+import '../states/search_mode_state.dart';
+import '../states/search_query_state.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);

@@ -3,10 +3,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/models/language.dart';
 
-import '../main.dart';
 import '../models/entry_language.dart';
 import '../models/pronunciation_method.dart';
 import '../models/romanization.dart';
+import '../states/entry_language_state.dart';
+import '../states/language_state.dart';
+import '../states/pronunciation_method_state.dart';
+import '../states/romanization_state.dart';
 import '../widgets/navigation_drawer.dart';
 
 class PreferencesPage extends StatelessWidget {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/main.dart';
 
 import '../constants.dart';
 import '../models/search_mode.dart';
+import '../states/search_mode_state.dart';
 
 class SearchModeButton extends StatelessWidget {
   final SearchMode Function(SearchMode) getMode;

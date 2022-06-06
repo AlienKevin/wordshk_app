@@ -3,11 +3,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:wordshk/main.dart';
 
 import '../../bridge_generated.dart' show Script;
 import '../../constants.dart';
 import '../../models/entry.dart';
+import '../../states/entry_language_state.dart';
 import 'entry_banner.dart';
 import 'entry_def.dart';
 import 'entry_labels.dart';
