@@ -83,14 +83,29 @@
     "dismiss": "关闭",
 
     "preferences": "设置",
+
     "language": "语言",
     "entryExplanationsLanguage": "词条解释语言",
     "entryLanguageCantonese": "粤语",
     "entryLanguageEnglish": "英语",
     "entryLanguageBoth": "双语",
+
     "entryEgPronunciationMethod": "词条例句发音方式",
     "pronunciationMethodSyllableRecordings": "音节录音",
     "pronunciationMethodTts": "系统语音合成",
+
+    "romanization": "拼音",
+    "romanizationJyutping": "粤拼",
+    "romanizationYaleNumbers": "耶鲁（数字）",
+    "romanizationYaleDiacritics": "耶鲁（调符）",
+    "romanizationCantonesePinyin": "教院式拼音",
+    "romanizationGuangdong": "广州话拼音方案",
+    "romanizationSidneyLau": "刘锡祥拼音",
+    "romanizationWongNumbers": "黄锡凌罗马拼音（数字）",
+    "romanizationWongDiacritics": "黄锡凌罗马拼音（调符）",
+    "romanizationIpa": "国际音标",
+    "romanizationPenkyampNumbers": "Penkyamp（数字）",
+    "romanizationPenkyampDiacritics": "Penkyamp（调符）",
 
     "dictionaryLicense": "字典授权协议",
     "dictionaryLicenseSummary": "《粤典》软件中的内容会用以下的授权协议开放给公众使用：",

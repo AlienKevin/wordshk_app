@@ -83,14 +83,29 @@
     "dismiss": "關閉",
 
     "preferences": "設定",
+
     "language": "語言",
     "entryExplanationsLanguage": "詞條解釋語言",
     "entryLanguageCantonese": "粵語",
     "entryLanguageEnglish": "英文",
     "entryLanguageBoth": "雙語",
+
     "entryEgPronunciationMethod": "詞條例句發音方式",
     "pronunciationMethodSyllableRecordings": "音節錄音",
     "pronunciationMethodTts": "系統語音合成",
+
+    "romanization": "拼音",
+    "romanizationJyutping": "粵拼",
+    "romanizationYaleNumbers": "耶魯（數字）",
+    "romanizationYaleDiacritics": "耶魯（調符）",
+    "romanizationCantonesePinyin": "教院式拼音",
+    "romanizationGuangdong": "廣州話拼音方案",
+    "romanizationSidneyLau": "劉錫祥拼音",
+    "romanizationWongNumbers": "黃錫凌羅馬拼音（數字）",
+    "romanizationWongDiacritics": "黃錫凌羅馬拼音（調符）",
+    "romanizationIpa": "國際音標",
+    "romanizationPenkyampNumbers": "Penkyamp（數字）",
+    "romanizationPenkyampDiacritics": "Penkyamp（調符）",
 
     "dictionaryLicense": "字典授權協議",
     "dictionaryLicenseSummary": "《粵典》軟體中的內容會用以下的授權協議開放給公眾使用：",

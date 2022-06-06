@@ -16,6 +16,7 @@ import 'custom_page_route.dart';
 import 'models/entry_language.dart';
 import 'models/language.dart';
 import 'models/pronunciation_method.dart';
+import 'models/romanization.dart';
 import 'models/search_mode.dart';
 import 'pages/entry_page.dart';
 import 'widgets/navigation_drawer.dart';
@@ -51,6 +52,8 @@ void main() {
             create: (_) => EntryLanguageState()),
         ChangeNotifierProvider<PronunciationMethodState>(
             create: (_) => PronunciationMethodState()),
+        ChangeNotifierProvider<RomanizationState>(
+            create: (_) => RomanizationState()),
       ],
       child: MyApp(),
     ),
@@ -306,6 +309,18 @@ class PronunciationMethodState with ChangeNotifier {
   }
 }
 
+class RomanizationState with ChangeNotifier {
+  Romanization? romanization;
+
+  void updateRomanization(Romanization newRomanization) {
+    romanization = newRomanization;
+    notifyListeners();
+    SharedPreferences.getInstance().then((prefs) async {
+      prefs.setInt("romanization", newRomanization.index);
+    });
+  }
+}
+
 class _HomePageState extends State<HomePage> {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
@@ -381,6 +396,19 @@ class _HomePageState extends State<HomePage> {
         } else {
           context.read<PronunciationMethodState>().updatePronunciationMethod(
               PronunciationMethod.values[methodIndex]);
+        }
+      });
+    }
+
+    final romanizationState = context.read<RomanizationState>();
+    if (romanizationState.romanization == null) {
+      SharedPreferences.getInstance().then((prefs) async {
+        final romanizationIndex = prefs.getInt("romanization");
+        if (romanizationIndex == null) {
+          romanizationState.updateRomanization(Romanization.jyutping);
+        } else {
+          romanizationState
+              .updateRomanization(Romanization.values[romanizationIndex]);
         }
       });
     }

@@ -88,14 +88,29 @@
     "dismiss": "Dismiss",
 
     "preferences": "Preferences",
+
     "language": "Language",
     "entryExplanationsLanguage": "Language(s) of Explanations",
     "entryLanguageCantonese": "Cantonese",
     "entryLanguageEnglish": "English",
     "entryLanguageBoth": "Bilingual",
+
     "entryEgPronunciationMethod": "Pronunciation Method of Example Sentences",
     "pronunciationMethodSyllableRecordings": "Syllable recordings",
     "pronunciationMethodTts": "System Text-to-speech",
+
+    "romanization": "Romanization",
+    "romanizationJyutping": "Jyutping",
+    "romanizationYaleNumbers": "Yale (Tone Numbers)",
+    "romanizationYaleDiacritics": "Yale (Tone Diacritics)",
+    "romanizationCantonesePinyin": "Cantonese Pinyin",
+    "romanizationGuangdong": "Guangdong Romanization",
+    "romanizationSidneyLau": "Sidney Lau",
+    "romanizationWongNumbers": "S. L. Wong (Tone Numbers)",
+    "romanizationWongDiacritics": "S. L. Wong (Tone Diacritics)",
+    "romanizationIpa": "IPA",
+    "romanizationPenkyampNumbers": "Penkyamp (Tone Numbers)",
+    "romanizationPenkyampDiacritics": "Penkyamp (Tone Diacritics)",
 
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",

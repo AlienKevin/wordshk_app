@@ -6,6 +6,7 @@ import 'package:wordshk/models/language.dart';
 import '../main.dart';
 import '../models/entry_language.dart';
 import '../models/pronunciation_method.dart';
+import '../models/romanization.dart';
 import '../widgets/navigation_drawer.dart';
 
 class PreferencesPage extends StatelessWidget {
@@ -17,6 +18,7 @@ class PreferencesPage extends StatelessWidget {
     final entryLanguage = context.watch<EntryLanguageState>().language;
     final egPronunciationMethod =
         context.watch<PronunciationMethodState>().entryEgMethod;
+    final romanization = context.watch<RomanizationState>().romanization;
 
     onLanguageChange(Language? newLanguage) {
       if (newLanguage != null) {
@@ -35,6 +37,12 @@ class PreferencesPage extends StatelessWidget {
         context
             .read<PronunciationMethodState>()
             .updatePronunciationMethod(newMethod);
+      }
+    }
+
+    onRomanizationChange(Romanization? newRomanization) {
+      if (newRomanization != null) {
+        context.read<RomanizationState>().updateRomanization(newRomanization);
       }
     }
 
@@ -60,8 +68,8 @@ class PreferencesPage extends StatelessWidget {
           activeColor: Theme.of(context).colorScheme.secondary,
         );
 
-    entryPronunciationMethodRadioListTile(
-            String title, PronunciationMethod value) =>
+    entryPronunciationMethodRadioListTile(String title,
+        PronunciationMethod value) =>
         RadioListTile<PronunciationMethod>(
           title: Text(title),
           value: value,
@@ -69,7 +77,24 @@ class PreferencesPage extends StatelessWidget {
           onChanged: onEntryEgPronunciationMethodChange,
           visualDensity: VisualDensity.compact,
           contentPadding: EdgeInsets.zero,
-          activeColor: Theme.of(context).colorScheme.secondary,
+          activeColor: Theme
+              .of(context)
+              .colorScheme
+              .secondary,
+        );
+
+    romanizationRadioListTile(String title, Romanization value) =>
+        RadioListTile<Romanization>(
+          title: Text(title),
+          value: value,
+          groupValue: romanization,
+          onChanged: onRomanizationChange,
+          visualDensity: VisualDensity.compact,
+          contentPadding: EdgeInsets.zero,
+          activeColor: Theme
+              .of(context)
+              .colorScheme
+              .secondary,
         );
 
     return Scaffold(
@@ -79,7 +104,7 @@ class PreferencesPage extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.all(20),
             child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(AppLocalizations.of(context)!.language,
                   style: Theme.of(context).textTheme.titleLarge),
               languageRadioListTile('廣東話（香港）', Language.zhHantHK),
@@ -106,7 +131,42 @@ class PreferencesPage extends StatelessWidget {
               entryPronunciationMethodRadioListTile(
                   AppLocalizations.of(context)!
                       .pronunciationMethodSyllableRecordings,
-                  PronunciationMethod.syllableRecordings)
+                  PronunciationMethod.syllableRecordings),
+              Text(AppLocalizations.of(context)!.romanization,
+                  style: Theme.of(context).textTheme.titleLarge),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationJyutping,
+                  Romanization.jyutping),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationYaleNumbers,
+                  Romanization.yaleNumbers),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationYaleDiacritics,
+                  Romanization.yaleDiacritics),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationCantonesePinyin,
+                  Romanization.cantonesePinyin),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationGuangdong,
+                  Romanization.guangdong),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationSidneyLau,
+                  Romanization.sidneyLau),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationWongNumbers,
+                  Romanization.wongNumbers),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationWongDiacritics,
+                  Romanization.wongDiacritics),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationIpa,
+                  Romanization.ipa),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationPenkyampNumbers,
+                  Romanization.penkyampNumbers),
+              romanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationPenkyampDiacritics,
+                  Romanization.penkyampDiacritics),
             ])),
       ),
     );
