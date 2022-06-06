@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../main.dart';
 import '../../models/entry.dart';
 import '../syllable_pronunciation_button.dart';
 
@@ -26,7 +28,9 @@ class EntryVariant extends StatelessWidget {
       const SizedBox(width: 10),
       ...prs.takeWhile((pr) => !pr.contains("!")).expand((pr) => [
             SelectableText.rich(
-              TextSpan(text: pr),
+              TextSpan(
+                  text:
+                      context.read<RomanizationState>().showPrs(pr.split(" "))),
               style: prTextStyle,
               // selectionWidthStyle: BoxWidthStyle.max,
             ),

@@ -37,8 +37,14 @@ class EntryRubyLine extends StatelessWidget {
               runSpacing: rubyFontSize * textScaleFactor / 1.4,
               children: [
                 ...line.segments
-                    .map((segment) => showRubySegment(segment, textColor,
-                        linkColor, rubyFontSize, textScaleFactor, onTapLink))
+                    .map((segment) => showRubySegment(
+                        segment,
+                        textColor,
+                        linkColor,
+                        rubyFontSize,
+                        textScaleFactor,
+                        onTapLink,
+                        context))
                     .expand((i) => i)
                     .toList(),
                 Consumer<PronunciationMethodState>(

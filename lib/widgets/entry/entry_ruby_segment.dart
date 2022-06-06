@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wordshk/main.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
 import '../../models/entry.dart';
 import 'entry_word.dart';
 
 List<Widget> showRubySegment(
-    RubySegment segment,
-    Color textColor,
-    Color linkColor,
-    double rubySize,
-    double textScaleFactor,
-    OnTapLink onTapLink) {
+  RubySegment segment,
+  Color textColor,
+  Color linkColor,
+  double rubySize,
+  double textScaleFactor,
+  OnTapLink onTapLink,
+  BuildContext context,
+) {
   double rubyYPos = rubySize * textScaleFactor;
   Widget text;
   String ruby;
@@ -33,7 +37,7 @@ List<Widget> showRubySegment(
                 style: TextStyle(
                     fontSize: rubySize, height: 1, color: textColor)));
       });
-      ruby = segment.segment.prs.join(" ");
+      ruby = context.read<RomanizationState>().showPrs(segment.segment.prs);
       break;
     case RubySegmentType.linkedWord:
       return (segment.segment.words as List<RubySegmentWord>)
@@ -43,7 +47,8 @@ List<Widget> showRubySegment(
               linkColor,
               rubySize,
               textScaleFactor,
-              onTapLink))
+              onTapLink,
+              context))
           .expand((i) => i)
           .map((seg) => GestureDetector(
               behavior: HitTestBehavior.translucent,
