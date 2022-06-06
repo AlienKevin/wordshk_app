@@ -8,6 +8,4 @@ enum Romanization {
   wongNumbers,
   wongDiacritics,
   ipa,
-  penkyampNumbers,
-  penkyampDiacritics,
 }

@@ -98,7 +98,7 @@ class PreferencesPage extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.all(20),
             child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(AppLocalizations.of(context)!.language,
                   style: Theme.of(context).textTheme.titleLarge),
               languageRadioListTile('廣東話（香港）', Language.zhHantHK),
@@ -155,12 +155,6 @@ class PreferencesPage extends StatelessWidget {
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationIpa,
                   Romanization.ipa),
-              romanizationRadioListTile(
-                  AppLocalizations.of(context)!.romanizationPenkyampNumbers,
-                  Romanization.penkyampNumbers),
-              romanizationRadioListTile(
-                  AppLocalizations.of(context)!.romanizationPenkyampDiacritics,
-                  Romanization.penkyampDiacritics),
             ])),
       ),
     );
