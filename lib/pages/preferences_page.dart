@@ -68,8 +68,8 @@ class PreferencesPage extends StatelessWidget {
           activeColor: Theme.of(context).colorScheme.secondary,
         );
 
-    entryPronunciationMethodRadioListTile(String title,
-        PronunciationMethod value) =>
+    entryPronunciationMethodRadioListTile(
+            String title, PronunciationMethod value) =>
         RadioListTile<PronunciationMethod>(
           title: Text(title),
           value: value,
@@ -77,10 +77,7 @@ class PreferencesPage extends StatelessWidget {
           onChanged: onEntryEgPronunciationMethodChange,
           visualDensity: VisualDensity.compact,
           contentPadding: EdgeInsets.zero,
-          activeColor: Theme
-              .of(context)
-              .colorScheme
-              .secondary,
+          activeColor: Theme.of(context).colorScheme.secondary,
         );
 
     romanizationRadioListTile(String title, Romanization value) =>
@@ -91,10 +88,7 @@ class PreferencesPage extends StatelessWidget {
           onChanged: onRomanizationChange,
           visualDensity: VisualDensity.compact,
           contentPadding: EdgeInsets.zero,
-          activeColor: Theme
-              .of(context)
-              .colorScheme
-              .secondary,
+          activeColor: Theme.of(context).colorScheme.secondary,
         );
 
     return Scaffold(
