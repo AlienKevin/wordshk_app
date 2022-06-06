@@ -1,8 +1,11 @@
 // Copyright (c) 2017, Spencer. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +74,8 @@ class IsSearching extends State<SearchBar> {
   /// Whether or not the search bar should add a clear input button, defaults to true.
   bool showClearButton = true;
 
+  late StreamSubscription<bool> keyboardSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -91,6 +96,16 @@ class IsSearching extends State<SearchBar> {
       }
     });
     controller.text = context.read<SearchQueryState>().query;
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+
+    // Subscribe
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      if (!visible) {
+        focusNode.unfocus();
+      }
+    });
   }
 
   @override

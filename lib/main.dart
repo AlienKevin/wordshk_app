@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -352,103 +353,106 @@ class _HomePageState extends State<HomePage> {
         break;
     }
 
-    return Scaffold(
-        appBar: SearchBar(onChanged: (query) {
-          if (query.isEmpty) {
-            setState(() {
-              queryEmptied = true;
-              finishedSearch = false;
-            });
-          } else {
-            setState(() {
-              queryEmptied = false;
-              finishedSearch = false;
-            });
-          }
-          doSearch(query, context);
-        }, onCleared: () {
-          setState(() {
-            // TODO: hide search results
-            queryEmptied = true;
-          });
-        }),
-        drawer: const NavigationDrawer(),
-        body: ((finishedSearch && isSearchResultsEmpty)
-            ? FutureBuilder<List<String>>(
-                future: api.getJyutping(
-                    query: context
-                        .watch<SearchQueryState>()
-                        .query), // a previously-obtained Future<String> or null
-                builder: (BuildContext context,
-                        AsyncSnapshot<List<String>> snapshot) =>
-                    Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: snapshot.hasData
-                                ? (snapshot.data!.isNotEmpty
-                                    ? [
-                                        Text(AppLocalizations.of(context)!
-                                            .searchDictionaryOnlyPronunciationFound),
-                                        RichText(
-                                            textScaleFactor:
-                                                MediaQuery.of(context)
-                                                    .textScaleFactor,
-                                            text: TextSpan(
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                                children: snapshot.data!
-                                                    .map((pr) => [
-                                                          TextSpan(text: pr),
-                                                          WidgetSpan(
-                                                              child: SyllablePronunciationButton(
-                                                                  prs: pr.split(
-                                                                      " "),
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .bottomCenter))
-                                                        ])
-                                                    .expand((i) => i)
-                                                    .toList()))
-                                      ]
-                                    : [
-                                        Text(AppLocalizations.of(context)!
-                                            .searchDictionaryNoResultsFound)
-                                      ])
-                                : snapshot.hasError
-                                    ? [
-                                        const Text(
-                                            "Error loading jyutping data.")
-                                      ]
-                                    : [])))
-            : (queryEmptied
-                ? Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: appBarHeight),
-                      child: MediaQuery.of(context).platformBrightness ==
-                              Brightness.light
-                          ? Image(
-                              width: watermarkSize,
-                              image: const AssetImage('assets/icon.png'))
-                          : Image(
-                              width: watermarkSize,
-                              image: const AssetImage('assets/icon_grey.png')),
-                    ),
-                  )
-                : Consumer<SearchModeState>(
-                    builder: (context, searchModeState, child) {
-                    final results = showSearchResults(
-                        Theme.of(context).textTheme.bodyLarge!,
-                        searchModeState.mode);
-                    return ListView.separated(
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemBuilder: (_, index) => results[index],
-                      itemCount: results.length,
-                    );
-                  }))));
+    return KeyboardVisibilityProvider(
+        child: Scaffold(
+            appBar: SearchBar(onChanged: (query) {
+              if (query.isEmpty) {
+                setState(() {
+                  queryEmptied = true;
+                  finishedSearch = false;
+                });
+              } else {
+                setState(() {
+                  queryEmptied = false;
+                  finishedSearch = false;
+                });
+              }
+              doSearch(query, context);
+            }, onCleared: () {
+              setState(() {
+                // TODO: hide search results
+                queryEmptied = true;
+              });
+            }),
+            drawer: const NavigationDrawer(),
+            body: ((finishedSearch && isSearchResultsEmpty)
+                ? FutureBuilder<List<String>>(
+                    future: api.getJyutping(
+                        query: context
+                            .watch<SearchQueryState>()
+                            .query), // a previously-obtained Future<String> or null
+                    builder: (BuildContext context,
+                            AsyncSnapshot<List<String>> snapshot) =>
+                        Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10.0),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: snapshot.hasData
+                                    ? (snapshot.data!.isNotEmpty
+                                        ? [
+                                            Text(AppLocalizations.of(context)!
+                                                .searchDictionaryOnlyPronunciationFound),
+                                            RichText(
+                                                textScaleFactor:
+                                                    MediaQuery.of(context)
+                                                        .textScaleFactor,
+                                                text: TextSpan(
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                    children: snapshot.data!
+                                                        .map((pr) => [
+                                                              TextSpan(
+                                                                  text: pr),
+                                                              WidgetSpan(
+                                                                  child: SyllablePronunciationButton(
+                                                                      prs: pr.split(
+                                                                          " "),
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .bottomCenter))
+                                                            ])
+                                                        .expand((i) => i)
+                                                        .toList()))
+                                          ]
+                                        : [
+                                            Text(AppLocalizations.of(context)!
+                                                .searchDictionaryNoResultsFound)
+                                          ])
+                                    : snapshot.hasError
+                                        ? [
+                                            const Text(
+                                                "Error loading jyutping data.")
+                                          ]
+                                        : [])))
+                : (queryEmptied
+                    ? Align(
+                        alignment: Alignment.topCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: appBarHeight),
+                          child: MediaQuery.of(context).platformBrightness ==
+                                  Brightness.light
+                              ? Image(
+                                  width: watermarkSize,
+                                  image: const AssetImage('assets/icon.png'))
+                              : Image(
+                                  width: watermarkSize,
+                                  image:
+                                      const AssetImage('assets/icon_grey.png')),
+                        ),
+                      )
+                    : Consumer<SearchModeState>(
+                        builder: (context, searchModeState, child) {
+                        final results = showSearchResults(
+                            Theme.of(context).textTheme.bodyLarge!,
+                            searchModeState.mode);
+                        return ListView.separated(
+                          separatorBuilder: (_, __) => const Divider(),
+                          itemBuilder: (_, index) => results[index],
+                          itemCount: results.length,
+                        );
+                      })))));
   }
 
   void doSearch(String query, BuildContext context) {
