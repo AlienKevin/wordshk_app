@@ -216,11 +216,12 @@ class IsSearching extends State<SearchBar> {
           MediaQuery.of(context).platformBrightness == Brightness.light
               ? Colors.grey[200]
               : Colors.grey[900],
-      nextFocus: true,
+      nextFocus: false,
       actions: [
         KeyboardActionsItem(
           focusNode: focusNode,
-          displayActionBar: true,
+          displayActionBar:
+              context.watch<InputModeState>().mode == InputMode.keyboard,
           displayArrows: false,
           displayDoneButton: false,
           toolbarButtons: [
@@ -265,7 +266,7 @@ class IsSearching extends State<SearchBar> {
             if (value != null) {
               context
                   .read<SearchModeState>()
-                  .updateSearchModeAndCloseSelector(value, focusNode);
+                  .updateSearchModeAndCloseSelector(value);
             } else {
               context.read<SearchModeState>().toggleSearchModeSelector();
             }
@@ -283,83 +284,79 @@ class IsSearching extends State<SearchBar> {
                 padding: const EdgeInsets.only(right: 10, top: 2),
                 child: SizedBox(
                     height: 42,
-                    child: ((textField) =>
-                        searchModeState.mode == SearchMode.pr ||
-                                searchModeState.mode == SearchMode.combined
-                            ? KeyboardActions(
-                                config: _buildKeyboardActionsConfig(context),
-                                child: textField)
-                            : textField)(TextField(
-                      textAlignVertical: TextAlignVertical.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: textColor),
-                      focusNode: focusNode,
-                      onTap: () => beginSearch(context),
-                      cursorColor: textColor,
-                      key: const Key('SearchBarTextField'),
-                      autocorrect: searchModeState.mode != SearchMode.pr &&
-                          searchModeState.mode != SearchMode.combined,
-                      enableSuggestions: false,
-                      keyboardType: context.watch<InputModeState>().mode ==
-                              InputMode.keyboard
-                          ? TextInputType.text
-                          : TextInputType.none,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Theme.of(context).canvasColor,
-                        contentPadding: const EdgeInsets.only(left: 8, top: -4),
-                        hintText: translateSearchMode(searchModeState.mode,
-                            AppLocalizations.of(context)!),
-                        hintStyle: TextStyle(
-                          color: textColor,
-                        ),
-                        suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
-                            showClearButton
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear,
-                                        semanticLabel: "Clear"),
-                                    color: buttonColor,
-                                    disabledColor:
-                                        theme.disabledColor.withOpacity(0),
-                                    onPressed: !_clearActive
-                                        ? null
-                                        : () {
-                                            widget.onCleared?.call();
-                                            controller.clear();
-                                            FocusScope.of(context)
-                                                .requestFocus(focusNode);
-                                            context
-                                                .read<SearchQueryState>()
-                                                .updateSearchQuery("");
-                                          })
-                                : null,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (query) {
-                        context
-                            .read<SearchQueryState>()
-                            .updateSearchQuery(query);
-                        if (widget.onChanged != null) {
-                          widget.onChanged!(query);
-                        }
-                      },
-                      onSubmitted: (String val) async {
-                        if (widget.closeOnSubmit) {
-                          await Navigator.maybePop(context);
-                        }
+                    child: KeyboardActions(
+                        config: _buildKeyboardActionsConfig(context),
+                        child: TextField(
+                          textAlignVertical: TextAlignVertical.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: textColor),
+                          focusNode: focusNode,
+                          onTap: () => beginSearch(context),
+                          cursorColor: textColor,
+                          key: const Key('SearchBarTextField'),
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          keyboardType: context.watch<InputModeState>().mode ==
+                                  InputMode.keyboard
+                              ? TextInputType.text
+                              : TextInputType.none,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Theme.of(context).canvasColor,
+                            contentPadding:
+                                const EdgeInsets.only(left: 8, top: -4),
+                            hintText: translateSearchMode(searchModeState.mode,
+                                AppLocalizations.of(context)!),
+                            hintStyle: TextStyle(
+                              color: textColor,
+                            ),
+                            suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
+                                showClearButton
+                                    ? IconButton(
+                                        icon: const Icon(Icons.clear,
+                                            semanticLabel: "Clear"),
+                                        color: buttonColor,
+                                        disabledColor:
+                                            theme.disabledColor.withOpacity(0),
+                                        onPressed: !_clearActive
+                                            ? null
+                                            : () {
+                                                widget.onCleared?.call();
+                                                controller.clear();
+                                                FocusScope.of(context)
+                                                    .requestFocus(focusNode);
+                                                context
+                                                    .read<SearchQueryState>()
+                                                    .updateSearchQuery("");
+                                              })
+                                    : null,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            border: InputBorder.none,
+                          ),
+                          onChanged: (query) {
+                            context
+                                .read<SearchQueryState>()
+                                .updateSearchQuery(query);
+                            if (widget.onChanged != null) {
+                              widget.onChanged!(query);
+                            }
+                          },
+                          onSubmitted: (String val) async {
+                            if (widget.closeOnSubmit) {
+                              await Navigator.maybePop(context);
+                            }
 
-                        if (widget.clearOnSubmit) {
-                          controller.clear();
-                        }
-                        widget.onSubmitted?.call(val);
-                      },
-                      autofocus: true,
-                      controller: controller,
-                    ))),
+                            if (widget.clearOnSubmit) {
+                              controller.clear();
+                            }
+                            widget.onSubmitted?.call(val);
+                          },
+                          autofocus: true,
+                          controller: controller,
+                        ))),
               ),
             ),
       actions: [

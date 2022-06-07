@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:wordshk/utils.dart';
 
 import '../models/input_mode.dart';
+import '../utils.dart';
 
 class InputModeState with ChangeNotifier {
   InputMode mode = InputMode.keyboard;
-  late final FocusNode searchFieldFocusNode;
+  FocusNode? searchFieldFocusNode;
 
   void setSearchFieldFocusNode(FocusNode focusNode) {
     searchFieldFocusNode = focusNode;
@@ -14,7 +14,7 @@ class InputModeState with ChangeNotifier {
   void updateInputMode(InputMode newMode) {
     if (mode == InputMode.keyboard) {
       if (newMode == InputMode.ink) {
-        switchKeyboardType(searchFieldFocusNode);
+        switchKeyboardType(searchFieldFocusNode!);
       }
     }
     mode = newMode;

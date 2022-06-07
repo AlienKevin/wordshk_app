@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../models/search_mode.dart';
-import '../utils.dart';
 
 class SearchModeState with ChangeNotifier {
   SearchMode mode = SearchMode.combined;
   bool showSearchModeSelector = false;
 
-  void updateSearchModeAndCloseSelector(
-      SearchMode newMode, FocusNode focusNode) {
-    switchKeyboardType(focusNode);
+  void updateSearchModeAndCloseSelector(SearchMode newMode) {
     mode = newMode;
     showSearchModeSelector = false;
     notifyListeners();
   }
 
-  void updateSearchMode(SearchMode newMode, FocusNode focusNode) {
-    switchKeyboardType(focusNode);
+  void updateSearchMode(SearchMode newMode) {
     mode = newMode;
     notifyListeners();
   }

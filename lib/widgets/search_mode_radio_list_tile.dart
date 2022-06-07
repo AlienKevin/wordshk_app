@@ -181,8 +181,7 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
                     highlighted: searchModeState.mode == value,
                     inAppBar: false,
                     onPressed: () {
-                      searchModeState.updateSearchModeAndCloseSelector(
-                          value, searchTextFieldFocusNode);
+                      searchModeState.updateSearchModeAndCloseSelector(value);
                     },
                   )),
           isThreeLine: isThreeLine,
