@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/search_mode.dart';
+import '../utils.dart';
 
 class SearchModeState with ChangeNotifier {
   SearchMode mode = SearchMode.combined;
@@ -24,11 +25,4 @@ class SearchModeState with ChangeNotifier {
     showSearchModeSelector = !showSearchModeSelector;
     notifyListeners();
   }
-}
-
-switchKeyboardType(FocusNode focusNode) {
-  focusNode.unfocus();
-  WidgetsBinding.instance.addPostFrameCallback(
-    (_) => focusNode.requestFocus(),
-  );
 }

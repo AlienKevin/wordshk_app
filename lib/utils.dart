@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:wordshk/constants.dart';
 
@@ -24,5 +25,12 @@ void openLink(String url) async {
       dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
       modalPresentationCapturesStatusBarAppearance: true,
     ),
+  );
+}
+
+switchKeyboardType(FocusNode focusNode) {
+  focusNode.unfocus();
+  WidgetsBinding.instance.addPostFrameCallback(
+    (_) => focusNode.requestFocus(),
   );
 }

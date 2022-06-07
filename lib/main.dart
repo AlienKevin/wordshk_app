@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/states/entry_language_state.dart';
+import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
@@ -39,6 +40,7 @@ void main() {
             create: (_) => SearchModeState()),
         ChangeNotifierProvider<SearchQueryState>(
             create: (_) => SearchQueryState()),
+        ChangeNotifierProvider<InputModeState>(create: (_) => InputModeState()),
         ChangeNotifierProvider<LanguageState>(create: (_) => LanguageState()),
         ChangeNotifierProvider<EntryLanguageState>(
             create: (_) => EntryLanguageState()),
@@ -132,6 +134,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final blueSwatch = MaterialColor(blueColor.value, blueColorMap);
+    const headlineLarge =
+        TextStyle(fontSize: 46.0, fontWeight: FontWeight.bold);
+    const headlineMedium =
+        TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold);
     const headlineSmall =
         TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold);
     const titleLarge = TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold);
@@ -141,6 +147,8 @@ class _MyAppState extends State<MyApp> {
     const bodyMedium = TextStyle(fontSize: 18.0);
     const bodySmall = TextStyle(fontSize: 16.0);
     var textTheme = const TextTheme(
+      headlineLarge: headlineLarge,
+      headlineMedium: headlineMedium,
       headlineSmall: headlineSmall,
       titleLarge: titleLarge,
       titleMedium: titleMedium,

@@ -12,6 +12,10 @@
     "searchModeCombinedIcon": "或",
     "searchModeEnglishIcon": "英",
 
+    "inkModelDownloading": "正在下载手写识别模型...",
+    "inkModelFailedToDownload": "无法下载手写识别模型。请检查您的网络链接后重试。",
+    "tryAgain": "重试",
+
     "entry": "词条",
     "entryMoreVariants": "更多写法",
     "entryCollapseVariants": "折叠写法",

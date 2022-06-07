@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/states/input_mode_state.dart';
+import 'package:wordshk/widgets/digital_ink_view.dart';
 import 'package:wordshk/widgets/search_bar.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
@@ -11,6 +13,7 @@ import '../bridge_generated.dart';
 import '../constants.dart';
 import '../custom_page_route.dart';
 import '../main.dart';
+import '../models/input_mode.dart';
 import '../models/language.dart';
 import '../models/search_mode.dart';
 import '../states/language_state.dart';
@@ -69,6 +72,7 @@ class _HomePageState extends State<HomePage> {
         isSearchResultsEmpty = englishSearchResults.isEmpty;
         break;
     }
+    final InputMode inputMode = context.watch<InputModeState>().mode;
 
     return KeyboardVisibilityProvider(
         child: Scaffold(
@@ -92,9 +96,15 @@ class _HomePageState extends State<HomePage> {
               });
             }),
             drawer: const NavigationDrawer(),
-            body: ((finishedSearch && isSearchResultsEmpty)
-                ? showResultsNotFound()
-                : (queryEmptied ? showWatermark() : showSearchResults()))));
+            body: inputMode == InputMode.ink
+                ? DigitalInkView(
+                    typeCharacter: (character) {
+                      context.read<SearchQueryState>().typeCharacter(character);
+                    },
+                  )
+                : ((finishedSearch && isSearchResultsEmpty)
+                    ? showResultsNotFound()
+                    : (queryEmptied ? showWatermark() : showSearchResults()))));
   }
 
   Widget showWatermark() {

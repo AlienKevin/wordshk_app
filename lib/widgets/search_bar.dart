@@ -9,10 +9,12 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/widgets/search_mode_button.dart';
 import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
 
 import '../constants.dart';
+import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
@@ -79,6 +81,10 @@ class IsSearching extends State<SearchBar> {
   @override
   void initState() {
     super.initState();
+
+    context.read<InputModeState>().setSearchFieldFocusNode(focusNode);
+    context.read<SearchQueryState>().setTypeCharacterInSearchBar(typeCharacter);
+
     controller.addListener(() {
       if (controller.text.isEmpty) {
         // If clear is already disabled, don't disable it
@@ -144,25 +150,57 @@ class IsSearching extends State<SearchBar> {
     }
   }
 
-  Widget digitButton(int digit) => Padding(
+  void typeCharacter(String character) {
+    final baseOffset = controller.selection.baseOffset;
+    final extentOffset = controller.selection.extentOffset;
+    final query = controller.text;
+    final newQuery = query.substring(0, baseOffset) +
+        character +
+        query.substring(extentOffset);
+    controller.value = TextEditingValue(
+        text: newQuery,
+        selection: TextSelection(
+            baseOffset: baseOffset, extentOffset: baseOffset + 1));
+    context.read<SearchQueryState>().updateSearchQuery(newQuery);
+    if (widget.onChanged != null) {
+      widget.onChanged!(newQuery);
+    }
+  }
+
+  Widget digitButton(int digit) => button(
+      () => typeDigit(digit),
+      Text(digit.toString()),
+      MaterialStateProperty.all(
+          MediaQuery.of(context).platformBrightness == Brightness.light
+              ? whiteColor
+              : Colors.grey[700]));
+
+  Widget inkInputModeButton() => button(() {
+        context.read<InputModeState>().updateInputMode(InputMode.ink);
+      },
+          const Icon(Icons.brush),
+          MaterialStateProperty.all(
+              MediaQuery.of(context).platformBrightness == Brightness.light
+                  ? Colors.grey[400]
+                  : Colors.grey[700]));
+
+  Widget button(void Function() onPressed, Widget child,
+          MaterialStateProperty<Color?> backgroundColor) =>
+      Padding(
         padding: const EdgeInsets.symmetric(horizontal: 3),
         child: ElevatedButton(
-            onPressed: () => typeDigit(digit),
-            child: Text(digit.toString(),
-                style: TextStyle(
-                    color: MediaQuery.of(context).platformBrightness ==
-                            Brightness.light
-                        ? blackColor
-                        : whiteColor)),
+            onPressed: onPressed,
+            child: child,
             style: ButtonStyle(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               minimumSize: MaterialStateProperty.all(Size.zero),
-              backgroundColor: MaterialStateProperty.all(
-                  MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? whiteColor
-                      : Colors.grey[700]),
               textStyle: MaterialStateProperty.all(
                   Theme.of(context).textTheme.bodyLarge),
+              foregroundColor: MaterialStateProperty.all(
+                  MediaQuery.of(context).platformBrightness == Brightness.light
+                      ? blackColor
+                      : whiteColor),
+              backgroundColor: backgroundColor,
               visualDensity: VisualDensity.compact,
               padding: MaterialStateProperty.all(
                   const EdgeInsets.symmetric(horizontal: 10.5, vertical: 12)),
@@ -192,6 +230,7 @@ class IsSearching extends State<SearchBar> {
             (node) => digitButton(4),
             (node) => digitButton(5),
             (node) => digitButton(6),
+            (node) => inkInputModeButton(),
           ],
           toolbarAlignment: MainAxisAlignment.start,
         ),
@@ -263,7 +302,10 @@ class IsSearching extends State<SearchBar> {
                       autocorrect: searchModeState.mode != SearchMode.pr &&
                           searchModeState.mode != SearchMode.combined,
                       enableSuggestions: false,
-                      keyboardType: TextInputType.text,
+                      keyboardType: context.watch<InputModeState>().mode ==
+                              InputMode.keyboard
+                          ? TextInputType.text
+                          : TextInputType.none,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Theme.of(context).canvasColor,
