@@ -2,9 +2,11 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/language_state.dart';
@@ -15,6 +17,10 @@ import 'package:wordshk/states/search_query_state.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
+import 'models/entry_language.dart';
+import 'models/language.dart';
+import 'models/pronunciation_method.dart';
+import 'models/romanization.dart';
 
 extension Unique<E, Id> on List<E> {
   List<E> unique([Id Function(E element)? id, bool inplace = true]) {
@@ -50,14 +56,19 @@ void main() {
         ChangeNotifierProvider<RomanizationState>(
             create: (_) => RomanizationState()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final Map<int, Color> blueColorMap = {
     50: blueColor,
     100: blueColor,
@@ -70,6 +81,61 @@ class MyApp extends StatelessWidget {
     800: blueColor,
     900: blueColor,
   };
+
+  @override
+  initState() {
+    super.initState();
+
+    Future.wait([
+      rootBundle.loadString("assets/api.json"),
+      rootBundle.loadString("assets/english_index.json"),
+      rootBundle.loadString("assets/word_list.tsv"),
+    ]).then((files) {
+      api.initApi(
+          apiJson: files[0], englishIndexJson: files[1], wordList: files[2]);
+    });
+
+    SharedPreferences.getInstance().then((prefs) async {
+      final languageIndex = prefs.getInt("language");
+      if (languageIndex == null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final languageCode = Localizations.localeOf(context).toString();
+          final language =
+              Language.values.byName(languageCode.replaceAll("_", ""));
+          context.read<LanguageState>().updateLanguage(language);
+        });
+      } else {
+        context
+            .read<LanguageState>()
+            .updateLanguage(Language.values[languageIndex]);
+      }
+    });
+
+    SharedPreferences.getInstance().then((prefs) async {
+      final languageIndex = prefs.getInt("entryLanguage");
+      context.read<EntryLanguageState>().updateLanguage(languageIndex == null
+          ? EntryLanguage.both
+          : EntryLanguage.values[languageIndex]);
+    });
+
+    SharedPreferences.getInstance().then((prefs) async {
+      final methodIndex = prefs.getInt("entryEgPronunciationMethod");
+      context.read<PronunciationMethodState>().updatePronunciationMethod(
+          methodIndex == null
+              ? (Platform.isIOS
+                  ? PronunciationMethod.tts
+                  : PronunciationMethod.syllableRecordings)
+              : PronunciationMethod.values[methodIndex]);
+    });
+
+    SharedPreferences.getInstance().then((prefs) async {
+      final romanizationIndex = prefs.getInt("romanization");
+      context.read<RomanizationState>().updateRomanization(
+          romanizationIndex == null
+              ? Romanization.jyutping
+              : Romanization.values[romanizationIndex]);
+    });
+  }
 
   // This widget is the root of your application.
   @override

@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/widgets/search_bar.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
@@ -13,15 +11,9 @@ import '../bridge_generated.dart';
 import '../constants.dart';
 import '../custom_page_route.dart';
 import '../main.dart';
-import '../models/entry_language.dart';
 import '../models/language.dart';
-import '../models/pronunciation_method.dart';
-import '../models/romanization.dart';
 import '../models/search_mode.dart';
-import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
-import '../states/pronunciation_method_state.dart';
-import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import '../widgets/navigation_drawer.dart';
@@ -48,14 +40,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Future.wait([
-      DefaultAssetBundle.of(context).loadString("assets/api.json"),
-      DefaultAssetBundle.of(context).loadString("assets/english_index.json"),
-      DefaultAssetBundle.of(context).loadString("assets/word_list.tsv"),
-    ]).then((files) {
-      api.initApi(
-          apiJson: files[0], englishIndexJson: files[1], wordList: files[2]);
-    });
     final query = context.read<SearchQueryState>().query;
     if (query.isNotEmpty) {
       queryEmptied = false;
@@ -65,68 +49,6 @@ class _HomePageState extends State<HomePage> {
       final query = context.read<SearchQueryState>().query;
       doSearch(query, context);
     });
-
-    final languageState = context.read<LanguageState>();
-    if (languageState.language == null) {
-      SharedPreferences.getInstance().then((prefs) async {
-        final languageIndex = prefs.getInt("language");
-        if (languageIndex == null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            final languageCode = Localizations.localeOf(context).toString();
-            final language =
-                Language.values.byName(languageCode.replaceAll("_", ""));
-            context.read<LanguageState>().updateLanguage(language);
-          });
-        } else {
-          context
-              .read<LanguageState>()
-              .updateLanguage(Language.values[languageIndex]);
-        }
-      });
-    }
-
-    final entryLanguageState = context.read<EntryLanguageState>();
-    if (entryLanguageState.language == null) {
-      SharedPreferences.getInstance().then((prefs) async {
-        final languageIndex = prefs.getInt("entryLanguage");
-        if (languageIndex == null) {
-          context.read<EntryLanguageState>().updateLanguage(EntryLanguage.both);
-        } else {
-          context
-              .read<EntryLanguageState>()
-              .updateLanguage(EntryLanguage.values[languageIndex]);
-        }
-      });
-    }
-
-    final pronunciationMethodState = context.read<PronunciationMethodState>();
-    if (pronunciationMethodState.entryEgMethod == null) {
-      SharedPreferences.getInstance().then((prefs) async {
-        final methodIndex = prefs.getInt("entryEgPronunciationMethod");
-        if (methodIndex == null) {
-          context.read<PronunciationMethodState>().updatePronunciationMethod(
-              Platform.isIOS
-                  ? PronunciationMethod.tts
-                  : PronunciationMethod.syllableRecordings);
-        } else {
-          context.read<PronunciationMethodState>().updatePronunciationMethod(
-              PronunciationMethod.values[methodIndex]);
-        }
-      });
-    }
-
-    final romanizationState = context.read<RomanizationState>();
-    if (romanizationState.romanization == null) {
-      SharedPreferences.getInstance().then((prefs) async {
-        final romanizationIndex = prefs.getInt("romanization");
-        if (romanizationIndex == null) {
-          romanizationState.updateRomanization(Romanization.jyutping);
-        } else {
-          romanizationState
-              .updateRomanization(Romanization.values[romanizationIndex]);
-        }
-      });
-    }
   }
 
   @override

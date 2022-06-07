@@ -6,9 +6,9 @@ import 'package:wordshk/pages/software_licenses_page.dart';
 
 import '../constants.dart';
 import '../custom_page_route.dart';
-import '../main.dart';
 import '../pages/about_page.dart';
 import '../pages/dictionary_license_page.dart';
+import '../pages/home_page.dart';
 
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
