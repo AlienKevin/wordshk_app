@@ -2,10 +2,15 @@ import 'package:flutter/foundation.dart';
 
 class SearchQueryState with ChangeNotifier {
   String query = "";
-  late void Function(String) typeCharacterInSearchBar;
+  late void Function(String) _typeCharacter;
+  late void Function() _backspace;
+  late void Function() _moveToEndOfSelection;
 
-  void setTypeCharacterInSearchBar(void Function(String) typeCharacter) {
-    typeCharacterInSearchBar = typeCharacter;
+  void setSearchBarCallbacks(void Function(String) typeCharacter,
+      void Function() backspace, void Function() moveToEndOfSelection) {
+    _typeCharacter = typeCharacter;
+    _backspace = backspace;
+    _moveToEndOfSelection = moveToEndOfSelection;
   }
 
   void updateSearchQuery(String newQuery) {
@@ -14,7 +19,17 @@ class SearchQueryState with ChangeNotifier {
   }
 
   void typeCharacter(String character) {
-    typeCharacterInSearchBar(character);
+    _typeCharacter(character);
+    notifyListeners();
+  }
+
+  void backspace() {
+    _backspace();
+    notifyListeners();
+  }
+
+  void moveToEndOfSelection() {
+    _moveToEndOfSelection();
     notifyListeners();
   }
 }

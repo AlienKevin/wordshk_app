@@ -83,7 +83,9 @@ class IsSearching extends State<SearchBar> {
     super.initState();
 
     context.read<InputModeState>().setSearchFieldFocusNode(focusNode);
-    context.read<SearchQueryState>().setTypeCharacterInSearchBar(typeCharacter);
+    context
+        .read<SearchQueryState>()
+        .setSearchBarCallbacks(typeCharacter, backspace, moveToEndOfSelection);
 
     controller.addListener(() {
       if (controller.text.isEmpty) {
@@ -125,17 +127,16 @@ class IsSearching extends State<SearchBar> {
   /// Initializes the search bar.
   ///
   /// This adds a route that listens for onRemove (and stops the search when that happens), and then calls [setState] to rebuild and start the search.
-  void beginSearch(context) {
-    // ModalRoute.of(context)!
-    //     .addLocalHistoryEntry(LocalHistoryEntry(onRemove: () {
-    // setState(() {
-    //   isSearching.value = false;
-    // });
-    // }));
-
+  void beginSearch() {
     setState(() {
       isSearching.value = true;
     });
+    final inputModeState = context.read<InputModeState>();
+    print("beginSearch: " + inputModeState.mode.toString());
+    if (inputModeState.mode == InputMode.done) {
+      print("beginSearch done");
+      inputModeState.updateInputMode(InputMode.keyboard);
+    }
   }
 
   void typeDigit(int digit) {
@@ -154,6 +155,7 @@ class IsSearching extends State<SearchBar> {
     final baseOffset = controller.selection.baseOffset;
     final extentOffset = controller.selection.extentOffset;
     final query = controller.text;
+    // delete selection and add character in place of selection
     final newQuery = query.substring(0, baseOffset) +
         character +
         query.substring(extentOffset);
@@ -165,6 +167,39 @@ class IsSearching extends State<SearchBar> {
     if (widget.onChanged != null) {
       widget.onChanged!(newQuery);
     }
+  }
+
+  void backspace() {
+    final baseOffset = controller.selection.baseOffset;
+    final extentOffset = controller.selection.extentOffset;
+    final query = controller.text;
+    late final String newQuery;
+    // has selection
+    if (extentOffset - baseOffset > 0) {
+      // delete selection
+      newQuery = query.substring(0, baseOffset) + query.substring(extentOffset);
+      controller.value = TextEditingValue(
+          text: newQuery,
+          selection: TextSelection.collapsed(offset: baseOffset));
+    }
+    // no selection, delete character before cursor
+    else if (baseOffset - 1 >= 0) {
+      newQuery =
+          query.substring(0, baseOffset - 1) + query.substring(baseOffset);
+      controller.value = TextEditingValue(
+          text: newQuery,
+          selection: TextSelection.collapsed(offset: baseOffset - 1));
+    } else {
+      return;
+    }
+    if (widget.onChanged != null) {
+      widget.onChanged!(newQuery);
+    }
+  }
+
+  void moveToEndOfSelection() {
+    final extentOffset = controller.selection.extentOffset;
+    controller.selection = TextSelection.collapsed(offset: extentOffset);
   }
 
   Widget digitButton(int digit) => button(
@@ -293,7 +328,7 @@ class IsSearching extends State<SearchBar> {
                               .bodyMedium
                               ?.copyWith(color: textColor),
                           focusNode: focusNode,
-                          onTap: () => beginSearch(context),
+                          onTap: beginSearch,
                           cursorColor: textColor,
                           key: const Key('SearchBarTextField'),
                           autocorrect: false,

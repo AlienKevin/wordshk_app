@@ -15,6 +15,7 @@
     "inkModelDownloading": "下載緊手寫識別模型...",
     "inkModelFailedToDownload": "無法下載手寫識別模型。請檢查您嘅網路連結後重試。",
     "tryAgain": "重試",
+    "done": "完成",
 
     "entry": "詞條",
     "entryMoreVariants": "多啲寫法",

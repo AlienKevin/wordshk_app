@@ -101,6 +101,12 @@ class _HomePageState extends State<HomePage> {
                     typeCharacter: (character) {
                       context.read<SearchQueryState>().typeCharacter(character);
                     },
+                    backspace: () {
+                      context.read<SearchQueryState>().backspace();
+                    },
+                    moveToEndOfSelection: () {
+                      context.read<SearchQueryState>().moveToEndOfSelection();
+                    },
                   )
                 : ((finishedSearch && isSearchResultsEmpty)
                     ? showResultsNotFound()

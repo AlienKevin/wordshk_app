@@ -15,6 +15,7 @@
     "inkModelDownloading": "Downloading ink recognition model...",
     "inkModelFailedToDownload": "Failed to download ink recognition model. Please check your internet connection and try again.",
     "tryAgain": "Try Again",
+    "done": "Done",
 
     "entry": "entry",
     "entryMoreVariants": "More Variants",

@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart' hide Ink;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mlkit_digital_ink_recognition/google_mlkit_digital_ink_recognition.dart';
@@ -9,10 +11,14 @@ import '../models/input_mode.dart';
 
 class DigitalInkView extends StatefulWidget {
   final void Function(String) typeCharacter;
+  final void Function() backspace;
+  final void Function() moveToEndOfSelection;
 
   const DigitalInkView({
     Key? key,
     required this.typeCharacter,
+    required this.backspace,
+    required this.moveToEndOfSelection,
   }) : super(key: key);
 
   @override
@@ -102,6 +108,8 @@ class _DigitalInkViewState extends State<DigitalInkView> {
       ]),
     ));
 
+    final candidatesFont = Theme.of(context).textTheme.headlineMedium!;
+
     final showSketchPad = Column(children: [
       Expanded(
         child: GestureDetector(
@@ -133,18 +141,66 @@ class _DigitalInkViewState extends State<DigitalInkView> {
           ),
         ),
       ),
-      SafeArea(
-        child: Wrap(
-            children: _recognizedCharacters
-                .map((character) => TextButton(
-                      child: Text(character,
-                          style: Theme.of(context).textTheme.headlineLarge),
-                      onPressed: () {
-                        widget.typeCharacter(character);
-                      },
-                    ))
-                .toList()),
-      )
+      Container(
+        color: Theme.of(context).canvasColor,
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Wrap(
+                    children: _recognizedCharacters
+                        .map((character) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: OutlinedButton(
+                                child: Text(character, style: candidatesFont),
+                                onPressed: () {
+                                  widget.typeCharacter(character);
+                                  _clearPad();
+                                  widget.moveToEndOfSelection();
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: Size(
+                                      candidatesFont.fontSize! * 1.4,
+                                      candidatesFont.fontSize!),
+                                  padding: EdgeInsets.zero,
+                                ),
+                              ),
+                            ))
+                        .toList()),
+              ),
+              Row(children: [
+                const Spacer(),
+                IconButton(
+                    onPressed: _undoStroke,
+                    icon: const Icon(Icons.undo),
+                    color: blueColor),
+                IconButton(
+                    onPressed: () {
+                      _clearPad();
+                      widget.backspace();
+                    },
+                    icon: const Icon(Icons.backspace),
+                    color: blueColor),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      context
+                          .read<InputModeState>()
+                          .updateInputMode(InputMode.done);
+                    },
+                    child: Text(AppLocalizations.of(context)!.done),
+                    style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 15.0)))),
+                const SizedBox(width: 20),
+              ]),
+            ],
+          ),
+        ),
+      ),
     ]);
 
     return FutureBuilder<DownloadEndStatus>(
@@ -175,14 +231,30 @@ class _DigitalInkViewState extends State<DigitalInkView> {
     });
   }
 
+  void _undoStroke() {
+    if (_ink.strokes.isNotEmpty) {
+      setState(() {
+        _ink.strokes.removeLast();
+      });
+      if (_ink.strokes.isNotEmpty) {
+        _recognizeCharacter();
+      }
+    }
+  }
+
   Future<void> _recognizeCharacter() async {
     try {
-      final candidates = await _digitalInkRecognizer.recognize(_ink);
-      _recognizedCharacters.clear();
-      _recognizedCharacters.addAll(candidates
+      final rawCandidates = await _digitalInkRecognizer.recognize(_ink);
+      final candidates = rawCandidates
           .where((candidate) => candidate.text.length == 1)
           .take(6)
-          .map((candidate) => candidate.text));
+          .map((candidate) => candidate.text)
+          .toList();
+      _recognizedCharacters.clear();
+      _recognizedCharacters.addAll(candidates);
+      if (candidates.isNotEmpty) {
+        widget.typeCharacter(candidates[0]);
+      }
       setState(() {});
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -199,6 +271,10 @@ class Signature extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final Paint backgroundPaint = Paint()..color = lightGreyColor;
+
+    canvas.drawRect(ui.Rect.largest, backgroundPaint);
+
     final Paint paint = Paint()
       ..color = Colors.black
       ..strokeCap = StrokeCap.round
