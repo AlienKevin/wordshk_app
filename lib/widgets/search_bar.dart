@@ -202,26 +202,17 @@ class IsSearching extends State<SearchBar> {
     controller.selection = TextSelection.collapsed(offset: extentOffset);
   }
 
-  Widget digitButton(int digit) => button(
-      () => typeDigit(digit),
-      Text(digit.toString()),
-      MaterialStateProperty.all(
-          MediaQuery.of(context).platformBrightness == Brightness.light
-              ? whiteColor
-              : Colors.grey[700]));
+  Widget digitButton(int digit) =>
+      button(() => typeDigit(digit), Text(digit.toString()));
 
-  Widget inkInputModeButton() => button(() {
-        context.read<InputModeState>().updateInputMode(InputMode.ink);
-      },
-          const Icon(Icons.brush),
-          MaterialStateProperty.all(
-              MediaQuery.of(context).platformBrightness == Brightness.light
-                  ? Colors.grey[400]
-                  : Colors.grey[700]));
+  Widget inkInputModeButton() => Padding(
+        padding: const EdgeInsets.only(left: 12.0),
+        child: button(() {
+          context.read<InputModeState>().updateInputMode(InputMode.ink);
+        }, const Icon(Icons.brush)),
+      );
 
-  Widget button(void Function() onPressed, Widget child,
-          MaterialStateProperty<Color?> backgroundColor) =>
-      Padding(
+  Widget button(void Function() onPressed, Widget child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 3),
         child: ElevatedButton(
             onPressed: onPressed,
@@ -235,7 +226,10 @@ class IsSearching extends State<SearchBar> {
                   MediaQuery.of(context).platformBrightness == Brightness.light
                       ? blackColor
                       : whiteColor),
-              backgroundColor: backgroundColor,
+              backgroundColor: MaterialStateProperty.all(
+                  MediaQuery.of(context).platformBrightness == Brightness.light
+                      ? whiteColor
+                      : Colors.grey[700]),
               visualDensity: VisualDensity.compact,
               padding: MaterialStateProperty.all(
                   const EdgeInsets.symmetric(horizontal: 10.5, vertical: 12)),
@@ -260,13 +254,14 @@ class IsSearching extends State<SearchBar> {
           displayArrows: false,
           displayDoneButton: false,
           toolbarButtons: [
-            (node) => digitButton(1),
-            (node) => digitButton(2),
-            (node) => digitButton(3),
-            (node) => digitButton(4),
-            (node) => digitButton(5),
-            (node) => digitButton(6),
-            (node) => inkInputModeButton(),
+            (_) => digitButton(1),
+            (_) => digitButton(2),
+            (_) => digitButton(3),
+            (_) => digitButton(4),
+            (_) => digitButton(5),
+            (_) => digitButton(6),
+            (_) => const Spacer(),
+            (_) => inkInputModeButton(),
           ],
           toolbarAlignment: MainAxisAlignment.start,
         ),

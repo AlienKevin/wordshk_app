@@ -13,7 +13,8 @@ class InputModeState with ChangeNotifier {
 
   void updateInputMode(InputMode newMode) {
     if ((mode == InputMode.keyboard && newMode == InputMode.ink) ||
-        (mode == InputMode.done && newMode == InputMode.keyboard)) {
+        ((mode == InputMode.done || mode == InputMode.ink) &&
+            newMode == InputMode.keyboard)) {
       switchKeyboardType(searchFieldFocusNode!);
     }
     mode = newMode;

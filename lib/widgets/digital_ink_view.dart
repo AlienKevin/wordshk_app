@@ -176,6 +176,15 @@ class _DigitalInkViewState extends State<DigitalInkView> {
                         .toList()),
               ),
               Row(children: [
+                const SizedBox(width: 15),
+                IconButton(
+                    onPressed: () {
+                      context
+                          .read<InputModeState>()
+                          .updateInputMode(InputMode.keyboard);
+                    },
+                    icon: const Icon(Icons.keyboard),
+                    color: Theme.of(context).colorScheme.secondary),
                 const Spacer(),
                 IconButton(
                     onPressed: _undoStroke,
