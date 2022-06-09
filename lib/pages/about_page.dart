@@ -109,6 +109,31 @@ class AboutPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 section(
+                  AppLocalizations.of(context)!.aboutWordshkPlatformsTitle,
+                  TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                        TextSpan(
+                            text: AppLocalizations.of(context)!
+                                .aboutWordshkPlatformsText1),
+                        linkedTextSpan(
+                          "GitHub",
+                          "https://github.com/AlienKevin/wordshk_app",
+                        ),
+                        TextSpan(
+                            text: AppLocalizations.of(context)!
+                                .aboutWordshkPlatformsText2),
+                        linkedTextSpan(
+                          "words.hk",
+                          "https://words.hk/zidin/",
+                        ),
+                        TextSpan(
+                            text: AppLocalizations.of(context)!
+                                .aboutWordshkPlatformsText3),
+                      ]),
+                ),
+                const SizedBox(height: 40),
+                section(
                     AppLocalizations.of(context)!.aboutWordshkWantToHelpTitle,
                     TextSpan(
                         style: Theme.of(context).textTheme.bodyMedium,

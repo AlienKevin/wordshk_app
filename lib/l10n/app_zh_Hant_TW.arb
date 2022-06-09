@@ -115,10 +115,6 @@
     "dictionaryLicenseText": "《非商業開放資料授權協議 1.0》\n（此中文版本僅供參考，一切以英文版作準）\n\n本產品「就是這樣」(as-is) 提供給你，沒有任何品質或安全保證。使用上帶來的一切後果，版權持有人和作者都恕不負責。\n\n你獲授權複製、修改、借用、改寫、出版、翻譯、二次創作、發佈、再分發、演出、展示、或以其他方式使用本產品。前提是：\n－　任何發佈都要包括英文版的版權告示、免責聲明；\n－　任何發佈都要包括《特別鳴謝》名單；\n－　如果本產品是由版權持有人的網頁得到，發布要標示網頁連結；\n－　如果你發佈一個URL裡面的內容，那你可以選擇在發佈物那裡標示以下告示，而不需要遵從上面三個發布的條款：\n　　　　\"版權持有人以《Non-Commercial Open Data License》授權發佈：http://the.URL/path\"。\n　　（以上告示的URL，要改成含有所發佈內容的URL。）\n－　未經書面許可，你不可以用作者或者授權人的名義去推薦或者推廣本產品的衍生作品；\n－　你不可以向其他人再授權本產品的任何部份；\n－　除了特別批准，你不可以用本產品做商業用途。\n\n商業用途包（但不止於）括以下各種情況：\n－　用本產品去收取網上的廣告費；\n－　將本產品當做增值服務去賣；\n－　出版本產品去獲取利益；\n－　教授一個建基於本產品的課程，並獲取利益；\n－　表演本產品或者產品的二次創作，從而獲取利益；\n－　任何商業環境下受版權法保護的使用、複製或發佈，無論這種使用是不是關乎「核心」業務。\n\n是不是商業用途，和盈虧無關，亦都和使用的目的（例如教學、公益、慈善）無關。\n\n下列情況可以豁免「商業用途」的限制：\n－　你和授權者之間有其他協議；\n－　你嘗試聯絡授權人，但是授權人無法在合理期間（六個月內）回覆；\n－　本產品出版超過十年；\n－　美國法律認可的合理使用（Fair use)；\n－　如果你是獨資，而且收入低於你所處地區的收入中位數三倍以下（如果你日後收入超過這個數字，你必須和授權者再談個別協議）。",
     "dictionaryLicenseEnglishVersion": "具有法律約束力的英文授權協議",
 
-    "softwareLicenses": "軟體授權協議",
-    "softwareLicensesShowLicense": "顯示授權協議",
-    "softwareLicensesHideLicense": "折疊授權協議",
-
     "aboutWordshkIntroductionTitle": "簡介",
     "aboutWordshkIntroductionText": "《粵典》是一個大型的粵語辭典計劃。我們用Crowd-sourcing的方法，製作一本大型、可持續發展的粵語辭典。我們的字典用香港粵語（廣東話）做中心，編寫解釋和例句時都會考慮香港的用法；部份例句會從本土的文章中節選出來，務求反映真實的語言現狀。",
     "aboutWordshkTenetsTitle": "宗旨",
@@ -129,6 +125,11 @@
     "aboutWordshkOpenContentText": "我們希望以開放資料（OpenData）的形式發佈資料。你日常用到的輸入法、語音辨識、機械翻譯，全部都要大量的語言資料才能運行，而粵語在這方面沒什麼資源。這次這個計劃除了可以讓一般用家可以容易啲找到粵語的材料，還可以方便開發者製作粵語工具。",
     "aboutWordshkWantToHelpTitle": "想要幫忙？",
     "aboutWordshkWantToHelpText": "只要你以粵語為日常的交談和書寫語言，無論你身處何方，都歡迎你加入我們的編輯團隊。如果有興趣參與，歡迎用以下方式和我們聯絡：",
+    "aboutWordshkPlatformsTitle": "支持的平台",
+    "aboutWordshkPlatformsText1": "這個軟體提供Android和iOS兩個版本，使用MIT軟件授權協議將原始碼公開在",
+    "github": "GitHub",
+    "aboutWordshkPlatformsText2": "。你也可以在網站",
+    "aboutWordshkPlatformsText3": "上訪問本詞典。加入編輯組後，你可以通過網站貢獻詞條，修改筆誤並和其他編輯討論。",
     "email": "電郵",
     "facebook": "Facebook",
     "aboutWordshkSpecialCreditsTitle": "特別鳴謝",

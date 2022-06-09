@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/pages/preferences_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
-import 'package:wordshk/pages/software_licenses_page.dart';
 
 import '../constants.dart';
 import '../custom_page_route.dart';
@@ -93,9 +92,6 @@ class NavigationDrawer extends StatelessWidget {
                   AppLocalizations.of(context)!.dictionaryLicense,
                   Icons.handshake_outlined,
                   (_) => const DictionaryLicensePage()),
-              const Divider(),
-              drawerButton(AppLocalizations.of(context)!.softwareLicenses,
-                  Icons.balance, (_) => const SoftwareLicensesPage()),
             ],
           ),
         ));
