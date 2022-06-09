@@ -5,11 +5,11 @@
 
     "searchModeVariant": "字詞",
     "searchModePr": "粵語拼音",
-    "searchModeCombined": "字詞或粵語拼音",
+    "searchModeCombined": "自動檢測",
     "searchModeEnglish": "英文",
     "searchModeVariantIcon": "詞",
     "searchModePrIcon": "拼",
-    "searchModeCombinedIcon": "或",
+    "searchModeCombinedIcon": "自",
     "searchModeEnglishIcon": "英",
 
     "inkModelDownloading": "正在下載手寫識別模型...",

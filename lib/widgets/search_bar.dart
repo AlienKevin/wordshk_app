@@ -406,7 +406,7 @@ class IsSearching extends State<SearchBar> {
                 portalFollower: Material(
                     color: Theme.of(context).canvasColor,
                     child: Container(
-                      width: 264,
+                      width: 300,
                       height: 290,
                       decoration: BoxDecoration(
                         border: Border(
@@ -421,17 +421,17 @@ class IsSearching extends State<SearchBar> {
                           builder: (context, searchModeState, child) => Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
+                                    searchModeRadioListTile(
+                                        SearchMode.combined,
+                                        "(e.g. 好彩/hou2 coi2/lucky)",
+                                        searchModeState.mode),
+                                    const Divider(thickness: 2),
                                     searchModeRadioListTile(SearchMode.variant,
                                         "(e.g. 好彩)", searchModeState.mode),
                                     const Divider(thickness: 2),
                                     searchModeRadioListTile(
                                         SearchMode.pr,
                                         "(e.g. hou2 coi2)",
-                                        searchModeState.mode),
-                                    const Divider(thickness: 2),
-                                    searchModeRadioListTile(
-                                        SearchMode.combined,
-                                        "(e.g. 好彩 / hou2 coi2)",
                                         searchModeState.mode),
                                     const Divider(thickness: 2),
                                     searchModeRadioListTile(SearchMode.english,

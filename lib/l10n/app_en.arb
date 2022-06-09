@@ -5,11 +5,11 @@
 
     "searchModeVariant": "Word",
     "searchModePr": "Jyutping",
-    "searchModeCombined": "Word or Jyutping",
+    "searchModeCombined": "Auto Detection",
     "searchModeEnglish": "English",
     "searchModeVariantIcon": "W",
     "searchModePrIcon": "J",
-    "searchModeCombinedIcon": "O",
+    "searchModeCombinedIcon": "A",
     "searchModeEnglishIcon": "E",
 
     "inkModelDownloading": "Downloading ink recognition model...",
