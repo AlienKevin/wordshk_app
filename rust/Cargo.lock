@@ -218,12 +218,12 @@ dependencies = [
 
 [[package]]
 name = "fast2s"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72922a7e4d5a84c67069003152bfbd8b98eeef4548032ee9f51dcf11618a0e0f"
+checksum = "1316063b5422f1f7bf4cc784c959eaf04b843de7c9ecbd4190c60614aa23b27e"
 dependencies = [
  "bincode",
- "hashbrown",
+ "hashbrown 0.12.1",
  "lazy_static",
 ]
 
@@ -388,6 +388,12 @@ name = "hashbrown"
 version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ab5ef0d4909ef3724cc8cce6ccc8572c5c817592e9285f5464f8e86f8bd3726e"
+
+[[package]]
+name = "hashbrown"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db0d4cf898abf0081f964436dc980e96670a0f36863e4b83aaacdb65c9d7ccc3"
 dependencies = [
  "ahash",
 ]
@@ -499,7 +505,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0f647032dfaa1f8b6dc29bd3edb7bbef4861b8b8007ebb118d6db284fd59f6ee"
 dependencies = [
  "autocfg",
- "hashbrown",
+ "hashbrown 0.11.2",
 ]
 
 [[package]]
@@ -1474,9 +1480,9 @@ dependencies = [
 
 [[package]]
 name = "wordshk_tools"
-version = "3.10.0-beta"
+version = "3.10.1-beta"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "308b0a30816f337a6481c5cc24ce0a59ffcb5c6a0c3a8d6be5f1004f64c8a19d"
+checksum = "62c6912b96e187b89029e655c5bb15c039a4430ea74c66afec663ad24f20454c"
 dependencies = [
  "csv",
  "deunicode",
