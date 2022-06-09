@@ -112,14 +112,14 @@ class PreferencesPage extends StatelessWidget {
               Text(AppLocalizations.of(context)!.entryExplanationsLanguage,
                   style: Theme.of(context).textTheme.titleLarge),
               entryLanguageRadioListTile(
+                  AppLocalizations.of(context)!.entryLanguageBoth,
+                  EntryLanguage.both),
+              entryLanguageRadioListTile(
                   AppLocalizations.of(context)!.entryLanguageCantonese,
                   EntryLanguage.cantonese),
               entryLanguageRadioListTile(
                   AppLocalizations.of(context)!.entryLanguageEnglish,
                   EntryLanguage.english),
-              entryLanguageRadioListTile(
-                  AppLocalizations.of(context)!.entryLanguageBoth,
-                  EntryLanguage.both),
               Text(AppLocalizations.of(context)!.entryEgPronunciationMethod,
                   style: Theme.of(context).textTheme.titleLarge),
               entryPronunciationMethodRadioListTile(
