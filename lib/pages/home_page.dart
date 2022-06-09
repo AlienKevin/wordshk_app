@@ -65,8 +65,9 @@ class _HomePageState extends State<HomePage> {
         isSearchResultsEmpty = variantSearchResults.isEmpty;
         break;
       case SearchMode.combined:
-        isSearchResultsEmpty =
-            prSearchResults.isEmpty && variantSearchResults.isEmpty;
+        isSearchResultsEmpty = prSearchResults.isEmpty &&
+            variantSearchResults.isEmpty &&
+            englishSearchResults.isEmpty;
         break;
       case SearchMode.english:
         isSearchResultsEmpty = englishSearchResults.isEmpty;
@@ -214,9 +215,10 @@ class _HomePageState extends State<HomePage> {
               .then((results) {
             setState(() {
               prSearchResults =
-                  results.prSearchResults.unique((result) => result.variant);
-              variantSearchResults = results.variantSearchResults
-                  .unique((result) => result.variant);
+                  results.prResults.unique((result) => result.variant);
+              variantSearchResults =
+                  results.variantResults.unique((result) => result.variant);
+              englishSearchResults = results.englishResults;
               finishedSearch = true;
             });
           });
@@ -299,10 +301,30 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
+  Widget showSearchResultCategory(String category) => DecoratedBox(
+      decoration:
+          BoxDecoration(color: Theme.of(context).textTheme.bodyMedium?.color),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+        child: Text(category,
+            style: TextStyle(color: Theme.of(context).canvasColor)),
+      ));
+
   List<Widget> showCombinedSearchResults(TextStyle textStyle) {
-    return showVariantSearchResults(textStyle)
-        .followedBy(showPrSearchResults(textStyle))
-        .toList();
+    return [
+      ...variantSearchResults.isNotEmpty
+          ? [showSearchResultCategory("Cantonese Results")]
+          : [],
+      ...showVariantSearchResults(textStyle),
+      ...prSearchResults.isNotEmpty
+          ? [showSearchResultCategory("Jyutping Results")]
+          : [],
+      ...showPrSearchResults(textStyle),
+      ...englishSearchResults.isNotEmpty
+          ? [showSearchResultCategory("English Results")]
+          : [],
+      ...showEnglishSearchResults(textStyle)
+    ];
   }
 
   Widget showSearchResult(int id, TextSpan resultText, {int? defIndex}) {

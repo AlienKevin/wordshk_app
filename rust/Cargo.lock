@@ -45,9 +45,9 @@ dependencies = [
 
 [[package]]
 name = "allo-isolate"
-version = "0.1.13-beta.4"
+version = "0.1.13-beta.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b44a1d0ed256099dc7b4dce1eee037110095aeff9c5913c22d03fc21e2bacfec"
+checksum = "5c1a52c9b965fdaf940102bcb1a0aef4bc2f56489056f5872cef705651c7972e"
 dependencies = [
  "atomic",
 ]
@@ -250,15 +250,15 @@ dependencies = [
 
 [[package]]
 name = "flutter_rust_bridge"
-version = "1.29.0"
+version = "1.34.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7375fb443e2c1ec8753eb164e853bf5ec9b2ce955aeb6ea9fc3371306f9565c"
+checksum = "d56ac4e92d08407968b7efba9cda734935f6ebbffd521f9255b8f516d8c2cede"
 dependencies = [
  "allo-isolate",
  "anyhow",
  "flutter_rust_bridge_macros",
  "lazy_static",
- "parking_lot 0.12.0",
+ "parking_lot 0.12.1",
  "threadpool",
 ]
 
@@ -769,9 +769,9 @@ dependencies = [
 
 [[package]]
 name = "parking_lot"
-version = "0.12.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87f5ec2493a61ac0506c0f4199f99070cbe83857b0337006a30f3e6719b8ef58"
+checksum = "3742b2c103b9f06bc9fff0a37ff4912935851bee6d36f3c02bcc755bcfec228f"
 dependencies = [
  "lock_api",
  "parking_lot_core 0.9.3",
@@ -1480,9 +1480,9 @@ dependencies = [
 
 [[package]]
 name = "wordshk_tools"
-version = "3.11.0-beta"
+version = "3.12.0-beta"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f9e0dfcea58f885b8e8ac6c2c245d34510f47ece4de1d4450ce803615393c95"
+checksum = "6f4d8991ac3ed84b733f585b18cdf3316e1b31a587812fd2dcad2bee14d504f4"
 dependencies = [
  "csv",
  "deunicode",

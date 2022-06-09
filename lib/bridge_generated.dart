@@ -4,12 +4,12 @@
 // ignore_for_file: non_constant_identifier_names, unused_element, duplicate_ignore, directives_ordering, curly_braces_in_flow_control_structures, unnecessary_lambdas, slash_for_doc_comments, prefer_const_literals_to_create_immutables, implicit_dynamic_list_literal, duplicate_import, unused_import, prefer_single_quotes, prefer_const_constructors
 
 import 'dart:convert';
+import 'dart:convert';
+import 'dart:ffi' as ffi;
+import 'dart:typed_data';
 import 'dart:typed_data';
 
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
-import 'dart:ffi' as ffi;
 
 abstract class WordshkApi {
   Future<void> initApi(
@@ -53,12 +53,14 @@ abstract class WordshkApi {
 }
 
 class CombinedSearchResults {
-  final List<PrSearchResult> prSearchResults;
-  final List<VariantSearchResult> variantSearchResults;
+  final List<VariantSearchResult> variantResults;
+  final List<PrSearchResult> prResults;
+  final List<EnglishSearchResult> englishResults;
 
   CombinedSearchResults({
-    required this.prSearchResults,
-    required this.variantSearchResults,
+    required this.variantResults,
+    required this.prResults,
+    required this.englishResults,
   });
 }
 
@@ -303,11 +305,12 @@ int _wire2api_box_autoadd_u32(dynamic raw) {
 
 CombinedSearchResults _wire2api_combined_search_results(dynamic raw) {
   final arr = raw as List<dynamic>;
-  if (arr.length != 2)
-    throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+  if (arr.length != 3)
+    throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
   return CombinedSearchResults(
-    prSearchResults: _wire2api_list_pr_search_result(arr[0]),
-    variantSearchResults: _wire2api_list_variant_search_result(arr[1]),
+    variantResults: _wire2api_list_variant_search_result(arr[0]),
+    prResults: _wire2api_list_pr_search_result(arr[1]),
+    englishResults: _wire2api_list_english_search_result(arr[2]),
   );
 }
 
