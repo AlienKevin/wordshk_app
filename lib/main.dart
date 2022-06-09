@@ -162,10 +162,12 @@ class _MyAppState extends State<MyApp> {
       backgroundColor: blueColor,
       centerTitle: true,
     );
-    const textSelectionTheme = TextSelectionThemeData(
-        selectionColor: greyColor,
-        selectionHandleColor: greyColor,
-        cursorColor: greyColor);
+    textSelectionTheme(Brightness brightness) => TextSelectionThemeData(
+        selectionColor: lightBlueColor.withAlpha(50),
+        selectionHandleColor:
+            brightness == Brightness.light ? blueColor : lightBlueColor,
+        cursorColor:
+            brightness == Brightness.light ? blueColor : lightBlueColor);
     textButtonTheme(Brightness brightness) => TextButtonThemeData(
             style: ButtonStyle(
           textStyle: MaterialStateProperty.all(
@@ -192,7 +194,7 @@ class _MyAppState extends State<MyApp> {
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
       appBarTheme: appBarTheme,
-      textSelectionTheme: textSelectionTheme,
+      textSelectionTheme: textSelectionTheme(Brightness.light),
       fontFamily: 'ChironHeiHK',
       textTheme: textTheme.copyWith(
           bodySmall: bodySmall.copyWith(color: darkGreyColor)),
@@ -213,7 +215,7 @@ class _MyAppState extends State<MyApp> {
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
       appBarTheme: appBarTheme,
-      textSelectionTheme: textSelectionTheme,
+      textSelectionTheme: textSelectionTheme(Brightness.dark),
       fontFamily: 'ChironHeiHK',
       textTheme: textTheme.copyWith(
           bodySmall: bodySmall.copyWith(color: lightGreyColor)),

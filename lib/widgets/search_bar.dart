@@ -324,7 +324,6 @@ class IsSearching extends State<SearchBar> {
                               ?.copyWith(color: textColor),
                           focusNode: focusNode,
                           onTap: beginSearch,
-                          cursorColor: textColor,
                           key: const Key('SearchBarTextField'),
                           autocorrect: false,
                           enableSuggestions: false,
