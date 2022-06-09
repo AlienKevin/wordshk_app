@@ -108,7 +108,10 @@ class _DigitalInkViewState extends State<DigitalInkView> {
       ]),
     ));
 
-    final candidatesFont = Theme.of(context).textTheme.headlineMedium!;
+    final candidatesFont = Theme.of(context).textTheme.headlineMedium!.copyWith(
+        color: MediaQuery.of(context).platformBrightness == Brightness.light
+            ? blackColor
+            : whiteColor);
 
     final showSketchPad = Column(children: [
       Expanded(
@@ -136,7 +139,9 @@ class _DigitalInkViewState extends State<DigitalInkView> {
             setState(() {});
           },
           child: CustomPaint(
-            painter: Signature(ink: _ink),
+            painter: Signature(
+                ink: _ink,
+                brightness: MediaQuery.of(context).platformBrightness),
             size: Size.infinite,
           ),
         ),
@@ -175,14 +180,14 @@ class _DigitalInkViewState extends State<DigitalInkView> {
                 IconButton(
                     onPressed: _undoStroke,
                     icon: const Icon(Icons.undo),
-                    color: blueColor),
+                    color: Theme.of(context).colorScheme.secondary),
                 IconButton(
                     onPressed: () {
                       _clearPad();
                       widget.backspace();
                     },
                     icon: const Icon(Icons.backspace),
-                    color: blueColor),
+                    color: Theme.of(context).colorScheme.secondary),
                 const SizedBox(width: 10),
                 ElevatedButton(
                     onPressed: () {
@@ -266,17 +271,19 @@ class _DigitalInkViewState extends State<DigitalInkView> {
 
 class Signature extends CustomPainter {
   Ink ink;
+  Brightness brightness;
 
-  Signature({required this.ink});
+  Signature({required this.ink, required this.brightness});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint backgroundPaint = Paint()..color = lightGreyColor;
+    final Paint backgroundPaint = Paint()
+      ..color = brightness == Brightness.light ? lightGreyColor : darkGreyColor;
 
     canvas.drawRect(ui.Rect.largest, backgroundPaint);
 
     final Paint paint = Paint()
-      ..color = Colors.black
+      ..color = brightness == Brightness.light ? blackColor : lightGreyColor
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 4.0;
 

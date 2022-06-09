@@ -134,6 +134,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final blueSwatch = MaterialColor(blueColor.value, blueColorMap);
+    accentColor(Brightness brightness) =>
+        brightness == Brightness.light ? blueColor : lightBlueColor;
     const headlineLarge =
         TextStyle(fontSize: 46.0, fontWeight: FontWeight.bold);
     const headlineMedium =
@@ -164,20 +166,21 @@ class _MyAppState extends State<MyApp> {
         selectionColor: greyColor,
         selectionHandleColor: greyColor,
         cursorColor: greyColor);
-    var textButtonTheme = TextButtonThemeData(
-        style: ButtonStyle(
-      textStyle:
-          MaterialStateProperty.all(bodyLarge.copyWith(color: blueColor)),
-      foregroundColor: MaterialStateProperty.resolveWith((_) => blueColor),
-    ));
-    var elevatedButtonTheme = ElevatedButtonThemeData(
-        style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(blueColor),
-      textStyle:
-          MaterialStateProperty.all(bodyLarge.copyWith(color: Colors.white)),
-      padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
-    ));
+    textButtonTheme(Brightness brightness) => TextButtonThemeData(
+            style: ButtonStyle(
+          textStyle: MaterialStateProperty.all(
+              bodyLarge.copyWith(color: accentColor(brightness))),
+          foregroundColor:
+              MaterialStateProperty.resolveWith((_) => accentColor(brightness)),
+        ));
+    elevatedButtonTheme(Brightness brightness) => ElevatedButtonThemeData(
+            style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(accentColor(brightness)),
+          textStyle: MaterialStateProperty.all(
+              bodyLarge.copyWith(color: Colors.white)),
+          padding: MaterialStateProperty.all(
+              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
+        ));
     const dividerTheme = DividerThemeData(space: 0, thickness: 1);
 
     var lightTheme = ThemeData(
@@ -194,8 +197,8 @@ class _MyAppState extends State<MyApp> {
       textTheme: textTheme.copyWith(
           bodySmall: bodySmall.copyWith(color: darkGreyColor)),
       iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
-      textButtonTheme: textButtonTheme,
-      elevatedButtonTheme: elevatedButtonTheme,
+      textButtonTheme: textButtonTheme(Brightness.light),
+      elevatedButtonTheme: elevatedButtonTheme(Brightness.light),
       dividerColor: lightGreyColor,
       dividerTheme: dividerTheme,
     );
@@ -215,8 +218,8 @@ class _MyAppState extends State<MyApp> {
       textTheme: textTheme.copyWith(
           bodySmall: bodySmall.copyWith(color: lightGreyColor)),
       iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
-      textButtonTheme: textButtonTheme,
-      elevatedButtonTheme: elevatedButtonTheme,
+      textButtonTheme: textButtonTheme(Brightness.dark),
+      elevatedButtonTheme: elevatedButtonTheme(Brightness.dark),
       dividerColor: darkGreyColor,
       dividerTheme: dividerTheme,
     );
