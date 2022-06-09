@@ -1,15 +1,17 @@
 use std::collections::HashMap;
-use wordshk_tools::rich_dict::{RichDict};
-use wordshk_tools::lean_rich_dict::{to_lean_rich_entry};
+
+use anyhow::Result;
+use flutter_rust_bridge::frb;
+use lazy_static::lazy_static;
+use parking_lot::Mutex;
+use serde::{Deserialize, Serialize};
+use wordshk_tools::dict::clause_to_string;
+use wordshk_tools::english_index::EnglishIndex;
+use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
+use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
 pub use wordshk_tools::search::Script;
-use wordshk_tools::english_index::EnglishIndex;
-use serde::{Deserialize, Serialize};
-use parking_lot::Mutex;
-use lazy_static::lazy_static;
-use anyhow::{Result};
-use flutter_rust_bridge::frb;
-use wordshk_tools::dict::clause_to_string;
+
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
 
@@ -122,15 +124,17 @@ impl Api {
         i = 0;
         while pr_ranks.len() > 0 && i < capacity {
             let search::PrSearchRank {
-                id, variant_index, pr_index, ..
+                id, variant_index, pr_index, score, ..
             } = pr_ranks.pop().unwrap();
-            let variant = &search::pick_variants(self.variants_map.get(&id).unwrap(), script).0[variant_index];
-            pr_search_results.push(PrSearchResult {
-                id: id as u32,
-                variant: variant.word.clone(),
-                pr: variant.prs.0[pr_index].to_string(),
-            });
-            i += 1;
+            if score > 70 {
+                let variant = &search::pick_variants(self.variants_map.get(&id).unwrap(), script).0[variant_index];
+                pr_search_results.push(PrSearchResult {
+                    id: id as u32,
+                    variant: variant.word.clone(),
+                    pr: variant.prs.0[pr_index].to_string(),
+                });
+                i += 1;
+            }
         }
         CombinedSearchResults { variant_search_results, pr_search_results }
     }
