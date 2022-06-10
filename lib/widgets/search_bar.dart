@@ -140,11 +140,16 @@ class IsSearching extends State<SearchBar> {
   }
 
   void typeDigit(int digit) {
-    final newQuery = controller.text + digit.toString();
+    final baseOffset = controller.selection.baseOffset;
+    final extentOffset = controller.selection.extentOffset;
+    final query = controller.text;
+    // delete selection and add character in place of selection
+    final newQuery = query.substring(0, baseOffset) +
+        digit.toString() +
+        query.substring(extentOffset);
     controller.value = TextEditingValue(
         text: newQuery,
-        selection: TextSelection.collapsed(
-            offset: controller.selection.baseOffset + 1));
+        selection: TextSelection.collapsed(offset: baseOffset + 1));
     context.read<SearchQueryState>().updateSearchQuery(newQuery);
     if (widget.onChanged != null) {
       widget.onChanged!(newQuery);
