@@ -48,7 +48,7 @@ class EntrySimsOrAnts extends StatelessWidget {
               .asMap()
               .entries
               .map((sim) {
-            final seg = (sim.value as Segment);
+            final seg = sim.value;
             return TextSpan(children: [
               seg.type == SegmentType.link
                   ? ScalableTextSpan(context,
