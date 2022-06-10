@@ -38,33 +38,36 @@ class EntryWidget extends StatelessWidget {
           length: entryGroup.length,
           child: Expanded(
             child: Column(children: [
-              TabBar(
-                onTap: updateEntryIndex,
-                isScrollable: true,
-                // Required
-                labelColor: lineTextStyle.color,
-                unselectedLabelColor: lineTextStyle.color,
-                // Other tabs color
-                labelPadding: const EdgeInsets.symmetric(horizontal: 30),
-                // Space between tabs
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(color: lineTextStyle.color!, width: 2),
-                  // Indicator height
-                  insets: const EdgeInsets.symmetric(
-                      horizontal: 30), // Indicator width
-                ),
-                tabs: entryGroup
-                    .asMap()
-                    .entries
-                    .map((entry) => Tab(
-                        text: (entry.key + 1).toString() +
-                            " " +
-                            entry.value.poses
-                                .map((pos) =>
-                                    translatePos(pos, localizationContext))
-                                .join("/")))
-                    .toList(),
-              ),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: TabBar(
+                    onTap: updateEntryIndex,
+                    isScrollable: true,
+                    // Required
+                    labelColor: lineTextStyle.color,
+                    unselectedLabelColor: lineTextStyle.color,
+                    // Other tabs color
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 30),
+                    // Space between tabs
+                    indicator: UnderlineTabIndicator(
+                      borderSide:
+                          BorderSide(color: lineTextStyle.color!, width: 2),
+                      // Indicator height
+                      insets: const EdgeInsets.symmetric(
+                          horizontal: 30), // Indicator width
+                    ),
+                    tabs: entryGroup
+                        .asMap()
+                        .entries
+                        .map((entry) => Tab(
+                            text: (entry.key + 1).toString() +
+                                " " +
+                                entry.value.poses
+                                    .map((pos) =>
+                                        translatePos(pos, localizationContext))
+                                    .join("/")))
+                        .toList(),
+                  )),
               EntryTab(
                 entry: entryGroup[entryIndex],
                 script: script,
