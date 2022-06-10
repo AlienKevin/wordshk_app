@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget showWatermark() {
-    double watermarkSize = min(MediaQuery.of(context).size.width * 0.8, 500);
+    double watermarkSize = min(MediaQuery.of(context).size.width * 0.6, 300);
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
