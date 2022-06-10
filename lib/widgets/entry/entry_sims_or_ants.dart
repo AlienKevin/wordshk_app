@@ -37,7 +37,14 @@ class EntrySimsOrAnts extends StatelessWidget {
                       style: lineTextStyle.copyWith(
                           fontWeight: FontWeight.bold)))),
           const WidgetSpan(child: SizedBox(width: 10)),
-          ...(script == Script.Traditional ? simsOrAnts : simsOrAntsSimp)
+          ...(script == Script.Traditional
+                  ? simsOrAnts
+                  : simsOrAnts
+                      .asMap()
+                      .entries
+                      .map((simOrAnt) => Segment(
+                          simOrAnt.value.type, simsOrAntsSimp[simOrAnt.key]))
+                      .toList())
               .asMap()
               .entries
               .map((sim) {
