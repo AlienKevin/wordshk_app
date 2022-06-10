@@ -46,6 +46,7 @@ pub extern "C" fn wire_pr_search(
     capacity: u32,
     query: *mut wire_uint_8_list,
     script: i32,
+    romanization: i32,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
@@ -57,7 +58,8 @@ pub extern "C" fn wire_pr_search(
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
             let api_script = script.wire2api();
-            move |task_callback| pr_search(api_capacity, api_query, api_script)
+            let api_romanization = romanization.wire2api();
+            move |task_callback| pr_search(api_capacity, api_query, api_script, api_romanization)
         },
     )
 }
@@ -90,6 +92,7 @@ pub extern "C" fn wire_combined_search(
     capacity: u32,
     query: *mut wire_uint_8_list,
     script: i32,
+    romanization: i32,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
@@ -101,7 +104,10 @@ pub extern "C" fn wire_combined_search(
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
             let api_script = script.wire2api();
-            move |task_callback| combined_search(api_capacity, api_query, api_script)
+            let api_romanization = romanization.wire2api();
+            move |task_callback| {
+                combined_search(api_capacity, api_query, api_script, api_romanization)
+            }
         },
     )
 }
@@ -236,6 +242,21 @@ impl Wire2Api<String> for *mut wire_uint_8_list {
     fn wire2api(self) -> String {
         let vec: Vec<u8> = self.wire2api();
         String::from_utf8_lossy(&vec).into_owned()
+    }
+}
+
+impl Wire2Api<Romanization> for i32 {
+    fn wire2api(self) -> Romanization {
+        match self {
+            0 => Romanization::Jyutping,
+            1 => Romanization::YaleNumbers,
+            2 => Romanization::YaleDiacritics,
+            3 => Romanization::CantonesePinyin,
+            4 => Romanization::Guangdong,
+            5 => Romanization::SidneyLau,
+            6 => Romanization::Ipa,
+            _ => unreachable!("Invalid variant for Romanization: {}", self),
+        }
     }
 }
 

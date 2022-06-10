@@ -17,8 +17,10 @@ import '../models/input_mode.dart';
 import '../models/language.dart';
 import '../models/search_mode.dart';
 import '../states/language_state.dart';
+import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
+import '../states/search_romanization_state.dart';
 import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
 
@@ -188,10 +190,16 @@ class _HomePageState extends State<HomePage> {
       final script = context.read<LanguageState>().language == Language.zhHansCN
           ? Script.Simplified
           : Script.Traditional;
+      final searchRomanization =
+          context.read<SearchRomanizationState>().romanization;
       switch (searchMode) {
         case SearchMode.pr:
           api
-              .prSearch(capacity: 10, query: query, script: script)
+              .prSearch(
+                  capacity: 10,
+                  query: query,
+                  script: script,
+                  romanization: searchRomanization)
               .then((results) {
             setState(() {
               prSearchResults = results.unique((result) => result.variant);
@@ -211,7 +219,11 @@ class _HomePageState extends State<HomePage> {
           break;
         case SearchMode.combined:
           api
-              .combinedSearch(capacity: 10, query: query, script: script)
+              .combinedSearch(
+                  capacity: 10,
+                  query: query,
+                  script: script,
+                  romanization: searchRomanization)
               .then((results) {
             setState(() {
               prSearchResults =
@@ -288,7 +300,11 @@ class _HomePageState extends State<HomePage> {
             children: [
               TextSpan(text: result.variant + " ", style: textStyle),
               TextSpan(
-                  text: result.pr, style: textStyle.copyWith(color: greyColor)),
+                  text: context.read<RomanizationState>().showPrs(
+                      result.pr.split(" "),
+                      romanization:
+                          context.read<SearchRomanizationState>().romanization),
+                  style: textStyle.copyWith(color: greyColor)),
             ],
           ));
     }).toList();
@@ -311,17 +327,43 @@ class _HomePageState extends State<HomePage> {
       ));
 
   List<Widget> showCombinedSearchResults(TextStyle textStyle) {
+    final s = AppLocalizations.of(context)!;
+    final searchRomanization =
+        context.read<SearchRomanizationState>().romanization;
+    late final searchRomanizationName;
+    switch (searchRomanization) {
+      case Romanization.Jyutping:
+        searchRomanizationName = s.romanizationJyutping;
+        break;
+      case Romanization.YaleNumbers:
+        searchRomanizationName = s.romanizationYaleNumbers;
+        break;
+      case Romanization.CantonesePinyin:
+        searchRomanizationName = s.romanizationCantonesePinyin;
+        break;
+      case Romanization.SidneyLau:
+        searchRomanizationName = s.romanizationSidneyLau;
+        break;
+      default:
+        throw "Unsupported search romanization $searchRomanization in showCombinedSearchResults.";
+    }
     return [
       ...variantSearchResults.isNotEmpty
-          ? [showSearchResultCategory("Cantonese Results")]
+          ? [
+              showSearchResultCategory(
+                  s.searchResults(s.searchResultsCategoryCantonese))
+            ]
           : [],
       ...showVariantSearchResults(textStyle),
       ...prSearchResults.isNotEmpty
-          ? [showSearchResultCategory("Jyutping Results")]
+          ? [showSearchResultCategory(s.searchResults(searchRomanizationName))]
           : [],
       ...showPrSearchResults(textStyle),
       ...englishSearchResults.isNotEmpty
-          ? [showSearchResultCategory("English Results")]
+          ? [
+              showSearchResultCategory(
+                  s.searchResults(s.searchResultsCategoryEnglish))
+            ]
           : [],
       ...showEnglishSearchResults(textStyle)
     ];

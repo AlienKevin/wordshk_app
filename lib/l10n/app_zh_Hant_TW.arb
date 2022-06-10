@@ -2,6 +2,9 @@
     "searchDictionary": "查字典",
     "searchDictionaryNoResultsFound": "抱歉，詞典裡找不到相關資料",
     "searchDictionaryOnlyPronunciationFound": "抱歉，我們只找到了這個詞的發音：",
+    "searchResults": "{resultsCategory}結果",
+    "searchResultsCategoryCantonese": "粵語",
+    "searchResultsCategoryEnglish": "英文",
 
     "searchModeVariant": "字詞",
     "searchModePr": "粵語拼音",
@@ -106,9 +109,9 @@
     "romanizationCantonesePinyin": "教院式拼音",
     "romanizationGuangdong": "廣州話拼音方案",
     "romanizationSidneyLau": "劉錫祥拼音",
-    "romanizationWongNumbers": "黃錫凌羅馬拼音（數字）",
-    "romanizationWongDiacritics": "黃錫凌羅馬拼音（調符）",
     "romanizationIpa": "國際音標",
+
+    "searchRomanization": "搜索使用的拼音",
 
     "dictionaryLicense": "字典授權協議",
     "dictionaryLicenseSummary": "《粵典》軟體中的內容會用以下的授權協議開放給公眾使用：",

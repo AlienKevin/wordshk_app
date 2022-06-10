@@ -3,22 +3,23 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/romanization.dart';
+import '../../bridge_generated.dart' show Romanization;
 
 class RomanizationState with ChangeNotifier {
-  Romanization? romanization;
+  late Romanization romanization;
   Map<String, List<String>> romanizationMap = {};
 
   void updateRomanization(Romanization newRomanization) async {
     romanization = newRomanization;
-    if (newRomanization != Romanization.jyutping && romanizationMap.isEmpty) {
+    if (newRomanization != Romanization.Jyutping && romanizationMap.isEmpty) {
       final tsv =
           await rootBundle.loadString("assets/cantonese_romanizations.tsv");
       final List<List<String>> rows = const CsvToListConverter(
               fieldDelimiter: "\t", shouldParseNumbers: false, eol: "\n")
           .convert(tsv);
+      rows.removeAt(0); // skip the header row
       romanizationMap.addEntries(rows.map((row) {
-        final jyutping = row[Romanization.jyutping.tsvColumn];
+        final jyutping = row[Romanization.Jyutping.index];
         return MapEntry(jyutping, row);
       }));
     }
@@ -29,20 +30,21 @@ class RomanizationState with ChangeNotifier {
   }
 
   String showPr(String jyutping) {
-    if (romanization == Romanization.jyutping) {
+    if (romanization == Romanization.Jyutping) {
       return jyutping;
     } else {
       final romanizations = romanizationMap[jyutping];
       if (romanizations == null) {
         return "[$jyutping]";
       } else {
-        return romanizations[romanization!.tsvColumn];
+        return romanizations[romanization.index];
       }
     }
   }
 
-  String showPrs(List<String> jyutpings) {
-    if (romanization == Romanization.jyutping) {
+  String showPrs(List<String> jyutpings, {Romanization? romanization}) {
+    final myRomanization = romanization ?? this.romanization;
+    if (myRomanization == Romanization.Jyutping) {
       return jyutpings.join(" ");
     } else {
       return jyutpings.map((jyutping) {
@@ -50,7 +52,7 @@ class RomanizationState with ChangeNotifier {
         if (romanizations == null) {
           return "[$jyutping]";
         } else {
-          return romanizations[romanization!.tsvColumn];
+          return romanizations[myRomanization.index];
         }
       }).join(" ");
     }

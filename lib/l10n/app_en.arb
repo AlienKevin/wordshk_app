@@ -2,6 +2,15 @@
     "searchDictionary": "Search",
     "searchDictionaryNoResultsFound": "Sorry, no results found",
     "searchDictionaryOnlyPronunciationFound": "Sorry, we only know the pronunciation of this word:",
+    "searchResults": "{resultsCategory} Results",
+    "@searchResults": {
+      "description": "Search Results",
+      "placeholders": {
+          "resultsCategory": {}
+      }
+    },
+    "searchResultsCategoryCantonese": "Cantonese",
+    "searchResultsCategoryEnglish": "English",
 
     "searchModeVariant": "Word",
     "searchModePr": "Jyutping",
@@ -111,9 +120,9 @@
     "romanizationCantonesePinyin": "Cantonese Pinyin",
     "romanizationGuangdong": "Guangdong Romanization",
     "romanizationSidneyLau": "Sidney Lau",
-    "romanizationWongNumbers": "S. L. Wong (Tone Numbers)",
-    "romanizationWongDiacritics": "S. L. Wong (Tone Diacritics)",
     "romanizationIpa": "IPA",
+
+    "searchRomanization": "Romanization for Searching",
 
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",

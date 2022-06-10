@@ -15,13 +15,13 @@ import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_mode_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
+import 'package:wordshk/states/search_romanization_state.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'models/entry_language.dart';
 import 'models/language.dart';
 import 'models/pronunciation_method.dart';
-import 'models/romanization.dart';
 
 const base = 'wordshk_api';
 final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
@@ -48,6 +48,8 @@ void main() {
             create: (_) => PronunciationMethodState()),
         ChangeNotifierProvider<RomanizationState>(
             create: (_) => RomanizationState()),
+        ChangeNotifierProvider<SearchRomanizationState>(
+            create: (_) => SearchRomanizationState()),
       ],
       child: const MyApp(),
     ),
@@ -125,7 +127,15 @@ class _MyAppState extends State<MyApp> {
       final romanizationIndex = prefs.getInt("romanization");
       context.read<RomanizationState>().updateRomanization(
           romanizationIndex == null
-              ? Romanization.jyutping
+              ? Romanization.Jyutping
+              : Romanization.values[romanizationIndex]);
+    });
+
+    SharedPreferences.getInstance().then((prefs) async {
+      final romanizationIndex = prefs.getInt("searchRomanization");
+      context.read<SearchRomanizationState>().updateRomanization(
+          romanizationIndex == null
+              ? Romanization.Jyutping
               : Romanization.values[romanizationIndex]);
     });
   }

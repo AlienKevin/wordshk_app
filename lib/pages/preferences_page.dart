@@ -3,13 +3,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/models/language.dart';
 
+import '../../bridge_generated.dart' show Romanization;
 import '../models/entry_language.dart';
 import '../models/pronunciation_method.dart';
-import '../models/romanization.dart';
 import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
 import '../states/pronunciation_method_state.dart';
 import '../states/romanization_state.dart';
+import '../states/search_romanization_state.dart';
 import '../widgets/navigation_drawer.dart';
 
 class PreferencesPage extends StatelessWidget {
@@ -22,6 +23,8 @@ class PreferencesPage extends StatelessWidget {
     final egPronunciationMethod =
         context.watch<PronunciationMethodState>().entryEgMethod;
     final romanization = context.watch<RomanizationState>().romanization;
+    final searchRomanization =
+        context.watch<SearchRomanizationState>().romanization;
 
     onLanguageChange(Language? newLanguage) {
       if (newLanguage != null) {
@@ -46,6 +49,14 @@ class PreferencesPage extends StatelessWidget {
     onRomanizationChange(Romanization? newRomanization) {
       if (newRomanization != null) {
         context.read<RomanizationState>().updateRomanization(newRomanization);
+      }
+    }
+
+    onSearchRomanizationChange(Romanization? newRomanization) {
+      if (newRomanization != null) {
+        context
+            .read<SearchRomanizationState>()
+            .updateRomanization(newRomanization);
       }
     }
 
@@ -94,6 +105,17 @@ class PreferencesPage extends StatelessWidget {
           activeColor: Theme.of(context).colorScheme.secondary,
         );
 
+    searchRomanizationRadioListTile(String title, Romanization value) =>
+        RadioListTile<Romanization>(
+          title: Text(title),
+          value: value,
+          groupValue: searchRomanization,
+          onChanged: onSearchRomanizationChange,
+          visualDensity: VisualDensity.compact,
+          contentPadding: EdgeInsets.zero,
+          activeColor: Theme.of(context).colorScheme.secondary,
+        );
+
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.preferences)),
       drawer: const NavigationDrawer(),
@@ -133,31 +155,39 @@ class PreferencesPage extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationJyutping,
-                  Romanization.jyutping),
+                  Romanization.Jyutping),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationYaleNumbers,
-                  Romanization.yaleNumbers),
+                  Romanization.YaleNumbers),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationYaleDiacritics,
-                  Romanization.yaleDiacritics),
+                  Romanization.YaleDiacritics),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationCantonesePinyin,
-                  Romanization.cantonesePinyin),
+                  Romanization.CantonesePinyin),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationGuangdong,
-                  Romanization.guangdong),
+                  Romanization.Guangdong),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationSidneyLau,
-                  Romanization.sidneyLau),
-              romanizationRadioListTile(
-                  AppLocalizations.of(context)!.romanizationWongNumbers,
-                  Romanization.wongNumbers),
-              romanizationRadioListTile(
-                  AppLocalizations.of(context)!.romanizationWongDiacritics,
-                  Romanization.wongDiacritics),
+                  Romanization.SidneyLau),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationIpa,
-                  Romanization.ipa),
+                  Romanization.Ipa),
+              Text(AppLocalizations.of(context)!.searchRomanization,
+                  style: Theme.of(context).textTheme.titleLarge),
+              searchRomanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationJyutping,
+                  Romanization.Jyutping),
+              searchRomanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationYaleNumbers,
+                  Romanization.YaleNumbers),
+              searchRomanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationCantonesePinyin,
+                  Romanization.CantonesePinyin),
+              searchRomanizationRadioListTile(
+                  AppLocalizations.of(context)!.romanizationSidneyLau,
+                  Romanization.SidneyLau),
             ])),
       ),
     );

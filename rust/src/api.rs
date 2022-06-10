@@ -1,6 +1,5 @@
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
-use std::fmt::Binary;
 
 use anyhow::Result;
 use flutter_rust_bridge::frb;
@@ -9,6 +8,7 @@ use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use wordshk_tools::dict::clause_to_string;
 use wordshk_tools::english_index::{EnglishIndex, EnglishIndexData};
+pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
@@ -41,6 +41,17 @@ pub enum _Script {
     Traditional,
 }
 
+#[frb(mirror(Romanization))]
+pub enum _Romanization {
+    Jyutping,
+    YaleNumbers,
+    YaleDiacritics,
+    CantonesePinyin,
+    Guangdong,
+    SidneyLau,
+    Ipa,
+}
+
 impl Api {
     pub fn new(api_json: String, english_index_json: String, word_list: String) -> Self {
         // if !*IS_LOG_INITIALIZED.lock() {
@@ -68,9 +79,9 @@ impl Api {
         api
     }
 
-    pub fn pr_search(&self, capacity: u32, query: &str, script: Script) -> Vec<PrSearchResult> {
+    pub fn pr_search(&self, capacity: u32, query: &str, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
         let mut results = vec![];
-        let mut ranks = search::pr_search(&self.variants_map, query);
+        let mut ranks = search::pr_search(&self.variants_map, query, romanization);
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
             let search::PrSearchRank {
@@ -108,8 +119,8 @@ impl Api {
         results
     }
 
-    pub fn combined_search(&self, capacity: u32, query: &str, script: Script) -> CombinedSearchResults {
-        match &mut search::combined_search(&self.variants_map, &self.english_index, query, script) {
+    pub fn combined_search(&self, capacity: u32, query: &str, script: Script, romanization: Romanization) -> CombinedSearchResults {
+        match &mut search::combined_search(&self.variants_map, &self.english_index, query, script, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
@@ -263,16 +274,16 @@ pub fn init_api(api_json: String, english_index_json: String, word_list: String)
     Ok(())
 }
 
-pub fn pr_search(capacity: u32, query: String, script: Script) -> Result<Vec<PrSearchResult>> {
-    Ok((*API.lock()).as_ref().unwrap().pr_search(capacity, &query, script))
+pub fn pr_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Result<Vec<PrSearchResult>> {
+    Ok((*API.lock()).as_ref().unwrap().pr_search(capacity, &query, script, romanization))
 }
 
 pub fn variant_search(capacity: u32, query: String, script: Script) -> Result<Vec<VariantSearchResult>> {
     Ok((*API.lock()).as_ref().unwrap().variant_search(capacity, &query, script))
 }
 
-pub fn combined_search(capacity: u32, query: String, script: Script) -> Result<CombinedSearchResults> {
-    Ok((*API.lock()).as_ref().unwrap().combined_search(capacity, &query, script))
+pub fn combined_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Result<CombinedSearchResults> {
+    Ok((*API.lock()).as_ref().unwrap().combined_search(capacity, &query, script, romanization))
 }
 
 pub fn english_search(capacity: u32, query: String, script: Script) -> Result<Vec<EnglishSearchResult>> {

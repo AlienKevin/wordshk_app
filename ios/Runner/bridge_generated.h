@@ -25,7 +25,8 @@ void wire_init_api(int64_t port_,
 void wire_pr_search(int64_t port_,
                     uint32_t capacity,
                     struct wire_uint_8_list *query,
-                    int32_t script);
+                    int32_t script,
+                    int32_t romanization);
 
 void wire_variant_search(int64_t port_,
                          uint32_t capacity,
@@ -35,7 +36,8 @@ void wire_variant_search(int64_t port_,
 void wire_combined_search(int64_t port_,
                           uint32_t capacity,
                           struct wire_uint_8_list *query,
-                          int32_t script);
+                          int32_t script,
+                          int32_t romanization);
 
 void wire_english_search(int64_t port_,
                          uint32_t capacity,
