@@ -102,7 +102,7 @@
     "pronunciationMethodSyllableRecordings": "音节录音",
     "pronunciationMethodTts": "系统语音合成",
 
-    "romanization": "拼音",
+    "entryRomanization": "词条拼音",
     "romanizationJyutping": "粤拼",
     "romanizationYaleNumbers": "耶鲁（数字）",
     "romanizationYaleDiacritics": "耶鲁（调符）",
@@ -111,7 +111,7 @@
     "romanizationSidneyLau": "刘锡祥拼音",
     "romanizationIpa": "国际音标",
 
-    "searchRomanization": "搜索使用的拼音",
+    "searchRomanization": "搜索拼音",
 
     "dictionaryLicense": "字典授权协议",
     "dictionaryLicenseSummary": "《粤典》软件中的内容会用以下的授权协议开放给公众使用：",

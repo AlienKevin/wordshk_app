@@ -116,6 +116,11 @@ class PreferencesPage extends StatelessWidget {
           activeColor: Theme.of(context).colorScheme.secondary,
         );
 
+    title(String title) => [
+          Text(title, style: Theme.of(context).textTheme.titleLarge),
+          const Divider()
+        ];
+
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.preferences)),
       drawer: const NavigationDrawer(),
@@ -124,15 +129,13 @@ class PreferencesPage extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(AppLocalizations.of(context)!.language,
-                  style: Theme.of(context).textTheme.titleLarge),
+              ...title(AppLocalizations.of(context)!.language),
               languageRadioListTile('廣東話（香港）', Language.zhHantHK),
               languageRadioListTile('English', Language.en),
               languageRadioListTile('中文（中国大陆）', Language.zhHansCN),
               languageRadioListTile('中文（台灣）', Language.zhHantTW),
               const SizedBox(height: 10),
-              Text(AppLocalizations.of(context)!.entryExplanationsLanguage,
-                  style: Theme.of(context).textTheme.titleLarge),
+              ...title(AppLocalizations.of(context)!.entryExplanationsLanguage),
               entryLanguageRadioListTile(
                   AppLocalizations.of(context)!.entryLanguageBoth,
                   EntryLanguage.both),
@@ -142,8 +145,9 @@ class PreferencesPage extends StatelessWidget {
               entryLanguageRadioListTile(
                   AppLocalizations.of(context)!.entryLanguageEnglish,
                   EntryLanguage.english),
-              Text(AppLocalizations.of(context)!.entryEgPronunciationMethod,
-                  style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 10),
+              ...title(
+                  AppLocalizations.of(context)!.entryEgPronunciationMethod),
               entryPronunciationMethodRadioListTile(
                   AppLocalizations.of(context)!.pronunciationMethodTts,
                   PronunciationMethod.tts),
@@ -151,8 +155,8 @@ class PreferencesPage extends StatelessWidget {
                   AppLocalizations.of(context)!
                       .pronunciationMethodSyllableRecordings,
                   PronunciationMethod.syllableRecordings),
-              Text(AppLocalizations.of(context)!.romanization,
-                  style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 10),
+              ...title(AppLocalizations.of(context)!.entryRomanization),
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationJyutping,
                   Romanization.Jyutping),
@@ -174,8 +178,8 @@ class PreferencesPage extends StatelessWidget {
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationIpa,
                   Romanization.Ipa),
-              Text(AppLocalizations.of(context)!.searchRomanization,
-                  style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 10),
+              ...title(AppLocalizations.of(context)!.searchRomanization),
               searchRomanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationJyutping,
                   Romanization.Jyutping),

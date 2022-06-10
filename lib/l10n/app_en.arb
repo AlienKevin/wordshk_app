@@ -113,7 +113,7 @@
     "pronunciationMethodSyllableRecordings": "Syllable recordings",
     "pronunciationMethodTts": "System Text-to-speech",
 
-    "romanization": "Romanization",
+    "entryRomanization": "Romanization of Entries",
     "romanizationJyutping": "Jyutping",
     "romanizationYaleNumbers": "Yale (Tone Numbers)",
     "romanizationYaleDiacritics": "Yale (Tone Diacritics)",
