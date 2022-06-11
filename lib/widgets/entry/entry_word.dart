@@ -9,4 +9,4 @@ TextSpan showText(EntryText text) => TextSpan(
     style: TextStyle(
         fontWeight: text.style == EntryTextStyle.normal
             ? FontWeight.normal
-            : FontWeight.bold));
+            : FontWeight.w600));

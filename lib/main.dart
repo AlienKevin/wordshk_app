@@ -160,14 +160,14 @@ class _MyAppState extends State<MyApp> {
     accentColor(Brightness brightness) =>
         brightness == Brightness.light ? blueColor : lightBlueColor;
     const headlineLarge =
-        TextStyle(fontSize: 46.0, fontWeight: FontWeight.bold);
+        TextStyle(fontSize: 46.0, fontWeight: FontWeight.w600);
     const headlineMedium =
-        TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold);
+        TextStyle(fontSize: 36.0, fontWeight: FontWeight.w600);
     const headlineSmall =
-        TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold);
-    const titleLarge = TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold);
-    const titleMedium = TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
-    const titleSmall = TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
+        TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600);
+    const titleLarge = TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600);
+    const titleMedium = TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600);
+    const titleSmall = TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600);
     const bodyLarge = TextStyle(fontSize: 22.0);
     const bodyMedium = TextStyle(fontSize: 18.0);
     const bodySmall = TextStyle(fontSize: 16.0);

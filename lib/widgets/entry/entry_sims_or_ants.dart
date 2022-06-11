@@ -35,7 +35,7 @@ class EntrySimsOrAnts extends StatelessWidget {
                   text: TextSpan(
                       text: label,
                       style: lineTextStyle.copyWith(
-                          fontWeight: FontWeight.bold)))),
+                          fontWeight: FontWeight.w600)))),
           const WidgetSpan(child: SizedBox(width: 10)),
           ...(script == Script.Traditional
                   ? simsOrAnts

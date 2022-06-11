@@ -24,7 +24,7 @@ class EntryLabels extends StatelessWidget {
                     text: TextSpan(
                         text: "[" + AppLocalizations.of(context)!.label + "]",
                         style: lineTextStyle.copyWith(
-                            fontWeight: FontWeight.bold)))),
+                            fontWeight: FontWeight.w600)))),
             ...labels
                 .map((label) => [
                       const WidgetSpan(child: SizedBox(width: 10)),
