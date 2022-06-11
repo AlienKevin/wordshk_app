@@ -60,61 +60,37 @@ class PreferencesPage extends StatelessWidget {
       }
     }
 
-    languageRadioListTile(String title, Language value) =>
-        RadioListTile<Language>(
+    radioListTile<T>(String title, T value, T? groupValue,
+            void Function(T?) onChanged) =>
+        RadioListTile<T>(
           title: Text(title),
           value: value,
-          groupValue: language,
-          onChanged: onLanguageChange,
+          groupValue: groupValue,
+          onChanged: onChanged,
           visualDensity: VisualDensity.compact,
           contentPadding: EdgeInsets.zero,
           activeColor: Theme.of(context).colorScheme.secondary,
         );
 
+    languageRadioListTile(String title, Language value) =>
+        radioListTile<Language>(title, value, language, onLanguageChange);
+
     entryLanguageRadioListTile(String title, EntryLanguage value) =>
-        RadioListTile<EntryLanguage>(
-          title: Text(title),
-          value: value,
-          groupValue: entryLanguage,
-          onChanged: onEntryLanguageChange,
-          visualDensity: VisualDensity.compact,
-          contentPadding: EdgeInsets.zero,
-          activeColor: Theme.of(context).colorScheme.secondary,
-        );
+        radioListTile<EntryLanguage>(
+            title, value, entryLanguage, onEntryLanguageChange);
 
     entryPronunciationMethodRadioListTile(
             String title, PronunciationMethod value) =>
-        RadioListTile<PronunciationMethod>(
-          title: Text(title),
-          value: value,
-          groupValue: egPronunciationMethod,
-          onChanged: onEntryEgPronunciationMethodChange,
-          visualDensity: VisualDensity.compact,
-          contentPadding: EdgeInsets.zero,
-          activeColor: Theme.of(context).colorScheme.secondary,
-        );
+        radioListTile<PronunciationMethod>(title, value, egPronunciationMethod,
+            onEntryEgPronunciationMethodChange);
 
     romanizationRadioListTile(String title, Romanization value) =>
-        RadioListTile<Romanization>(
-          title: Text(title),
-          value: value,
-          groupValue: romanization,
-          onChanged: onRomanizationChange,
-          visualDensity: VisualDensity.compact,
-          contentPadding: EdgeInsets.zero,
-          activeColor: Theme.of(context).colorScheme.secondary,
-        );
+        radioListTile<Romanization>(
+            title, value, romanization, onRomanizationChange);
 
     searchRomanizationRadioListTile(String title, Romanization value) =>
-        RadioListTile<Romanization>(
-          title: Text(title),
-          value: value,
-          groupValue: searchRomanization,
-          onChanged: onSearchRomanizationChange,
-          visualDensity: VisualDensity.compact,
-          contentPadding: EdgeInsets.zero,
-          activeColor: Theme.of(context).colorScheme.secondary,
-        );
+        radioListTile<Romanization>(
+            title, value, searchRomanization, onSearchRomanizationChange);
 
     title(String title) => [
           Text(title, style: Theme.of(context).textTheme.titleLarge),
