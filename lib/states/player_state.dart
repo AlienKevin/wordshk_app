@@ -32,7 +32,7 @@ class PlayerState with ChangeNotifier {
 
   Future<bool> setPlayerKey(int newKey) async {
     if (playerKey != null) {
-      await stop();
+      await stopHelper();
       if (playerKey == newKey) {
         playerMode = PlayerMode.none;
         playerKey = null;
@@ -45,6 +45,13 @@ class PlayerState with ChangeNotifier {
     }
     playerKey = newKey;
     return false;
+  }
+
+  refreshPlayerState() async {
+    await stop();
+    nextPlayerKey = 0;
+    playerStoppedDueToSwitch = false;
+    notifyListeners();
   }
 
   Future<void> syllablesPlay(int newKey, List<String> prs) async {
@@ -92,6 +99,14 @@ class PlayerState with ChangeNotifier {
   }
 
   stop() async {
+    if (playerMode != PlayerMode.none) {
+      await stopHelper();
+      playerMode = PlayerMode.none;
+      playerKey = null;
+    }
+  }
+
+  stopHelper() async {
     switch (playerMode) {
       case PlayerMode.tts:
         await ttsPlayer.stop();

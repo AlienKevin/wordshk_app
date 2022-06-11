@@ -13,6 +13,7 @@ import '../main.dart';
 import '../models/entry.dart';
 import '../models/language.dart';
 import '../states/language_state.dart';
+import '../states/player_state.dart';
 import '../utils.dart';
 import '../widgets/entry/entry.dart';
 import 'entry_not_published_page.dart';
@@ -52,81 +53,94 @@ class _EntryPageState extends State<EntryPage> {
     final script = context.read<LanguageState>().language == Language.zhHansCN
         ? Script.Simplified
         : Script.Traditional;
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.entry),
-          actions: [
-            IconButton(
-                onPressed: () => openLink(
-                    "https://words.hk/zidin/v/${entryGroup[entryIndex].id}"),
-                icon: const Icon(Icons.edit))
-          ],
-        ),
-        body: FutureBuilder(
-          future: api.getEntryGroupJson(id: widget.id).then((json) {
-            var newEntryGroup = json
-                .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
-                .toList();
-            entryGroup = newEntryGroup;
-            return newEntryGroup;
-          }),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData) {
-              WidgetsBinding.instance.addPostFrameCallback((_) async {
-                if (widget.defIndex != null) {
-                  await scrollController.scrollToIndex(widget.defIndex!,
-                      preferPosition: AutoScrollPosition.begin);
-                  scrollController.highlight(widget.defIndex!);
+    return WillPopScope(
+        // detect user pressing back button
+        onWillPop: () {
+          context.read<PlayerState>().refreshPlayerState();
+          return Future.value(true);
+        },
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.entry),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      openLink(
+                          "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
+                      context.read<PlayerState>().stop();
+                    },
+                    icon: const Icon(Icons.edit))
+              ],
+            ),
+            body: FutureBuilder(
+              future: api.getEntryGroupJson(id: widget.id).then((json) {
+                var newEntryGroup = json
+                    .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
+                    .toList();
+                entryGroup = newEntryGroup;
+                return newEntryGroup;
+              }),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (snapshot.hasData) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    if (widget.defIndex != null) {
+                      await scrollController.scrollToIndex(widget.defIndex!,
+                          preferPosition: AutoScrollPosition.begin);
+                      scrollController.highlight(widget.defIndex!);
+                    }
+                  });
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: EntryWidget(
+                      entryGroup: snapshot.data,
+                      entryIndex: entryIndex,
+                      script: script,
+                      updateEntryIndex: (index) {
+                        if (index != entryIndex) {
+                          setState(() {
+                            entryIndex = index;
+                          });
+                          context.read<PlayerState>().stop();
+                        }
+                      },
+                      onTapLink: (entryVariant) {
+                        log("Tapped on link $entryVariant");
+                        api
+                            .getEntryId(query: entryVariant, script: script)
+                            .then((id) {
+                          context.read<PlayerState>().refreshPlayerState();
+                          if (id == null) {
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                  builder: (context) => EntryNotPublishedPage(
+                                      entryVariant: entryVariant)),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                  builder: (context) => EntryPage(id: id)),
+                            );
+                          }
+                        });
+                      },
+                      scrollController: scrollController,
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  log("Entry page failed to load due to an error.");
+                  log(snapshot.error.toString());
+                  return const Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text("Entry failed to load."),
+                  );
+                } else {
+                  // TODO: handle snapshot.hasError and loading screen
+                  return Container();
                 }
-              });
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: EntryWidget(
-                  entryGroup: snapshot.data,
-                  entryIndex: entryIndex,
-                  script: script,
-                  updateEntryIndex: (index) {
-                    setState(() {
-                      entryIndex = index;
-                    });
-                  },
-                  onTapLink: (entryVariant) {
-                    log("Tapped on link $entryVariant");
-                    api
-                        .getEntryId(query: entryVariant, script: script)
-                        .then((id) {
-                      if (id == null) {
-                        Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) => EntryNotPublishedPage(
-                                  entryVariant: entryVariant)),
-                        );
-                      } else {
-                        Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) => EntryPage(id: id)),
-                        );
-                      }
-                    });
-                  },
-                  scrollController: scrollController,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              log("Entry page failed to load due to an error.");
-              log(snapshot.error.toString());
-              return const Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text("Entry failed to load."),
-              );
-            } else {
-              // TODO: handle snapshot.hasError and loading screen
-              return Container();
-            }
-          },
-        ));
+              },
+            )));
   }
 }
