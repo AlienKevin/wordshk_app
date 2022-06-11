@@ -98,11 +98,11 @@
     "entryLanguageEnglish": "英语",
     "entryLanguageBoth": "双语",
 
-    "entryEgPronunciationMethod": "词条例句发音方式",
+    "entryEgPronunciationMethod": "词条注音例句发音方式",
     "pronunciationMethodSyllableRecordings": "音节录音",
     "pronunciationMethodTts": "系统语音合成",
 
-    "entryEgFontSize": "词条例句字体大小",
+    "entryEgFontSize": "词条注音例句字体大小",
     "fontSizeSmall": "小",
     "fontSizeMedium": "中",
     "fontSizeLarge": "大",

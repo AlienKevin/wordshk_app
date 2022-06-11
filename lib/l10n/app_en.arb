@@ -109,11 +109,11 @@
     "entryLanguageEnglish": "English",
     "entryLanguageBoth": "Bilingual",
 
-    "entryEgPronunciationMethod": "Pronunciation Method of Example Sentences",
+    "entryEgPronunciationMethod": "Pronunciation Method of Annotated Example Sentences",
     "pronunciationMethodSyllableRecordings": "Syllable recordings",
     "pronunciationMethodTts": "System Text-to-speech",
 
-    "entryEgFontSize": "Font Size of Example Sentences",
+    "entryEgFontSize": "Font Size of Annotated Example Sentences",
     "fontSizeSmall": "Small",
     "fontSizeMedium": "Medium",
     "fontSizeLarge": "Large",
