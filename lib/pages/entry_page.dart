@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
@@ -34,7 +33,6 @@ class _EntryPageState extends State<EntryPage> {
   late List<Entry> entryGroup;
   late final AutoScrollController scrollController;
   bool scrolledToInitialDef = false;
-  FlutterTts player = FlutterTts();
 
   @override
   void initState() {
@@ -46,13 +44,6 @@ class _EntryPageState extends State<EntryPage> {
     () async {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.speech());
-
-      await player.setSharedInstance(true);
-      await player.setLanguage("zh-HK");
-      await player.setSpeechRate(0.5);
-      await player.setVolume(0.5);
-      await player.setPitch(1.0);
-      await player.isLanguageAvailable("zh-HK");
     }();
   }
 
@@ -122,7 +113,6 @@ class _EntryPageState extends State<EntryPage> {
                     });
                   },
                   scrollController: scrollController,
-                  player: player,
                 ),
               );
             } else if (snapshot.hasError) {

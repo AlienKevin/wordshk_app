@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 import '../../bridge_generated.dart' show Script;
 import '../../constants.dart';
@@ -16,19 +15,17 @@ class EntryEg extends StatelessWidget {
   final Color linkColor;
   final double rubyFontSize;
   final OnTapLink onTapLink;
-  final FlutterTts player;
 
-  const EntryEg(
-      {Key? key,
-      required this.eg,
-      required this.entryLanguage,
-      required this.script,
-      required this.lineTextStyle,
-      required this.linkColor,
-      required this.rubyFontSize,
-      required this.onTapLink,
-      required this.player})
-      : super(key: key);
+  const EntryEg({
+    Key? key,
+    required this.eg,
+    required this.entryLanguage,
+    required this.script,
+    required this.lineTextStyle,
+    required this.linkColor,
+    required this.rubyFontSize,
+    required this.onTapLink,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -54,7 +51,6 @@ class EntryEg extends StatelessWidget {
                     linkColor: linkColor,
                     rubyFontSize: rubyFontSize,
                     onTapLink: onTapLink,
-                    player: player,
                   ),
             eg.yue == null
                 ? const SizedBox.shrink()
@@ -64,7 +60,6 @@ class EntryEg extends StatelessWidget {
                     linkColor: linkColor,
                     rubyFontSize: rubyFontSize,
                     onTapLink: onTapLink,
-                    player: player,
                   ),
             ...(entryLanguage == EntryLanguage.english ||
                         entryLanguage == EntryLanguage.both) &&

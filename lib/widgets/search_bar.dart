@@ -132,9 +132,7 @@ class IsSearching extends State<SearchBar> {
       isSearching.value = true;
     });
     final inputModeState = context.read<InputModeState>();
-    print("beginSearch: " + inputModeState.mode.toString());
     if (inputModeState.mode == InputMode.done) {
-      print("beginSearch done");
       inputModeState.updateInputMode(InputMode.keyboard);
     }
   }

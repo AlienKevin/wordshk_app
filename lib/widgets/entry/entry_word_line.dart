@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';
@@ -11,17 +10,15 @@ class EntryWordLine extends StatelessWidget {
   final Color linkColor;
   final double fontSize;
   final OnTapLink onTapLink;
-  final FlutterTts player;
 
-  const EntryWordLine(
-      {Key? key,
-      required this.line,
-      required this.textColor,
-      required this.linkColor,
-      required this.fontSize,
-      required this.onTapLink,
-      required this.player})
-      : super(key: key);
+  const EntryWordLine({
+    Key? key,
+    required this.line,
+    required this.textColor,
+    required this.linkColor,
+    required this.fontSize,
+    required this.onTapLink,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
@@ -36,9 +33,7 @@ class EntryWordLine extends StatelessWidget {
               WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
                   child: TtsPronunciationButton(
-                      player: player,
-                      text: line.toString(),
-                      alignment: Alignment.center))
+                      text: line.toString(), alignment: Alignment.center))
             ],
             style: TextStyle(fontSize: fontSize, height: 1.2, color: textColor),
           ),

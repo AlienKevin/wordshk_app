@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 import 'package:wordshk/widgets/pronunciation_button.dart';
 
 import '../constants.dart';
+import '../states/player_state.dart';
 
 class SyllablePronunciationButton extends StatelessWidget {
   final List<String> prs;
@@ -17,31 +16,9 @@ class SyllablePronunciationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Visibility(
         visible: jyutpingFemaleSyllableNames.containsAll(prs),
-        child: Builder(builder: (context) {
-          return PronunciationButton(
-            player: AudioPlayer(),
-            play: (player) async {
-              final completer = Completer<void>();
-              await (player as AudioPlayer).setAudioSource(
-                  ConcatenatingAudioSource(
-                      children: prs
-                          .map((syllable) => AudioSource.uri(Uri.parse(
-                              "asset:///assets/jyutping_female/$syllable.mp3")))
-                          .toList()));
-              player.playerStateStream.listen((state) {
-                if (state.processingState == ProcessingState.completed) {
-                  completer.complete();
-                }
-              });
-              await player.seek(Duration.zero, index: 0);
-              await player.play();
-              return completer.future;
-            },
-            stop: (player) async {
-              await (player as AudioPlayer).stop();
-            },
-            alignment: alignment,
-          );
-        }),
+        child: PronunciationButton(
+          play: (key) => context.read<PlayerState>().syllablesPlay(key, prs),
+          alignment: alignment,
+        ),
       );
 }

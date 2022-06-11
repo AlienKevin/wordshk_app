@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:wordshk/models/entry_language.dart';
 
 import '../../bridge_generated.dart' show Script;
@@ -17,20 +16,18 @@ class EntryDef extends StatelessWidget {
   final double rubyFontSize;
   final bool isSingleDef;
   final OnTapLink onTapLink;
-  final FlutterTts player;
 
-  const EntryDef(
-      {Key? key,
-      required this.def,
-      required this.entryLanguage,
-      required this.script,
-      required this.lineTextStyle,
-      required this.linkColor,
-      required this.rubyFontSize,
-      required this.isSingleDef,
-      required this.onTapLink,
-      required this.player})
-      : super(key: key);
+  const EntryDef({
+    Key? key,
+    required this.def,
+    required this.entryLanguage,
+    required this.script,
+    required this.lineTextStyle,
+    required this.linkColor,
+    required this.rubyFontSize,
+    required this.isSingleDef,
+    required this.onTapLink,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
@@ -42,7 +39,6 @@ class EntryDef extends StatelessWidget {
                     EntryClause(
                         clause:
                             script == Script.Simplified ? def.yueSimp : def.yue,
-                        player: player,
                         tag: "(" +
                             AppLocalizations.of(context)!.cantonese +
                             ") ",
@@ -65,15 +61,15 @@ class EntryDef extends StatelessWidget {
                   ]
                 : [],
             EntryEgs(
-                egs: def.egs,
-                entryLanguage: entryLanguage,
-                script: script,
-                lineTextStyle: lineTextStyle,
-                linkColor: linkColor,
-                rubyFontSize: rubyFontSize,
-                isSingleDef: isSingleDef,
-                onTapLink: onTapLink,
-                player: player)
+              egs: def.egs,
+              entryLanguage: entryLanguage,
+              script: script,
+              lineTextStyle: lineTextStyle,
+              linkColor: linkColor,
+              rubyFontSize: rubyFontSize,
+              isSingleDef: isSingleDef,
+              onTapLink: onTapLink,
+            )
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         );

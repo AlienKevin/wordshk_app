@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
@@ -17,16 +16,14 @@ class EntryRubyLine extends StatelessWidget {
   final Color linkColor;
   final double rubyFontSize;
   final OnTapLink onTapLink;
-  final FlutterTts player;
-  const EntryRubyLine(
-      {Key? key,
-      required this.line,
-      required this.textColor,
-      required this.linkColor,
-      required this.rubyFontSize,
-      required this.onTapLink,
-      required this.player})
-      : super(key: key);
+  const EntryRubyLine({
+    Key? key,
+    required this.line,
+    required this.textColor,
+    required this.linkColor,
+    required this.rubyFontSize,
+    required this.onTapLink,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
@@ -59,7 +56,6 @@ class EntryRubyLine extends StatelessWidget {
                                     .split(RegExp(r"\s+")),
                                 alignment: Alignment.topCenter)
                             : TtsPronunciationButton(
-                                player: player,
                                 text: Platform.isIOS
                                     ? line.toPrs()
                                     : line.toString(),

@@ -22,6 +22,7 @@ import 'constants.dart';
 import 'models/entry_language.dart';
 import 'models/language.dart';
 import 'models/pronunciation_method.dart';
+import 'states/player_state.dart';
 
 const base = 'wordshk_api';
 final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
@@ -50,6 +51,7 @@ void main() {
             create: (_) => RomanizationState()),
         ChangeNotifierProvider<SearchRomanizationState>(
             create: (_) => SearchRomanizationState()),
+        ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
       ],
       child: const MyApp(),
     ),

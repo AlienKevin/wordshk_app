@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../../bridge_generated.dart' show Script;
@@ -14,18 +13,16 @@ class EntryWidget extends StatelessWidget {
   final void Function(int) updateEntryIndex;
   final OnTapLink onTapLink;
   final AutoScrollController scrollController;
-  final FlutterTts player;
 
-  const EntryWidget(
-      {Key? key,
-      required this.entryGroup,
-      required this.entryIndex,
-      required this.script,
-      required this.updateEntryIndex,
-      required this.onTapLink,
-      required this.scrollController,
-      required this.player})
-      : super(key: key);
+  const EntryWidget({
+    Key? key,
+    required this.entryGroup,
+    required this.entryIndex,
+    required this.script,
+    required this.updateEntryIndex,
+    required this.onTapLink,
+    required this.scrollController,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +75,6 @@ class EntryWidget extends StatelessWidget {
                 rubyFontSize: rubyFontSize,
                 onTapLink: onTapLink,
                 scrollController: scrollController,
-                player: player,
               )
             ]),
           ),

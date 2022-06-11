@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 import '../../models/entry.dart';
 import 'entry_ruby_line.dart';
@@ -11,7 +10,6 @@ class EntryRichLine extends StatelessWidget {
   final Color linkColor;
   final double rubyFontSize;
   final OnTapLink onTapLink;
-  final FlutterTts player;
 
   const EntryRichLine({
     Key? key,
@@ -20,7 +18,6 @@ class EntryRichLine extends StatelessWidget {
     required this.linkColor,
     required this.rubyFontSize,
     required this.onTapLink,
-    required this.player,
   }) : super(key: key);
 
   @override
@@ -33,7 +30,6 @@ class EntryRichLine extends StatelessWidget {
           linkColor: linkColor,
           rubyFontSize: rubyFontSize,
           onTapLink: onTapLink,
-          player: player,
         );
       case RichLineType.word:
         return EntryWordLine(
@@ -42,7 +38,6 @@ class EntryRichLine extends StatelessWidget {
           linkColor: linkColor,
           fontSize: rubyFontSize,
           onTapLink: onTapLink,
-          player: player,
         );
     }
   }

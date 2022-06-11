@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class PronunciationButton<Player> extends StatefulWidget {
-  final Future<void> Function(Player) play;
-  final void Function(Player) stop;
-  final Player player;
+import '../states/player_state.dart';
+
+class PronunciationButton extends StatefulWidget {
+  final Future<void> Function(int) play;
   final Alignment alignment;
 
   const PronunciationButton(
-      {Key? key,
-      required this.player,
-      required this.play,
-      required this.stop,
-      required this.alignment})
+      {Key? key, required this.play, required this.alignment})
       : super(key: key);
 
   @override
@@ -19,30 +16,28 @@ class PronunciationButton<Player> extends StatefulWidget {
 }
 
 class _PronunciationButtonState extends State<PronunciationButton> {
-  bool isPlaying = false;
+  int? playerKey;
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        visualDensity: VisualDensity.compact,
-        tooltip: "Pronunciation",
-        alignment: widget.alignment,
-        icon: Icon(isPlaying ? Icons.stop_circle : Icons.volume_up),
-        color: Theme.of(context).colorScheme.secondary,
-        padding: EdgeInsets.zero,
-        onPressed: () {
-          isPlaying
-              ? widget.stop(widget.player)
-              : widget.play(widget.player).then((_) {
-                  if (mounted) {
-                    setState(() {
-                      isPlaying = false;
-                    });
-                  }
-                });
+      visualDensity: VisualDensity.compact,
+      tooltip: "Pronunciation",
+      alignment: widget.alignment,
+      icon: Icon(playerKey != null &&
+              context.watch<PlayerState>().playerKey == playerKey
+          ? Icons.stop_circle
+          : Icons.volume_up),
+      color: Theme.of(context).colorScheme.secondary,
+      padding: EdgeInsets.zero,
+      onPressed: () {
+        if (playerKey == null) {
           setState(() {
-            isPlaying = !isPlaying;
+            playerKey = context.read<PlayerState>().getPlayerKey();
           });
-        });
+        }
+        widget.play(playerKey!);
+      },
+    );
   }
 }
