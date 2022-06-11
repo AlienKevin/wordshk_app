@@ -6,7 +6,9 @@ import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';
+import '../../models/font_size.dart';
 import '../../models/pronunciation_method.dart';
+import '../../states/entry_eg_font_size_state.dart';
 import '../../states/pronunciation_method_state.dart';
 import 'entry_ruby_segment.dart';
 
@@ -28,17 +30,36 @@ class EntryRubyLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
         final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+        final rubyFontSizePreference =
+            context.watch<EntryEgFontSizeState>().size!;
+        late final double rubyFontSizeFactor;
+        switch (rubyFontSizePreference) {
+          case FontSize.small:
+            rubyFontSizeFactor = 0.8;
+            break;
+          case FontSize.medium:
+            rubyFontSizeFactor = 1;
+            break;
+          case FontSize.large:
+            rubyFontSizeFactor = 1.2;
+            break;
+          case FontSize.veryLarge:
+            rubyFontSizeFactor = 1.5;
+            break;
+        }
+        final renderedRubyFontSize = rubyFontSize * rubyFontSizeFactor;
         return Padding(
-          padding: EdgeInsets.only(top: rubyFontSize * textScaleFactor / 1.5),
+          padding: EdgeInsets.only(
+              top: renderedRubyFontSize * textScaleFactor / 1.5),
           child: Wrap(
-              runSpacing: rubyFontSize * textScaleFactor / 1.4,
+              runSpacing: renderedRubyFontSize * textScaleFactor / 1.4,
               children: [
                 ...line.segments
                     .map((segment) => showRubySegment(
                         segment,
                         textColor,
                         linkColor,
-                        rubyFontSize,
+                        renderedRubyFontSize,
                         textScaleFactor,
                         onTapLink,
                         context))

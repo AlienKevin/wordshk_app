@@ -113,6 +113,12 @@
     "pronunciationMethodSyllableRecordings": "Syllable recordings",
     "pronunciationMethodTts": "System Text-to-speech",
 
+    "entryEgFontSize": "Font Size of Example Sentences",
+    "fontSizeSmall": "Small",
+    "fontSizeMedium": "Medium",
+    "fontSizeLarge": "Large",
+    "fontSizeVeryLarge": "Very Large",
+
     "entryRomanization": "Romanization of Entries",
     "romanizationJyutping": "Jyutping",
     "romanizationYaleNumbers": "Yale (Tone Numbers)",

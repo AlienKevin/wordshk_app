@@ -102,6 +102,12 @@
     "pronunciationMethodSyllableRecordings": "音节录音",
     "pronunciationMethodTts": "系统语音合成",
 
+    "entryEgFontSize": "词条例句字体大小",
+    "fontSizeSmall": "小",
+    "fontSizeMedium": "中",
+    "fontSizeLarge": "大",
+    "fontSizeVeryLarge": "特大",
+
     "entryRomanization": "词条拼音",
     "romanizationJyutping": "粤拼",
     "romanizationYaleNumbers": "耶鲁（数字）",

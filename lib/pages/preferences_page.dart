@@ -5,7 +5,9 @@ import 'package:wordshk/models/language.dart';
 
 import '../../bridge_generated.dart' show Romanization;
 import '../models/entry_language.dart';
+import '../models/font_size.dart';
 import '../models/pronunciation_method.dart';
+import '../states/entry_eg_font_size_state.dart';
 import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
 import '../states/pronunciation_method_state.dart';
@@ -22,6 +24,7 @@ class PreferencesPage extends StatelessWidget {
     final entryLanguage = context.watch<EntryLanguageState>().language;
     final egPronunciationMethod =
         context.watch<PronunciationMethodState>().entryEgMethod;
+    final entryEgRubySize = context.watch<EntryEgFontSizeState>().size;
     final romanization = context.watch<RomanizationState>().romanization;
     final searchRomanization =
         context.watch<SearchRomanizationState>().romanization;
@@ -43,6 +46,12 @@ class PreferencesPage extends StatelessWidget {
         context
             .read<PronunciationMethodState>()
             .updatePronunciationMethod(newMethod);
+      }
+    }
+
+    onEntryEgRubySizechange(FontSize? newSize) {
+      if (newSize != null) {
+        context.read<EntryEgFontSizeState>().updateSize(newSize);
       }
     }
 
@@ -83,6 +92,10 @@ class PreferencesPage extends StatelessWidget {
             String title, PronunciationMethod value) =>
         radioListTile<PronunciationMethod>(title, value, egPronunciationMethod,
             onEntryEgPronunciationMethodChange);
+
+    entryEgRubySizeRadioListTile(String title, FontSize value) =>
+        radioListTile<FontSize>(
+            title, value, entryEgRubySize, onEntryEgRubySizechange);
 
     romanizationRadioListTile(String title, Romanization value) =>
         radioListTile<Romanization>(
@@ -131,6 +144,18 @@ class PreferencesPage extends StatelessWidget {
                   AppLocalizations.of(context)!
                       .pronunciationMethodSyllableRecordings,
                   PronunciationMethod.syllableRecordings),
+              const SizedBox(height: 10),
+              ...title(AppLocalizations.of(context)!.entryEgFontSize),
+              entryEgRubySizeRadioListTile(
+                  AppLocalizations.of(context)!.fontSizeSmall, FontSize.small),
+              entryEgRubySizeRadioListTile(
+                  AppLocalizations.of(context)!.fontSizeMedium,
+                  FontSize.medium),
+              entryEgRubySizeRadioListTile(
+                  AppLocalizations.of(context)!.fontSizeLarge, FontSize.large),
+              entryEgRubySizeRadioListTile(
+                  AppLocalizations.of(context)!.fontSizeVeryLarge,
+                  FontSize.veryLarge),
               const SizedBox(height: 10),
               ...title(AppLocalizations.of(context)!.entryRomanization),
               romanizationRadioListTile(

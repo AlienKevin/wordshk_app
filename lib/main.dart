@@ -8,6 +8,7 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/pages/home_page.dart';
+import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
@@ -20,6 +21,7 @@ import 'package:wordshk/states/search_romanization_state.dart';
 import 'bridge_generated.dart';
 import 'constants.dart';
 import 'models/entry_language.dart';
+import 'models/font_size.dart';
 import 'models/language.dart';
 import 'models/pronunciation_method.dart';
 import 'states/player_state.dart';
@@ -47,6 +49,8 @@ void main() {
             create: (_) => EntryLanguageState()),
         ChangeNotifierProvider<PronunciationMethodState>(
             create: (_) => PronunciationMethodState()),
+        ChangeNotifierProvider<EntryEgFontSizeState>(
+            create: (_) => EntryEgFontSizeState()),
         ChangeNotifierProvider<RomanizationState>(
             create: (_) => RomanizationState()),
         ChangeNotifierProvider<SearchRomanizationState>(
@@ -123,6 +127,13 @@ class _MyAppState extends State<MyApp> {
                   ? PronunciationMethod.tts
                   : PronunciationMethod.syllableRecordings)
               : PronunciationMethod.values[methodIndex]);
+    });
+
+    SharedPreferences.getInstance().then((prefs) async {
+      final fontSizeIndex = prefs.getInt("entryEgFontSize");
+      context.read<EntryEgFontSizeState>().updateSize(fontSizeIndex == null
+          ? FontSize.medium
+          : FontSize.values[fontSizeIndex]);
     });
 
     SharedPreferences.getInstance().then((prefs) async {
