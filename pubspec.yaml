@@ -58,7 +58,7 @@ flutter:
   fonts:
     - family: ChironHeiHK
       fonts:
-        - asset: fonts/ChironHeiHK-N.otf
+        - asset: fonts/ChironHeiHK-N.ttf
 
 flutter_native_splash:
   color: "ffffff"
