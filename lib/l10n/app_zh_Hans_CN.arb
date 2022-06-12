@@ -117,6 +117,10 @@
     "romanizationSidneyLau": "刘锡祥拼音",
     "romanizationIpa": "国际音标",
 
+    "entryEgJumpyPrs": "跳跃式词条注音",
+    "enabled": "开启",
+    "disabled": "关闭",
+
     "searchRomanization": "搜索拼音",
 
     "dictionaryLicense": "字典授权协议",

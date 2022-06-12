@@ -8,6 +8,7 @@ import '../models/entry_language.dart';
 import '../models/font_size.dart';
 import '../models/pronunciation_method.dart';
 import '../states/entry_eg_font_size_state.dart';
+import '../states/entry_eg_jumpy_prs_state.dart';
 import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
 import '../states/pronunciation_method_state.dart';
@@ -26,6 +27,7 @@ class PreferencesPage extends StatelessWidget {
         context.watch<PronunciationMethodState>().entryEgMethod;
     final entryEgRubySize = context.watch<EntryEgFontSizeState>().size;
     final romanization = context.watch<RomanizationState>().romanization;
+    final isJumpy = context.watch<EntryEgJumpyPrsState>().isJumpy;
     final searchRomanization =
         context.watch<SearchRomanizationState>().romanization;
 
@@ -58,6 +60,12 @@ class PreferencesPage extends StatelessWidget {
     onRomanizationChange(Romanization? newRomanization) {
       if (newRomanization != null) {
         context.read<RomanizationState>().updateRomanization(newRomanization);
+      }
+    }
+
+    onEntryEgJumpyPrsChange(bool? newIsJumpy) {
+      if (newIsJumpy != null) {
+        context.read<EntryEgJumpyPrsState>().updateIsJumpy(newIsJumpy);
       }
     }
 
@@ -179,6 +187,17 @@ class PreferencesPage extends StatelessWidget {
               romanizationRadioListTile(
                   AppLocalizations.of(context)!.romanizationIpa,
                   Romanization.Ipa),
+              const SizedBox(height: 10),
+              ...title(AppLocalizations.of(context)!.entryEgJumpyPrs),
+              SwitchListTile(
+                title: Text(isJumpy
+                    ? AppLocalizations.of(context)!.enabled
+                    : AppLocalizations.of(context)!.disabled),
+                value: isJumpy,
+                onChanged: onEntryEgJumpyPrsChange,
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              ),
               const SizedBox(height: 10),
               ...title(AppLocalizations.of(context)!.searchRomanization),
               searchRomanizationRadioListTile(

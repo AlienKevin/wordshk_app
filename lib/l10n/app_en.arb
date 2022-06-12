@@ -128,6 +128,10 @@
     "romanizationSidneyLau": "Sidney Lau",
     "romanizationIpa": "IPA",
 
+    "entryEgJumpyPrs": "Jumpy Pronunciation in Example Sentences",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+
     "searchRomanization": "Romanization for Searching",
 
     "dictionaryLicense": "Dictionary License",

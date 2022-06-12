@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
 import '../../constants.dart';
@@ -66,54 +67,75 @@ List<Widget> showRubySegment(
               child: seg))
           .toList();
   }
+  final isJumpy = context.watch<EntryEgJumpyPrsState>().isJumpy;
   return [
     Stack(alignment: Alignment.center, children: [
-      Positioned.fill(
-          bottom: 0,
-          child: Transform(
-              transform: Matrix4.translationValues(0, -rubySize * 1.25, 0),
-              child: Container(
-                color: lightGreyColor,
-                height: rubySize,
-              ))),
-      Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: IterableZip([prs, prsTones]).map((pair) {
-            final pr = pair[0] as String;
-            final tone = pair[1] as int;
-            final double yPos = ((tone == 1)
-                    ? 2.6
-                    : tone == 2
-                        ? 2.3
-                        : tone == 3
-                            ? 2
-                            : tone == 5
-                                ? 1.7
-                                : tone == 4
-                                    ? 1.4
-                                    : 1.5) *
-                -rubyYPos;
-            final double angle = (tone == 1 || tone == 3 || tone == 6)
-                ? 0
-                : tone == 2
-                    ? -pi / 6.0
-                    : (tone == 5 ? -pi / 7.0 : pi / 7.0);
-            return Container(
-                alignment: Alignment.bottomCenter,
-                child: Center(
-                    child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.translationValues(0, yPos, 0)
-                          ..rotateZ(angle),
-                        child: Builder(builder: (context) {
-                          return RichText(
-                              text: ScalableTextSpan(context,
-                                  text: pr,
-                                  style: TextStyle(
-                                      fontSize: rubySize * 0.5,
-                                      color: textColor)));
-                        }))));
-          }).toList()),
+      ...isJumpy
+          ? [
+              Positioned.fill(
+                  bottom: 0,
+                  child: Transform(
+                      transform:
+                          Matrix4.translationValues(0, -rubySize * 1.25, 0),
+                      child: Container(
+                        color: lightGreyColor,
+                        height: rubySize,
+                      ))),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: IterableZip([prs, prsTones]).map((pair) {
+                    final pr = pair[0] as String;
+                    final tone = pair[1] as int;
+                    final double yPos = ((tone == 1)
+                            ? 2.6
+                            : tone == 2
+                                ? 2.3
+                                : tone == 3
+                                    ? 2
+                                    : tone == 5
+                                        ? 1.7
+                                        : tone == 4
+                                            ? 1.4
+                                            : 1.5) *
+                        -rubyYPos;
+                    final double angle = (tone == 1 || tone == 3 || tone == 6)
+                        ? 0
+                        : tone == 2
+                            ? -pi / 6.0
+                            : (tone == 5 ? -pi / 7.0 : pi / 7.0);
+                    return Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Center(
+                            child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.translationValues(0, yPos, 0)
+                                  ..rotateZ(angle),
+                                child: Builder(builder: (context) {
+                                  return RichText(
+                                      text: ScalableTextSpan(context,
+                                          text: pr,
+                                          style: TextStyle(
+                                              fontSize: rubySize * 0.5,
+                                              color: textColor)));
+                                }))));
+                  }).toList())
+            ]
+          : [
+              Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Center(
+                      child: Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.translationValues(0, -rubySize, 0),
+                          child: Builder(builder: (context) {
+                            return RichText(
+                                text: ScalableTextSpan(context,
+                                    text: prs.join(" "),
+                                    style: TextStyle(
+                                        fontSize: rubySize * 0.5,
+                                        color: textColor)));
+                          }))))
+            ],
       text
     ])
   ];

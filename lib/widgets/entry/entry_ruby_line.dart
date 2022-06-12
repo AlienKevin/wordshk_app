@@ -9,6 +9,7 @@ import '../../models/entry.dart';
 import '../../models/font_size.dart';
 import '../../models/pronunciation_method.dart';
 import '../../states/entry_eg_font_size_state.dart';
+import '../../states/entry_eg_jumpy_prs_state.dart';
 import '../../states/pronunciation_method_state.dart';
 import 'entry_ruby_segment.dart';
 
@@ -48,11 +49,20 @@ class EntryRubyLine extends StatelessWidget {
             break;
         }
         final renderedRubyFontSize = rubyFontSize * rubyFontSizeFactor;
+        final isJumpy = context.watch<EntryEgJumpyPrsState>().isJumpy;
+        final topPaddingFactor = isJumpy ? 3.5 : 1.0;
+        final wrapRunSpacingFactor = isJumpy ? 3 : 1;
         return Padding(
           padding: EdgeInsets.only(
-              top: renderedRubyFontSize * 3.5 * textScaleFactor / 1.5),
+              top: renderedRubyFontSize *
+                  topPaddingFactor *
+                  textScaleFactor /
+                  1.5),
           child: Wrap(
-              runSpacing: renderedRubyFontSize * 3.6 * textScaleFactor / 1.4,
+              runSpacing: renderedRubyFontSize *
+                  wrapRunSpacingFactor *
+                  textScaleFactor *
+                  0.85,
               children: [
                 ...line.segments
                     .map((segment) => showRubySegment(

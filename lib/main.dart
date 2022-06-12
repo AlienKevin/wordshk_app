@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
+import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
@@ -53,6 +54,8 @@ void main() {
             create: (_) => EntryEgFontSizeState()),
         ChangeNotifierProvider<RomanizationState>(
             create: (_) => RomanizationState()),
+        ChangeNotifierProvider<EntryEgJumpyPrsState>(
+            create: (_) => EntryEgJumpyPrsState()),
         ChangeNotifierProvider<SearchRomanizationState>(
             create: (_) => SearchRomanizationState()),
         ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
@@ -142,6 +145,13 @@ class _MyAppState extends State<MyApp> {
           romanizationIndex == null
               ? Romanization.Jyutping
               : Romanization.values[romanizationIndex]);
+    });
+
+    SharedPreferences.getInstance().then((prefs) async {
+      final isJumpy = prefs.getInt("entryEgJumpyPrs");
+      context
+          .read<EntryEgJumpyPrsState>()
+          .updateIsJumpy(isJumpy == null ? false : true);
     });
 
     SharedPreferences.getInstance().then((prefs) async {
