@@ -50,9 +50,9 @@ class EntryRubyLine extends StatelessWidget {
         final renderedRubyFontSize = rubyFontSize * rubyFontSizeFactor;
         return Padding(
           padding: EdgeInsets.only(
-              top: renderedRubyFontSize * textScaleFactor / 1.5),
+              top: renderedRubyFontSize * 3.5 * textScaleFactor / 1.5),
           child: Wrap(
-              runSpacing: renderedRubyFontSize * textScaleFactor / 1.4,
+              runSpacing: renderedRubyFontSize * 3.6 * textScaleFactor / 1.4,
               children: [
                 ...line.segments
                     .map((segment) => showRubySegment(
