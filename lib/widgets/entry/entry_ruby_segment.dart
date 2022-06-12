@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
@@ -21,6 +22,7 @@ List<Widget> showRubySegment(
   final double rubyYPos = rubySize * textScaleFactor;
   late final Widget text;
   late final List<String> prs;
+  late final List<int> prsTones;
   switch (segment.type) {
     case RubySegmentType.punc:
       text = Builder(builder: (context) {
@@ -31,6 +33,7 @@ List<Widget> showRubySegment(
                     fontSize: rubySize, height: 1, color: textColor)));
       });
       prs = [""];
+      prsTones = [6]; // empty pr defaults to 6 tones (this is arbitrary)
       break;
     case RubySegmentType.word:
       text = Builder(builder: (context) {
@@ -44,6 +47,7 @@ List<Widget> showRubySegment(
           .read<RomanizationState>()
           .showPrs(segment.segment.prs)
           .split(" ");
+      prsTones = segment.segment.prsTones;
       break;
     case RubySegmentType.linkedWord:
       return (segment.segment.words as List<RubySegmentWord>)
@@ -74,8 +78,9 @@ List<Widget> showRubySegment(
               ))),
       Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: prs.map((pr) {
-            final int tone = pr.isEmpty ? 6 : int.parse(pr[pr.length - 1]);
+          children: IterableZip([prs, prsTones]).map((pair) {
+            final pr = pair[0] as String;
+            final tone = pair[1] as int;
             final double yPos = ((tone == 1)
                     ? 2.6
                     : tone == 2

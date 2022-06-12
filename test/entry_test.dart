@@ -67,11 +67,13 @@ void main() {
                               RubySegmentWord(
                                   EntryWord(
                                       [EntryText(EntryTextStyle.normal, "性")]),
-                                  ["sing3"]),
+                                  ["sing3"],
+                                  [3]),
                               RubySegmentWord(
                                   EntryWord(
                                       [EntryText(EntryTextStyle.bold, "命")]),
-                                  ["ming6"])
+                                  ["ming6"],
+                                  [6])
                             ]))
                       ])),
                   yueSimp: RichLine(
@@ -83,11 +85,13 @@ void main() {
                               RubySegmentWord(
                                   EntryWord(
                                       [EntryText(EntryTextStyle.normal, "性")]),
-                                  ["sing3"]),
+                                  ["sing3"],
+                                  [3]),
                               RubySegmentWord(
                                   EntryWord(
                                       [EntryText(EntryTextStyle.bold, "命")]),
-                                  ["ming6"])
+                                  ["ming6"],
+                                  [6])
                             ]))
                       ])),
                   eng: Line([Segment(SegmentType.text, "life; lives")]))

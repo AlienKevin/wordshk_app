@@ -230,12 +230,16 @@ class RubySegment extends Equatable {
 class RubySegmentWord extends Equatable {
   final EntryWord word;
   final List<String> prs;
+  final List<int> prsTones;
 
-  const RubySegmentWord(this.word, this.prs);
+  const RubySegmentWord(this.word, this.prs, this.prsTones);
 
   RubySegmentWord.fromJson(List<dynamic> json)
       : word = EntryWord.fromJson(json[0]),
-        prs = List.from(json[1]);
+        prs = List.from(json[1]),
+        prsTones = List.from(json[1])
+            .map((pr) => int.parse(pr[pr.length - 1]))
+            .toList();
 
   @override
   String toString() => word.toString();
