@@ -1480,9 +1480,9 @@ dependencies = [
 
 [[package]]
 name = "wordshk_tools"
-version = "3.13.3-beta"
+version = "3.14.1-beta"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6db57cec5e4aa9a49978e45e45fb6e26fcbad8ab149d6ce67dc486b25322d216"
+checksum = "78ff0a5e53a355909def246d6a8218a4a6308b68f7aa69184f82c20a3fc0b20d"
 dependencies = [
  "csv",
  "deunicode",
