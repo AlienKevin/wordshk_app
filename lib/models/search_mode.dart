@@ -7,12 +7,13 @@ enum SearchMode {
   english,
 }
 
-translateSearchMode(SearchMode searchMode, AppLocalizations context) {
+translateSearchMode(SearchMode searchMode, String searchRomanizationName,
+    AppLocalizations context) {
   switch (searchMode) {
     case SearchMode.variant:
       return context.searchModeVariant;
     case SearchMode.pr:
-      return context.searchModePr;
+      return searchRomanizationName;
     case SearchMode.combined:
       return context.searchModeCombined;
     case SearchMode.english:

@@ -21,6 +21,7 @@ import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import '../states/search_romanization_state.dart';
+import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
 
@@ -330,23 +331,7 @@ class _HomePageState extends State<HomePage> {
     final s = AppLocalizations.of(context)!;
     final searchRomanization =
         context.read<SearchRomanizationState>().romanization;
-    late final searchRomanizationName;
-    switch (searchRomanization) {
-      case Romanization.Jyutping:
-        searchRomanizationName = s.romanizationJyutping;
-        break;
-      case Romanization.YaleNumbers:
-        searchRomanizationName = s.romanizationYaleNumbers;
-        break;
-      case Romanization.CantonesePinyin:
-        searchRomanizationName = s.romanizationCantonesePinyin;
-        break;
-      case Romanization.SidneyLau:
-        searchRomanizationName = s.romanizationSidneyLau;
-        break;
-      default:
-        throw "Unsupported search romanization $searchRomanization in showCombinedSearchResults.";
-    }
+    final searchRomanizationName = getRomanizationName(searchRomanization, s);
     return [
       ...variantSearchResults.isNotEmpty
           ? [

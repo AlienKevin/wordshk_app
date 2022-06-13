@@ -10,9 +10,12 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/input_mode_state.dart';
+import 'package:wordshk/states/search_romanization_state.dart';
+import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/search_mode_button.dart';
 import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
 
+import '../bridge_generated.dart' show Romanization;
 import '../constants.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
@@ -284,12 +287,35 @@ class IsSearching extends State<SearchBar> {
     Color? buttonColor = theme.textTheme.bodyMedium!.color;
     final textColor = theme.textTheme.bodyMedium!.color;
 
+    final searchRomanization =
+        context.watch<SearchRomanizationState>().romanization;
+    final searchRomanizationName =
+        getRomanizationName(searchRomanization, AppLocalizations.of(context)!);
+    late final String searchRomanizationExample;
+    switch (searchRomanization) {
+      case Romanization.Jyutping:
+        searchRomanizationExample = "hou2 coi2";
+        break;
+      case Romanization.YaleNumbers:
+        searchRomanizationExample = "hou2 choi2";
+        break;
+      case Romanization.CantonesePinyin:
+        searchRomanizationExample = "hou2 tsoi2";
+        break;
+      case Romanization.SidneyLau:
+        searchRomanizationExample = "ho2 choi2";
+        break;
+      default:
+        throw "Unsupported romanization $searchRomanization in search_bar.dart";
+    }
+
     searchModeRadioListTile(
             SearchMode mode, String subtitle, SearchMode groupMode) =>
         SearchModeRadioListTile(
           activeColor: blueColor,
           title: Text(
-            translateSearchMode(mode, AppLocalizations.of(context)!),
+            translateSearchMode(
+                mode, searchRomanizationName, AppLocalizations.of(context)!),
             textAlign: TextAlign.end,
           ),
           subtitle: Text(subtitle, textAlign: TextAlign.end),
@@ -339,7 +365,9 @@ class IsSearching extends State<SearchBar> {
                             fillColor: Theme.of(context).canvasColor,
                             contentPadding:
                                 const EdgeInsets.only(left: 8, top: -4),
-                            hintText: translateSearchMode(searchModeState.mode,
+                            hintText: translateSearchMode(
+                                searchModeState.mode,
+                                searchRomanizationName,
                                 AppLocalizations.of(context)!),
                             hintStyle: TextStyle(
                               color: textColor,
@@ -403,7 +431,7 @@ class IsSearching extends State<SearchBar> {
                 portalFollower: Material(
                     color: Theme.of(context).canvasColor,
                     child: Container(
-                      width: 300,
+                      width: 270,
                       height: 290,
                       decoration: BoxDecoration(
                         border: Border(
@@ -420,19 +448,19 @@ class IsSearching extends State<SearchBar> {
                                   children: <Widget>[
                                     searchModeRadioListTile(
                                         SearchMode.combined,
-                                        "(e.g. 好彩/hou2 coi2/lucky)",
+                                        "好彩/$searchRomanizationExample/lucky",
                                         searchModeState.mode),
                                     const Divider(thickness: 2),
                                     searchModeRadioListTile(SearchMode.variant,
-                                        "(e.g. 好彩)", searchModeState.mode),
+                                        "好彩", searchModeState.mode),
                                     const Divider(thickness: 2),
                                     searchModeRadioListTile(
                                         SearchMode.pr,
-                                        "(e.g. hou2 coi2)",
+                                        searchRomanizationExample,
                                         searchModeState.mode),
                                     const Divider(thickness: 2),
                                     searchModeRadioListTile(SearchMode.english,
-                                        "(e.g. lucky)", searchModeState.mode),
+                                        "lucky", searchModeState.mode),
                                   ])),
                     )),
                 child: SearchModeButton(

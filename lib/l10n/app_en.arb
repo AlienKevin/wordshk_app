@@ -13,11 +13,11 @@
     "searchResultsCategoryEnglish": "English",
 
     "searchModeVariant": "Word",
-    "searchModePr": "Jyutping",
+    "searchModePr": "Romanization",
     "searchModeCombined": "Auto Detection",
     "searchModeEnglish": "English",
     "searchModeVariantIcon": "W",
-    "searchModePrIcon": "J",
+    "searchModePrIcon": "R",
     "searchModeCombinedIcon": "A",
     "searchModeEnglishIcon": "E",
 
