@@ -148,7 +148,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     SharedPreferences.getInstance().then((prefs) async {
-      final isJumpy = prefs.getInt("entryEgJumpyPrs");
+      final isJumpy = prefs.getBool("entryEgJumpyPrs");
       context
           .read<EntryEgJumpyPrsState>()
           .updateIsJumpy(isJumpy == null ? false : true);
