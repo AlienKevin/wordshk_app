@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 import '../../models/entry.dart';
 import 'entry_line.dart';
@@ -9,14 +8,14 @@ class EntryClause extends StatelessWidget {
   final String? tag;
   final TextStyle lineTextStyle;
   final OnTapLink onTapLink;
-  final FlutterTts? player;
+  final bool isCantonese;
   const EntryClause(
       {Key? key,
       required this.clause,
       this.tag,
       required this.lineTextStyle,
       required this.onTapLink,
-      this.player})
+      required this.isCantonese})
       : super(key: key);
 
   @override
@@ -24,10 +23,10 @@ class EntryClause extends StatelessWidget {
         children: clause.lines.asMap().keys.toList().map((index) {
           return EntryLine(
             line: clause.lines[index],
-            player: player,
             tag: index == 0 ? tag : null,
             lineTextStyle: lineTextStyle,
             onTapLink: onTapLink,
+            isCantonese: isCantonese,
           );
         }).toList(),
         crossAxisAlignment: CrossAxisAlignment.start,

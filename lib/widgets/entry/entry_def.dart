@@ -43,7 +43,8 @@ class EntryDef extends StatelessWidget {
                             AppLocalizations.of(context)!.cantonese +
                             ") ",
                         lineTextStyle: lineTextStyle,
-                        onTapLink: onTapLink)
+                        onTapLink: onTapLink,
+                        isCantonese: true)
                   ]
                 : [],
             ...entryLanguage == EntryLanguage.english ||
@@ -57,7 +58,8 @@ class EntryDef extends StatelessWidget {
                                 AppLocalizations.of(context)!.english +
                                 ") ",
                             lineTextStyle: lineTextStyle,
-                            onTapLink: onTapLink)
+                            onTapLink: onTapLink,
+                            isCantonese: false)
                   ]
                 : [],
             EntryEgs(

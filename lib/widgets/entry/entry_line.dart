@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';
@@ -10,14 +9,14 @@ class EntryLine extends StatelessWidget {
   final String? tag;
   final TextStyle lineTextStyle;
   final OnTapLink onTapLink;
-  final FlutterTts? player;
+  final bool isCantonese;
   const EntryLine(
       {Key? key,
       required this.line,
       this.tag,
       required this.lineTextStyle,
       required this.onTapLink,
-      this.player})
+      required this.isCantonese})
       : super(key: key);
 
   @override
@@ -37,7 +36,7 @@ class EntryLine extends StatelessWidget {
                   .map((segment) => showSegment(segment,
                       Theme.of(context).colorScheme.secondary, onTapLink))
                   .toList(),
-              ...player != null
+              ...isCantonese
                   ? [
                       WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
