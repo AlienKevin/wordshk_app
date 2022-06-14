@@ -4,11 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 class EntryEgJumpyPrsState with ChangeNotifier {
   bool isJumpy = false;
 
-  void updateIsJumpy(bool newIsJumpy) {
+  EntryEgJumpyPrsState(SharedPreferences prefs) {
+    final newIsJumpy = prefs.getBool("entryEgJumpyPrs");
+    isJumpy = newIsJumpy == null ? false : true;
+  }
+
+  void updateIsJumpy(bool newIsJumpy, {bool saveToSharedPreferences = true}) {
     isJumpy = newIsJumpy;
     notifyListeners();
-    SharedPreferences.getInstance().then((prefs) async {
-      prefs.setBool("entryEgJumpyPrs", newIsJumpy);
-    });
+    if (saveToSharedPreferences) {
+      SharedPreferences.getInstance().then((prefs) async {
+        prefs.setBool("entryEgJumpyPrs", newIsJumpy);
+      });
+    }
   }
 }

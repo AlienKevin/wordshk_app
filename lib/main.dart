@@ -21,10 +21,6 @@ import 'package:wordshk/states/search_romanization_state.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
-import 'models/entry_language.dart';
-import 'models/font_size.dart';
-import 'models/language.dart';
-import 'models/pronunciation_method.dart';
 import 'states/player_state.dart';
 
 const base = 'wordshk_api';
@@ -36,7 +32,9 @@ late final dylib = Platform.isIOS
         : DynamicLibrary.open(path);
 late final api = WordshkApiImpl(dylib);
 
-void main() {
+main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // mandatory when awaiting on main
+  final prefs = await SharedPreferences.getInstance();
   runApp(
     MultiProvider(
       providers: [
@@ -45,19 +43,20 @@ void main() {
         ChangeNotifierProvider<SearchQueryState>(
             create: (_) => SearchQueryState()),
         ChangeNotifierProvider<InputModeState>(create: (_) => InputModeState()),
-        ChangeNotifierProvider<LanguageState>(create: (_) => LanguageState()),
+        ChangeNotifierProvider<LanguageState>(
+            create: (context) => LanguageState(prefs, context)),
         ChangeNotifierProvider<EntryLanguageState>(
-            create: (_) => EntryLanguageState()),
+            create: (_) => EntryLanguageState(prefs)),
         ChangeNotifierProvider<PronunciationMethodState>(
-            create: (_) => PronunciationMethodState()),
+            create: (_) => PronunciationMethodState(prefs)),
         ChangeNotifierProvider<EntryEgFontSizeState>(
-            create: (_) => EntryEgFontSizeState()),
+            create: (_) => EntryEgFontSizeState(prefs)),
         ChangeNotifierProvider<RomanizationState>(
-            create: (_) => RomanizationState()),
+            create: (_) => RomanizationState(prefs), lazy: false),
         ChangeNotifierProvider<EntryEgJumpyPrsState>(
-            create: (_) => EntryEgJumpyPrsState()),
+            create: (_) => EntryEgJumpyPrsState(prefs)),
         ChangeNotifierProvider<SearchRomanizationState>(
-            create: (_) => SearchRomanizationState()),
+            create: (_) => SearchRomanizationState(prefs)),
         ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
       ],
       child: const MyApp(),
@@ -97,69 +96,6 @@ class _MyAppState extends State<MyApp> {
     ]).then((files) {
       api.initApi(
           apiJson: files[0], englishIndexJson: files[1], wordList: files[2]);
-    });
-
-    SharedPreferences.getInstance().then((prefs) async {
-      final languageIndex = prefs.getInt("language");
-      if (languageIndex == null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final languageCode = Localizations.localeOf(context).toString();
-          final language =
-              Language.values.byName(languageCode.replaceAll("_", ""));
-          context.read<LanguageState>().updateLanguage(language);
-        });
-      } else {
-        context
-            .read<LanguageState>()
-            .updateLanguage(Language.values[languageIndex]);
-      }
-    });
-
-    SharedPreferences.getInstance().then((prefs) async {
-      final languageIndex = prefs.getInt("entryLanguage");
-      context.read<EntryLanguageState>().updateLanguage(languageIndex == null
-          ? EntryLanguage.both
-          : EntryLanguage.values[languageIndex]);
-    });
-
-    SharedPreferences.getInstance().then((prefs) async {
-      final methodIndex = prefs.getInt("entryEgPronunciationMethod");
-      context.read<PronunciationMethodState>().updatePronunciationMethod(
-          methodIndex == null
-              ? (Platform.isIOS
-                  ? PronunciationMethod.tts
-                  : PronunciationMethod.syllableRecordings)
-              : PronunciationMethod.values[methodIndex]);
-    });
-
-    SharedPreferences.getInstance().then((prefs) async {
-      final fontSizeIndex = prefs.getInt("entryEgFontSize");
-      context.read<EntryEgFontSizeState>().updateSize(fontSizeIndex == null
-          ? FontSize.medium
-          : FontSize.values[fontSizeIndex]);
-    });
-
-    SharedPreferences.getInstance().then((prefs) async {
-      final romanizationIndex = prefs.getInt("romanization");
-      context.read<RomanizationState>().updateRomanization(
-          romanizationIndex == null
-              ? Romanization.Jyutping
-              : Romanization.values[romanizationIndex]);
-    });
-
-    SharedPreferences.getInstance().then((prefs) async {
-      final isJumpy = prefs.getBool("entryEgJumpyPrs");
-      context
-          .read<EntryEgJumpyPrsState>()
-          .updateIsJumpy(isJumpy == null ? false : true);
-    });
-
-    SharedPreferences.getInstance().then((prefs) async {
-      final romanizationIndex = prefs.getInt("searchRomanization");
-      context.read<SearchRomanizationState>().updateRomanization(
-          romanizationIndex == null
-              ? Romanization.Jyutping
-              : Romanization.values[romanizationIndex]);
     });
   }
 
@@ -261,7 +197,7 @@ class _MyAppState extends State<MyApp> {
     return Portal(
         child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      locale: context.watch<LanguageState>().language?.toLocale,
+      locale: context.watch<LanguageState>().language.toLocale,
       title: 'words.hk',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       localeResolutionCallback: (

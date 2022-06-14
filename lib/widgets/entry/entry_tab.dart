@@ -97,7 +97,7 @@ class EntryTab extends StatelessWidget {
                         child: EntryDef(
                           def: entry.defs[index - 1],
                           entryLanguage:
-                              context.watch<EntryLanguageState>().language!,
+                              context.watch<EntryLanguageState>().language,
                           script: script,
                           lineTextStyle: lineTextStyle,
                           linkColor: linkColor,

@@ -32,7 +32,7 @@ class EntryRubyLine extends StatelessWidget {
   Widget build(BuildContext context) => Builder(builder: (context) {
         final textScaleFactor = MediaQuery.of(context).textScaleFactor;
         final rubyFontSizePreference =
-            context.watch<EntryEgFontSizeState>().size!;
+            context.watch<EntryEgFontSizeState>().size;
         late final double rubyFontSizeFactor;
         switch (rubyFontSizePreference) {
           case FontSize.small:
