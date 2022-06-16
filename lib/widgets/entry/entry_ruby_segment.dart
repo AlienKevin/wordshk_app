@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
-import '../../constants.dart';
 import '../../models/entry.dart';
 import '../../states/romanization_state.dart';
 import 'entry_word.dart';
@@ -78,7 +77,7 @@ List<Widget> showRubySegment(
                       transform:
                           Matrix4.translationValues(0, -rubySize * 1.25, 0),
                       child: Container(
-                        color: lightGreyColor,
+                        color: Theme.of(context).dividerColor,
                         height: rubySize,
                       ))),
               Row(
