@@ -55,7 +55,8 @@ class PreferencesPage extends StatelessWidget {
               tiles: <SettingsTile>[
                 SettingsTile.navigation(
                   title: Text(s.searchRomanization),
-                  value: Text(getRomanizationName(searchRomanization, s)),
+                  value: Text(getRomanizationShortName(
+                      searchRomanization, s, language)),
                   onPressed: (context) {
                     Navigator.push(
                         context,
@@ -82,7 +83,8 @@ class PreferencesPage extends StatelessWidget {
                 ),
                 SettingsTile.navigation(
                   title: Text(s.entryRomanization),
-                  value: Text(getRomanizationName(romanization, s)),
+                  value:
+                      Text(getRomanizationShortName(romanization, s, language)),
                   onPressed: (context) {
                     Navigator.push(
                         context,

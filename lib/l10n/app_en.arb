@@ -117,7 +117,9 @@
 
     "entryEgPronunciationMethod": "Example Pronunciation Method",
     "pronunciationMethodSyllableRecordings": "Syllable recordings",
-    "pronunciationMethodTts": "Text-to-Speech",
+    "pronunciationMethodTts": "System Text-to-Speech",
+    "pronunciationMethodSyllableRecordingsShort": "Record",
+    "pronunciationMethodTtsShort": "TTS",
 
     "entryEgFontSize": "Example Font Size",
     "fontSizeSmall": "Small",
@@ -133,6 +135,13 @@
     "romanizationGuangdong": "Guangdong Romanization",
     "romanizationSidneyLau": "Sidney Lau",
     "romanizationIpa": "IPA",
+    "romanizationJyutpingShort": "Jyutping",
+    "romanizationYaleNumbersShort": "Yale (Number)",
+    "romanizationYaleDiacriticsShort": "Yale (Diacritic)",
+    "romanizationCantonesePinyinShort": "Canto Pinyin",
+    "romanizationGuangdongShort": "Guangdong",
+    "romanizationSidneyLauShort": "Sidney Lau",
+    "romanizationIpaShort": "IPA",
 
     "entryEgJumpyPrs": "Jumpy Pronunciation in Example",
     "enabled": "Enabled",

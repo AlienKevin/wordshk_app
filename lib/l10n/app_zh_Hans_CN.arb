@@ -95,6 +95,8 @@
     "general": "通用",
     "dictionarySearch": "词典搜索",
     "dictionaryDefinition": "词条",
+    "dictionaryExample": "词条例句",
+    "annotatedExample": "注音例句",
 
     "language": "语言",
     "entryExplanationsLanguage": "词条解释语言",
@@ -102,11 +104,11 @@
     "entryLanguageEnglish": "英语",
     "entryLanguageBoth": "双语",
 
-    "entryEgPronunciationMethod": "词条注音例句发音方式",
+    "entryEgPronunciationMethod": "注音例句发音方式",
     "pronunciationMethodSyllableRecordings": "音节录音",
     "pronunciationMethodTts": "系统语音合成",
 
-    "entryEgFontSize": "词条注音例句字体大小",
+    "entryEgFontSize": "注音例句字体大小",
     "fontSizeSmall": "小",
     "fontSizeMedium": "中",
     "fontSizeLarge": "大",
@@ -121,7 +123,7 @@
     "romanizationSidneyLau": "刘锡祥拼音",
     "romanizationIpa": "国际音标",
 
-    "entryEgJumpyPrs": "跳跃式词条例句注音",
+    "entryEgJumpyPrs": "跳跃式注音",
     "enabled": "开启",
     "disabled": "关闭",
 
