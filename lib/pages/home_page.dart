@@ -287,7 +287,8 @@ class _HomePageState extends State<HomePage> {
                   text: result.pr, style: textStyle.copyWith(color: greyColor)),
               TextSpan(
                   text: "\n" + result.eng,
-                  style: textStyle.copyWith(color: greyColor)),
+                  style: textStyle.copyWith(
+                      fontWeight: FontWeight.normal, color: greyColor)),
             ],
           ));
     }).toList();
