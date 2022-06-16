@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
@@ -70,7 +71,7 @@ class _EntryPageState extends State<EntryPage> {
                           "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
                       context.read<PlayerState>().stop();
                     },
-                    icon: const Icon(Icons.edit))
+                    icon: Icon(PlatformIcons(context).edit))
               ],
             ),
             body: FutureBuilder(

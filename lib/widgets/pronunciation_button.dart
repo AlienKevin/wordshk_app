@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../states/player_state.dart';
@@ -26,8 +28,10 @@ class _PronunciationButtonState extends State<PronunciationButton> {
       alignment: widget.alignment,
       icon: Icon(playerKey != null &&
               context.watch<PlayerState>().playerKey == playerKey
-          ? Icons.stop_circle
-          : Icons.volume_up),
+          ? isMaterial(context)
+              ? Icons.stop_circle
+              : CupertinoIcons.stop_circle_fill
+          : PlatformIcons(context).volumeUp),
       color: Theme.of(context).colorScheme.secondary,
       padding: EdgeInsets.zero,
       onPressed: () {

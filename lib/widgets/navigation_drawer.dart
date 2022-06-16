@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:wordshk/pages/preferences_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 
@@ -74,23 +76,35 @@ class NavigationDrawer extends StatelessWidget {
                       ]),
                 ),
               ),
-              drawerButton(AppLocalizations.of(context)!.dictionary,
-                  Icons.search, (_) => const HomePage(title: 'words.hk')),
+              drawerButton(
+                  AppLocalizations.of(context)!.dictionary,
+                  PlatformIcons(context).search,
+                  (_) => const HomePage(title: 'words.hk')),
               const Divider(),
-              drawerButton(AppLocalizations.of(context)!.aboutWordshk,
-                  Icons.info_outline, (_) => const AboutPage()),
+              drawerButton(
+                  AppLocalizations.of(context)!.aboutWordshk,
+                  isMaterial(context)
+                      ? Icons.info_outline
+                      : CupertinoIcons.info,
+                  (_) => const AboutPage()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.qualityControl,
-                  Icons.check,
+                  PlatformIcons(context).checkMark,
                   (_) => const QualityControlPage(useBackNavigation: false)),
               const Divider(),
-              drawerButton(AppLocalizations.of(context)!.preferences,
-                  Icons.settings_outlined, (_) => const PreferencesPage()),
+              drawerButton(
+                  AppLocalizations.of(context)!.preferences,
+                  isMaterial(context)
+                      ? Icons.settings_outlined
+                      : CupertinoIcons.settings,
+                  (_) => const PreferencesPage()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.dictionaryLicense,
-                  Icons.handshake_outlined,
+                  isMaterial(context)
+                      ? Icons.article_outlined
+                      : CupertinoIcons.doc_text,
                   (_) => const DictionaryLicensePage()),
             ],
           ),

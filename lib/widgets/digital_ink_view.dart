@@ -1,7 +1,9 @@
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Ink;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:google_mlkit_digital_ink_recognition/google_mlkit_digital_ink_recognition.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/constants.dart';
@@ -183,19 +185,25 @@ class _DigitalInkViewState extends State<DigitalInkView> {
                           .read<InputModeState>()
                           .updateInputMode(InputMode.keyboard);
                     },
-                    icon: const Icon(Icons.keyboard),
+                    icon: Icon(isMaterial(context)
+                        ? Icons.keyboard
+                        : CupertinoIcons.keyboard),
                     color: Theme.of(context).colorScheme.secondary),
                 const Spacer(),
                 IconButton(
                     onPressed: _undoStroke,
-                    icon: const Icon(Icons.undo),
+                    icon: Icon(isMaterial(context)
+                        ? Icons.undo
+                        : CupertinoIcons.arrow_uturn_left),
                     color: Theme.of(context).colorScheme.secondary),
                 IconButton(
                     onPressed: () {
                       _clearPad();
                       widget.backspace();
                     },
-                    icon: const Icon(Icons.backspace),
+                    icon: Icon(isMaterial(context)
+                        ? Icons.backspace
+                        : CupertinoIcons.delete_left_fill),
                     color: Theme.of(context).colorScheme.secondary),
                 const SizedBox(width: 10),
                 ElevatedButton(

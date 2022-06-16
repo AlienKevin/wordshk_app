@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
@@ -57,7 +59,7 @@ class AboutPage extends StatelessWidget {
               child: Icon(Icons.circle,
                   size: 12,
                   color: Theme.of(context).textTheme.bodyMedium?.color)),
-          const TextSpan(text: " "),
+          const TextSpan(text: "  "),
           linkedTextSpan(
             text,
             link,
@@ -142,7 +144,9 @@ class AboutPage extends StatelessWidget {
                               text: AppLocalizations.of(context)!
                                   .aboutWordshkWantToHelpText),
                           linkedTextSpan(
-                            icon: Icons.email_outlined,
+                            icon: isMaterial(context)
+                                ? Icons.email_outlined
+                                : CupertinoIcons.mail,
                             AppLocalizations.of(context)!.email,
                             "mailto:join@words.hk",
                           ),

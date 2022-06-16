@@ -34,6 +34,7 @@ dependencies:
   google_mlkit_digital_ink_recognition: ^0.4.0
   settings_ui: ^2.0.2
   cupertino_icons: ^1.0.5
+  flutter_platform_widgets: ^2.0.0
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:

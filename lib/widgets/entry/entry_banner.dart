@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 
 import '../../custom_page_route.dart';
@@ -29,7 +31,10 @@ class _EntryBannerState extends State<EntryBanner> {
           child: Column(children: [
             Row(children: [
               const SizedBox(width: 6),
-              Icon(Icons.warning_amber_outlined,
+              Icon(
+                  isMaterial(context)
+                      ? Icons.warning_amber_outlined
+                      : CupertinoIcons.exclamationmark_triangle,
                   color: Theme.of(context).textTheme.bodySmall!.color),
               const SizedBox(width: 16),
               Expanded(

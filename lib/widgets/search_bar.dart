@@ -3,9 +3,11 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
@@ -215,7 +217,10 @@ class IsSearching extends State<SearchBar> {
         padding: const EdgeInsets.only(left: 12.0),
         child: button(() {
           context.read<InputModeState>().updateInputMode(InputMode.ink);
-        }, const Icon(Icons.brush)),
+        },
+            Icon(isMaterial(context)
+                ? Icons.brush
+                : CupertinoIcons.pencil_outline)),
       );
 
   Widget button(void Function() onPressed, Widget child) => Padding(
@@ -375,7 +380,7 @@ class IsSearching extends State<SearchBar> {
                             suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
                                 showClearButton
                                     ? IconButton(
-                                        icon: const Icon(Icons.clear,
+                                        icon: Icon(PlatformIcons(context).clear,
                                             semanticLabel: "Clear"),
                                         color: buttonColor,
                                         disabledColor:

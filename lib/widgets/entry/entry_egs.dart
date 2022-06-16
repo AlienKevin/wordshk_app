@@ -1,6 +1,8 @@
 import 'package:expandable/expandable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import '../../bridge_generated.dart' show Script;
 import '../../models/entry.dart';
@@ -79,7 +81,9 @@ class EntryEgs extends StatelessWidget {
                     Builder(builder: (context) {
                       return expandButton(
                           AppLocalizations.of(context)!.entryMoreExamples,
-                          Icons.expand_more,
+                          isMaterial(context)
+                              ? Icons.expand_more
+                              : CupertinoIcons.chevron_down,
                           lineTextStyle.copyWith(
                               color: Theme.of(context).colorScheme.secondary));
                     })
@@ -101,7 +105,9 @@ class EntryEgs extends StatelessWidget {
                     Builder(builder: (context) {
                       return expandButton(
                           AppLocalizations.of(context)!.entryCollapseExamples,
-                          Icons.expand_less,
+                          isMaterial(context)
+                              ? Icons.expand_less
+                              : CupertinoIcons.chevron_up,
                           lineTextStyle.copyWith(
                               color: Theme.of(context).colorScheme.secondary));
                     })
