@@ -373,7 +373,12 @@ class _HomePageState extends State<HomePage> {
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            child: RichText(text: resultText, textAlign: TextAlign.start),
+            child: RichText(
+              text: resultText,
+              textAlign: TextAlign.start,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ],
