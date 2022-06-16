@@ -11,19 +11,10 @@ class RomanizationState with ChangeNotifier {
 
   RomanizationState(SharedPreferences prefs) {
     final romanizationIndex = prefs.getInt("romanization");
+    romanization = romanizationIndex == null
+        ? Romanization.Jyutping
+        : Romanization.values[romanizationIndex];
     (() async {
-      await updateRomanization(
-          romanizationIndex == null
-              ? Romanization.Jyutping
-              : Romanization.values[romanizationIndex],
-          saveToSharedPreferences: false);
-    })();
-  }
-
-  Future<void> updateRomanization(Romanization newRomanization,
-      {bool saveToSharedPreferences = true}) async {
-    romanization = newRomanization;
-    if (newRomanization != Romanization.Jyutping && romanizationMap.isEmpty) {
       final tsv =
           await rootBundle.loadString("assets/cantonese_romanizations.tsv");
       final List<List<String>> rows = const CsvToListConverter(
@@ -34,13 +25,15 @@ class RomanizationState with ChangeNotifier {
         final jyutping = row[Romanization.Jyutping.index];
         return MapEntry(jyutping, row);
       }));
-    }
+    })();
+  }
+
+  void updateRomanization(Romanization newRomanization) async {
+    romanization = newRomanization;
     notifyListeners();
-    if (saveToSharedPreferences) {
-      SharedPreferences.getInstance().then((prefs) async {
-        prefs.setInt("romanization", newRomanization.index);
-      });
-    }
+    SharedPreferences.getInstance().then((prefs) async {
+      prefs.setInt("romanization", newRomanization.index);
+    });
   }
 
   String showPr(String jyutping) {
