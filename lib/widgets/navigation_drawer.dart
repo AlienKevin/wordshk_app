@@ -51,7 +51,7 @@ class NavigationDrawer extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: [
               SizedBox(
-                height: 210 * MediaQuery.of(context).textScaleFactor * 0.9,
+                height: 180 * MediaQuery.of(context).textScaleFactor,
                 child: DrawerHeader(
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
@@ -66,6 +66,12 @@ class NavigationDrawer extends StatelessWidget {
                               .titleLarge
                               ?.copyWith(color: whiteColor),
                         ),
+                        SizedBox(
+                            height: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .fontSize! /
+                                2),
                         Text(
                           AppLocalizations.of(context)!.wordshkSlogan,
                           style: Theme.of(context)
