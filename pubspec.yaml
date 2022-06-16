@@ -32,6 +32,8 @@ dependencies:
   csv: ^5.0.1
   flutter_keyboard_visibility: ^5.2.0
   google_mlkit_digital_ink_recognition: ^0.4.0
+  settings_ui: ^2.0.2
+  cupertino_icons: ^1.0.5
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:

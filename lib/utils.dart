@@ -3,6 +3,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/constants.dart';
+import 'package:wordshk/models/entry_language.dart';
+import 'package:wordshk/models/pronunciation_method.dart';
+
+import 'models/font_size.dart';
 
 void openLink(String url) async {
   return FlutterWebBrowser.openWebPage(
@@ -38,29 +42,54 @@ switchKeyboardType(FocusNode focusNode) {
 }
 
 String getRomanizationName(Romanization romanization, AppLocalizations s) {
-  late final String name;
   switch (romanization) {
     case Romanization.Jyutping:
-      name = s.romanizationJyutping;
-      break;
+      return s.romanizationJyutping;
     case Romanization.YaleNumbers:
-      name = s.romanizationYaleNumbers;
-      break;
+      return s.romanizationYaleNumbers;
     case Romanization.YaleDiacritics:
-      name = s.romanizationYaleDiacritics;
-      break;
+      return s.romanizationYaleDiacritics;
     case Romanization.CantonesePinyin:
-      name = s.romanizationCantonesePinyin;
-      break;
+      return s.romanizationCantonesePinyin;
     case Romanization.Guangdong:
-      name = s.romanizationGuangdong;
-      break;
+      return s.romanizationGuangdong;
     case Romanization.SidneyLau:
-      name = s.romanizationSidneyLau;
-      break;
+      return s.romanizationSidneyLau;
     case Romanization.Ipa:
-      name = s.romanizationIpa;
-      break;
+      return s.romanizationIpa;
   }
-  return name;
+}
+
+String getEntryLanguageName(EntryLanguage language, AppLocalizations s) {
+  switch (language) {
+    case EntryLanguage.both:
+      return s.entryLanguageBoth;
+    case EntryLanguage.cantonese:
+      return s.entryLanguageCantonese;
+    case EntryLanguage.english:
+      return s.entryLanguageEnglish;
+  }
+}
+
+String getFontSizeName(FontSize size, AppLocalizations s) {
+  switch (size) {
+    case FontSize.small:
+      return s.fontSizeSmall;
+    case FontSize.medium:
+      return s.fontSizeMedium;
+    case FontSize.large:
+      return s.fontSizeLarge;
+    case FontSize.veryLarge:
+      return s.fontSizeVeryLarge;
+  }
+}
+
+String getPronunciationMethodName(
+    PronunciationMethod method, AppLocalizations s) {
+  switch (method) {
+    case PronunciationMethod.tts:
+      return s.pronunciationMethodTts;
+    case PronunciationMethod.syllableRecordings:
+      return s.pronunciationMethodSyllableRecordings;
+  }
 }

@@ -21,4 +21,18 @@ enum Language {
             languageCode: 'zh', scriptCode: 'Hant', countryCode: 'HK');
     }
   }
+
+  @override
+  String toString() {
+    switch (this) {
+      case Language.en:
+        return "English";
+      case Language.zhHansCN:
+        return "简体中文";
+      case Language.zhHantTW:
+        return "繁體中文";
+      case Language.zhHantHK:
+        return "廣東話";
+    }
+  }
 }

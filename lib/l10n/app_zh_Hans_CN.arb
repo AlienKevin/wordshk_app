@@ -92,6 +92,10 @@
 
     "preferences": "设置",
 
+    "general": "通用",
+    "dictionarySearch": "词典搜索",
+    "dictionaryDefinition": "词条",
+
     "language": "语言",
     "entryExplanationsLanguage": "词条解释语言",
     "entryLanguageCantonese": "粤语",

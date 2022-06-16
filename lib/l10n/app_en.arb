@@ -103,23 +103,29 @@
 
     "preferences": "Preferences",
 
+    "general": "General",
+    "dictionarySearch": "Dictionary Search",
+    "dictionaryDefinition": "Dictionary Definition",
+    "dictionaryExample": "Dictionary Example",
+    "annotatedExample": "Annotated Example",
+
     "language": "Language",
-    "entryExplanationsLanguage": "Language(s) of Explanations",
+    "entryExplanationsLanguage": "Explanation Language",
     "entryLanguageCantonese": "Cantonese",
     "entryLanguageEnglish": "English",
     "entryLanguageBoth": "Bilingual",
 
-    "entryEgPronunciationMethod": "Pronunciation Method of Annotated Example Sentences",
+    "entryEgPronunciationMethod": "Example Pronunciation Method",
     "pronunciationMethodSyllableRecordings": "Syllable recordings",
-    "pronunciationMethodTts": "System Text-to-speech",
+    "pronunciationMethodTts": "Text-to-Speech",
 
-    "entryEgFontSize": "Font Size of Annotated Example Sentences",
+    "entryEgFontSize": "Example Font Size",
     "fontSizeSmall": "Small",
     "fontSizeMedium": "Medium",
     "fontSizeLarge": "Large",
     "fontSizeVeryLarge": "Very Large",
 
-    "entryRomanization": "Romanization of Entries",
+    "entryRomanization": "Definition Romanization",
     "romanizationJyutping": "Jyutping",
     "romanizationYaleNumbers": "Yale (Tone Numbers)",
     "romanizationYaleDiacritics": "Yale (Tone Diacritics)",
@@ -128,11 +134,11 @@
     "romanizationSidneyLau": "Sidney Lau",
     "romanizationIpa": "IPA",
 
-    "entryEgJumpyPrs": "Jumpy Pronunciation in Example Sentences",
+    "entryEgJumpyPrs": "Jumpy Pronunciation in Example",
     "enabled": "Enabled",
     "disabled": "Disabled",
 
-    "searchRomanization": "Romanization for Searching",
+    "searchRomanization": "Search Romanization",
 
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",
