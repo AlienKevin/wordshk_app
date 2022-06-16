@@ -320,12 +320,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget showSearchResultCategory(String category) => DecoratedBox(
-      decoration:
-          BoxDecoration(color: Theme.of(context).textTheme.bodyMedium?.color),
+      decoration: BoxDecoration(color: Theme.of(context).dividerColor),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-        child: Text(category,
-            style: TextStyle(color: Theme.of(context).canvasColor)),
+        child: Text(category),
       ));
 
   List<Widget> showCombinedSearchResults(TextStyle textStyle) {
