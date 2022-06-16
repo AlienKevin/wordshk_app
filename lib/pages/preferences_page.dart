@@ -15,6 +15,7 @@ import '../states/language_state.dart';
 import '../states/romanization_state.dart';
 import '../states/search_romanization_state.dart';
 import '../widgets/navigation_drawer.dart';
+import '../widgets/preferences/settings_list.dart';
 
 class PreferencesPage extends StatelessWidget {
   const PreferencesPage({Key? key}) : super(key: key);
@@ -32,7 +33,7 @@ class PreferencesPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: Text(s.preferences)),
         drawer: const NavigationDrawer(),
-        body: SettingsList(
+        body: MySettingsList(
           sections: [
             SettingsSection(
               title: Text(s.general),

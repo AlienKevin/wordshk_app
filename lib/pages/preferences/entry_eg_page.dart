@@ -5,11 +5,13 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/pages/preferences/entry_eg_font_size_page.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/widgets/preferences/settings_switch_tile.dart';
 
 import '../../custom_page_route.dart';
 import '../../states/entry_eg_font_size_state.dart';
 import '../../states/pronunciation_method_state.dart';
 import '../../utils.dart';
+import '../../widgets/preferences/settings_list.dart';
 import 'entry_eg_pronunciation_method_page.dart';
 
 class EntryEgPreferencesPage extends StatelessWidget {
@@ -30,7 +32,7 @@ class EntryEgPreferencesPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(title: Text(s.dictionaryExample)),
-        body: SettingsList(sections: [
+        body: MySettingsList(sections: [
           SettingsSection(
               title: Text(s.annotatedExample),
               tiles: <SettingsTile>[
@@ -57,10 +59,10 @@ class EntryEgPreferencesPage extends StatelessWidget {
                                 const EntryEgPronunciationMethodPreferencesPage()));
                   },
                 ),
-                SettingsTile.switchTile(
+                MySettingsSwitchTile(
                     initialValue: entryEgIsJumpy,
                     onToggle: onEntryEgJumpyPrsChange,
-                    title: Text(s.entryEgJumpyPrs))
+                    label: s.entryEgJumpyPrs)
               ]),
         ]));
   }
