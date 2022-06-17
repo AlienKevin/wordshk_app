@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/bridge_generated.dart';
@@ -7,6 +8,7 @@ import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/states/speech_recognition_state.dart';
 
 import 'models/font_size.dart';
 import 'models/language.dart';
@@ -159,3 +161,32 @@ Script getScript(BuildContext context) =>
     context.read<LanguageState>().language == Language.zhHansCN
         ? Script.Simplified
         : Script.Traditional;
+
+void showSpeechRecognitionDialog(BuildContext context) {
+  final state = context.read<SpeechRecognitionState>();
+  state.startListening(getScript(context));
+  final s = AppLocalizations.of(context)!;
+  showPlatformDialog(
+      context: context,
+      builder: (context) {
+        final state = context.watch<SpeechRecognitionState>();
+        return PlatformAlertDialog(
+          title: Text(s.speakNow(s.entryLanguageCantonese)),
+          content: state.speechToText.isAvailable
+              ? (state.speechToText.isListening
+                  ? Text(s.listening)
+                  : state.speechToText.hasError
+                      ? Text(s.errorInSpeechRecognition)
+                      : Text(s.loadingRecognitionEngine))
+              : Text(s.speechRecognitionNotAvailable),
+          actions: <Widget>[
+            PlatformDialogAction(
+                child: PlatformText('Done'),
+                onPressed: () {
+                  state.cancelListening();
+                  Navigator.pop(context, false);
+                }),
+          ],
+        );
+      });
+}

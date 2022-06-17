@@ -242,37 +242,9 @@ class IsSearching extends State<SearchBar> {
               ? Icons.brush
               : CupertinoIcons.pencil_outline));
 
-  Widget speechInputModeButton() => button(() {
-        final state = context.read<SpeechRecognitionState>();
-        state.startListening(getScript(context));
-        final s = AppLocalizations.of(context)!;
-        showPlatformDialog(
-            context: context,
-            builder: (context) {
-              final state = context.watch<SpeechRecognitionState>();
-              return PlatformAlertDialog(
-                title: Text(s.speakNow(s.entryLanguageCantonese)),
-                content: state.speechToText.isAvailable
-                    ? (state.speechToText.isListening
-                        ? Text(s.listening)
-                        : state.speechToText.hasError
-                            ? Text(s.errorInSpeechRecognition)
-                            : Text(s.loadingRecognitionEngine))
-                    : Text(s.speechRecognitionNotAvailable),
-                actions: <Widget>[
-                  PlatformDialogAction(
-                      child: PlatformText('Done'),
-                      onPressed: () {
-                        state.cancelListening();
-                        Navigator.pop(context, false);
-                      }),
-                ],
-              );
-            });
-      },
-          Icon(isMaterial(context)
-              ? Icons.mic_rounded
-              : CupertinoIcons.mic_fill));
+  Widget speechInputModeButton() => button(
+      () => showSpeechRecognitionDialog(context),
+      Icon(isMaterial(context) ? Icons.mic_rounded : CupertinoIcons.mic_fill));
 
   Widget button(void Function() onPressed, Widget child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 3),
