@@ -9,11 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 
-import '../bridge_generated.dart' show Script;
 import '../main.dart';
 import '../models/entry.dart';
-import '../models/language.dart';
-import '../states/language_state.dart';
 import '../states/player_state.dart';
 import '../utils.dart';
 import '../widgets/entry/entry.dart';
@@ -51,9 +48,7 @@ class _EntryPageState extends State<EntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final script = context.read<LanguageState>().language == Language.zhHansCN
-        ? Script.Simplified
-        : Script.Traditional;
+    final script = getScript(context);
     return WillPopScope(
         // detect user pressing back button
         onWillPop: () {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:provider/provider.dart';
 import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
+import 'package:wordshk/states/language_state.dart';
 
 import 'models/font_size.dart';
 import 'models/language.dart';
@@ -152,3 +154,8 @@ String getPronunciationMethodShortName(
     }
   }
 }
+
+Script getScript(BuildContext context) =>
+    context.read<LanguageState>().language == Language.zhHansCN
+        ? Script.Simplified
+        : Script.Traditional;

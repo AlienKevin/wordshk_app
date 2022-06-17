@@ -244,7 +244,7 @@ class IsSearching extends State<SearchBar> {
 
   Widget speechInputModeButton() => button(() {
         final state = context.read<SpeechRecognitionState>();
-        state.startListening();
+        state.startListening(getScript(context));
         final s = AppLocalizations.of(context)!;
         showPlatformDialog(
             context: context,

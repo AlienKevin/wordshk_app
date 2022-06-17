@@ -14,9 +14,7 @@ import '../constants.dart';
 import '../custom_page_route.dart';
 import '../main.dart';
 import '../models/input_mode.dart';
-import '../models/language.dart';
 import '../models/search_mode.dart';
-import '../states/language_state.dart';
 import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
@@ -188,9 +186,7 @@ class _HomePageState extends State<HomePage> {
       });
     } else {
       final searchMode = context.read<SearchModeState>().mode;
-      final script = context.read<LanguageState>().language == Language.zhHansCN
-          ? Script.Simplified
-          : Script.Traditional;
+      final script = getScript(context);
       final searchRomanization =
           context.read<SearchRomanizationState>().romanization;
       switch (searchMode) {

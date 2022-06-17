@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
+import '../bridge_generated.dart' show Script;
 
 class SpeechRecognitionState with ChangeNotifier {
   final SpeechToText speechToText = SpeechToText();
@@ -9,7 +13,13 @@ class SpeechRecognitionState with ChangeNotifier {
 
   SpeechRecognitionState() {
     (() async {
-      await speechToText.initialize();
+      await speechToText.initialize(debugLogging: true, options: [
+        SpeechToText.androidNoBluetooth,
+        SpeechToText.androidIntentLookup
+      ]);
+      // Debug: Prints all available system speech recognition locales
+      // var locales = await speechToText.locales();
+      // print(locales.map((locale) => locale.localeId).toList());
     })();
   }
 
@@ -18,8 +28,12 @@ class SpeechRecognitionState with ChangeNotifier {
   }
 
   /// Each time to start a speech recognition session
-  void startListening() async {
-    await speechToText.listen(onResult: onSpeechResult, localeId: "zh-HK");
+  void startListening(Script script) async {
+    await speechToText.listen(
+        onResult: onSpeechResult,
+        localeId: Platform.isAndroid
+            ? "yue_HK"
+            : (script == Script.Traditional ? "zh-HK" : "yue-CN"));
     notifyListeners();
   }
 
