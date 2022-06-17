@@ -33,7 +33,7 @@
           "language": {}
       }
     },
-    "listening": "Listening...",
+    "listening": "Listening👂...",
     "errorInSpeechRecognition": "Error caused speech recognition to stop. Please try again.",
     "loadingRecognitionEngine": "Loading speech recognition engine...",
     "speechRecognitionNotAvailable": "Speech Recognition is not available. Please try again.",
