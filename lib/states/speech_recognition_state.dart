@@ -5,7 +5,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 class SpeechRecognitionState with ChangeNotifier {
   final SpeechToText speechToText = SpeechToText();
   String recognizedWords = "";
-  late final void Function(String) onResult;
+  void Function(String)? onResult;
 
   SpeechRecognitionState() {
     (() async {
@@ -33,7 +33,7 @@ class SpeechRecognitionState with ChangeNotifier {
   void onSpeechResult(SpeechRecognitionResult result) {
     recognizedWords = result.recognizedWords;
     if (!speechToText.isNotListening) {
-      onResult(recognizedWords);
+      onResult!(recognizedWords);
     }
     notifyListeners();
   }
