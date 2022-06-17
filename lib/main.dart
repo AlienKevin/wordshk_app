@@ -18,6 +18,7 @@ import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_mode_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/search_romanization_state.dart';
+import 'package:wordshk/states/speech_recognition_state.dart';
 
 import 'bridge_generated.dart';
 import 'constants.dart';
@@ -58,6 +59,8 @@ main() async {
         ChangeNotifierProvider<SearchRomanizationState>(
             create: (_) => SearchRomanizationState(prefs)),
         ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
+        ChangeNotifierProvider<SpeechRecognitionState>(
+            create: (_) => SpeechRecognitionState(), lazy: false),
       ],
       child: const MyApp(),
     ),

@@ -13,6 +13,7 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/search_romanization_state.dart';
+import 'package:wordshk/states/speech_recognition_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/search_mode_button.dart';
 import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
@@ -119,6 +120,8 @@ class IsSearching extends State<SearchBar> {
         focusNode.unfocus();
       }
     });
+
+    context.read<SpeechRecognitionState>().setOnResult(typeCharacters);
   }
 
   @override
@@ -153,6 +156,25 @@ class IsSearching extends State<SearchBar> {
     controller.value = TextEditingValue(
         text: newQuery,
         selection: TextSelection.collapsed(offset: baseOffset + 1));
+    context.read<SearchQueryState>().updateSearchQuery(newQuery);
+    if (widget.onChanged != null) {
+      widget.onChanged!(newQuery);
+    }
+  }
+
+  void typeCharacters(String characters) {
+    final baseOffset = controller.selection.baseOffset;
+    final extentOffset = controller.selection.extentOffset;
+    final query = controller.text;
+    // delete selection and add character in place of selection
+    final newQuery = query.substring(0, baseOffset) +
+        characters +
+        query.substring(extentOffset);
+    controller.value = TextEditingValue(
+        text: newQuery,
+        selection: TextSelection(
+            baseOffset: baseOffset,
+            extentOffset: baseOffset + characters.length));
     context.read<SearchQueryState>().updateSearchQuery(newQuery);
     if (widget.onChanged != null) {
       widget.onChanged!(newQuery);
@@ -213,15 +235,46 @@ class IsSearching extends State<SearchBar> {
   Widget digitButton(int digit) =>
       button(() => typeDigit(digit), Text(digit.toString()));
 
-  Widget inkInputModeButton() => Padding(
-        padding: const EdgeInsets.only(left: 12.0),
-        child: button(() {
-          context.read<InputModeState>().updateInputMode(InputMode.ink);
-        },
-            Icon(isMaterial(context)
-                ? Icons.brush
-                : CupertinoIcons.pencil_outline)),
-      );
+  Widget inkInputModeButton() => button(() {
+        context.read<InputModeState>().updateInputMode(InputMode.ink);
+      },
+          Icon(isMaterial(context)
+              ? Icons.brush
+              : CupertinoIcons.pencil_outline));
+
+  Widget speechInputModeButton() => button(() {
+        final state = context.read<SpeechRecognitionState>();
+        state.startListening();
+        showPlatformDialog(
+            context: context,
+            builder: (context) {
+              final state = context.watch<SpeechRecognitionState>();
+              return PlatformAlertDialog(
+                title: Text('Speak Now'),
+                content: Column(children: [
+                  Text('Cantonese (Hong Kong)'),
+                  state.speechToText.isAvailable
+                      ? (state.speechToText.isListening
+                          ? Text('Listening...')
+                          : state.speechToText.hasError
+                              ? Text('Error during speech recognition')
+                              : Text('Loading the recognition engine...'))
+                      : Text("Speech Recognition not available")
+                ]),
+                actions: <Widget>[
+                  PlatformDialogAction(
+                      child: PlatformText('Done'),
+                      onPressed: () {
+                        state.cancelListening();
+                        Navigator.pop(context, false);
+                      }),
+                ],
+              );
+            });
+      },
+          Icon(isMaterial(context)
+              ? Icons.mic_rounded
+              : CupertinoIcons.mic_fill));
 
   Widget button(void Function() onPressed, Widget child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -273,6 +326,7 @@ class IsSearching extends State<SearchBar> {
             (_) => digitButton(6),
             (_) => const Spacer(),
             (_) => inkInputModeButton(),
+            (_) => speechInputModeButton(),
           ],
           toolbarAlignment: MainAxisAlignment.start,
         ),
