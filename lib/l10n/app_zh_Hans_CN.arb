@@ -20,6 +20,12 @@
     "tryAgain": "重试",
     "done": "完成",
 
+    "speakNow": "请讲{language}",
+    "listening": "正在聆听👂...",
+    "errorInSpeechRecognition": "语音识别出现故障而中途停止。请再试一次。",
+    "loadingRecognitionEngine": "正在加载语音识别模型...",
+    "speechRecognitionNotAvailable": "语音识别不可用。请再试一次。",
+
     "entry": "词条",
     "entryMoreVariants": "更多写法",
     "entryCollapseVariants": "折叠写法",

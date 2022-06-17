@@ -245,22 +245,20 @@ class IsSearching extends State<SearchBar> {
   Widget speechInputModeButton() => button(() {
         final state = context.read<SpeechRecognitionState>();
         state.startListening();
+        final s = AppLocalizations.of(context)!;
         showPlatformDialog(
             context: context,
             builder: (context) {
               final state = context.watch<SpeechRecognitionState>();
               return PlatformAlertDialog(
-                title: Text('Speak Now'),
-                content: Column(children: [
-                  Text('Cantonese (Hong Kong)'),
-                  state.speechToText.isAvailable
-                      ? (state.speechToText.isListening
-                          ? Text('Listening...')
-                          : state.speechToText.hasError
-                              ? Text('Error during speech recognition')
-                              : Text('Loading the recognition engine...'))
-                      : Text("Speech Recognition not available")
-                ]),
+                title: Text(s.speakNow(s.entryLanguageCantonese)),
+                content: state.speechToText.isAvailable
+                    ? (state.speechToText.isListening
+                        ? Text(s.listening)
+                        : state.speechToText.hasError
+                            ? Text(s.errorInSpeechRecognition)
+                            : Text(s.loadingRecognitionEngine))
+                    : Text(s.speechRecognitionNotAvailable),
                 actions: <Widget>[
                   PlatformDialogAction(
                       child: PlatformText('Done'),

@@ -26,6 +26,18 @@
     "tryAgain": "Try Again",
     "done": "Done",
 
+    "speakNow": "Please speak {language}",
+    "@speakNow": {
+      "description": "speech recognition language",
+      "placeholders": {
+          "language": {}
+      }
+    },
+    "listening": "Listening...",
+    "errorInSpeechRecognition": "Error caused speech recognition to stop. Please try again.",
+    "loadingRecognitionEngine": "Loading speech recognition engine...",
+    "speechRecognitionNotAvailable": "Speech Recognition is not available. Please try again.",
+
     "entry": "entry",
     "entryMoreVariants": "More Variants",
     "entryCollapseVariants": "Collapse Variants",

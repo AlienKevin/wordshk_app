@@ -20,6 +20,12 @@
     "tryAgain": "重試",
     "done": "完成",
 
+    "speakNow": "請講{language}",
+    "listening": "正在聆聽👂...",
+    "errorInSpeechRecognition": "語音識別出現故障而中途停止。請再試一次。",
+    "loadingRecognitionEngine": "正在載入語音識別模型...",
+    "speechRecognitionNotAvailable": "語音識別不可用。請再試一次。",
+
     "entry": "詞條",
     "entryMoreVariants": "更多寫法",
     "entryCollapseVariants": "折疊寫法",
