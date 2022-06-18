@@ -1,4 +1,10 @@
 {
+    "introduction": "Introduction",
+
+    "languageBackgroundHeritage": "Heritage Cantonese Speaker",
+    "languageBackgroundNonHeritage": "Non-Heritage Cantonese Learner",
+    "languageBackgroundNative": "Native Cantonese Speaker",
+
     "searchDictionary": "Search",
     "searchDictionaryNoResultsFound": "Sorry, no results found",
     "searchDictionaryOnlyPronunciationFound": "Sorry, we only know the pronunciation of this word:",

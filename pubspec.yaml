@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   flutter_platform_widgets: ^2.0.0
   speech_to_text: ^5.5.0
+  introduction_screen: ^3.0.2
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:

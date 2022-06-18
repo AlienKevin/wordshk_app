@@ -7,7 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wordshk/pages/home_page.dart';
+import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
@@ -256,7 +256,8 @@ class _MyAppState extends State<MyApp> {
       ],
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const HomePage(title: 'words.hk'),
+      // home: const HomePage(title: 'words.hk'),
+      home: const IntroductionPage(),
     ));
   }
 }

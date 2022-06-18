@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
+import 'package:wordshk/models/language_background.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/speech_recognition_state.dart';
@@ -189,4 +190,16 @@ void showSpeechRecognitionDialog(BuildContext context) {
           ],
         );
       });
+}
+
+String getLanguageBackgroundName(
+    LanguageBackground background, AppLocalizations s) {
+  switch (background) {
+    case LanguageBackground.heritage:
+      return s.languageBackgroundHeritage;
+    case LanguageBackground.nonHeritage:
+      return s.languageBackgroundNonHeritage;
+    case LanguageBackground.native:
+      return s.languageBackgroundNative;
+  }
 }
