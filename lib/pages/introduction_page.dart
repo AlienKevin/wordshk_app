@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:wordshk/models/language_background.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/widgets/preferences/title.dart';
 
 import '../custom_page_route.dart';
 import '../widgets/preferences/language_radio_list_tiles.dart';
+import '../widgets/preferences/search_romanization_radio_list_tiles.dart';
 
 class IntroductionPage extends StatelessWidget {
   const IntroductionPage({Key? key}) : super(key: key);
@@ -55,6 +55,14 @@ class IntroductionPage extends StatelessWidget {
                 child:
                     PreferencesTitle(title: "I feel most comfortable in...")),
             bodyWidget: const LanguageRadioListTiles(),
+            decoration: pageDecoration,
+          ),
+          PageViewModel(
+            titleWidget: const Align(
+                alignment: Alignment.centerLeft,
+                child: PreferencesTitle(title: "I'm most familiar with...")),
+            bodyWidget: const SearchRomanizationRadioListTiles(
+                syncEntryRomanization: true),
             decoration: pageDecoration,
           )
         ]);
