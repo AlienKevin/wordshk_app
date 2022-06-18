@@ -15,7 +15,7 @@ class SyllablePronunciationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Visibility(
-        visible: jyutpingFemaleSyllableNames.containsAll(prs),
+        visible: jyutpingMaleSyllableNames.containsAll(prs),
         child: PronunciationButton(
           play: (key) => context.read<PlayerState>().syllablesPlay(key, prs),
           alignment: alignment,

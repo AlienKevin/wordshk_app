@@ -63,7 +63,7 @@ class PlayerState with ChangeNotifier {
     await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
         children: prs
             .map((syllable) => AudioSource.uri(
-                Uri.parse("asset:///assets/jyutping_female/$syllable.mp3")))
+                Uri.parse("asset:///assets/jyutping_male/$syllable.mp3")))
             .toList()));
     syllablesPlayer.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
