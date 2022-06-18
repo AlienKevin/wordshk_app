@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/widgets/preferences/title.dart';
@@ -12,6 +13,8 @@ class IntroductionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context)!;
+
     const pageDecoration = PageDecoration(
       titlePadding: EdgeInsets.only(top: 0.0, bottom: 24.0),
       contentMargin: EdgeInsets.all(32.0),
@@ -33,34 +36,31 @@ class IntroductionPage extends StatelessWidget {
         showBackButton: true,
         //rtl: true, // Display as right-to-left
         back: const Icon(Icons.arrow_back),
-        skip: const Text('Skip', style: TextStyle(fontWeight: FontWeight.w600)),
         next: const Icon(Icons.arrow_forward),
-        done: const Text('Done', style: TextStyle(fontWeight: FontWeight.w600)),
+        done: Text(s.done, style: const TextStyle(fontWeight: FontWeight.w600)),
         pages: [
           PageViewModel(
             titleWidget: const Align(
                 alignment: Alignment.centerLeft,
                 child: PreferencesTitle(title: "Welcome")),
-            bodyWidget: Column(children: const [
-              Text(
-                  "Welcome to words.hk!\nEach learner's background is different and we want everyone to have the best Cantonese learning experience possible. So before you start, please take a moment to select your learning preferences."),
-              SizedBox(height: 20),
-              Image(width: 200, image: AssetImage('assets/icon.png'))
+            bodyWidget: Column(children: [
+              Text(s.introductionText),
+              const SizedBox(height: 40),
+              const Image(width: 200, image: AssetImage('assets/icon.png'))
             ]),
             decoration: pageDecoration,
           ),
           PageViewModel(
-            titleWidget: const Align(
+            titleWidget: Align(
                 alignment: Alignment.centerLeft,
-                child:
-                    PreferencesTitle(title: "I feel most comfortable in...")),
+                child: PreferencesTitle(title: s.introductionLanguage)),
             bodyWidget: const LanguageRadioListTiles(),
             decoration: pageDecoration,
           ),
           PageViewModel(
-            titleWidget: const Align(
+            titleWidget: Align(
                 alignment: Alignment.centerLeft,
-                child: PreferencesTitle(title: "I'm most familiar with...")),
+                child: PreferencesTitle(title: s.introductionRomanization)),
             bodyWidget: const SearchRomanizationRadioListTiles(
                 syncEntryRomanization: true),
             decoration: pageDecoration,

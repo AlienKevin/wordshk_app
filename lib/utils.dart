@@ -191,15 +191,3 @@ void showSpeechRecognitionDialog(BuildContext context) {
         );
       });
 }
-
-String getLanguageBackgroundName(
-    LanguageBackground background, AppLocalizations s) {
-  switch (background) {
-    case LanguageBackground.heritage:
-      return s.languageBackgroundHeritage;
-    case LanguageBackground.nonHeritage:
-      return s.languageBackgroundNonHeritage;
-    case LanguageBackground.native:
-      return s.languageBackgroundNative;
-  }
-}

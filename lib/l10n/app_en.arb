@@ -1,9 +1,8 @@
 {
     "introduction": "Introduction",
-
-    "languageBackgroundHeritage": "Heritage Cantonese Speaker",
-    "languageBackgroundNonHeritage": "Non-Heritage Cantonese Learner",
-    "languageBackgroundNative": "Native Cantonese Speaker",
+    "introductionText": "Welcome to words.hk!\nBefore we start, please take a moment to select your learning preferences.",
+    "introductionLanguage": "I feel most comfortable with...",
+    "introductionRomanization": "I'm most familiar with...",
 
     "searchDictionary": "Search",
     "searchDictionaryNoResultsFound": "Sorry, no results found",

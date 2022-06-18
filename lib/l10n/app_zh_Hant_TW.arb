@@ -1,4 +1,9 @@
 {
+    "introduction": "介紹",
+    "introductionText": "歡迎來到粵典！\n在開始之前，請設定您的學習偏好。",
+    "introductionLanguage": "我最熟悉的語言是...",
+    "introductionRomanization": "我最熟悉的拼音系統是...",
+
     "searchDictionary": "查字典",
     "searchDictionaryNoResultsFound": "抱歉，詞典裡找不到相關資料",
     "searchDictionaryOnlyPronunciationFound": "抱歉，我們只找到了這個詞的發音：",

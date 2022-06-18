@@ -1,4 +1,9 @@
 {
+    "introduction": "介紹",
+    "introductionText": "歡迎嚟到粵典！\n喺開始之前，請設定你嘅學習偏好。",
+    "introductionLanguage": "我最熟悉嘅語言係...",
+    "introductionRomanization": "我最熟悉嘅拼音系統係...",
+
     "searchDictionary": "查字典",
     "searchDictionaryNoResultsFound": "對唔住，詞典入面揾唔到相關資料",
     "searchDictionaryOnlyPronunciationFound": "對唔住，我哋凈係揾到咗呢個詞嘅發音：",
