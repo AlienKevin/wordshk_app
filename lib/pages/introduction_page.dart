@@ -40,11 +40,13 @@ class IntroductionPage extends StatelessWidget {
         done: Text(s.done, style: const TextStyle(fontWeight: FontWeight.w600)),
         pages: [
           PageViewModel(
-            titleWidget: const Align(
+            titleWidget: Align(
                 alignment: Alignment.centerLeft,
-                child: PreferencesTitle(title: "Welcome")),
+                child: PreferencesTitle(title: s.welcome)),
             bodyWidget: Column(children: [
-              Text(s.introductionText),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(s.introductionText)),
               const SizedBox(height: 40),
               const Image(width: 200, image: AssetImage('assets/icon.png'))
             ]),
