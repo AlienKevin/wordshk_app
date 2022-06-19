@@ -35,9 +35,9 @@ class SpeechRateRadioListTiles extends StatelessWidget {
             getSpeechRateName(value, s), value, speechRate, onSpeechRateChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      speechRateRadioListTile(SpeechRate.verySlow),
       speechRateRadioListTile(SpeechRate.slow),
-      speechRateRadioListTile(SpeechRate.medium),
-      speechRateRadioListTile(SpeechRate.fast),
+      speechRateRadioListTile(SpeechRate.normal),
     ]);
   }
 }

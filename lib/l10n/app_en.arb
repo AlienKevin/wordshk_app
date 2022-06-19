@@ -145,9 +145,9 @@
     "pronunciationMethodTtsShort": "TTS",
     "entryEgSpeechRate": "Example Speech Rate",
 
-    "speechRateSlow": "Slow",
-    "speechRateMedium": "Medium",
-    "speechRateFast": "Fast",
+    "speechRateVerySlow": "Very Slow",
+    "speechRateSlow": "Slower",
+    "speechRateNormal": "Normal",
 
     "entryEgFontSize": "Example Font Size",
     "fontSizeSmall": "Small",

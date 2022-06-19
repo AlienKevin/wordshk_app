@@ -1,5 +1,5 @@
 enum SpeechRate {
+  verySlow,
   slow,
-  medium,
-  fast,
+  normal,
 }

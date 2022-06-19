@@ -84,18 +84,18 @@ class PlayerState with ChangeNotifier {
       }
     });
     final speed = method == PronunciationMethod.syllableRecordingsMale
-        ? (rate == SpeechRate.slow
+        ? (rate == SpeechRate.verySlow
             ? 0.6
-            : rate == SpeechRate.medium
-                ? 1.0
-                : 1.3)
-        : (rate == SpeechRate.slow
+            : rate == SpeechRate.slow
+                ? 0.8
+                : 1.0)
+        : (rate == SpeechRate.verySlow
             ? 0.8
-            : rate == SpeechRate.medium
-                ? 1.5
-                : 2.0);
+            : rate == SpeechRate.slow
+                ? 1.2
+                : 1.5);
     final volume =
-        method == PronunciationMethod.syllableRecordingsMale ? 0.4 : 0.5;
+        method == PronunciationMethod.syllableRecordingsMale ? 0.4 : 0.6;
     await syllablesPlayer.setSpeed(speed);
     await syllablesPlayer.setVolume(volume);
     await syllablesPlayer.seek(Duration.zero, index: 0);
@@ -108,11 +108,11 @@ class PlayerState with ChangeNotifier {
     }
     playerMode = PlayerMode.tts;
     notifyListeners();
-    final speed = rate == SpeechRate.slow
+    final speed = rate == SpeechRate.verySlow
         ? 0.15
-        : rate == SpeechRate.medium
-            ? 0.5
-            : 0.6;
+        : rate == SpeechRate.slow
+            ? 0.3
+            : 0.5;
     await ttsPlayer.setSpeechRate(speed);
     await ttsPlayer.speak(text);
     ttsPlayer.setCompletionHandler(() {

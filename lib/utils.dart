@@ -200,11 +200,11 @@ void showSpeechRecognitionDialog(BuildContext context) {
 
 String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
   switch (rate) {
+    case SpeechRate.verySlow:
+      return s.speechRateVerySlow;
     case SpeechRate.slow:
       return s.speechRateSlow;
-    case SpeechRate.medium:
-      return s.speechRateMedium;
-    case SpeechRate.fast:
-      return s.speechRateFast;
+    case SpeechRate.normal:
+      return s.speechRateNormal;
   }
 }
