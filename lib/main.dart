@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
@@ -37,6 +38,7 @@ late final api = WordshkApiImpl(dylib);
 main() async {
   WidgetsFlutterBinding.ensureInitialized(); // mandatory when awaiting on main
   final prefs = await SharedPreferences.getInstance();
+  final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
   runApp(
     MultiProvider(
       providers: [
@@ -65,13 +67,17 @@ main() async {
         ChangeNotifierProvider<SpeechRateState>(
             create: (_) => SpeechRateState()),
       ],
-      child: const MyApp(),
+      child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool firstTimeUser;
+  final SharedPreferences prefs;
+
+  const MyApp({Key? key, required this.firstTimeUser, required this.prefs})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MyAppState();
@@ -260,7 +266,9 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       // home: const HomePage(title: 'words.hk'),
-      home: const IntroductionPage(),
+      home: widget.firstTimeUser
+          ? IntroductionPage(prefs: widget.prefs)
+          : const HomePage(title: "words.hk"),
     ));
   }
 }

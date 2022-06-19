@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/widgets/preferences/title.dart';
 
@@ -9,7 +10,9 @@ import '../widgets/preferences/language_radio_list_tiles.dart';
 import '../widgets/preferences/search_romanization_radio_list_tiles.dart';
 
 class IntroductionPage extends StatelessWidget {
-  const IntroductionPage({Key? key}) : super(key: key);
+  final SharedPreferences prefs;
+
+  const IntroductionPage({Key? key, required this.prefs}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class IntroductionPage extends StatelessWidget {
             CustomPageRoute(
                 builder: (context) => const HomePage(title: "words.hk")),
           );
+          prefs.setBool("firstTimeUser", false);
         },
         showSkipButton: false,
         skipOrBackFlex: 0,
