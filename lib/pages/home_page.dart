@@ -161,9 +161,11 @@ class _HomePageState extends State<HomePage> {
                                                 WidgetSpan(
                                                     child:
                                                         SyllablePronunciationButton(
-                                                            prs: pr.split(" "),
-                                                            alignment: Alignment
-                                                                .bottomCenter))
+                                                  prs: pr.split(" "),
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  atHeader: true,
+                                                ))
                                               ])
                                           .expand((i) => i)
                                           .toList()))

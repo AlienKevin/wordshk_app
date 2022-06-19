@@ -133,8 +133,10 @@ String getPronunciationMethodName(
   switch (method) {
     case PronunciationMethod.tts:
       return s.pronunciationMethodTts;
-    case PronunciationMethod.syllableRecordings:
-      return s.pronunciationMethodSyllableRecordings;
+    case PronunciationMethod.syllableRecordingsMale:
+      return s.pronunciationMethodSyllableRecordingsMale;
+    case PronunciationMethod.syllableRecordingsFemale:
+      return s.pronunciationMethodSyllableRecordingsFemale;
   }
 }
 
@@ -144,15 +146,19 @@ String getPronunciationMethodShortName(
     switch (method) {
       case PronunciationMethod.tts:
         return s.pronunciationMethodTtsShort;
-      case PronunciationMethod.syllableRecordings:
-        return s.pronunciationMethodSyllableRecordingsShort;
+      case PronunciationMethod.syllableRecordingsMale:
+        return s.pronunciationMethodSyllableRecordingsMaleShort;
+      case PronunciationMethod.syllableRecordingsFemale:
+        return s.pronunciationMethodSyllableRecordingsFemaleShort;
     }
   } else {
     switch (method) {
       case PronunciationMethod.tts:
         return s.pronunciationMethodTts;
-      case PronunciationMethod.syllableRecordings:
-        return s.pronunciationMethodSyllableRecordings;
+      case PronunciationMethod.syllableRecordingsMale:
+        return s.pronunciationMethodSyllableRecordingsMale;
+      case PronunciationMethod.syllableRecordingsFemale:
+        return s.pronunciationMethodSyllableRecordingsFemale;
     }
   }
 }

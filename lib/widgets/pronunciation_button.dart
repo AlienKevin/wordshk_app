@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../states/player_state.dart';
 
 class PronunciationButton extends StatefulWidget {
-  final Future<void> Function(int) play;
+  final void Function(int) play;
   final Alignment alignment;
 
   const PronunciationButton(

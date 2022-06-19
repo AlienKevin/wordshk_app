@@ -5,9 +5,11 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/pages/preferences/entry_eg_page.dart';
 import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
+import 'package:wordshk/pages/preferences/entry_header_pronunciation_method.dart';
 import 'package:wordshk/pages/preferences/entry_romanization_page.dart';
 import 'package:wordshk/pages/preferences/language_page.dart';
 import 'package:wordshk/pages/preferences/search_romanization_page.dart';
+import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/utils.dart';
 
 import '../states/entry_language_state.dart';
@@ -29,6 +31,8 @@ class PreferencesPage extends StatelessWidget {
     final romanization = context.watch<RomanizationState>().romanization;
     final searchRomanization =
         context.watch<SearchRomanizationState>().romanization;
+    final entryHeaderPronunciationMethod =
+        context.watch<PronunciationMethodState>().entryHeaderMethod;
 
     return Scaffold(
         appBar: AppBar(title: Text(s.preferences)),
@@ -92,6 +96,18 @@ class PreferencesPage extends StatelessWidget {
                         CustomPageRoute(
                             builder: (context) =>
                                 const EntryRomanizationPreferencesPage()));
+                  },
+                ),
+                SettingsTile.navigation(
+                  title: Text(s.entryHeaderPronunciationMethod),
+                  value: Text(getPronunciationMethodShortName(
+                      entryHeaderPronunciationMethod, s, language)),
+                  onPressed: (context) {
+                    Navigator.push(
+                        context,
+                        CustomPageRoute(
+                            builder: (context) =>
+                                const EntryHeaderPronunciationMethodPreferencesPage()));
                   },
                 ),
                 SettingsTile.navigation(

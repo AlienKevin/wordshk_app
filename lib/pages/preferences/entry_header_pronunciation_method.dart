@@ -8,19 +8,20 @@ import '../../utils.dart';
 import '../../widgets/preferences/radio_list_tile.dart';
 import '../../widgets/preferences/title.dart';
 
-class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
-  const EntryEgPronunciationMethodPreferencesPage({Key? key}) : super(key: key);
+class EntryHeaderPronunciationMethodPreferencesPage extends StatelessWidget {
+  const EntryHeaderPronunciationMethodPreferencesPage({Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
-    final method = context.watch<PronunciationMethodState>().entryEgMethod;
+    final method = context.watch<PronunciationMethodState>().entryHeaderMethod;
 
     onMethodChange(PronunciationMethod? newMethod) {
       if (newMethod != null) {
         context
             .read<PronunciationMethodState>()
-            .updateEntryEgPronunciationMethod(newMethod);
+            .updateEntryHeaderPronunciationMethod(newMethod);
       }
     }
 
@@ -32,13 +33,12 @@ class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
             onMethodChange);
 
     return Scaffold(
-        appBar: AppBar(title: Text(s.annotatedExample)),
+        appBar: AppBar(title: Text(s.dictionaryDefinition)),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            PreferencesTitle(title: s.entryEgPronunciationMethod),
-            methodRadioListTile(PronunciationMethod.tts),
+            PreferencesTitle(title: s.entryHeaderPronunciationMethod),
             methodRadioListTile(PronunciationMethod.syllableRecordingsMale),
             methodRadioListTile(PronunciationMethod.syllableRecordingsFemale),
           ]),

@@ -5,6 +5,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../models/player_mode.dart';
+import '../models/pronunciation_method.dart';
 
 class PlayerState with ChangeNotifier {
   final FlutterTts ttsPlayer = FlutterTts();
@@ -54,16 +55,21 @@ class PlayerState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> syllablesPlay(int newKey, List<String> prs) async {
+  Future<void> syllablesPlay(
+      int newKey, List<String> prs, PronunciationMethod method) async {
     if (await setPlayerKey(newKey)) {
       return;
     }
     playerMode = PlayerMode.syllables;
     notifyListeners();
+    final String speakerGender =
+        method == PronunciationMethod.syllableRecordingsMale
+            ? "male"
+            : "female";
     await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
         children: prs
-            .map((syllable) => AudioSource.uri(
-                Uri.parse("asset:///assets/jyutping_male/$syllable.mp3")))
+            .map((syllable) => AudioSource.uri(Uri.parse(
+                "asset:///assets/jyutping_$speakerGender/$syllable.mp3")))
             .toList()));
     syllablesPlayer.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {

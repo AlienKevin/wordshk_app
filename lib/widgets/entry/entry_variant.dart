@@ -35,7 +35,10 @@ class EntryVariant extends StatelessWidget {
               // selectionWidthStyle: BoxWidthStyle.max,
             ),
             SyllablePronunciationButton(
-                prs: pr.split(" "), alignment: Alignment.center)
+              prs: pr.split(" "),
+              alignment: Alignment.center,
+              atHeader: true,
+            )
           ])
     ]);
   }

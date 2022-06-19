@@ -78,19 +78,21 @@ class EntryRubyLine extends StatelessWidget {
                 Consumer<PronunciationMethodState>(
                     builder: (context, pronunciationMethodState, child) =>
                         pronunciationMethodState.entryEgMethod ==
-                                PronunciationMethod.syllableRecordings
-                            ? SyllablePronunciationButton(
+                                PronunciationMethod.tts
+                            ? TtsPronunciationButton(
+                                text: Platform.isIOS
+                                    ? line.toPrs()
+                                    : line.toString(),
+                                alignment: Alignment.topCenter,
+                              )
+                            : SyllablePronunciationButton(
                                 prs: line
                                     .toPrs()
                                     .replaceAll(RegExp(r"[^a-z0-6 ]"), "")
                                     .trim()
                                     .split(RegExp(r"\s+")),
-                                alignment: Alignment.topCenter)
-                            : TtsPronunciationButton(
-                                text: Platform.isIOS
-                                    ? line.toPrs()
-                                    : line.toString(),
                                 alignment: Alignment.topCenter,
+                                atHeader: false,
                               )),
               ]
                   .map((e) => Row(
