@@ -123,6 +123,10 @@
     "pronunciationMethodSyllableRecordingsFemale": "音节录音（女）",
     "pronunciationMethodTts": "系统语音合成",
 
+    "speechRateVerySlow": "非常慢",
+    "speechRateSlow": "较缓",
+    "speechRateNormal": "匀速",
+
     "entryEgFontSize": "注音例句字体大小",
     "fontSizeSmall": "小",
     "fontSizeMedium": "中",
