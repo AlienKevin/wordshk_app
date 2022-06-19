@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
+import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/widgets/pronunciation_button.dart';
 
 import '../constants.dart';
@@ -30,10 +31,17 @@ class SyllablePronunciationButton extends StatelessWidget {
                 : jyutpingFemaleSyllableNames.containsAll(prs),
             child: PronunciationButton(
               play: (key) {
-                final state = context.read<PronunciationMethodState>();
-                final method =
-                    atHeader ? state.entryHeaderMethod : state.entryEgMethod;
-                context.read<PlayerState>().syllablesPlay(key, prs, method);
+                final prMethodState = context.read<PronunciationMethodState>();
+                final method = atHeader
+                    ? prMethodState.entryHeaderMethod
+                    : prMethodState.entryEgMethod;
+                final speechRateState = context.read<SpeechRateState>();
+                final rate = atHeader
+                    ? speechRateState.entryHeaderRate
+                    : speechRateState.entryEgRate;
+                context
+                    .read<PlayerState>()
+                    .syllablesPlay(key, prs, method, rate);
               },
               alignment: alignment,
             ),

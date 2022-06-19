@@ -7,6 +7,7 @@ import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
+import 'package:wordshk/models/speech_rate.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/speech_recognition_state.dart';
 
@@ -195,4 +196,15 @@ void showSpeechRecognitionDialog(BuildContext context) {
           ],
         );
       });
+}
+
+String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
+  switch (rate) {
+    case SpeechRate.slow:
+      return s.speechRateSlow;
+    case SpeechRate.medium:
+      return s.speechRateMedium;
+    case SpeechRate.fast:
+      return s.speechRateFast;
+  }
 }

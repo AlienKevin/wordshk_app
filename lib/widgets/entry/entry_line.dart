@@ -41,8 +41,10 @@ class EntryLine extends StatelessWidget {
                       WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
                           child: TtsPronunciationButton(
-                              text: line.toString(),
-                              alignment: Alignment.center))
+                            text: line.toString(),
+                            alignment: Alignment.center,
+                            atHeader: false,
+                          ))
                     ]
                   : []
             ],

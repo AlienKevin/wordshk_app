@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 
 import '../models/player_mode.dart';
 import '../models/pronunciation_method.dart';
+import '../models/speech_rate.dart';
 
 class PlayerState with ChangeNotifier {
   final FlutterTts ttsPlayer = FlutterTts();
@@ -20,7 +21,7 @@ class PlayerState with ChangeNotifier {
       await ttsPlayer.setSharedInstance(true);
       await ttsPlayer.setLanguage("zh-HK");
       await ttsPlayer.setSpeechRate(0.5);
-      await ttsPlayer.setVolume(0.5);
+      await ttsPlayer.setVolume(0.3);
       await ttsPlayer.setPitch(1.0);
       await ttsPlayer.isLanguageAvailable("zh-HK");
     })();
@@ -55,8 +56,8 @@ class PlayerState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> syllablesPlay(
-      int newKey, List<String> prs, PronunciationMethod method) async {
+  Future<void> syllablesPlay(int newKey, List<String> prs,
+      PronunciationMethod method, SpeechRate rate) async {
     if (await setPlayerKey(newKey)) {
       return;
     }
@@ -82,16 +83,37 @@ class PlayerState with ChangeNotifier {
         }
       }
     });
+    final speed = method == PronunciationMethod.syllableRecordingsMale
+        ? (rate == SpeechRate.slow
+            ? 0.6
+            : rate == SpeechRate.medium
+                ? 1.0
+                : 1.3)
+        : (rate == SpeechRate.slow
+            ? 0.8
+            : rate == SpeechRate.medium
+                ? 1.5
+                : 2.0);
+    final volume =
+        method == PronunciationMethod.syllableRecordingsMale ? 0.4 : 0.5;
+    await syllablesPlayer.setSpeed(speed);
+    await syllablesPlayer.setVolume(volume);
     await syllablesPlayer.seek(Duration.zero, index: 0);
     await syllablesPlayer.play();
   }
 
-  Future<void> ttsPlay(int newKey, String text) async {
+  Future<void> ttsPlay(int newKey, String text, SpeechRate rate) async {
     if (await setPlayerKey(newKey)) {
       return;
     }
     playerMode = PlayerMode.tts;
     notifyListeners();
+    final speed = rate == SpeechRate.slow
+        ? 0.15
+        : rate == SpeechRate.medium
+            ? 0.5
+            : 0.6;
+    await ttsPlayer.setSpeechRate(speed);
     await ttsPlayer.speak(text);
     ttsPlayer.setCompletionHandler(() {
       if (!playerStoppedDueToSwitch) {

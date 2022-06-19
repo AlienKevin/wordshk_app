@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
+import 'package:wordshk/widgets/preferences/speech_rate_radio_list_tiles.dart';
 
 import '../../models/pronunciation_method.dart';
 import '../../utils.dart';
@@ -41,6 +42,9 @@ class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
             methodRadioListTile(PronunciationMethod.tts),
             methodRadioListTile(PronunciationMethod.syllableRecordingsMale),
             methodRadioListTile(PronunciationMethod.syllableRecordingsFemale),
+            const SizedBox(height: 20),
+            PreferencesTitle(title: s.entryEgSpeechRate),
+            const SpeechRateRadioListTiles(atHeader: false),
           ]),
         ));
   }

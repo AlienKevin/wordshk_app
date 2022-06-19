@@ -84,6 +84,7 @@ class EntryRubyLine extends StatelessWidget {
                                     ? line.toPrs()
                                     : line.toString(),
                                 alignment: Alignment.topCenter,
+                                atHeader: false,
                               )
                             : SyllablePronunciationButton(
                                 prs: line

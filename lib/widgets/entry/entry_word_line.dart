@@ -33,7 +33,10 @@ class EntryWordLine extends StatelessWidget {
               WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
                   child: TtsPronunciationButton(
-                      text: line.toString(), alignment: Alignment.center))
+                    text: line.toString(),
+                    alignment: Alignment.center,
+                    atHeader: false,
+                  ))
             ],
             style: TextStyle(fontSize: fontSize, height: 1.2, color: textColor),
           ),

@@ -134,6 +134,7 @@
     "entryLanguageBoth": "Bilingual",
 
     "entryHeaderPronunciationMethod": "Header Pronunciation Method",
+    "entryHeaderSpeechRate": "Header Speech Rate",
 
     "entryEgPronunciationMethod": "Example Pronunciation Method",
     "pronunciationMethodSyllableRecordingsMale": "Syllable recordings (Male)",
@@ -142,6 +143,11 @@
     "pronunciationMethodSyllableRecordingsMaleShort": "Record (M)",
     "pronunciationMethodSyllableRecordingsFemaleShort": "Record (F)",
     "pronunciationMethodTtsShort": "TTS",
+    "entryEgSpeechRate": "Example Speech Rate",
+
+    "speechRateSlow": "Slow",
+    "speechRateMedium": "Medium",
+    "speechRateFast": "Fast",
 
     "entryEgFontSize": "Example Font Size",
     "fontSizeSmall": "Small",

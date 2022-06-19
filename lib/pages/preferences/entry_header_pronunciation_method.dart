@@ -6,6 +6,7 @@ import 'package:wordshk/states/pronunciation_method_state.dart';
 import '../../models/pronunciation_method.dart';
 import '../../utils.dart';
 import '../../widgets/preferences/radio_list_tile.dart';
+import '../../widgets/preferences/speech_rate_radio_list_tiles.dart';
 import '../../widgets/preferences/title.dart';
 
 class EntryHeaderPronunciationMethodPreferencesPage extends StatelessWidget {
@@ -41,6 +42,9 @@ class EntryHeaderPronunciationMethodPreferencesPage extends StatelessWidget {
             PreferencesTitle(title: s.entryHeaderPronunciationMethod),
             methodRadioListTile(PronunciationMethod.syllableRecordingsMale),
             methodRadioListTile(PronunciationMethod.syllableRecordingsFemale),
+            const SizedBox(height: 20),
+            PreferencesTitle(title: s.entryHeaderSpeechRate),
+            const SpeechRateRadioListTiles(atHeader: true),
           ]),
         ));
   }
