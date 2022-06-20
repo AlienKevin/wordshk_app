@@ -20,7 +20,7 @@ class EntryEgPreferencesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
-    final language = context.watch<LanguageState>().language;
+    final language = context.watch<LanguageState>().language!;
     final entryEgFontSize = context.watch<EntryEgFontSizeState>().size;
     final entryEgPronunciationMethod =
         context.watch<PronunciationMethodState>().entryEgMethod;

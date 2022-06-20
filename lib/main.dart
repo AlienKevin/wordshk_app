@@ -48,7 +48,7 @@ main() async {
             create: (_) => SearchQueryState()),
         ChangeNotifierProvider<InputModeState>(create: (_) => InputModeState()),
         ChangeNotifierProvider<LanguageState>(
-            create: (context) => LanguageState(prefs, context)),
+            create: (context) => LanguageState(prefs, context), lazy: false),
         ChangeNotifierProvider<EntryLanguageState>(
             create: (_) => EntryLanguageState(prefs)),
         ChangeNotifierProvider<PronunciationMethodState>(
@@ -209,31 +209,34 @@ class _MyAppState extends State<MyApp> {
     return Portal(
         child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      locale: context.watch<LanguageState>().language.toLocale,
+      locale: context.watch<LanguageState>().language?.toLocale,
       title: 'words.hk',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       localeResolutionCallback: (
         locale,
         supportedLocales,
       ) {
+        late final Locale resolvedLocale;
         if (locale?.languageCode == 'yue') {
-          return const Locale.fromSubtags(
+          resolvedLocale = const Locale.fromSubtags(
               languageCode: 'zh',
               scriptCode: 'Hant',
               countryCode: 'HK'); // 'zh_Hant_HK'
-        } else if (supportedLocales.contains(locale)) {
-          return locale;
+        } else if (locale != null && supportedLocales.contains(locale)) {
+          resolvedLocale = locale;
         } else if (locale?.languageCode == 'zh') {
           if (locale?.scriptCode == 'Hant') {
-            return const Locale.fromSubtags(
+            resolvedLocale = const Locale.fromSubtags(
                 languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW');
           } else {
-            return const Locale.fromSubtags(
+            resolvedLocale = const Locale.fromSubtags(
                 languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN');
           }
         } else {
-          return const Locale.fromSubtags(languageCode: 'en');
+          resolvedLocale = const Locale.fromSubtags(languageCode: 'en');
         }
+        context.read<LanguageState>().syncLocale(resolvedLocale);
+        return resolvedLocale;
       },
       supportedLocales: const [
         Locale.fromSubtags(

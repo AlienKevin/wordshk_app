@@ -26,7 +26,7 @@ class PreferencesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
 
-    final language = context.watch<LanguageState>().language;
+    final language = context.watch<LanguageState>().language!;
     final entryLanguage = context.watch<EntryLanguageState>().language;
     final romanization = context.watch<RomanizationState>().romanization;
     final searchRomanization =
