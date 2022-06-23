@@ -62,15 +62,37 @@ cargo ndk -o ../android/app/src/main/jniLibs build
 See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_android.html) to set up Android.
 
 # Generate App Store images
+
 Run snapshot:
+
 ```
 bundle exec fastlane snapshot --configuration "Release" --stop_after_first_error
 ```
 
 Reset all simulators in case of errors during snapshot:
+
 ```
 bundle exec fastlane fastlane snapshot reset_simulators
 ```
+
+# Normalize jyutping syllables audios
+
+1. Open Adobe Audition, run the "Match Loudness" with these settings:
+   
+   * ITU-R BS.1770-3 Loudness
+   * Tolerance: 2 LU
+   * Max True Peak Level: -2 dBTP
+   * Look-ahead Time: 12ms
+   * Release Time: 200ms
+
+2. Export the files with matched loudness
+   With export settings as follows:
+   
+   * Format MP3
+   * Sample Type: Same as source
+   * Format settings: MP3 24 Kbps CBR (Constant type)
+
+3. Run `audio_trim_silence.sh` to trim silence at the beginning and end of all mp3 files 
 
 # TODO
 
