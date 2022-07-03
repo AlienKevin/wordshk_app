@@ -75,11 +75,12 @@ Reset all simulators in case of errors during snapshot:
 bundle exec fastlane fastlane snapshot reset_simulators
 ```
 
-# Normalize jyutping syllables audios
+# Normalize jyutping syllable audios
 
 1. Open Adobe Audition, run the "Match Loudness" with these settings:
    
    * ITU-R BS.1770-3 Loudness
+   * Target Loudness: -16 LUFS
    * Tolerance: 2 LU
    * Max True Peak Level: -2 dBTP
    * Look-ahead Time: 12ms
@@ -92,7 +93,11 @@ bundle exec fastlane fastlane snapshot reset_simulators
    * Sample Type: Same as source
    * Format settings: MP3 24 Kbps CBR (Constant type)
 
-3. Run `audio_trim_silence.sh` to trim silence at the beginning and end of all mp3 files 
+3. Change directory into `assets/jyutping_female` or `assets/jyutping_male`.
+4. Run `process_audios.sh`. This script does three things:
+   1. Trim silence at the beginning and end of all mp3 files
+   2. Pad the end of jap6sing1 syllables so they are not too short
+   3. Peak normalize jap6sing1 syllables to make they as loud as other syllables
 
 # TODO
 
