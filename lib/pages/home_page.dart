@@ -54,6 +54,30 @@ class _HomePageState extends State<HomePage> {
       final query = context.read<SearchQueryState>().query;
       doSearch(query, context);
     });
+    context
+        .read<InputModeState>()
+        .setOnDone(() => onSearchDone(context.read<SearchQueryState>().query));
+  }
+
+  onSearchDone(String query) {
+    final state = context.read<SearchModeState>();
+    if (state.mode == SearchMode.variant || state.mode == SearchMode.combined) {
+      // No search results should be produced in other modes
+      if (state.mode == SearchMode.combined) {
+        if (prSearchResults.isNotEmpty || englishSearchResults.isNotEmpty) {
+          return;
+        }
+      }
+      final exactMatchVariant = variantSearchResults
+          .firstWhereOrNull((result) => result.variant == query);
+      if (exactMatchVariant != null) {
+        Navigator.push(
+          context,
+          CustomPageRoute(
+              builder: (context) => EntryPage(id: exactMatchVariant.id)),
+        );
+      }
+    }
   }
 
   @override
@@ -101,29 +125,7 @@ class _HomePageState extends State<HomePage> {
                   queryEmptied = true;
                 });
               },
-              onSubmitted: (query) {
-                final state = context.read<SearchModeState>();
-                if (state.mode == SearchMode.variant ||
-                    state.mode == SearchMode.combined) {
-                  // No search results should be produced in other modes
-                  if (state.mode == SearchMode.combined) {
-                    if (prSearchResults.isNotEmpty ||
-                        englishSearchResults.isNotEmpty) {
-                      return;
-                    }
-                  }
-                  final exactMatchVariant = variantSearchResults
-                      .firstWhereOrNull((result) => result.variant == query);
-                  if (exactMatchVariant != null) {
-                    Navigator.push(
-                      context,
-                      CustomPageRoute(
-                          builder: (context) =>
-                              EntryPage(id: exactMatchVariant.id)),
-                    );
-                  }
-                }
-              },
+              onSubmitted: onSearchDone,
             ),
             drawer: const NavigationDrawer(),
             body: inputMode == InputMode.ink
