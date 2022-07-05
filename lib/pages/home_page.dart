@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -58,7 +59,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final bool isSearchResultsEmpty;
-    switch (context.watch<SearchModeState>().mode) {
+    final SearchModeState searchMode = context.watch<SearchModeState>();
+    switch (searchMode.mode) {
       case SearchMode.pr:
         isSearchResultsEmpty = prSearchResults.isEmpty;
         break;
@@ -78,25 +80,51 @@ class _HomePageState extends State<HomePage> {
 
     return KeyboardVisibilityProvider(
         child: Scaffold(
-            appBar: SearchBar(onChanged: (query) {
-              if (query.isEmpty) {
+            appBar: SearchBar(
+              onChanged: (query) {
+                if (query.isEmpty) {
+                  setState(() {
+                    queryEmptied = true;
+                    finishedSearch = false;
+                  });
+                } else {
+                  setState(() {
+                    queryEmptied = false;
+                    finishedSearch = false;
+                  });
+                }
+                doSearch(query, context);
+              },
+              onCleared: () {
                 setState(() {
+                  // TODO: hide search results
                   queryEmptied = true;
-                  finishedSearch = false;
                 });
-              } else {
-                setState(() {
-                  queryEmptied = false;
-                  finishedSearch = false;
-                });
-              }
-              doSearch(query, context);
-            }, onCleared: () {
-              setState(() {
-                // TODO: hide search results
-                queryEmptied = true;
-              });
-            }),
+              },
+              onSubmitted: (query) {
+                final state = context.read<SearchModeState>();
+                if (state.mode == SearchMode.variant ||
+                    state.mode == SearchMode.combined) {
+                  // No search results should be produced in other modes
+                  if (state.mode == SearchMode.combined) {
+                    if (prSearchResults.isNotEmpty ||
+                        englishSearchResults.isNotEmpty) {
+                      return;
+                    }
+                  }
+                  final exactMatchVariant = variantSearchResults
+                      .firstWhereOrNull((result) => result.variant == query);
+                  if (exactMatchVariant != null) {
+                    Navigator.push(
+                      context,
+                      CustomPageRoute(
+                          builder: (context) =>
+                              EntryPage(id: exactMatchVariant.id)),
+                    );
+                  }
+                }
+              },
+            ),
             drawer: const NavigationDrawer(),
             body: inputMode == InputMode.ink
                 ? DigitalInkView(

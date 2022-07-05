@@ -429,9 +429,7 @@ class IsSearching extends State<SearchBar> {
                             context
                                 .read<SearchQueryState>()
                                 .updateSearchQuery(query);
-                            if (widget.onChanged != null) {
-                              widget.onChanged!(query);
-                            }
+                            widget.onChanged?.call(query);
                           },
                           onSubmitted: (String val) async {
                             if (widget.closeOnSubmit) {
