@@ -25,7 +25,6 @@ class IntroductionPage extends StatelessWidget {
     return IntroductionScreen(
         isTopSafeArea: true,
         isBottomSafeArea: true,
-        globalBackgroundColor: Colors.white,
         onDone: () {
           Navigator.push(
             context,
@@ -52,7 +51,12 @@ class IntroductionPage extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(s.introductionText)),
               const SizedBox(height: 40),
-              const Image(width: 200, image: AssetImage('assets/icon.png'))
+              Image(
+                  width: 200,
+                  image: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? const AssetImage('assets/icon.png')
+                      : const AssetImage('assets/icon_grey.png'))
             ]),
             decoration: pageDecoration,
           ),
