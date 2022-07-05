@@ -28,9 +28,11 @@
 
     "speakNow": "請講{language}",
     "listening": "聽緊👂...",
-    "errorInSpeechRecognition": "語音識別出咗問題而中途停止。請試多次。",
+    "errorInSpeechRecognition": "語音識別出咗問題而中途停止。請試多次或者改用打字輸入。",
+    "speechRecognitionNoMatch": "我哋喺數據庫入面揾唔到相關短語。請試多次或者改用打字輸入。",
     "loadingRecognitionEngine": "載入緊語音識別模型...",
     "speechRecognitionNotAvailable": "語音識別唔可用。請試多次。",
+    "speechRecognitionFinished": "完成語音識別。",
 
     "entry": "詞條",
     "entryMoreVariants": "多啲寫法",

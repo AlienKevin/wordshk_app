@@ -13,7 +13,6 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/search_romanization_state.dart';
-import 'package:wordshk/states/speech_recognition_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/search_mode_button.dart';
 import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
@@ -24,6 +23,7 @@ import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
+import '../states/speech_recognition_state.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);

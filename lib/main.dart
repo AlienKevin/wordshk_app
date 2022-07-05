@@ -63,7 +63,7 @@ main() async {
             create: (_) => SearchRomanizationState(prefs)),
         ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
         ChangeNotifierProvider<SpeechRecognitionState>(
-            create: (_) => SpeechRecognitionState(), lazy: false),
+            create: (_) => SpeechRecognitionState(), lazy: true),
         ChangeNotifierProvider<SpeechRateState>(
             create: (_) => SpeechRateState()),
       ],

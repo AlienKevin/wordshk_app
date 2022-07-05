@@ -163,28 +163,38 @@ Script getScript(BuildContext context) =>
         ? Script.Simplified
         : Script.Traditional;
 
-void showSpeechRecognitionDialog(BuildContext context) {
+void showSpeechRecognitionDialog(BuildContext context) async {
   final state = context.read<SpeechRecognitionState>();
-  state.startListening(getScript(context));
+  await state.startListening(getScript(context));
   final s = AppLocalizations.of(context)!;
   showPlatformDialog(
       context: context,
       builder: (context) {
         final state = context.watch<SpeechRecognitionState>();
+        state.setCloseDialog(() {
+          // print("close speech recognition dialog");
+          Navigator.pop(context, false);
+        });
         return PlatformAlertDialog(
           title: Text(s.speakNow(s.entryLanguageCantonese)),
-          content: state.speechToText.isAvailable
+          content: (state.speechToText.isAvailable && state.isAvailable)
               ? (state.speechToText.isListening
                   ? Text(s.listening)
-                  : state.speechToText.hasError
-                      ? Text(s.errorInSpeechRecognition)
-                      : Text(s.loadingRecognitionEngine))
+                  : state.speechToText.hasRecognized
+                      ? Text(s.speechRecognitionFinished)
+                      : state.speechToText.hasError
+                          ? (state.speechToText.lastError!.errorMsg ==
+                                  "error_no_match"
+                              ? Text(s.speechRecognitionNoMatch)
+                              : Text(s.errorInSpeechRecognition))
+                          : Text(s.loadingRecognitionEngine))
               : Text(s.speechRecognitionNotAvailable),
           actions: <Widget>[
             PlatformDialogAction(
                 child: PlatformText('Done'),
                 onPressed: () {
                   state.cancelListening();
+                  // print("close speech recognition dialog");
                   Navigator.pop(context, false);
                 }),
           ],

@@ -28,9 +28,11 @@
 
     "speakNow": "请讲{language}",
     "listening": "正在聆听👂...",
-    "errorInSpeechRecognition": "语音识别出现故障而中途停止。请再试一次。",
+    "errorInSpeechRecognition": "语音识别出现故障而中途停止。请重试或改用打字输入。",
+    "speechRecognitionNoMatch": "我们在数据库中找不到相匹配的短语。请重试或改用打字输入。",
     "loadingRecognitionEngine": "正在加载语音识别模型...",
     "speechRecognitionNotAvailable": "语音识别不可用。请再试一次。",
+    "speechRecognitionFinished": "完成语音识别。",
 
     "entry": "词条",
     "entryMoreVariants": "更多写法",
