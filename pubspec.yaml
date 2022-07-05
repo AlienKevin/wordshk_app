@@ -60,7 +60,6 @@ flutter:
     - assets/
     - assets/images/
     - assets/jyutping_female/
-    - assets/jyutping_male/
   fonts:
     - family: ChironHeiHK
       fonts:

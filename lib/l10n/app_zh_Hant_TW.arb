@@ -116,11 +116,10 @@
     "entryLanguageEnglish": "英文",
     "entryLanguageBoth": "雙語",
 
-    "entryHeaderPronunciationMethod": "標題發音方式",
+    "entryHeaderSpeechRate": "標題發音速度",
 
     "entryEgPronunciationMethod": "注音例句發音方式",
-    "pronunciationMethodSyllableRecordingsMale": "音節錄音（男）",
-    "pronunciationMethodSyllableRecordingsFemale": "音節錄音（女）",
+    "pronunciationMethodSyllableRecordings": "音節錄音",
     "pronunciationMethodTts": "系統語音合成",
 
     "speechRateVerySlow": "非常慢",

@@ -133,15 +133,12 @@
     "entryLanguageEnglish": "English",
     "entryLanguageBoth": "Bilingual",
 
-    "entryHeaderPronunciationMethod": "Header Pronunciation Method",
     "entryHeaderSpeechRate": "Header Speech Rate",
 
     "entryEgPronunciationMethod": "Example Pronunciation Method",
-    "pronunciationMethodSyllableRecordingsMale": "Syllable recordings (Male)",
-    "pronunciationMethodSyllableRecordingsFemale": "Syllable recordings (Female)",
+    "pronunciationMethodSyllableRecordings": "Syllable recordings",
     "pronunciationMethodTts": "System Text-to-Speech",
-    "pronunciationMethodSyllableRecordingsMaleShort": "Record (M)",
-    "pronunciationMethodSyllableRecordingsFemaleShort": "Record (F)",
+    "pronunciationMethodSyllableRecordingsShort": "Recording",
     "pronunciationMethodTtsShort": "TTS",
     "entryEgSpeechRate": "Example Speech Rate",
 

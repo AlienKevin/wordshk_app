@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -63,14 +64,10 @@ class PlayerState with ChangeNotifier {
     }
     playerMode = PlayerMode.syllables;
     notifyListeners();
-    final String speakerGender =
-        method == PronunciationMethod.syllableRecordingsMale
-            ? "male"
-            : "female";
     await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
         children: prs
-            .map((syllable) => AudioSource.uri(Uri.parse(
-                "asset:///assets/jyutping_$speakerGender/$syllable.mp3")))
+            .map((syllable) => AudioSource.uri(
+                Uri.parse("asset:///assets/jyutping_female/$syllable.mp3")))
             .toList()));
     syllablesPlayer.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
@@ -83,19 +80,12 @@ class PlayerState with ChangeNotifier {
         }
       }
     });
-    final speed = method == PronunciationMethod.syllableRecordingsMale
-        ? (rate == SpeechRate.verySlow
-            ? 0.6
-            : rate == SpeechRate.slow
-                ? 0.8
-                : 1.0)
-        : (rate == SpeechRate.verySlow
-            ? 0.8
-            : rate == SpeechRate.slow
-                ? 1.2
-                : 1.5);
-    final volume =
-        method == PronunciationMethod.syllableRecordingsMale ? 0.4 : 0.6;
+    final speed = rate == SpeechRate.verySlow
+        ? 0.8
+        : rate == SpeechRate.slow
+            ? 1.2
+            : 1.5;
+    final volume = Platform.isIOS ? 0.1 : 1.0;
     await syllablesPlayer.setSpeed(speed);
     await syllablesPlayer.setVolume(volume);
     await syllablesPlayer.seek(Duration.zero, index: 0);

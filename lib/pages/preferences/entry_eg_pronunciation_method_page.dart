@@ -40,8 +40,7 @@ class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             PreferencesTitle(title: s.entryEgPronunciationMethod),
             methodRadioListTile(PronunciationMethod.tts),
-            methodRadioListTile(PronunciationMethod.syllableRecordingsMale),
-            methodRadioListTile(PronunciationMethod.syllableRecordingsFemale),
+            methodRadioListTile(PronunciationMethod.syllableRecordings),
             const SizedBox(height: 20),
             PreferencesTitle(title: s.entryEgSpeechRate),
             const SpeechRateRadioListTiles(atHeader: false),

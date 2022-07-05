@@ -1,5 +1,4 @@
 enum PronunciationMethod {
-  syllableRecordingsMale,
-  syllableRecordingsFemale,
+  syllableRecordings,
   tts,
 }

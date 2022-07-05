@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/speech_rate.dart';
 
 class SpeechRateState with ChangeNotifier {
-  SpeechRate entryHeaderRate = SpeechRate.normal;
+  SpeechRate entryHeaderRate = SpeechRate.slow;
   SpeechRate entryEgRate = SpeechRate.normal;
 
   void updateEntryHeaderSpeechRate(SpeechRate newRate) {

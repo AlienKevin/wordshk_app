@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/widgets/pronunciation_button.dart';
@@ -23,18 +22,11 @@ class SyllablePronunciationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<PronunciationMethodState>(
       builder: (context, prMethodState, child) => Visibility(
-            visible: (atHeader
-                        ? prMethodState.entryHeaderMethod
-                        : prMethodState.entryEgMethod) ==
-                    PronunciationMethod.syllableRecordingsMale
-                ? jyutpingMaleSyllableNames.containsAll(prs)
-                : jyutpingFemaleSyllableNames.containsAll(prs),
+            visible: jyutpingFemaleSyllableNames.containsAll(prs),
             child: PronunciationButton(
               play: (key) {
                 final prMethodState = context.read<PronunciationMethodState>();
-                final method = atHeader
-                    ? prMethodState.entryHeaderMethod
-                    : prMethodState.entryEgMethod;
+                final method = prMethodState.entryEgMethod;
                 final speechRateState = context.read<SpeechRateState>();
                 final rate = atHeader
                     ? speechRateState.entryHeaderRate
