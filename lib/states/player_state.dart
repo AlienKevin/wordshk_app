@@ -22,7 +22,7 @@ class PlayerState with ChangeNotifier {
       await ttsPlayer.setSharedInstance(true);
       await ttsPlayer.setLanguage("zh-HK");
       await ttsPlayer.setSpeechRate(0.5);
-      await ttsPlayer.setVolume(0.3);
+      await ttsPlayer.setVolume(Platform.isIOS ? 0.3 : 1.0);
       await ttsPlayer.setPitch(1.0);
       await ttsPlayer.isLanguageAvailable("zh-HK");
     })();
