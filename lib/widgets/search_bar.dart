@@ -371,7 +371,7 @@ class IsSearching extends State<SearchBar> {
               builder: (context, searchModeState, child) => Padding(
                 padding: const EdgeInsets.only(right: 10, top: 2),
                 child: SizedBox(
-                    height: 42,
+                    height: 48,
                     child: KeyboardActions(
                         config: _buildKeyboardActionsConfig(context),
                         child: TextField(
@@ -390,10 +390,10 @@ class IsSearching extends State<SearchBar> {
                               ? TextInputType.text
                               : TextInputType.none,
                           decoration: InputDecoration(
+                            isDense: true,
                             filled: true,
                             fillColor: Theme.of(context).canvasColor,
-                            contentPadding:
-                                const EdgeInsets.only(left: 8, top: -4),
+                            contentPadding: const EdgeInsets.only(left: 8),
                             hintText: translateSearchMode(
                                 searchModeState.mode,
                                 searchRomanizationName,
