@@ -177,17 +177,17 @@ void showSpeechRecognitionDialog(BuildContext context) async {
         });
         return PlatformAlertDialog(
           title: Text(s.speakNow(s.entryLanguageCantonese)),
-          content: (state.speechToText.isAvailable && state.isAvailable)
-              ? (state.speechToText.isListening
-                  ? Text(s.listening)
-                  : state.speechToText.hasRecognized
-                      ? Text(s.speechRecognitionFinished)
-                      : state.speechToText.hasError
-                          ? (state.speechToText.lastError!.errorMsg ==
-                                  "error_no_match"
-                              ? Text(s.speechRecognitionNoMatch)
-                              : Text(s.errorInSpeechRecognition))
-                          : Text(s.loadingRecognitionEngine))
+          content: state.isAvailable
+              ? (state.lastError != null
+                  ? (state.lastError!.errorMsg == "error_no_match"
+                      ? Text(s.speechRecognitionNoMatch)
+                      : Text(s.errorInSpeechRecognition))
+                  : (state.speechToText.isListening
+                      ? Text(s.listening)
+                      : (state.speechToText.hasRecognized ||
+                              !state.isDialogOpen)
+                          ? Text(s.speechRecognitionFinished)
+                          : Text(s.loadingRecognitionEngine)))
               : Text(s.speechRecognitionNotAvailable),
           actions: <Widget>[
             PlatformDialogAction(

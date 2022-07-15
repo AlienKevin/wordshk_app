@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -14,6 +15,7 @@ class SpeechRecognitionState with ChangeNotifier {
   bool initialized = false;
   bool isAvailable = true;
   bool isDialogOpen = true;
+  SpeechRecognitionError? lastError;
 
   void setOnResult(void Function(String) newOnResult) {
     onResult = newOnResult;
@@ -44,13 +46,16 @@ class SpeechRecognitionState with ChangeNotifier {
             SpeechToText.androidIntentLookup,
           ],
           onError: (error) {
-            // print("error: $error");
-            // print("lastError: ${speechToText.lastError}");
+            print("error: $error");
+            print("lastError: ${speechToText.lastError}");
+            lastError = error;
             notifyListeners();
           });
       // print("finished initialization.");
       initialized = true;
     }
+    lastError = null;
+    notifyListeners();
     var cantoneseLocaleId = Platform.isAndroid
         ? "yue_HK"
         : (script == Script.Traditional ? "zh-HK" : "yue-CN");
@@ -72,8 +77,8 @@ class SpeechRecognitionState with ChangeNotifier {
 
   void cancelListening() async {
     isDialogOpen = false;
+    notifyListeners();
     await speechToText.cancel();
-    // print("set isDialogOpen to false");
     notifyListeners();
   }
 
@@ -85,11 +90,13 @@ class SpeechRecognitionState with ChangeNotifier {
       onResult!(result.recognizedWords);
       // iOS for some reason never stops listening
       // So the user has to manually close the dialog
-      if (Platform.isAndroid && isDialogOpen) {
-        Future.delayed(const Duration(milliseconds: 600), () {
-          if (speechToText.isNotListening) {
-            closeDialog!();
+      if (isDialogOpen) {
+        print("Schedule close dialog");
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (speechToText.isNotListening && isDialogOpen) {
             isDialogOpen = false;
+            notifyListeners();
+            closeDialog!();
           }
         });
       }
