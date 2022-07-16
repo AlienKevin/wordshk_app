@@ -51,6 +51,8 @@
     "entryCollapseVariants": "Collapse Variants",
     "entryMoreExamples": "More Examples",
     "entryCollapseExamples": "Collapse Examples",
+    "entryFailedToLoad": "Entry Failed to Load. An anonymous bug report has been sent to the developer. We will fix this soon.",
+    "backToSearch": "Back to Search",
 
     "posNoun": "noun",
     "posVerb": "verb",

@@ -39,6 +39,8 @@
     "entryCollapseVariants": "折疊寫法",
     "entryMoreExamples": "更多例句",
     "entryCollapseExamples": "折疊例句",
+    "entryFailedToLoad": "詞條加載失敗，問題報告已經匿名傳送給開發者，我們會盡快處理。",
+    "backToSearch": "返回搜索界面",
 
     "posNoun": "名詞",
     "posVerb": "動詞",

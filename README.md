@@ -11,6 +11,24 @@ In your `Cargo.toml`, ensure the following `crate-type` is present:
 crate-type = ["staticlib", "cdylib"] # "staticlib" for iOS, "cdylib" for Android
 ```
 
+We use the SMTP protocol to anonymously report bugs to the developers. If you wish to
+receive bug reports via email, add `lib/smtp_credentials.dart` with the following variables:
+
+```dart
+String host = 'YOUR SMTP HOST'; // eg: 'smtp.mailgun.org'
+String username =
+    'YOUR SMTP USERNAME'; // eg: 'postmaster@sandbox.mailgun.org';
+String password = 'YOUR SMTP PASSWORD';
+String recipient = 'YOUR DEVELOPER EMAIL ADDRESS'; // eg: 'wordshk@gmail.com'
+```
+
+If you are not interested in the bug reports, add `lib/smtp_credentials.dart` with
+following content:
+
+```dart
+String host = ''; // This turns off SMTP bug reporting
+```
+
 Give the build script execution permission:
 
 ```bash
@@ -94,7 +112,9 @@ bundle exec fastlane fastlane snapshot reset_simulators
    * Format settings: MP3 24 Kbps CBR (Constant type)
 
 3. Change directory into `assets/jyutping_female` or `assets/jyutping_male`.
+
 4. Run `process_audios.sh`. This script does three things:
+   
    1. Trim silence at the beginning and end of all mp3 files
    2. Pad the end of jap6sing1 syllables so they are not too short
    3. Peak normalize jap6sing1 syllables to make they as loud as other syllables
