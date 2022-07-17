@@ -102,7 +102,7 @@ impl Api {
     }
 
     pub fn variant_search(&self, capacity: u32, query: &str, script: Script) -> Vec<VariantSearchResult> {
-        let mut ranks = search::variant_search(&self.variants_map, query, script);
+        let mut ranks = search::variant_search(&self.variants_map, query);
         let mut results = vec![];
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
@@ -120,7 +120,7 @@ impl Api {
     }
 
     pub fn combined_search(&self, capacity: u32, query: &str, script: Script, romanization: Romanization) -> CombinedSearchResults {
-        match &mut search::combined_search(&self.variants_map, &self.english_index, query, script, romanization) {
+        match &mut search::combined_search(&self.variants_map, &self.english_index, query, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
