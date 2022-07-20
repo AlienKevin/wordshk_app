@@ -14,6 +14,7 @@ use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
 pub use wordshk_tools::search::Script;
+use wordshk_tools::unicode::is_cjk;
 
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
@@ -74,7 +75,10 @@ impl Api {
         api.word_list = HashMap::new();
         for result in rdr.records() {
             let record = result.unwrap();
-            api.word_list.entry(record[0].to_string()).or_insert(vec![]).push(record[1].to_string());
+            // push traditional variant
+            api.word_list.entry(record[0].to_string()).or_insert(vec![]).push(record[2].to_string());
+            // push simplified variant
+            api.word_list.entry(record[1].to_string()).or_insert(vec![]).push(record[2].to_string());
         }
         api
     }
@@ -102,7 +106,7 @@ impl Api {
     }
 
     pub fn variant_search(&self, capacity: u32, query: &str, script: Script) -> Vec<VariantSearchResult> {
-        let mut ranks = search::variant_search(&self.variants_map, query);
+        let mut ranks = search::variant_search(&self.variants_map, query, script);
         let mut results = vec![];
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
@@ -120,7 +124,7 @@ impl Api {
     }
 
     pub fn combined_search(&self, capacity: u32, query: &str, script: Script, romanization: Romanization) -> CombinedSearchResults {
-        match &mut search::combined_search(&self.variants_map, &self.english_index, query, romanization) {
+        match &mut search::combined_search(&self.variants_map, &self.english_index, query, script, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
@@ -182,7 +186,8 @@ impl Api {
     }
 
     pub fn get_jyutping(&self, query: &str) -> Vec<String> {
-        self.word_list.get(query).unwrap_or(&vec![]).clone()
+        let query_normalized: String =query.chars().filter(|&c| is_cjk(c)).collect();
+        self.word_list.get(&query_normalized).unwrap_or(&vec![]).clone()
     }
 }
 
