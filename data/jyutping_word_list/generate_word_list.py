@@ -1,17 +1,10 @@
-import json
 import csv
 import re
 import opencc
 
-variants = set()
-
-# get words already in words.hk
-with open('../../assets/api.json') as file:
-  dict = json.load(file)["dict"]
-  for _, value in dict.items():
-    for variant in value["v"]:
-      variants.add(variant["w"])
-  print(variants)
+wordshk_word_list = None
+with open('../wordshk_word_list/word_list.txt', 'r') as f:
+    wordshk_word_list = set(line.strip() for line in f)
 
 # filter out words already in words.hk
 filtered = None
@@ -29,7 +22,7 @@ def converter(row):
 with open(input_filename, 'r') as f_read:
     reader = csv.reader(f_read, delimiter='\t')
     filtered = map(converter,
-        filter(lambda row: not (row[0] in variants) and len(row[0]) <= 9, reader)
+        filter(lambda row: not (row[0] in wordshk_word_list) and len(row[0]) <= 9, reader)
     )
     with open(output_filename,'w') as f_write:
         csv.writer(f_write,delimiter='\t').writerows(filtered)
