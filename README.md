@@ -6,7 +6,7 @@ words.hk dictionary for Android and iOS
 
 # Download
 
-<a href="https://apps.apple.com/us/app/words-hk-%E7%B2%B5%E5%85%B8/id1621976909?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 180px"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1657756800&h=1600d970c262d2b70ad557b308a2154b" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
+<a href="https://apps.apple.com/us/app/words-hk-%E7%B2%B5%E5%85%B8/id1621976909?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 180px"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1657756800&h=1600d970c262d2b70ad557b308a2154b" alt="Download on the App Store" style="border-radius: 13px; width: 200px; height: 95px;"></a>
 <a href='https://play.google.com/store/apps/details?id=hk.words.wordshk&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="width:250px;"/></a>
 
 # Build
