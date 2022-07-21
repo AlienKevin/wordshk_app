@@ -6,7 +6,7 @@ import opencc
 variants = set()
 
 # get words already in words.hk
-with open('../assets/api.json') as file:
+with open('../../assets/api.json') as file:
   dict = json.load(file)["dict"]
   for _, value in dict.items():
     for variant in value["v"]:
@@ -16,7 +16,7 @@ with open('../assets/api.json') as file:
 # filter out words already in words.hk
 filtered = None
 input_filename = "word_list.tsv"
-output_filename = "../assets/word_list.tsv"
+output_filename = "../../assets/word_list.tsv"
 hk_converter = opencc.OpenCC('t2hk.json')
 simp_converter = opencc.OpenCC('t2s.json')
 
