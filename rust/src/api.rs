@@ -75,10 +75,15 @@ impl Api {
         api.word_list = HashMap::new();
         for result in rdr.records() {
             let record = result.unwrap();
+            let trad = record[0].to_string();
+            let simp = record[1].to_string();
+            let pr = record[2].to_string();
+            // push simplified variant if it's different from the traditional
+            if simp != trad {
+                api.word_list.entry(simp).or_insert(vec![]).push(pr.clone());
+            }
             // push traditional variant
-            api.word_list.entry(record[0].to_string()).or_insert(vec![]).push(record[2].to_string());
-            // push simplified variant
-            api.word_list.entry(record[1].to_string()).or_insert(vec![]).push(record[2].to_string());
+            api.word_list.entry(trad).or_insert(vec![]).push(pr);
         }
         api
     }
@@ -187,7 +192,11 @@ impl Api {
 
     pub fn get_jyutping(&self, query: &str) -> Vec<String> {
         let query_normalized: String =query.chars().filter(|&c| is_cjk(c)).collect();
-        self.word_list.get(&query_normalized).unwrap_or(&vec![]).clone()
+        if query_normalized.chars().count() == 1 {
+            search::get_char_jyutpings(query_normalized.chars().next().unwrap()).unwrap_or(vec![])
+        } else {
+            self.word_list.get(&query_normalized).unwrap_or(&vec![]).clone()
+        }
     }
 }
 
