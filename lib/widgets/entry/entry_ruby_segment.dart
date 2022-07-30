@@ -22,7 +22,7 @@ List<Widget> showRubySegment(
   final double rubyYPos = rubySize * textScaleFactor;
   late final Widget text;
   late final List<String> prs;
-  late final List<int> prsTones;
+  late final List<int?> prsTones;
   switch (segment.type) {
     case RubySegmentType.punc:
       text = Builder(builder: (context) {
@@ -84,7 +84,7 @@ List<Widget> showRubySegment(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: IterableZip([prs, prsTones]).map((pair) {
                     final pr = pair[0] as String;
-                    final tone = pair[1] as int;
+                    final tone = (pair[1] as int?) ?? 1;
                     final double yPos = ((tone == 1)
                             ? 2.6
                             : tone == 2
