@@ -1116,9 +1116,18 @@ dependencies = [
 
 [[package]]
 name = "thesaurus"
-version = "0.2.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1840273ee33ed310a11797495b51634a53d08517a5ac881a11bf805dc26e3a5"
+checksum = "f32a7c11aded3e1cfdb6d7b520351ed4ef667ff93c043ab4f58856f5844edb91"
+dependencies = [
+ "thesaurus-wordnet",
+]
+
+[[package]]
+name = "thesaurus-wordnet"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0259c586ea967888ba2b555fbc56e68fdac32ad44d39b8dfcebd3afc3278a1a2"
 dependencies = [
  "lazy_static",
  "libflate",
@@ -1480,9 +1489,9 @@ dependencies = [
 
 [[package]]
 name = "wordshk_tools"
-version = "3.15.0-beta"
+version = "3.15.3-beta"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5dd7421c52a08942fd4297a0e2279f7a4ad270943433ed29fc2e719a265d2f69"
+checksum = "040bf39a135e557053a983c3829868a78fa985beed65fe7d9568767cbd1996c3"
 dependencies = [
  "csv",
  "deunicode",
