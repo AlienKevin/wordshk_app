@@ -31,27 +31,41 @@ class EntryPage extends StatefulWidget {
 }
 
 class _EntryPageState extends State<EntryPage> {
-  int entryIndex = 0;
+  late int entryIndex;
   late List<Entry> entryGroup;
   late final AutoScrollController scrollController;
   bool scrolledToInitialDef = false;
+  bool hasError = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    scrollController = AutoScrollController(
-        viewportBoundaryGetter: () =>
-            Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
-        axis: Axis.vertical);
     () async {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.speech());
+      try {
+        final json = await api.getEntryGroupJson(id: widget.id);
+        setState(() {
+          entryGroup = json
+              .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
+              .toList();
+        });
+      } catch (err) {
+        print(err);
+        setState(() {
+          hasError = true;
+        });
+      }
+      setState(() {
+        entryIndex = entryGroup.indexWhere((entry) => entry.id == widget.id);
+        isLoading = false;
+      });
     }();
   }
 
   @override
   Widget build(BuildContext context) {
-    final script = getScript(context);
     return WillPopScope(
         // detect user pressing back button
         onWillPop: () {
@@ -59,116 +73,92 @@ class _EntryPageState extends State<EntryPage> {
           return Future.value(true);
         },
         child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.entry),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      openLink(
-                          "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
-                      context.read<PlayerState>().stop();
-                    },
-                    icon: Icon(PlatformIcons(context).edit))
-              ],
-            ),
-            body: FutureBuilder(
-              future: api.getEntryGroupJson(id: widget.id).then((json) {
-                var newEntryGroup = json
-                    .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
-                    .toList();
-                entryGroup = newEntryGroup;
-                return newEntryGroup;
-              }),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.hasData) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) async {
-                    if (widget.defIndex != null) {
-                      await scrollController.scrollToIndex(widget.defIndex!,
-                          preferPosition: AutoScrollPosition.begin);
-                      scrollController.highlight(widget.defIndex!);
-                    }
-                  });
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: EntryWidget(
-                      entryGroup: snapshot.data,
-                      entryIndex: entryIndex,
-                      script: script,
-                      updateEntryIndex: (index) {
-                        if (index != entryIndex) {
-                          setState(() {
-                            entryIndex = index;
-                          });
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.entry),
+            actions: isLoading || hasError
+                ? []
+                : [
+                    IconButton(
+                        onPressed: () {
+                          openLink(
+                              "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
                           context.read<PlayerState>().stop();
-                        }
-                      },
-                      onTapLink: (entryVariant) {
-                        log("Tapped on link $entryVariant");
-                        api
-                            .getEntryId(query: entryVariant, script: script)
-                            .then((id) {
-                          context.read<PlayerState>().refreshPlayerState();
-                          if (id == null) {
-                            Navigator.push(
-                              context,
-                              CustomPageRoute(
-                                  builder: (context) => EntryNotPublishedPage(
-                                      entryVariant: entryVariant)),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              CustomPageRoute(
-                                  builder: (context) => EntryPage(id: id)),
-                            );
-                          }
-                        });
-                      },
-                      scrollController: scrollController,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  log("Entry page failed to load due to an error.");
-                  log(snapshot.error.toString());
-                  // Check that host is defined
-                  if (smtp.host.isNotEmpty) {
-                    print("sending bug report email");
-                    final smtpServer = SmtpServer(smtp.host,
-                        username: smtp.username, password: smtp.password);
-                    // Create our message.
-                    final message = Message()
-                      ..from = Address(smtp.username, 'Wordshk')
-                      ..recipients.add(smtp.recipient)
-                      ..subject = 'Entry ${widget.id} failed to load';
-                    try {
-                      send(message, smtpServer).then((sendReport) {
-                        print('Message sent: ' + sendReport.toString());
-                      });
-                    } on MailerException catch (e) {
-                      print('Message not sent.');
-                      print(e);
-                    }
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(children: [
-                      Text(AppLocalizations.of(context)!.entryFailedToLoad),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                          onPressed: () {
-                            // Back to previous search page
-                            Navigator.pop(context);
-                          },
-                          child:
-                              Text(AppLocalizations.of(context)!.backToSearch))
-                    ]),
-                  );
-                } else {
-                  // TODO: handle snapshot.hasError and loading screen
-                  return Container();
-                }
+                        },
+                        icon: Icon(PlatformIcons(context).edit))
+                  ],
+          ),
+          body: showEntry(),
+        ));
+  }
+
+  showEntry() {
+    if (hasError) {
+      log("Entry page failed to load due to an error.");
+      // Check that host is defined
+      if (smtp.host.isNotEmpty) {
+        print("sending bug report email");
+        final smtpServer = SmtpServer(smtp.host,
+            username: smtp.username, password: smtp.password);
+        // Create our message.
+        final message = Message()
+          ..from = Address(smtp.username, 'Wordshk')
+          ..recipients.add(smtp.recipient)
+          ..subject = 'Entry ${widget.id} failed to load';
+        try {
+          send(message, smtpServer).then((sendReport) {
+            print('Message sent: ' + sendReport.toString());
+          });
+        } on MailerException catch (e) {
+          print('Message not sent.');
+          print(e);
+        }
+      }
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(children: [
+          Text(AppLocalizations.of(context)!.entryFailedToLoad),
+          const SizedBox(height: 20),
+          ElevatedButton(
+              onPressed: () {
+                // Back to previous search page
+                Navigator.pop(context);
               },
-            )));
+              child: Text(AppLocalizations.of(context)!.backToSearch))
+        ]),
+      );
+    } else if (isLoading) {
+      return Container();
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: EntryWidget(
+          entryGroup: entryGroup,
+          initialEntryIndex: entryIndex,
+          initialDefIndex: widget.defIndex,
+          onTapLink: (entryVariant) {
+            log("Tapped on link $entryVariant");
+            api
+                .getEntryId(query: entryVariant, script: getScript(context))
+                .then((id) {
+              context.read<PlayerState>().refreshPlayerState();
+              if (id == null) {
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                      builder: (context) =>
+                          EntryNotPublishedPage(entryVariant: entryVariant)),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  CustomPageRoute(builder: (context) => EntryPage(id: id)),
+                );
+              }
+            });
+          },
+        ),
+      );
+    }
   }
 }
