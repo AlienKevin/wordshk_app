@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -166,7 +168,6 @@ Script getScript(BuildContext context) =>
 void showSpeechRecognitionDialog(BuildContext context) async {
   final state = context.read<SpeechRecognitionState>();
   await state.startListening(getScript(context));
-  final s = AppLocalizations.of(context)!;
   showPlatformDialog(
       context: context,
       builder: (context) {
@@ -175,6 +176,9 @@ void showSpeechRecognitionDialog(BuildContext context) async {
           // print("close speech recognition dialog");
           Navigator.pop(context, false);
         });
+        final s = AppLocalizations.of(context)!;
+        final recognitionFinished =
+            state.speechToText.hasRecognized || !state.isDialogOpen;
         return PlatformAlertDialog(
           title: Text(s.speakNow(s.entryLanguageCantonese)),
           content: state.isAvailable
@@ -184,20 +188,34 @@ void showSpeechRecognitionDialog(BuildContext context) async {
                       : Text(s.errorInSpeechRecognition))
                   : (state.speechToText.isListening
                       ? Text(s.listening)
-                      : (state.speechToText.hasRecognized ||
-                              !state.isDialogOpen)
+                      : recognitionFinished
                           ? Text(s.speechRecognitionFinished)
                           : Text(s.loadingRecognitionEngine)))
-              : Text(s.speechRecognitionNotAvailable),
-          actions: <Widget>[
-            PlatformDialogAction(
-                child: PlatformText('Done'),
-                onPressed: () {
-                  state.cancelListening();
-                  // print("close speech recognition dialog");
-                  Navigator.pop(context, false);
-                }),
-          ],
+              : Text(Platform.isAndroid
+                  ? s.speechRecognitionNotAvailableAndroid
+                  : s.speechRecognitionNotAvailableIos),
+          actions: (state.isAvailable &&
+                      (state.speechToText.isListening || recognitionFinished)
+                  ? <Widget>[]
+                  : <Widget>[
+                      PlatformDialogAction(
+                          child: PlatformText(s.tryAgain),
+                          onPressed: () {
+                            state.cancelListening();
+                            Navigator.pop(context, false);
+                            // restart listening
+                            showSpeechRecognitionDialog(context);
+                          })
+                    ]) +
+              [
+                PlatformDialogAction(
+                    child: PlatformText(s.done),
+                    onPressed: () {
+                      state.cancelListening();
+                      // print("close speech recognition dialog");
+                      Navigator.pop(context, false);
+                    }),
+              ],
         );
       });
 }

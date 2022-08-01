@@ -65,6 +65,7 @@ class SpeechRecognitionState with ChangeNotifier {
     if (locales.any((locale) => locale.localeId == cantoneseLocaleId)) {
       // print("Cantonese speech recognition is supported!");
       isDialogOpen = true;
+      isAvailable = true;
       await speechToText.listen(
         onResult: onSpeechResult,
         localeId: cantoneseLocaleId,

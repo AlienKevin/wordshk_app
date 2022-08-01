@@ -31,7 +31,8 @@
     "errorInSpeechRecognition": "语音识别出现故障而中途停止。请重试或改用打字输入。",
     "speechRecognitionNoMatch": "我们在数据库中找不到相匹配的短语。请重试或改用打字输入。",
     "loadingRecognitionEngine": "正在加载语音识别模型...",
-    "speechRecognitionNotAvailable": "语音识别不可用。请再试一次。",
+    "speechRecognitionNotAvailableAndroid": "语音识别不可用，请在系统设置中打开粤语语音识别，然后重试。开启Google语音输入的步骤：前往 系统 > 语言和输入法，点击Google语音输入并添加语言\"廣東話（香港)\"。",
+    "speechRecognitionNotAvailableIos": "语音识别不可用，请在系统设置中打开粤语语音识别，然后重试。开启语音输入的步骤：先要在 通用 > 语言与地区 中加入简体粤语。然后前往 通用 > 键盘，打开\"启用听写\"，点击下方的\"听写语言\"然后选择\"粤语 - 中国大陆\"。",
     "speechRecognitionFinished": "完成语音识别。",
 
     "entry": "词条",

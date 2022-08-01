@@ -31,7 +31,8 @@
     "errorInSpeechRecognition": "語音識別出現故障而中途停止。請再試一次。",
     "speechRecognitionNoMatch": "我們在數據庫中找不到相匹配的短語。請重試或改用打字輸入。",
     "loadingRecognitionEngine": "正在載入語音識別模型...",
-    "speechRecognitionNotAvailable": "語音識別不可用。請再試一次。",
+    "speechRecognitionNotAvailableAndroid": "語音識別不可用，請在系統設定中打开粵語語音識別，然后重試。開啟Google語音輸入的步驟：前往 系統 > 語言和輸入法，點擊Google語音輸入并添加語言「廣東話（香港)」。",
+    "speechRecognitionNotAvailableIos": "語音識別不可用，請在系統設定中打开粵語語音識別，然后重試。開啟語音輸入的步驟：先要在 一般 > 語言與地區 中加入繁體廣東話。然后前往 一般 > 鍵盤，打开「啟用聽寫」，點擊下方的「聽寫語言」然后選擇「粵語 - 香港」。",
     "speechRecognitionFinished": "完成語音識別。",
 
     "entry": "詞條",
