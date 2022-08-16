@@ -31,7 +31,7 @@ dependencies:
   keyboard_actions: ^4.0.0
   csv: ^5.0.1
   flutter_keyboard_visibility: ^5.2.0
-  google_mlkit_digital_ink_recognition: ^0.4.0
+#  google_mlkit_digital_ink_recognition: ^0.4.0
   settings_ui: ^2.0.2
   cupertino_icons: ^1.0.5
   flutter_platform_widgets: ^2.0.0

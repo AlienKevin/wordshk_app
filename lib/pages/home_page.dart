@@ -6,7 +6,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/input_mode_state.dart';
-import 'package:wordshk/widgets/digital_ink_view.dart';
 import 'package:wordshk/widgets/search_bar.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
@@ -128,7 +127,7 @@ class _HomePageState extends State<HomePage> {
               onSubmitted: onSearchDone,
             ),
             drawer: const NavigationDrawer(),
-            body: inputMode == InputMode.ink
+            body: /*inputMode == InputMode.ink
                 ? DigitalInkView(
                     typeCharacter: (character) {
                       context.read<SearchQueryState>().typeCharacter(character);
@@ -140,7 +139,8 @@ class _HomePageState extends State<HomePage> {
                       context.read<SearchQueryState>().moveToEndOfSelection();
                     },
                   )
-                : ((finishedSearch && isSearchResultsEmpty)
+                : */
+                ((finishedSearch && isSearchResultsEmpty)
                     ? showResultsNotFound()
                     : (queryEmptied ? showWatermark() : showSearchResults()))));
   }

@@ -235,12 +235,12 @@ class IsSearching extends State<SearchBar> {
   Widget digitButton(int digit) =>
       button(() => typeDigit(digit), Text(digit.toString()));
 
-  Widget inkInputModeButton() => button(() {
-        context.read<InputModeState>().updateInputMode(InputMode.ink);
-      },
-          Icon(isMaterial(context)
-              ? Icons.brush
-              : CupertinoIcons.pencil_outline));
+  // Widget inkInputModeButton() => button(() {
+  //       context.read<InputModeState>().updateInputMode(InputMode.ink);
+  //     },
+  //         Icon(isMaterial(context)
+  //             ? Icons.brush
+  //             : CupertinoIcons.pencil_outline));
 
   Widget speechInputModeButton() => button(
       () => showSpeechRecognitionDialog(context),
@@ -295,7 +295,7 @@ class IsSearching extends State<SearchBar> {
             (_) => digitButton(5),
             (_) => digitButton(6),
             (_) => const Spacer(),
-            (_) => inkInputModeButton(),
+            // (_) => inkInputModeButton(),
             (_) => speechInputModeButton(),
           ],
           toolbarAlignment: MainAxisAlignment.start,
