@@ -9,6 +9,17 @@ words.hk dictionary for Android and iOS
 <a href="https://apps.apple.com/us/app/words-hk-%E7%B2%B5%E5%85%B8/id1621976909?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 180px"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1657756800&h=1600d970c262d2b70ad557b308a2154b" alt="Download on the App Store" style="border-radius: 13px; width: 200px; height: 95px;"></a>
 <a href='https://play.google.com/store/apps/details?id=hk.words.wordshk&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="width:250px;"/></a>
 
+# Notes about the `fdroid` Branch
+
+A few differences exist between the `fdroid` branch and `main`. They are mostly
+there to abide by F-Droid's publishing requirements and for the convenience of the
+F-Droid packaging process.
+
+1. All proprietary libraries are removed
+   * Removed google_mlkit_digital_ink_recognition
+2. A blank `/lib/smtp_credentials.dart` is provided
+3. A symlink to `/android/fastlane/` is created at the project root
+
 # Build
 
 In your `Cargo.toml`, ensure the following `crate-type` is present:
