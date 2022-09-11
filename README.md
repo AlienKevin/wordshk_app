@@ -34,7 +34,11 @@ If you are not interested in the bug reports, add `lib/smtp_credentials.dart` wi
 following content:
 
 ```dart
-String host = ''; // This turns off SMTP bug reporting
+// Turns off SMTP bug reporting
+String host = '';
+String username = '';
+String password = '';
+String recipient = '';
 ```
 
 Give the build script execution permission:
@@ -47,6 +51,11 @@ Run the build script to build Rust for Android and iOS:
 
 ```bash
 ./build_rust.sh
+```
+
+If you are building this app on an M1 mac, you may need to run the following line before running `flutter run`:
+```
+sudo gem uninstall ffi && sudo gem install ffi -- --enable-libffi-alloc
 ```
 
 # How Does the Build Script Work?
