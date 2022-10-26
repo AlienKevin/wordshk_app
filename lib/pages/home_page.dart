@@ -283,6 +283,7 @@ class _HomePageState extends State<HomePage> {
         final results = showSearchResultsHelper(
             Theme.of(context).textTheme.bodyLarge!, searchModeState.mode);
         return ListView.separated(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           separatorBuilder: (_, __) => const Divider(),
           itemBuilder: (_, index) => results[index],
           itemCount: results.length,
