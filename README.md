@@ -12,6 +12,7 @@ words.hk dictionary for Android and iOS
 
 # Build
 
+## Crate-Type
 In your `Cargo.toml`, ensure the following `crate-type` is present:
 
 ```
@@ -19,6 +20,7 @@ In your `Cargo.toml`, ensure the following `crate-type` is present:
 crate-type = ["staticlib", "cdylib"] # "staticlib" for iOS, "cdylib" for Android
 ```
 
+## SMTP Bug Reporting
 We use the SMTP protocol to anonymously report bugs to the developers. If you wish to
 receive bug reports via email, add `lib/smtp_credentials.dart` with the following variables:
 
@@ -41,6 +43,49 @@ String password = '';
 String recipient = '';
 ```
 
+## Rust for Android
+Install Android NDK in Android Studio:
+```bash
+Android Studio > Tools > SDK Manager > SDK Tools > NDK (Side by side)
+```
+
+Install Cargo NDK for Android:
+```bash
+cargo install cargo-ndk --version ^2.7.0
+```
+See [here](https://cjycode.com/flutter_rust_bridge/template/setup_android.html#android-ndk-1) for potential caveats.
+
+Download the Android targets for Rust:
+```bash
+rustup target add armv7-linux-androideabi
+rustup target add aarch64-linux-android
+```
+
+## Rust for iOS
+Install Cargo lip for iOS:
+```bash
+cargo install cargo-lipo
+```
+
+Download the ios targets for Rust:
+```bash
+rustup target add x86_64-apple-ios
+rustup target add aarch64-apple-ios
+```
+
+## Install Flutter Rust Bridge
+Until [this issue](https://github.com/fzyzcjy/flutter_rust_bridge/issues/838) is fixed, we need to use an older version of flutter_rust_bridge_codegen.
+```bash
+cargo install flutter_rust_bridge_codegen --version=1.34.2
+```
+
+Install ffigen
+```bash
+flutter pub add --dev ffigen && flutter pub add ffi
+dart pub global activate ffigen
+```
+
+## Build Rust for iOS and Android
 Give the build script execution permission:
 
 ```bash

@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-wordshk_tools = "3.15.3-beta"
-flutter_rust_bridge = "1.34.2"
+wordshk_tools = "3.15.4"
+flutter_rust_bridge = "=1.34.2"
 anyhow = { version = "1.0.52", features = ["backtrace"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
