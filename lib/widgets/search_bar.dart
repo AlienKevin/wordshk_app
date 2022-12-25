@@ -25,7 +25,7 @@ import '../models/search_mode.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import '../states/speech_recognition_state.dart';
-import 'TextScaleFactorClamper.dart';
+import 'text_scale_factor_clamper.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
