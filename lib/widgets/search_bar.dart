@@ -511,8 +511,3 @@ class IsSearching extends State<SearchBar> {
     );
   }
 }
-
-double lerp(double x, double x0, double x1, double y0, double y1) {
-  return (x - x0) * (y1 - y0) / (x1 - x0) + y0;
-}
-
