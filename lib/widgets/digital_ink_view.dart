@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
@@ -156,27 +157,30 @@ class _DigitalInkViewState extends State<DigitalInkView> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Wrap(
-                    children: _recognizedCharacters
-                        .map((character) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 6),
-                              child: OutlinedButton(
-                                child: Text(character, style: candidatesFont),
-                                onPressed: () {
-                                  widget.typeCharacter(character);
-                                  _clearPad();
-                                  widget.moveToEndOfSelection();
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: Size(
-                                      candidatesFont.fontSize! * 1.4,
-                                      candidatesFont.fontSize!),
-                                  padding: EdgeInsets.zero,
-                                ),
-                              ),
-                            ))
-                        .toList()),
+                child: _recognizedCharacters.isEmpty
+                    ? SizedBox(height: candidatesFont.fontSize! * 1.4)
+                    : Wrap(
+                        children: _recognizedCharacters
+                            .map((character) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      widget.typeCharacter(character);
+                                      _clearPad();
+                                      widget.moveToEndOfSelection();
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      minimumSize: Size(
+                                          candidatesFont.fontSize! * 1.4,
+                                          candidatesFont.fontSize!),
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                    child:
+                                        Text(character, style: candidatesFont),
+                                  ),
+                                ))
+                            .toList()),
               ),
               Row(children: [
                 const SizedBox(width: 15),
@@ -304,7 +308,39 @@ class Signature extends CustomPainter {
     final Paint backgroundPaint = Paint()
       ..color = brightness == Brightness.light ? lightGreyColor : darkGreyColor;
 
-    canvas.drawRect(ui.Rect.largest, backgroundPaint);
+    final Paint borderPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = brightness == Brightness.light ? darkGreyColor : lightGreyColor
+      ..strokeWidth = 2;
+
+    canvas.drawRect(
+        ui.Rect.fromCenter(
+            center: Offset(size.width / 2, size.height / 2),
+            width: 300,
+            height: 300),
+        backgroundPaint);
+
+    canvas.drawRect(
+        ui.Rect.fromCenter(
+            center: Offset(size.width / 2, size.height / 2),
+            width: 300,
+            height: 300),
+        borderPaint);
+
+    _drawDashedLine(
+        canvas: canvas,
+        p1: Offset(size.width / 2 - 150, size.height / 2),
+        p2: Offset(size.width / 2 + 150, size.height / 2),
+        dashWidth: 6,
+        dashSpace: 4,
+        paint: borderPaint..strokeWidth = 1);
+    _drawDashedLine(
+        canvas: canvas,
+        p1: Offset(size.width / 2, size.height / 2 - 150),
+        p2: Offset(size.width / 2, size.height / 2 + 150),
+        dashWidth: 6,
+        dashSpace: 4,
+        paint: borderPaint..strokeWidth = 1);
 
     final Paint paint = Paint()
       ..color = brightness == Brightness.light ? blackColor : lightGreyColor
@@ -318,6 +354,35 @@ class Signature extends CustomPainter {
         canvas.drawLine(Offset(p1.x.toDouble(), p1.y.toDouble()),
             Offset(p2.x.toDouble(), p2.y.toDouble()), paint);
       }
+    }
+  }
+
+  void _drawDashedLine(
+      {required Canvas canvas,
+        required Offset p1,
+        required Offset p2,
+        required int dashWidth,
+        required int dashSpace,
+        required Paint paint}) {
+    // Get normalized distance vector from p1 to p2
+    var dx = p2.dx - p1.dx;
+    var dy = p2.dy - p1.dy;
+    final magnitude = sqrt(dx * dx + dy * dy);
+    dx = dx / magnitude;
+    dy = dy / magnitude;
+
+    // Compute number of dash segments
+    final steps = magnitude ~/ (dashWidth + dashSpace);
+
+    var startX = p1.dx;
+    var startY = p1.dy;
+
+    for (int i = 0; i < steps; i++) {
+      final endX = startX + dx * dashWidth;
+      final endY = startY + dy * dashWidth;
+      canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
+      startX += dx * (dashWidth + dashSpace);
+      startY += dy * (dashWidth + dashSpace);
     }
   }
 
