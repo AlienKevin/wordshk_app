@@ -12,6 +12,7 @@ import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/utils.dart';
 
 import '../models/input_mode.dart';
+import 'text_scale_factor_clamper.dart';
 
 class DigitalInkView extends StatefulWidget {
   final void Function(String) typeCharacter;
@@ -155,33 +156,33 @@ class _DigitalInkViewState extends State<DigitalInkView> {
         child: SafeArea(
           child: Column(
             children: [
-              Padding(
+            TextScaleFactorClamper(maxScaleFactor: 1.2, child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                child: _recognizedCharacters.isEmpty
-                    ? SizedBox(height: candidatesFont.fontSize! * 1.4)
-                    : Wrap(
-                        children: _recognizedCharacters
-                            .map((character) => Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 6),
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      widget.typeCharacter(character);
-                                      _clearPad();
-                                      widget.moveToEndOfSelection();
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      minimumSize: Size(
-                                          candidatesFont.fontSize! * 1.4,
-                                          candidatesFont.fontSize!),
-                                      padding: EdgeInsets.zero,
+                child: SizedBox(
+                  height: candidatesFont.fontSize! * 1.2 * MediaQuery.of(context).textScaleFactor + 2,
+                  child: Wrap(
+                          children: _recognizedCharacters
+                              .map((character) => Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 6),
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        widget.typeCharacter(character);
+                                        _clearPad();
+                                        widget.moveToEndOfSelection();
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                        minimumSize: Size(
+                                            candidatesFont.fontSize! * 1.2,
+                                            candidatesFont.fontSize! * 1.2),
+                                        padding: EdgeInsets.zero,
+                                      ),
+                                      child: Text(character, style: candidatesFont),
                                     ),
-                                    child:
-                                        Text(character, style: candidatesFont),
-                                  ),
-                                ))
-                            .toList()),
-              ),
+                                  ))
+                              .toList()),
+                ),
+              )),
               Row(children: [
                 const SizedBox(width: 15),
                 IconButton(
@@ -361,11 +362,11 @@ class Signature extends CustomPainter {
 
   void _drawDashedLine(
       {required Canvas canvas,
-        required Offset p1,
-        required Offset p2,
-        required int dashWidth,
-        required int dashSpace,
-        required Paint paint}) {
+      required Offset p1,
+      required Offset p2,
+      required int dashWidth,
+      required int dashSpace,
+      required Paint paint}) {
     // Get normalized distance vector from p1 to p2
     var dx = p2.dx - p1.dx;
     var dy = p2.dy - p1.dy;
