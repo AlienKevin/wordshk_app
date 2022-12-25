@@ -405,6 +405,7 @@ class _HomePageState extends State<HomePage> {
               textAlign: TextAlign.start,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
+              textScaleFactor: MediaQuery.of(context).textScaleFactor,
             ),
           ),
         ),
