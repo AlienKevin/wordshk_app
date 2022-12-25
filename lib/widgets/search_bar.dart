@@ -235,7 +235,7 @@ class IsSearching extends State<SearchBar> {
   }
 
   Widget digitButton(int digit) =>
-      button(() => typeDigit(digit), Text(digit.toString()));
+      button(() => typeDigit(digit), TextScaleFactorClamper(maxScaleFactor: 1.2, child: Text(digit.toString(), textAlign: TextAlign.center, style: const TextStyle(height: 1.2))));
 
   Widget inkInputModeButton() => button(() {
         context.read<InputModeState>().updateInputMode(InputMode.ink);
@@ -252,7 +252,6 @@ class IsSearching extends State<SearchBar> {
         padding: const EdgeInsets.symmetric(horizontal: 3),
         child: ElevatedButton(
             onPressed: onPressed,
-            child: child,
             style: ButtonStyle(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               minimumSize: MaterialStateProperty.all(Size.zero),
@@ -269,7 +268,8 @@ class IsSearching extends State<SearchBar> {
               visualDensity: VisualDensity.compact,
               padding: MaterialStateProperty.all(
                   const EdgeInsets.symmetric(horizontal: 10.5, vertical: 12)),
-            )),
+            ),
+            child: Align(alignment: Alignment.center, child: child)),
       );
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
