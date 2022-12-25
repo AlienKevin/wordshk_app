@@ -290,9 +290,11 @@ class _DigitalInkViewState extends State<DigitalInkView> {
       }
       setState(() {});
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(e.toString()),
-      ));
+      // do nothing
+
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   content: Text(e.toString()),
+      // ));
     }
   }
 }
