@@ -81,6 +81,7 @@ class _EntryPageState extends State<EntryPage> {
                 : [
                     IconButton(
                         onPressed: () {
+                          print(entryGroup[entryIndex].id);
                           openLink(
                               "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
                           context.read<PlayerState>().stop();
@@ -90,6 +91,10 @@ class _EntryPageState extends State<EntryPage> {
           ),
           body: showEntry(),
         ));
+  }
+
+  void updateEntryIndex(int newIndex) {
+    entryIndex = newIndex;
   }
 
   showEntry() {
@@ -136,6 +141,7 @@ class _EntryPageState extends State<EntryPage> {
           entryGroup: entryGroup,
           initialEntryIndex: entryIndex,
           initialDefIndex: widget.defIndex,
+          updateEntryIndex: updateEntryIndex,
           onTapLink: (entryVariant) {
             log("Tapped on link $entryVariant");
             api

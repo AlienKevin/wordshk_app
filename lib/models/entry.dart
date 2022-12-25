@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 typedef OnTapLink = void Function(String entryVariant);
+typedef UpdateEntryIndex = void Function(int newIndex);
 typedef EntryGroup = List<Entry>;
 
 class Entry extends Equatable {
