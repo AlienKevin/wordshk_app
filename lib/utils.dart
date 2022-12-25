@@ -62,9 +62,29 @@ String getRomanizationName(Romanization romanization, AppLocalizations s) {
     case Romanization.Guangdong:
       return s.romanizationGuangdong;
     case Romanization.SidneyLau:
-      return s.romanizationSidneyLau;
+      return "SidneyLau is deprecated";
     case Romanization.Ipa:
       return s.romanizationIpa;
+  }
+}
+
+String getRomanizationDescription(
+    Romanization romanization, AppLocalizations s) {
+  switch (romanization) {
+    case Romanization.Jyutping:
+      return s.romanizationJyutpingDescription;
+    case Romanization.YaleNumbers:
+      return s.romanizationYaleNumbersDescription;
+    case Romanization.YaleDiacritics:
+      return s.romanizationYaleDiacriticsDescription;
+    case Romanization.CantonesePinyin:
+      return s.romanizationCantonesePinyinDescription;
+    case Romanization.Guangdong:
+      return s.romanizationGuangdongDescription;
+    case Romanization.Ipa:
+      return s.romanizationIpaDescription;
+    case Romanization.SidneyLau:
+      return "SidneyLau is deprecated";
   }
 }
 
@@ -83,7 +103,7 @@ String getRomanizationShortName(
       case Romanization.Guangdong:
         return s.romanizationGuangdongShort;
       case Romanization.SidneyLau:
-        return s.romanizationSidneyLauShort;
+        return "SidneyLau is deprecated";
       case Romanization.Ipa:
         return s.romanizationIpaShort;
     }
@@ -100,7 +120,7 @@ String getRomanizationShortName(
       case Romanization.Guangdong:
         return s.romanizationGuangdong;
       case Romanization.SidneyLau:
-        return s.romanizationSidneyLau;
+        return "SidneyLau is deprecated";
       case Romanization.Ipa:
         return s.romanizationIpa;
     }

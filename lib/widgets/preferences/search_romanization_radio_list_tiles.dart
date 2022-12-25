@@ -33,14 +33,17 @@ class SearchRomanizationRadioListTiles extends StatelessWidget {
     }
 
     searchRomanizationRadioListTile(Romanization value) =>
-        PreferencesRadioListTile<Romanization>(getRomanizationName(value, s),
-            value, searchRomanization, onSearchRomanizationChange);
+        PreferencesRadioListTile<Romanization>(
+            title: getRomanizationName(value, s),
+            subtitle: getRomanizationDescription(value, s),
+            value: value,
+            groupValue: searchRomanization,
+            onChanged: onSearchRomanizationChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       searchRomanizationRadioListTile(Romanization.Jyutping),
       searchRomanizationRadioListTile(Romanization.YaleNumbers),
       searchRomanizationRadioListTile(Romanization.CantonesePinyin),
-      searchRomanizationRadioListTile(Romanization.SidneyLau),
     ]);
   }
 }

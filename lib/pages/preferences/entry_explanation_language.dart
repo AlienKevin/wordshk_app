@@ -23,8 +23,11 @@ class EntryExplanationLanguagePreferencesPage extends StatelessWidget {
     }
 
     entryLanguageRadioListTile(EntryLanguage value) =>
-        PreferencesRadioListTile<EntryLanguage>(getEntryLanguageName(value, s),
-            value, entryLanguage, onEntryLanguageChange);
+        PreferencesRadioListTile<EntryLanguage>(
+            title: getEntryLanguageName(value, s),
+            value: value,
+            groupValue: entryLanguage,
+            onChanged: onEntryLanguageChange);
 
     return Scaffold(
         appBar: AppBar(title: Text(s.dictionaryDefinition)),

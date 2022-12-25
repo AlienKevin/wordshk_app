@@ -23,24 +23,29 @@ class EntryRomanizationPreferencesPage extends StatelessWidget {
     }
 
     entryRomanizationRadioListTile(Romanization value) =>
-        PreferencesRadioListTile<Romanization>(getRomanizationName(value, s),
-            value, entryRomanization, onEntryRomanizationChange);
+        PreferencesRadioListTile<Romanization>(
+            title: getRomanizationName(value, s),
+            subtitle: getRomanizationDescription(value, s),
+            value: value,
+            groupValue: entryRomanization,
+            onChanged: onEntryRomanizationChange);
 
     return Scaffold(
         appBar: AppBar(title: Text(s.dictionaryDefinition)),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            PreferencesTitle(title: s.entryRomanization),
-            entryRomanizationRadioListTile(Romanization.Jyutping),
-            entryRomanizationRadioListTile(Romanization.YaleNumbers),
-            entryRomanizationRadioListTile(Romanization.YaleDiacritics),
-            entryRomanizationRadioListTile(Romanization.CantonesePinyin),
-            entryRomanizationRadioListTile(Romanization.Guangdong),
-            entryRomanizationRadioListTile(Romanization.SidneyLau),
-            entryRomanizationRadioListTile(Romanization.Ipa),
-          ]),
+          child: SingleChildScrollView(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              PreferencesTitle(title: s.entryRomanization),
+              entryRomanizationRadioListTile(Romanization.Jyutping),
+              entryRomanizationRadioListTile(Romanization.YaleNumbers),
+              entryRomanizationRadioListTile(Romanization.YaleDiacritics),
+              entryRomanizationRadioListTile(Romanization.CantonesePinyin),
+              entryRomanizationRadioListTile(Romanization.Guangdong),
+              entryRomanizationRadioListTile(Romanization.Ipa),
+            ]),
+          ),
         ));
   }
 }

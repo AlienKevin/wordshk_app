@@ -27,10 +27,10 @@ class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
 
     methodRadioListTile(PronunciationMethod value) =>
         PreferencesRadioListTile<PronunciationMethod>(
-            getPronunciationMethodName(value, s),
-            value,
-            method,
-            onMethodChange);
+            title: getPronunciationMethodName(value, s),
+            value: value,
+            groupValue: method,
+            onChanged: onMethodChange);
 
     return Scaffold(
         appBar: AppBar(title: Text(s.annotatedExample)),
