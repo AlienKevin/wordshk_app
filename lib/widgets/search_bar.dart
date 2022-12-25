@@ -2,6 +2,7 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ import '../models/search_mode.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import '../states/speech_recognition_state.dart';
+import 'TextScaleFactorClamper.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
@@ -347,7 +349,10 @@ class IsSearching extends State<SearchBar> {
                 mode, searchRomanizationName, AppLocalizations.of(context)!),
             textAlign: TextAlign.end,
           ),
-          subtitle: Text(subtitle, textAlign: TextAlign.end),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(subtitle, textAlign: TextAlign.end),
+          ),
           value: mode,
           groupValue: groupMode,
           onChanged: (SearchMode? value) {
@@ -448,57 +453,66 @@ class IsSearching extends State<SearchBar> {
             ),
       actions: [
         Consumer<SearchModeState>(
-            builder: (context, searchModeState, child) => PortalTarget(
-                visible: searchModeState.showSearchModeSelector,
-                anchor: const Aligned(
-                  follower: Alignment.topRight,
-                  target: Alignment.bottomRight,
-                  offset: Offset(0, 4),
-                ),
-                portalFollower: Material(
-                    color: Theme.of(context).canvasColor,
-                    child: Container(
-                      width: 270,
-                      height: 290,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          left:
-                              BorderSide(width: 2.0, color: theme.dividerColor),
-                          bottom:
-                              BorderSide(width: 2.0, color: theme.dividerColor),
-                        ),
+            builder: (context, searchModeState, child) => TextScaleFactorClamper(child: Builder(
+              builder: (context) {
+                return PortalTarget(
+                    visible: searchModeState.showSearchModeSelector,
+                    anchor: const Aligned(
+                      follower: Alignment.topRight,
+                      target: Alignment.bottomRight,
+                      offset: Offset(0, 4),
+                    ),
+                    portalFollower: Material(
                         color: Theme.of(context).canvasColor,
-                      ),
-                      child: Consumer<SearchModeState>(
-                          builder: (context, searchModeState, child) => Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: <Widget>[
-                                    searchModeRadioListTile(
-                                        SearchMode.combined,
-                                        "好彩/$searchRomanizationExample/lucky",
-                                        searchModeState.mode),
-                                    const Divider(thickness: 2),
-                                    searchModeRadioListTile(SearchMode.variant,
-                                        "好彩", searchModeState.mode),
-                                    const Divider(thickness: 2),
-                                    searchModeRadioListTile(
-                                        SearchMode.pr,
-                                        searchRomanizationExample,
-                                        searchModeState.mode),
-                                    const Divider(thickness: 2),
-                                    searchModeRadioListTile(SearchMode.english,
-                                        "lucky", searchModeState.mode),
-                                  ])),
-                    )),
-                child: SearchModeButton(
-                  getMode: (mode) => mode,
-                  highlighted: true,
-                  inAppBar: true,
-                  onPressed: () => context
-                      .read<SearchModeState>()
-                      .toggleSearchModeSelector(),
-                ))),
+                        child: Container(
+                          width: 270.0 * (log(MediaQuery.of(context).textScaleFactor) * 1/1.4 + 1),
+                          height: 275.0 * (log(MediaQuery.of(context).textScaleFactor) * 0.95 + 1),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left:
+                                  BorderSide(width: 2.0, color: theme.dividerColor),
+                              bottom:
+                                  BorderSide(width: 2.0, color: theme.dividerColor),
+                            ),
+                            color: Theme.of(context).canvasColor,
+                          ),
+                          child: Consumer<SearchModeState>(
+                              builder: (context, searchModeState, child) => Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: <Widget>[
+                                        searchModeRadioListTile(
+                                            SearchMode.combined,
+                                            "好彩/$searchRomanizationExample/lucky",
+                                            searchModeState.mode),
+                                        const Divider(thickness: 2),
+                                        searchModeRadioListTile(SearchMode.variant,
+                                            "好彩", searchModeState.mode),
+                                        const Divider(thickness: 2),
+                                        searchModeRadioListTile(
+                                            SearchMode.pr,
+                                            searchRomanizationExample,
+                                            searchModeState.mode),
+                                        const Divider(thickness: 2),
+                                        searchModeRadioListTile(SearchMode.english,
+                                            "lucky", searchModeState.mode),
+                                      ])),
+                        )),
+                    child: SearchModeButton(
+                      getMode: (mode) => mode,
+                      highlighted: true,
+                      inAppBar: true,
+                      onPressed: () => context
+                          .read<SearchModeState>()
+                          .toggleSearchModeSelector(),
+                    ));
+              }
+            ))),
       ],
     );
   }
 }
+
+double lerp(double x, double x0, double x1, double y0, double y1) {
+  return (x - x0) * (y1 - y0) / (x1 - x0) + y0;
+}
+
