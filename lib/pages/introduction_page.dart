@@ -23,8 +23,7 @@ class IntroductionPage extends StatelessWidget {
       contentMargin: EdgeInsets.all(32.0),
     );
     return IntroductionScreen(
-        isTopSafeArea: true,
-        isBottomSafeArea: true,
+        safeAreaList: const [false, false, true, true],
         onDone: () {
           Navigator.push(
             context,

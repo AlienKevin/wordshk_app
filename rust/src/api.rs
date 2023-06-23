@@ -5,7 +5,7 @@ use anyhow::Result;
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
 use parking_lot::Mutex;
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize, ser::SerializeStruct, Serializer, Deserializer};
 use wordshk_tools::dict::clause_to_string;
 use wordshk_tools::english_index::{EnglishIndex, EnglishIndexData};
 pub use wordshk_tools::jyutping::Romanization;
@@ -15,19 +15,53 @@ use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
 pub use wordshk_tools::search::Script;
 use wordshk_tools::unicode::is_cjk;
+use flutter_rust_bridge::RustOpaque;
 
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
 
-#[derive(Serialize, Deserialize)]
-struct Api {
-    pub dict: RichDict,
-    #[serde(skip)]
-    pub english_index: EnglishIndex,
-    #[serde(skip)]
-    pub variants_map: search::VariantsMap,
-    #[serde(skip)]
-    pub word_list: HashMap<String, Vec<String>>,
+pub struct Api {
+    pub dict: RustOpaque<RichDict>,
+    pub english_index: RustOpaque<EnglishIndex>,
+    pub variants_map: RustOpaque<search::VariantsMap>,
+    pub word_list: RustOpaque<HashMap<String, Vec<String>>>,
+}
+
+// Implement `Serialize` for `Api`
+impl Serialize for Api {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("Api", 1)?;
+        // assuming RustOpaque<RichDict> can be serialized
+        state.serialize_field("dict", &self.dict.clone().try_unwrap().unwrap())?;
+        state.end()
+    }
+}
+
+// Implement `Deserialize` for `Api`
+impl<'de> Deserialize<'de> for Api {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // Create a helper struct
+        #[derive(Deserialize)]
+        struct Fields {
+            dict: RichDict,
+        }
+
+        let fields = Fields::deserialize(deserializer)?;
+
+        Ok(Api {
+            dict: RustOpaque::new(fields.dict),
+            // fill in the other fields with some sensible default values
+            english_index: RustOpaque::new(EnglishIndex::default()),
+            variants_map: RustOpaque::new(search::VariantsMap::default()),
+            word_list: RustOpaque::new(HashMap::default()),
+        })
+    }
 }
 
 pub struct CombinedSearchResults {
@@ -54,7 +88,7 @@ pub enum _Romanization {
 }
 
 impl Api {
-    pub fn new(api_json: String, english_index_json: String, word_list: String) -> Self {
+    pub fn new(api_json: String, english_index_json: String, word_list: String) -> Api {
         // if !*IS_LOG_INITIALIZED.lock() {
         //     OsLogger::new("hk.words")
         //         .level_filter(LevelFilter::Debug)
@@ -65,14 +99,14 @@ impl Api {
         // }
         // info!("Calling Api::new()...");
         let mut api: Api = serde_json::from_str(&api_json).unwrap();
-        api.variants_map = search::rich_dict_to_variants_map(&api.dict);
+        api.variants_map = RustOpaque::new(search::rich_dict_to_variants_map(&api.dict));
         let english_index: EnglishIndex = serde_json::from_str(&english_index_json).unwrap();
-        api.english_index = english_index;
+        api.english_index = RustOpaque::new(english_index);
         let mut rdr = csv::ReaderBuilder::new()
             .has_headers(false)
             .delimiter(b'\t')
             .from_reader(word_list.as_bytes());
-        api.word_list = HashMap::new();
+        let mut word_list = HashMap::new();
         for result in rdr.records() {
             let record = result.unwrap();
             let trad = record[0].to_string();
@@ -80,17 +114,18 @@ impl Api {
             let pr = record[2].to_string();
             // push simplified variant if it's different from the traditional
             if simp != trad {
-                api.word_list.entry(simp).or_insert(vec![]).push(pr.clone());
+                word_list.entry(simp).or_insert(vec![]).push(pr.clone());
             }
             // push traditional variant
-            api.word_list.entry(trad).or_insert(vec![]).push(pr);
+            word_list.entry(trad).or_insert(vec![]).push(pr);
         }
+        api.word_list = RustOpaque::new(word_list);
         api
     }
 
-    pub fn pr_search(&self, capacity: u32, query: &str, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
+    pub fn pr_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
         let mut results = vec![];
-        let mut ranks = search::pr_search(&self.variants_map, query, romanization);
+        let mut ranks = search::pr_search(&self.variants_map, &query, romanization);
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
             let search::PrSearchRank {
@@ -110,8 +145,8 @@ impl Api {
         results
     }
 
-    pub fn variant_search(&self, capacity: u32, query: &str, script: Script) -> Vec<VariantSearchResult> {
-        let mut ranks = search::variant_search(&self.variants_map, query, script);
+    pub fn variant_search(&self, capacity: u32, query: String, script: Script) -> Vec<VariantSearchResult> {
+        let mut ranks = search::variant_search(&self.variants_map, &query, script);
         let mut results = vec![];
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
@@ -128,8 +163,8 @@ impl Api {
         results
     }
 
-    pub fn combined_search(&self, capacity: u32, query: &str, script: Script, romanization: Romanization) -> CombinedSearchResults {
-        match &mut search::combined_search(&self.variants_map, &self.english_index, query, script, romanization) {
+    pub fn combined_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
+        match &mut search::combined_search(&self.variants_map, &self.english_index, &query, script, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
@@ -151,8 +186,8 @@ impl Api {
         }
     }
 
-    pub fn english_search(&self, capacity: u32, query: &str, script: Script) -> Vec<EnglishSearchResult> {
-        let entries = search::english_search(&self.english_index, query);
+    pub fn english_search(&self, capacity: u32, query: String, script: Script) -> Vec<EnglishSearchResult> {
+        let entries = search::english_search(&self.english_index, &query);
         entries[..std::cmp::min(capacity as usize, entries.len())]
             .iter()
             .map(|entry| {
@@ -186,11 +221,11 @@ impl Api {
             .collect()
     }
 
-    pub fn get_entry_id(&self, query: &str, script: Script) -> Option<u32> {
-        search::get_entry_id(&self.variants_map, query, script).map(|id| id as u32)
+    pub fn get_entry_id(&self, query: String, script: Script) -> Option<u32> {
+        search::get_entry_id(&self.variants_map, &query, script).map(|id| id as u32)
     }
 
-    pub fn get_jyutping(&self, query: &str) -> Vec<String> {
+    pub fn get_jyutping(&self, query: String) -> Vec<String> {
         let query_normalized: String =query.chars().filter(|&c| is_cjk(c)).collect();
         if query_normalized.chars().count() == 1 {
             search::get_char_jyutpings(query_normalized.chars().next().unwrap()).unwrap_or(vec![])
@@ -289,19 +324,19 @@ pub fn init_api(api_json: String, english_index_json: String, word_list: String)
 }
 
 pub fn pr_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Result<Vec<PrSearchResult>> {
-    Ok((*API.lock()).as_ref().unwrap().pr_search(capacity, &query, script, romanization))
+    Ok((*API.lock()).as_ref().unwrap().pr_search(capacity, query, script, romanization))
 }
 
 pub fn variant_search(capacity: u32, query: String, script: Script) -> Result<Vec<VariantSearchResult>> {
-    Ok((*API.lock()).as_ref().unwrap().variant_search(capacity, &query, script))
+    Ok((*API.lock()).as_ref().unwrap().variant_search(capacity, query, script))
 }
 
 pub fn combined_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Result<CombinedSearchResults> {
-    Ok((*API.lock()).as_ref().unwrap().combined_search(capacity, &query, script, romanization))
+    Ok((*API.lock()).as_ref().unwrap().combined_search(capacity, query, script, romanization))
 }
 
 pub fn english_search(capacity: u32, query: String, script: Script) -> Result<Vec<EnglishSearchResult>> {
-    Ok((*API.lock()).as_ref().unwrap().english_search(capacity, &query, script))
+    Ok((*API.lock()).as_ref().unwrap().english_search(capacity, query, script))
 }
 
 pub fn get_entry_json(id: u32) -> Result<String> {
@@ -313,9 +348,9 @@ pub fn get_entry_group_json(id: u32) -> Result<Vec<String>> {
 }
 
 pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
-    (*API.lock()).as_ref().unwrap().get_entry_id(&query, script)
+    (*API.lock()).as_ref().unwrap().get_entry_id(query, script)
 }
 
 pub fn get_jyutping(query: String) -> Vec<String> {
-    (*API.lock()).as_ref().unwrap().get_jyutping(&query)
+    (*API.lock()).as_ref().unwrap().get_jyutping(query)
 }
