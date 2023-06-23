@@ -103,6 +103,16 @@ If you are building this app on an M1 mac, you may need to run the following lin
 sudo gem uninstall ffi && sudo gem install ffi -- --enable-libffi-alloc
 ```
 
+## Updating Flutter Rust Bridge
+
+1. Update the version of `flutter_rust_bridge` in `pubspec.yaml`
+2. Update the version of `ffigen` in `pubspec.yaml` if not updated automatically
+3. Update the version of `flutter_rust_bridge` in `rust/Cargo.toml` to the same version as (1)
+4. Run `dart pub global activate ffigen` to activate updated ffigen
+5. Run `./build_rust.sh` and fix any compiler error
+6. Run `flutter clean` to clean build files
+7. Restart flutter using `flutter run`
+
 # How Does the Build Script Work?
 
 ## flutter_rust_bridge
