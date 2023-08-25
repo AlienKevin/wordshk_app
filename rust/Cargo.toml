@@ -4,13 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-wordshk_tools = "3.15.7"
-flutter_rust_bridge = "=1.78.0"
+wordshk_tools = "3.15.9"
+flutter_rust_bridge = "=1.80.1"
 anyhow = { version = "1.0.52", features = ["backtrace"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 parking_lot = "0.12.1"
 lazy_static = "1.4.0"
+flate2 = "1.0"
 #oslog = { version = "0.1.0" }
 #log = "0.4.14"
 openssl = { version = "*", features = ["vendored"] }

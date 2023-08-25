@@ -51,7 +51,7 @@ Android Studio > Tools > SDK Manager > SDK Tools > NDK (Side by side)
 
 Install Cargo NDK for Android:
 ```bash
-cargo install cargo-ndk --version ^2.7.0
+cargo install cargo-ndk --version ^3.2.2
 ```
 See [here](https://cjycode.com/flutter_rust_bridge/template/setup_android.html#android-ndk-1) for potential caveats.
 
@@ -74,9 +74,8 @@ rustup target add aarch64-apple-ios
 ```
 
 ## Install Flutter Rust Bridge
-Until [this issue](https://github.com/fzyzcjy/flutter_rust_bridge/issues/838) is fixed, we need to use an older version of flutter_rust_bridge_codegen.
 ```bash
-cargo install flutter_rust_bridge_codegen --version=1.34.2
+cargo install flutter_rust_bridge_codegen
 ```
 
 Install ffigen

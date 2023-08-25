@@ -1,5 +1,6 @@
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
+use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 use wordshk_tools::dict::clause_to_string;
@@ -10,6 +11,8 @@ use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, Script, VariantsMap};
 use wordshk_tools::unicode::is_cjk;
+
+use flate2::read::GzDecoder;
 
 use crate::api::{CombinedSearchResults, EnglishSearchResult, PrSearchResult, VariantSearchResult};
 
@@ -35,7 +38,10 @@ impl Api {
         //     *IS_LOG_INITIALIZED.lock() = true;
         // }
         // info!("Calling Api::new()...");
-        let mut api: Api = serde_json::from_str(&api_json).unwrap();
+        let mut d = GzDecoder::new(api_json.as_bytes());
+        let mut api_str = String::new();
+        d.read_to_string(&mut api_str).unwrap();
+        let mut api: Api = serde_json::from_str(&api_str).unwrap();
         api.variants_map = search::rich_dict_to_variants_map(&api.dict);
         let english_index: EnglishIndex = serde_json::from_str(&english_index_json).unwrap();
         api.english_index = english_index;
