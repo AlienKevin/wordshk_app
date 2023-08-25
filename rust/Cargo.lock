@@ -382,7 +382,7 @@ dependencies = [
  "lazy_static",
  "libc",
  "log",
- "parking_lot 0.12.1",
+ "parking_lot",
  "threadpool",
  "wasm-bindgen",
  "web-sys",
@@ -649,9 +649,9 @@ dependencies = [
 
 [[package]]
 name = "indoc"
-version = "1.0.8"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da2d6f23ffea9d7e76c53eee25dfb67bcd8fde7f1198b0855350698c9f07c780"
+checksum = "9f2cb48b81b1dc9f39676bf99f5499babfec7cd8fe14307f7b3d747208fb5690"
 
 [[package]]
 name = "instant"
@@ -741,11 +741,14 @@ dependencies = [
 
 [[package]]
 name = "lip"
-version = "5.1.1"
+version = "8.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fce82ab5cbe57fa168bfdf913f9244202351934e848d751cba292c38f7a56370"
+checksum = "2153ab6ecc213f2207fe5448cb9d1552ade1ae8b12916c84499423d3df9bdcb2"
 dependencies = [
+ "itertools",
  "unicode-segmentation",
+ "unicode-width",
+ "xi-unicode",
 ]
 
 [[package]]
@@ -909,37 +912,12 @@ dependencies = [
 
 [[package]]
 name = "parking_lot"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d17b78036a60663b797adeaee46f5c9dfebb86948d1255007a1d6be0271ff99"
-dependencies = [
- "instant",
- "lock_api",
- "parking_lot_core 0.8.6",
-]
-
-[[package]]
-name = "parking_lot"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3742b2c103b9f06bc9fff0a37ff4912935851bee6d36f3c02bcc755bcfec228f"
 dependencies = [
  "lock_api",
- "parking_lot_core 0.9.5",
-]
-
-[[package]]
-name = "parking_lot_core"
-version = "0.8.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60a2cfe6f0ad2bfc16aefa463b497d5c7a5ecd44a23efa72aa342d90177356dc"
-dependencies = [
- "cfg-if",
- "instant",
- "libc",
- "redox_syscall",
- "smallvec",
- "winapi",
+ "parking_lot_core",
 ]
 
 [[package]]
@@ -1787,7 +1765,7 @@ dependencies = [
  "flutter_rust_bridge",
  "lazy_static",
  "openssl",
- "parking_lot 0.11.2",
+ "parking_lot",
  "serde",
  "serde_json",
  "wordshk_tools",
@@ -1795,9 +1773,9 @@ dependencies = [
 
 [[package]]
 name = "wordshk_tools"
-version = "3.15.4"
+version = "3.15.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f9307a9d81c4385f31e4c8716d07f69b8fd9649eca215b9d677b73ba388df6c"
+checksum = "37c61e2c13d2b60045c7d9cedb9b756c2c06b8292dc8d6b83d7195457dec0496"
 dependencies = [
  "csv",
  "deunicode",
@@ -1820,3 +1798,9 @@ dependencies = [
  "unicode-segmentation",
  "unicode_names2",
 ]
+
+[[package]]
+name = "xi-unicode"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a67300977d3dc3f8034dae89778f502b6ba20b269527b3223ba59c0cf393bb8a"
