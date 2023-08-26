@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/bridge_generated.dart';
@@ -11,7 +8,6 @@ import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/models/speech_rate.dart';
 import 'package:wordshk/states/language_state.dart';
-import 'package:wordshk/states/speech_recognition_state.dart';
 
 import 'models/font_size.dart';
 import 'models/language.dart';
@@ -184,61 +180,6 @@ Script getScript(BuildContext context) =>
     context.read<LanguageState>().language == Language.zhHansCN
         ? Script.Simplified
         : Script.Traditional;
-
-void showSpeechRecognitionDialog(BuildContext context) async {
-  final state = context.read<SpeechRecognitionState>();
-  await state.startListening(getScript(context));
-  showPlatformDialog(
-      context: context,
-      builder: (context) {
-        final state = context.watch<SpeechRecognitionState>();
-        state.setCloseDialog(() {
-          // print("close speech recognition dialog");
-          Navigator.pop(context, false);
-        });
-        final s = AppLocalizations.of(context)!;
-        final recognitionFinished =
-            state.speechToText.hasRecognized || !state.isDialogOpen;
-        return PlatformAlertDialog(
-          title: Text(s.speakNow(s.entryLanguageCantonese)),
-          content: state.isAvailable
-              ? (state.lastError != null
-                  ? (state.lastError!.errorMsg == "error_no_match"
-                      ? Text(s.speechRecognitionNoMatch)
-                      : Text(s.errorInSpeechRecognition))
-                  : (state.speechToText.isListening
-                      ? Text(s.listening)
-                      : recognitionFinished
-                          ? Text(s.speechRecognitionFinished)
-                          : Text(s.loadingRecognitionEngine)))
-              : Text(Platform.isAndroid
-                  ? s.speechRecognitionNotAvailableAndroid
-                  : s.speechRecognitionNotAvailableIos),
-          actions: (state.isAvailable &&
-                      (state.speechToText.isListening || recognitionFinished)
-                  ? <Widget>[]
-                  : <Widget>[
-                      PlatformDialogAction(
-                          child: PlatformText(s.tryAgain),
-                          onPressed: () {
-                            state.cancelListening();
-                            Navigator.pop(context, false);
-                            // restart listening
-                            showSpeechRecognitionDialog(context);
-                          })
-                    ]) +
-              [
-                PlatformDialogAction(
-                    child: PlatformText(s.done),
-                    onPressed: () {
-                      state.cancelListening();
-                      // print("close speech recognition dialog");
-                      Navigator.pop(context, false);
-                    }),
-              ],
-        );
-      });
-}
 
 String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
   switch (rate) {

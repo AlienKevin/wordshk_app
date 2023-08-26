@@ -84,11 +84,7 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - speech_to_text (0.0.1):
-    - Flutter
-    - Try
   - SSZipArchive (2.4.3)
-  - Try (2.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
 
@@ -105,7 +101,6 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
@@ -124,7 +119,6 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - SSZipArchive
-    - Try
 
 EXTERNAL SOURCES:
   audio_session:
@@ -151,8 +145,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  speech_to_text:
-    :path: ".symlinks/plugins/speech_to_text/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
@@ -182,9 +174,7 @@ SPEC CHECKSUMS:
   permission_handler_apple: 8f116445eff3c0e7c65ad60f5fef5490aa94b4e4
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
-  speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
-  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
 
 PODFILE CHECKSUM: 7620d23b768f6539b968a42c9d6771cc6ca6ae2f

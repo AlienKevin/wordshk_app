@@ -24,7 +24,6 @@ import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
-import '../states/speech_recognition_state.dart';
 import 'text_scale_factor_clamper.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
@@ -122,8 +121,6 @@ class IsSearching extends State<SearchBar> {
         focusNode.unfocus();
       }
     });
-
-    context.read<SpeechRecognitionState>().setOnResult(typeCharacters);
   }
 
   @override
@@ -244,10 +241,6 @@ class IsSearching extends State<SearchBar> {
               ? Icons.brush
               : CupertinoIcons.pencil_outline));
 
-  Widget speechInputModeButton() => button(
-      () => showSpeechRecognitionDialog(context),
-      Icon(isMaterial(context) ? Icons.mic_rounded : CupertinoIcons.mic_fill));
-
   Widget button(void Function() onPressed, Widget child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 3),
         child: ElevatedButton(
@@ -298,7 +291,6 @@ class IsSearching extends State<SearchBar> {
             (_) => digitButton(6),
             (_) => const Spacer(),
             (_) => inkInputModeButton(),
-            (_) => speechInputModeButton(),
           ],
           toolbarAlignment: MainAxisAlignment.start,
         ),

@@ -50,9 +50,5 @@
 		<false/>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>We need to access your microphone to start speech recognition.</string>
-		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>We need to access Apple's speech recognition server to process your speech.</string>
 	</dict>
 </plist>

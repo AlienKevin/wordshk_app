@@ -630,14 +630,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.7"
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      sha256: "67fc27ed9639506c856c840ccce7594d0bdcd91bc8d53d6e52359449a1d50602"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.11.1"
   permission_handler:
     dependency: "direct main"
     description:
@@ -907,30 +899,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  speech_to_text:
-    dependency: "direct main"
-    description:
-      name: speech_to_text
-      sha256: ff8fbd31d039bdbac6c7ec9f0516d37df2cbea62c45198326d3b64034e6fb920
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.1"
-  speech_to_text_macos:
-    dependency: transitive
-    description:
-      name: speech_to_text_macos
-      sha256: "6b5575e5a8346be1779838b0a482c259474965b5943668830b479147a75b5bfc"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
-  speech_to_text_platform_interface:
-    dependency: transitive
-    description:
-      name: speech_to_text_platform_interface
-      sha256: "13d90215a7554b9a8c1ce47c0a1739af8eacd2cf196ca66351e54dfd2172746d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   stack_trace:
     dependency: transitive
     description:

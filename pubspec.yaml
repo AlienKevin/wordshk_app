@@ -35,7 +35,6 @@ dependencies:
   settings_ui: ^2.0.2
   cupertino_icons: ^1.0.5
   flutter_platform_widgets: ^3.3.5
-  speech_to_text: ^6.1.1
   introduction_screen: ^3.0.2
   permission_handler: ^10.0.0
   mailer: ^6.0.1

@@ -9,7 +9,6 @@ import 'package:google_mlkit_digital_ink_recognition/google_mlkit_digital_ink_re
 import 'package:provider/provider.dart';
 import 'package:wordshk/constants.dart';
 import 'package:wordshk/states/input_mode_state.dart';
-import 'package:wordshk/utils.dart';
 
 import '../models/input_mode.dart';
 import 'text_scale_factor_clamper.dart';
@@ -194,12 +193,6 @@ class _DigitalInkViewState extends State<DigitalInkView> {
                     icon: Icon(isMaterial(context)
                         ? Icons.keyboard
                         : CupertinoIcons.keyboard),
-                    color: Theme.of(context).colorScheme.secondary),
-                IconButton(
-                    onPressed: () => showSpeechRecognitionDialog(context),
-                    icon: Icon(isMaterial(context)
-                        ? Icons.mic_rounded
-                        : CupertinoIcons.mic_fill),
                     color: Theme.of(context).colorScheme.secondary),
                 const Spacer(),
                 IconButton(
