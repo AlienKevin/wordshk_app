@@ -20,9 +20,14 @@ import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;
+  final bool showFirstEntryInGroupInitially;
   final int? defIndex;
 
-  const EntryPage({Key? key, required this.id, this.defIndex})
+  const EntryPage(
+      {Key? key,
+      required this.id,
+      required this.showFirstEntryInGroupInitially,
+      this.defIndex})
       : super(key: key);
 
   @override
@@ -57,7 +62,9 @@ class _EntryPageState extends State<EntryPage> {
         });
       }
       setState(() {
-        entryIndex = entryGroup.indexWhere((entry) => entry.id == widget.id);
+        entryIndex = widget.showFirstEntryInGroupInitially
+            ? 0
+            : entryGroup.indexWhere((entry) => entry.id == widget.id);
         isLoading = false;
       });
     }();
@@ -92,7 +99,10 @@ class _EntryPageState extends State<EntryPage> {
                                       ? Icons.warning_amber_outlined
                                       : CupertinoIcons
                                           .exclamationmark_triangle),
-                                  iconColor: Theme.of(context).textTheme.bodyMedium!.color!,
+                                  iconColor: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .color!,
                                   content: Text(AppLocalizations.of(context)!
                                       .unpublishedWarning),
                                   actions: <Widget>[
@@ -192,7 +202,9 @@ class _EntryPageState extends State<EntryPage> {
               } else {
                 Navigator.push(
                   context,
-                  CustomPageRoute(builder: (context) => EntryPage(id: id)),
+                  CustomPageRoute(
+                      builder: (context) => EntryPage(
+                          id: id, showFirstEntryInGroupInitially: true)),
                 );
               }
             });

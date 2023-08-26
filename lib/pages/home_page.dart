@@ -74,7 +74,9 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           CustomPageRoute(
-              builder: (context) => EntryPage(id: exactMatchVariant.id)),
+              builder: (context) => EntryPage(
+                  id: exactMatchVariant.id,
+                  showFirstEntryInGroupInitially: true)),
         );
       }
     }
@@ -344,7 +346,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> showVariantSearchResults(TextStyle textStyle) {
     return variantSearchResults.map((result) {
       return showSearchResult(
-          result.id, TextSpan(text: result.variant, style: textStyle));
+          result.id, showFirstEntryInGroupInitially: true, TextSpan(text: result.variant, style: textStyle));
     }).toList();
   }
 
@@ -382,7 +384,7 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-  Widget showSearchResult(int id, TextSpan resultText, {int? defIndex}) {
+  Widget showSearchResult(int id, TextSpan resultText, {int? defIndex, bool showFirstEntryInGroupInitially = false }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -395,7 +397,7 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               CustomPageRoute(
-                  builder: (context) => EntryPage(id: id, defIndex: defIndex)),
+                  builder: (context) => EntryPage(id: id, defIndex: defIndex, showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,)),
             );
           },
           child: Padding(
