@@ -20,29 +20,6 @@ In your `Cargo.toml`, ensure the following `crate-type` is present:
 crate-type = ["staticlib", "cdylib"] # "staticlib" for iOS, "cdylib" for Android
 ```
 
-## SMTP Bug Reporting
-We use the SMTP protocol to anonymously report bugs to the developers. If you wish to
-receive bug reports via email, add `lib/smtp_credentials.dart` with the following variables:
-
-```dart
-String host = 'YOUR SMTP HOST'; // eg: 'smtp.mailgun.org'
-String username =
-    'YOUR SMTP USERNAME'; // eg: 'postmaster@sandbox.mailgun.org';
-String password = 'YOUR SMTP PASSWORD';
-String recipient = 'YOUR DEVELOPER EMAIL ADDRESS'; // eg: 'wordshk@gmail.com'
-```
-
-If you are not interested in the bug reports, add `lib/smtp_credentials.dart` with
-following content:
-
-```dart
-// Turns off SMTP bug reporting
-String host = '';
-String username = '';
-String password = '';
-String recipient = '';
-```
-
 ## Rust for Android
 Install Android NDK in Android Studio:
 ```bash
