@@ -29,8 +29,8 @@ use crate::api::*;
 
 fn wire_init_api_impl(
     port_: MessagePort,
-    api_json: impl Wire2Api<String> + UnwindSafe,
-    english_index_json: impl Wire2Api<String> + UnwindSafe,
+    api_json: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    english_index_json: impl Wire2Api<Vec<u8>> + UnwindSafe,
     word_list: impl Wire2Api<String> + UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, ()>(

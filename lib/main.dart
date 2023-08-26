@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -102,12 +103,12 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     Future.wait([
-      rootBundle.loadString("assets/api.json"),
-      rootBundle.loadString("assets/english_index.json"),
-      rootBundle.loadString("assets/word_list.tsv"),
+      rootBundle.load("assets/api.json"),
+      rootBundle.load("assets/english_index.json"),
+      rootBundle.load("assets/word_list.tsv"),
     ]).then((files) {
       api.initApi(
-          apiJson: files[0], englishIndexJson: files[1], wordList: files[2]);
+          apiJson: files[0].buffer.asUint8List(), englishIndexJson: files[1].buffer.asUint8List(), wordList: utf8.decode(files[2].buffer.asUint8List()));
     });
   }
 

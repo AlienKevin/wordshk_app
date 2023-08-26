@@ -28,7 +28,7 @@ pub struct Api {
 }
 
 impl Api {
-    pub fn new(api_json: String, english_index_json: String, word_list: String) -> Api {
+    pub fn new(api_json: Vec<u8>, english_index_json: Vec<u8>, word_list: String) -> Api {
         // if !*IS_LOG_INITIALIZED.lock() {
         //     OsLogger::new("hk.words")
         //         .level_filter(LevelFilter::Debug)
@@ -38,12 +38,16 @@ impl Api {
         //     *IS_LOG_INITIALIZED.lock() = true;
         // }
         // info!("Calling Api::new()...");
-        let mut d = GzDecoder::new(api_json.as_bytes());
+        let mut api_decompressor = GzDecoder::new(&api_json[..]);
         let mut api_str = String::new();
-        d.read_to_string(&mut api_str).unwrap();
+        api_decompressor.read_to_string(&mut api_str).unwrap();
         let mut api: Api = serde_json::from_str(&api_str).unwrap();
         api.variants_map = search::rich_dict_to_variants_map(&api.dict);
-        let english_index: EnglishIndex = serde_json::from_str(&english_index_json).unwrap();
+
+        let mut english_index_decompressor = GzDecoder::new(&english_index_json[..]);
+        let mut english_index_str = String::new();
+        english_index_decompressor.read_to_string(&mut english_index_str).unwrap();
+        let english_index: EnglishIndex = serde_json::from_str(&english_index_str).unwrap();
         api.english_index = english_index;
         let mut rdr = csv::ReaderBuilder::new()
             .has_headers(false)

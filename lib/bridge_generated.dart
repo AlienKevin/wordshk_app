@@ -12,8 +12,8 @@ import 'package:uuid/uuid.dart';
 
 abstract class WordshkApi {
   Future<void> initApi(
-      {required String apiJson,
-      required String englishIndexJson,
+      {required Uint8List apiJson,
+      required Uint8List englishIndexJson,
       required String wordList,
       dynamic hint});
 
@@ -146,12 +146,12 @@ class WordshkApiImpl implements WordshkApi {
       WordshkApiImpl(module as ExternalLibrary);
   WordshkApiImpl.raw(this._platform);
   Future<void> initApi(
-      {required String apiJson,
-      required String englishIndexJson,
+      {required Uint8List apiJson,
+      required Uint8List englishIndexJson,
       required String wordList,
       dynamic hint}) {
-    var arg0 = _platform.api2wire_String(apiJson);
-    var arg1 = _platform.api2wire_String(englishIndexJson);
+    var arg0 = _platform.api2wire_uint_8_list(apiJson);
+    var arg1 = _platform.api2wire_uint_8_list(englishIndexJson);
     var arg2 = _platform.api2wire_String(wordList);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) =>

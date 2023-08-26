@@ -57,7 +57,7 @@ lazy_static! {
     static ref IS_LOG_INITIALIZED: Mutex<bool> = Mutex::new(false);
 }
 
-pub fn init_api(api_json: String, english_index_json: String, word_list: String) -> Result<()> {
+pub fn init_api(api_json: Vec<u8>, english_index_json: Vec<u8>, word_list: String) -> Result<()> {
     // info!("Calling init_api()...");
     *API.lock() = Some(Api::new(api_json, english_index_json, word_list));
     Ok(())
