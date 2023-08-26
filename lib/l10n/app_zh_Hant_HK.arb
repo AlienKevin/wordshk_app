@@ -26,15 +26,6 @@
     "tryAgain": "重試",
     "done": "完成",
 
-    "speakNow": "請講{language}",
-    "listening": "聽緊👂...",
-    "errorInSpeechRecognition": "語音識別出咗問題而中途停止。請試多次或者改用打字輸入。",
-    "speechRecognitionNoMatch": "我哋喺數據庫入面揾唔到相關短語。請試多次或者改用打字輸入。",
-    "loadingRecognitionEngine": "載入緊語音識別模型...",
-    "speechRecognitionNotAvailableAndroid": "語音識別唔可用，請喺系統設定度開啓粵語語音識別，之後試多次。開啟Google語音輸入嘅步驟：前往 系統 > 語言和輸入法，點擊Google語音輸入，加埋語言「廣東話（香港)」。",
-    "speechRecognitionNotAvailableIos": "語音識別唔可用，請喺系統設定度開啓粵語語音識別，之後試多次。開啟語音輸入嘅步驟：先要喺 一般 > 語言與地區 度加埋繁體廣東話。之後前往 一般 > 鍵盤，打開「啟用聽寫」，撳下方嘅「聽寫語言」之後選擇「粵語 - 香港」。",
-    "speechRecognitionFinished": "完成語音識別。",
-
     "entry": "詞條",
     "entryMoreVariants": "多啲寫法",
     "entryCollapseVariants": "折疊寫法",

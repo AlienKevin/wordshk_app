@@ -32,21 +32,6 @@
     "tryAgain": "Try Again",
     "done": "Done",
 
-    "speakNow": "Please speak {language}",
-    "@speakNow": {
-      "description": "speech recognition language",
-      "placeholders": {
-          "language": {}
-      }
-    },
-    "listening": "Listening👂...",
-    "errorInSpeechRecognition": "Error caused speech recognition to stop. Please try again or consider typing in the phrase instead.",
-    "speechRecognitionNoMatch": "We couldn't find a matching phrase to your speech in our database. Please try again or consider typing in the phrase instead.",
-    "loadingRecognitionEngine": "Loading speech recognition engine...",
-    "speechRecognitionNotAvailableAndroid": "Speech Recognition is not available. Please enable Cantonese dictation in your System Settings and try again. Steps to enable dictation using Google Voice Typing: go to System > Languages & input, click on Google voice typing and add \"廣東話（香港)\" meaning Cantonese (Hong Kong) in Languages.",
-    "speechRecognitionNotAvailableIos": "Speech Recognition is not available. Please enable Cantonese dictation in your System Preferences and try again. Steps to enable dictation: You need to first add Cantonese, Traditional in General > Language & Region. Then, go to General > Keyboard, switch on \"Enable Dictation\", click on the \"Dictation Languages\" below, and select \"Cantonese\".",
-    "speechRecognitionFinished": "Finished Speech Recognition.",
-
     "entry": "entry",
     "entryMoreVariants": "More Variants",
     "entryCollapseVariants": "Collapse Variants",
