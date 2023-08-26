@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
+import 'package:wordshk/pages/quality_control_page.dart';
 
 import '../main.dart';
 import '../models/entry.dart';
@@ -72,19 +74,73 @@ class _EntryPageState extends State<EntryPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.entry),
-            actions: isLoading || hasError
-                ? []
-                : [
-                    IconButton(
-                        onPressed: () {
-                          print(entryGroup[entryIndex].id);
-                          openLink(
-                              "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
-                          context.read<PlayerState>().stop();
-                        },
-                        icon: Icon(PlatformIcons(context).edit))
-                  ],
+            title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Visibility(
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: !(isLoading ||
+                      hasError ||
+                      entryGroup[entryIndex].published),
+                  child: IconButton(
+                      onPressed: () {
+                        context.read<PlayerState>().stop();
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                                  icon: Icon(isMaterial(context)
+                                      ? Icons.warning_amber_outlined
+                                      : CupertinoIcons
+                                          .exclamationmark_triangle),
+                                  iconColor: Theme.of(context).textTheme.bodyMedium!.color!,
+                                  content: Text(AppLocalizations.of(context)!
+                                      .unpublishedWarning),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        Navigator.push(
+                                          context,
+                                          CustomPageRoute(
+                                              builder: (context) =>
+                                                  const QualityControlPage(
+                                                      useBackNavigation: true)),
+                                        );
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .learnMore),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(AppLocalizations.of(context)!
+                                          .dismiss),
+                                    ),
+                                  ],
+                                ));
+                      },
+                      icon: Icon(isMaterial(context)
+                          ? Icons.warning_amber_outlined
+                          : CupertinoIcons.exclamationmark_triangle))),
+              Text(AppLocalizations.of(context)!.entry),
+              SizedBox(
+                  width: 3 * Theme.of(context).textTheme.bodyMedium!.fontSize!),
+            ]),
+            actions: [
+              Visibility(
+                  visible: !(isLoading || hasError),
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: IconButton(
+                      onPressed: () {
+                        print(entryGroup[entryIndex].id);
+                        openLink(
+                            "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
+                        context.read<PlayerState>().stop();
+                      },
+                      icon: Icon(PlatformIcons(context).edit)))
+            ],
           ),
           body: showEntry(),
         ));

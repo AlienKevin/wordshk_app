@@ -7,7 +7,6 @@ import '../../bridge_generated.dart' show Script;
 import '../../constants.dart';
 import '../../models/entry.dart';
 import '../../states/entry_language_state.dart';
-import 'entry_banner.dart';
 import 'entry_def.dart';
 import 'entry_labels.dart';
 import 'entry_sims_or_ants.dart';
@@ -96,7 +95,6 @@ class _EntryTabState extends State<EntryTab> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    EntryBanner(published: widget.entry.published),
                     EntryVariants(
                       variants: widget.entry.variants,
                       variantsSimp: widget.entry.variantsSimp,
