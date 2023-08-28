@@ -8,27 +8,27 @@ import '../../states/romanization_state.dart';
 import '../../widgets/preferences/radio_list_tile.dart';
 import '../../widgets/preferences/title.dart';
 
-class EntryRomanizationPreferencesPage extends StatelessWidget {
-  const EntryRomanizationPreferencesPage({Key? key}) : super(key: key);
+class RomanizationPreferencesPage extends StatelessWidget {
+  const RomanizationPreferencesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
     final entryRomanization = context.watch<RomanizationState>().romanization;
 
-    onEntryRomanizationChange(Romanization? newRomanization) {
+    onRomanizationChange(Romanization? newRomanization) {
       if (newRomanization != null) {
         context.read<RomanizationState>().updateRomanization(newRomanization);
       }
     }
 
-    entryRomanizationRadioListTile(Romanization value) =>
+    romanizationRadioListTile(Romanization value) =>
         PreferencesRadioListTile<Romanization>(
             title: getRomanizationName(value, s),
             subtitle: getRomanizationDescription(value, s),
             value: value,
             groupValue: entryRomanization,
-            onChanged: onEntryRomanizationChange);
+            onChanged: onRomanizationChange);
 
     return Scaffold(
         appBar: AppBar(title: Text(s.dictionaryDefinition)),
@@ -37,13 +37,9 @@ class EntryRomanizationPreferencesPage extends StatelessWidget {
           child: SingleChildScrollView(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              PreferencesTitle(title: s.entryRomanization),
-              entryRomanizationRadioListTile(Romanization.Jyutping),
-              entryRomanizationRadioListTile(Romanization.YaleNumbers),
-              entryRomanizationRadioListTile(Romanization.YaleDiacritics),
-              entryRomanizationRadioListTile(Romanization.CantonesePinyin),
-              entryRomanizationRadioListTile(Romanization.Guangdong),
-              entryRomanizationRadioListTile(Romanization.Ipa),
+              PreferencesTitle(title: s.romanization),
+              romanizationRadioListTile(Romanization.Jyutping),
+              romanizationRadioListTile(Romanization.Yale),
             ]),
           ),
         ));

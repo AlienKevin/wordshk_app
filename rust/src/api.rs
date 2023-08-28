@@ -7,8 +7,7 @@ pub use wordshk_tools::search::Script;
 
 use crate::util::*;
 
-// use oslog::{OsLogger};
-// use log::{LevelFilter, info};
+// use log::info;
 
 pub struct CombinedSearchResults {
     pub variant_results: Vec<VariantSearchResult>,
@@ -25,12 +24,7 @@ pub enum _Script {
 #[frb(mirror(Romanization))]
 pub enum _Romanization {
     Jyutping,
-    YaleNumbers,
-    YaleDiacritics,
-    CantonesePinyin,
-    Guangdong,
-    SidneyLau,
-    Ipa,
+    Yale,
 }
 
 pub struct PrSearchResult {
@@ -54,13 +48,21 @@ pub struct EnglishSearchResult {
 
 lazy_static! {
     static ref API: Mutex<Option<Api>> = Mutex::new(None);
-    static ref IS_LOG_INITIALIZED: Mutex<bool> = Mutex::new(false);
 }
 
 pub fn init_api(api_json: Vec<u8>, english_index_json: Vec<u8>, word_list: String) -> Result<()> {
     // info!("Calling init_api()...");
     *API.lock() = Some(Api::new(api_json, english_index_json, word_list));
     Ok(())
+}
+
+pub fn update_pr_indices(pr_indices: Vec<u8>) -> Result<()> {
+    Ok((*API.lock()).as_mut().unwrap().update_pr_indices(pr_indices))
+}
+
+pub fn generate_pr_indices(romanization: Romanization) -> Result<Vec<u8>> {
+    // info!("api.rs generate_pr_indices");
+    Ok((*API.lock()).as_mut().unwrap().generate_pr_indices(romanization))
 }
 
 pub fn pr_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Result<Vec<PrSearchResult>> {
@@ -93,4 +95,8 @@ pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
 
 pub fn get_jyutping(query: String) -> Vec<String> {
     (*API.lock()).as_ref().unwrap().get_jyutping(query)
+}
+
+pub fn jyutping_to_yale(jyutping: String) -> String {
+    wordshk_tools::jyutping::jyutping_to_yale(jyutping)
 }

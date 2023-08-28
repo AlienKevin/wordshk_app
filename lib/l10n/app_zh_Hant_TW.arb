@@ -129,25 +129,15 @@
     "fontSizeLarge": "大",
     "fontSizeVeryLarge": "特大",
 
-    "entryRomanization": "詞條拼音",
+    "romanization": "拼音",
     "romanizationJyutping": "粵拼",
-    "romanizationYaleNumbers": "耶魯（數字）",
-    "romanizationYaleDiacritics": "耶魯（調符）",
-    "romanizationCantonesePinyin": "教院式拼音",
-    "romanizationGuangdong": "廣州話拼音方案",
-    "romanizationIpa": "國際音標",
+    "romanizationYale": "耶魯",
     "romanizationJyutpingDescription": "推介使用，香港現在最常用的拼音方案",
-    "romanizationYaleNumbersDescription": "常見於西方的粵語出版物",
-    "romanizationYaleDiacriticsDescription": "常見於西方的粵語出版物",
-    "romanizationCantonesePinyinDescription": "過去常見於香港的粵語出版物（1990到2000年左右）",
-    "romanizationGuangdongDescription": "常見於中國大陸的粵語出版物",
-    "romanizationIpaDescription": "國際音標常見於語言學著作",
+    "romanizationYaleDescription": "常見於西方的粵語出版物",
 
     "entryEgJumpyPrs": "跳躍式注音",
     "enabled": "開啟",
     "disabled": "關閉",
-
-    "searchRomanization": "搜索拼音",
 
     "dictionaryLicense": "字典授權協議",
     "dictionaryLicenseSummary": "《粵典》軟體中的內容會用以下的授權協議開放給公眾使用：",

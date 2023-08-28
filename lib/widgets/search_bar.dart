@@ -13,7 +13,6 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/input_mode_state.dart';
-import 'package:wordshk/states/search_romanization_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/search_mode_button.dart';
 import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
@@ -22,6 +21,7 @@ import '../bridge_generated.dart' show Romanization;
 import '../constants.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
+import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import 'text_scale_factor_clamper.dart';
@@ -310,27 +310,15 @@ class IsSearching extends State<SearchBar> {
     Color? buttonColor = theme.textTheme.bodyMedium!.color;
     final textColor = theme.textTheme.bodyMedium!.color;
 
-    final searchRomanization =
-        context.watch<SearchRomanizationState>().romanization;
-    final searchRomanizationName =
-        getRomanizationName(searchRomanization, AppLocalizations.of(context)!);
+    final romanization =
+        context.watch<RomanizationState>().romanization;
+    final romanizationName =
+        getRomanizationName(romanization, AppLocalizations.of(context)!);
     late final String searchRomanizationExample;
-    switch (searchRomanization) {
-      case Romanization.Jyutping:
-        searchRomanizationExample = "hou2 coi2";
-        break;
-      case Romanization.YaleNumbers:
-        searchRomanizationExample = "hou2 choi2";
-        break;
-      case Romanization.CantonesePinyin:
-        searchRomanizationExample = "hou2 tsoi2";
-        break;
-      case Romanization.SidneyLau:
-        searchRomanizationExample = "ho2 choi2";
-        break;
-      default:
-        throw "Unsupported romanization $searchRomanization in search_bar.dart";
-    }
+    searchRomanizationExample = switch (romanization) {
+      Romanization.Jyutping => "hou2 coi2",
+      Romanization.Yale => "hou choi",
+    };
 
     searchModeRadioListTile(
             SearchMode mode, String subtitle, SearchMode groupMode) =>
@@ -338,7 +326,7 @@ class IsSearching extends State<SearchBar> {
           activeColor: blueColor,
           title: Text(
             translateSearchMode(
-                mode, searchRomanizationName, AppLocalizations.of(context)!),
+                mode, romanizationName, AppLocalizations.of(context)!),
             textAlign: TextAlign.end,
           ),
           subtitle: Padding(
@@ -393,7 +381,7 @@ class IsSearching extends State<SearchBar> {
                             contentPadding: const EdgeInsets.only(left: 8),
                             hintText: translateSearchMode(
                                 searchModeState.mode,
-                                searchRomanizationName,
+                                romanizationName,
                                 AppLocalizations.of(context)!),
                             hintStyle: TextStyle(
                               color: textColor,

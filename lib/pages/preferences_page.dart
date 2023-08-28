@@ -6,15 +6,13 @@ import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/pages/preferences/entry_eg_page.dart';
 import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
 import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
-import 'package:wordshk/pages/preferences/entry_romanization_page.dart';
 import 'package:wordshk/pages/preferences/language_page.dart';
-import 'package:wordshk/pages/preferences/search_romanization_page.dart';
+import 'package:wordshk/pages/preferences/romanization_page.dart';
 import 'package:wordshk/utils.dart';
 
 import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
-import '../states/search_romanization_state.dart';
 import '../states/speech_rate_state.dart';
 import '../widgets/navigation_drawer.dart';
 import '../widgets/preferences/settings_list.dart';
@@ -29,8 +27,6 @@ class PreferencesPage extends StatelessWidget {
     final language = context.watch<LanguageState>().language!;
     final entryLanguage = context.watch<EntryLanguageState>().language;
     final romanization = context.watch<RomanizationState>().romanization;
-    final searchRomanization =
-        context.watch<SearchRomanizationState>().romanization;
     final entryHeaderSpeechRate =
         context.watch<SpeechRateState>().entryHeaderRate;
 
@@ -53,21 +49,16 @@ class PreferencesPage extends StatelessWidget {
                                 const LanguagePreferencesPage()));
                   },
                 ),
-              ],
-            ),
-            SettingsSection(
-              title: Text(s.dictionarySearch),
-              tiles: <SettingsTile>[
                 SettingsTile.navigation(
-                  title: Text(s.searchRomanization),
-                  value: Text(getRomanizationShortName(
-                      searchRomanization, s, language)),
+                  title: Text(s.romanization),
+                  value:
+                  Text(getRomanizationName(romanization, s)),
                   onPressed: (context) {
                     Navigator.push(
                         context,
                         CustomPageRoute(
                             builder: (context) =>
-                                const SearchRomanizationPreferencesPage()));
+                            const RomanizationPreferencesPage()));
                   },
                 ),
               ],
@@ -84,18 +75,6 @@ class PreferencesPage extends StatelessWidget {
                         CustomPageRoute(
                             builder: (context) =>
                                 const EntryExplanationLanguagePreferencesPage()));
-                  },
-                ),
-                SettingsTile.navigation(
-                  title: Text(s.entryRomanization),
-                  value:
-                      Text(getRomanizationShortName(romanization, s, language)),
-                  onPressed: (context) {
-                    Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) =>
-                                const EntryRomanizationPreferencesPage()));
                   },
                 ),
                 SettingsTile.navigation(

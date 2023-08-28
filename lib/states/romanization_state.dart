@@ -1,31 +1,38 @@
-import 'package:csv/csv.dart';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bridge_generated.dart' show Romanization;
+import '../main.dart';
 
 class RomanizationState with ChangeNotifier {
   late Romanization romanization;
-  Map<String, List<String>> romanizationMap = {};
 
   RomanizationState(SharedPreferences prefs) {
     final romanizationIndex = prefs.getInt("romanization");
+    // Reset invalid romanization index to the jyutping default
+    if (romanizationIndex != null && romanizationIndex >= Romanization.values.length) {
+      prefs.setInt("romanization", Romanization.Jyutping.index);
+    }
     romanization = romanizationIndex == null
         ? Romanization.Jyutping
         : Romanization.values[romanizationIndex];
-    (() async {
-      final tsv =
-          await rootBundle.loadString("assets/cantonese_romanizations.tsv");
-      final List<List<String>> rows = const CsvToListConverter(
-              fieldDelimiter: "\t", shouldParseNumbers: false, eol: "\n")
-          .convert(tsv);
-      rows.removeAt(0); // skip the header row
-      romanizationMap.addEntries(rows.map((row) {
-        final jyutping = row[Romanization.Jyutping.index];
-        return MapEntry(jyutping, row);
-      }));
-    })();
+  }
+
+  Future<File> get _prIndicesFile async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File('${directory.path}/prIndices.msgpack');
+  }
+
+  void initPrIndices() async {
+    final prIndicesFile = await _prIndicesFile;
+    if (prIndicesFile.existsSync()) {
+      api.updatePrIndices(prIndices: await prIndicesFile.readAsBytes());
+    } else {
+      prIndicesFile.writeAsBytes(await api.generatePrIndices(romanization: romanization));
+    }
   }
 
   void updateRomanization(Romanization newRomanization) async {
@@ -34,34 +41,26 @@ class RomanizationState with ChangeNotifier {
     SharedPreferences.getInstance().then((prefs) async {
       prefs.setInt("romanization", newRomanization.index);
     });
+
+    final prIndicesFile = await _prIndicesFile;
+    prIndicesFile.writeAsBytes(await api.generatePrIndices(romanization: romanization));
   }
 
-  String showPr(String jyutping) {
-    if (romanization == Romanization.Jyutping) {
-      return jyutping;
-    } else {
-      final romanizations = romanizationMap[jyutping];
-      if (romanizations == null) {
-        return "[$jyutping]";
-      } else {
-        return romanizations[romanization.index];
-      }
-    }
+  Future<String> showPr(String jyutping) {
+    return switch (romanization) {
+      Romanization.Jyutping => Future.value(jyutping),
+      Romanization.Yale => (() {
+        return api.jyutpingToYale(jyutping: jyutping);
+      })()
+    };
   }
 
-  String showPrs(List<String> jyutpings, {Romanization? romanization}) {
-    final myRomanization = romanization ?? this.romanization;
-    if (myRomanization == Romanization.Jyutping) {
-      return jyutpings.join(" ");
-    } else {
-      return jyutpings.map((jyutping) {
-        final romanizations = romanizationMap[jyutping];
-        if (romanizations == null) {
-          return "[$jyutping]";
-        } else {
-          return romanizations[myRomanization.index];
-        }
-      }).join(" ");
-    }
+  Future<String> showPrs(List<String> jyutpings) {
+    return switch (romanization) {
+      Romanization.Jyutping => Future.value(jyutpings.join(" ")),
+      Romanization.Yale => (() {
+        return api.jyutpingToYale(jyutping: jyutpings.join(" "));
+      })(),
+    };
   }
 }

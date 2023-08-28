@@ -13,6 +13,16 @@ pub extern "C" fn wire_init_api(
 }
 
 #[no_mangle]
+pub extern "C" fn wire_update_pr_indices(port_: i64, pr_indices: *mut wire_uint_8_list) {
+    wire_update_pr_indices_impl(port_, pr_indices)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_generate_pr_indices(port_: i64, romanization: i32) {
+    wire_generate_pr_indices_impl(port_, romanization)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_pr_search(
     port_: i64,
     capacity: u32,
@@ -72,6 +82,11 @@ pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_uint_8_list, sc
 #[no_mangle]
 pub extern "C" fn wire_get_jyutping(port_: i64, query: *mut wire_uint_8_list) {
     wire_get_jyutping_impl(port_, query)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_jyutping_to_yale(port_: i64, jyutping: *mut wire_uint_8_list) {
+    wire_jyutping_to_yale_impl(port_, jyutping)
 }
 
 // Section: allocate functions

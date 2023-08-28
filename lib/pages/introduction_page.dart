@@ -7,7 +7,7 @@ import 'package:wordshk/widgets/preferences/title.dart';
 
 import '../custom_page_route.dart';
 import '../widgets/preferences/language_radio_list_tiles.dart';
-import '../widgets/preferences/search_romanization_radio_list_tiles.dart';
+import '../widgets/preferences/romanization_radio_list_tiles.dart';
 
 class IntroductionPage extends StatelessWidget {
   final SharedPreferences prefs;
@@ -70,7 +70,7 @@ class IntroductionPage extends StatelessWidget {
             titleWidget: Align(
                 alignment: Alignment.centerLeft,
                 child: PreferencesTitle(title: s.introductionRomanization)),
-            bodyWidget: const SearchRomanizationRadioListTiles(
+            bodyWidget: const RomanizationRadioListTiles(
                 syncEntryRomanization: true),
             decoration: pageDecoration,
           )

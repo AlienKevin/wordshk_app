@@ -47,6 +47,38 @@ fn wire_init_api_impl(
         },
     )
 }
+fn wire_update_pr_indices_impl(
+    port_: MessagePort,
+    pr_indices: impl Wire2Api<Vec<u8>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, ()>(
+        WrapInfo {
+            debug_name: "update_pr_indices",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_pr_indices = pr_indices.wire2api();
+            move |task_callback| update_pr_indices(api_pr_indices)
+        },
+    )
+}
+fn wire_generate_pr_indices_impl(
+    port_: MessagePort,
+    romanization: impl Wire2Api<Romanization> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<u8>>(
+        WrapInfo {
+            debug_name: "generate_pr_indices",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_romanization = romanization.wire2api();
+            move |task_callback| generate_pr_indices(api_romanization)
+        },
+    )
+}
 fn wire_pr_search_impl(
     port_: MessagePort,
     capacity: impl Wire2Api<u32> + UnwindSafe,
@@ -190,6 +222,19 @@ fn wire_get_jyutping_impl(port_: MessagePort, query: impl Wire2Api<String> + Unw
         },
     )
 }
+fn wire_jyutping_to_yale_impl(port_: MessagePort, jyutping: impl Wire2Api<String> + UnwindSafe) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String>(
+        WrapInfo {
+            debug_name: "jyutping_to_yale",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_jyutping = jyutping.wire2api();
+            move |task_callback| Ok(jyutping_to_yale(api_jyutping))
+        },
+    )
+}
 // Section: wrapper structs
 
 // Section: static checks
@@ -222,12 +267,7 @@ impl Wire2Api<Romanization> for i32 {
     fn wire2api(self) -> Romanization {
         match self {
             0 => Romanization::Jyutping,
-            1 => Romanization::YaleNumbers,
-            2 => Romanization::YaleDiacritics,
-            3 => Romanization::CantonesePinyin,
-            4 => Romanization::Guangdong,
-            5 => Romanization::SidneyLau,
-            6 => Romanization::Ipa,
+            1 => Romanization::Yale,
             _ => unreachable!("Invalid variant for Romanization: {}", self),
         }
     }

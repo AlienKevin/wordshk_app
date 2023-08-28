@@ -19,7 +19,6 @@ import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_mode_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
-import 'package:wordshk/states/search_romanization_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 
 import 'bridge_generated.dart';
@@ -59,8 +58,6 @@ main() async {
             create: (_) => RomanizationState(prefs), lazy: false),
         ChangeNotifierProvider<EntryEgJumpyPrsState>(
             create: (_) => EntryEgJumpyPrsState(prefs)),
-        ChangeNotifierProvider<SearchRomanizationState>(
-            create: (_) => SearchRomanizationState(prefs)),
         ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
         ChangeNotifierProvider<SpeechRateState>(
             create: (_) => SpeechRateState()),
@@ -103,9 +100,10 @@ class _MyAppState extends State<MyApp> {
       rootBundle.load("assets/api.json"),
       rootBundle.load("assets/english_index.json"),
       rootBundle.load("assets/word_list.tsv"),
-    ]).then((files) {
-      api.initApi(
+    ]).then((files) async {
+      await api.initApi(
           apiJson: files[0].buffer.asUint8List(), englishIndexJson: files[1].buffer.asUint8List(), wordList: utf8.decode(files[2].buffer.asUint8List()));
+      context.read<RomanizationState>().initPrIndices();
     });
   }
 

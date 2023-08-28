@@ -46,81 +46,18 @@ switchKeyboardType(FocusNode focusNode) {
 }
 
 String getRomanizationName(Romanization romanization, AppLocalizations s) {
-  switch (romanization) {
-    case Romanization.Jyutping:
-      return s.romanizationJyutping;
-    case Romanization.YaleNumbers:
-      return s.romanizationYaleNumbers;
-    case Romanization.YaleDiacritics:
-      return s.romanizationYaleDiacritics;
-    case Romanization.CantonesePinyin:
-      return s.romanizationCantonesePinyin;
-    case Romanization.Guangdong:
-      return s.romanizationGuangdong;
-    case Romanization.SidneyLau:
-      return "SidneyLau is deprecated";
-    case Romanization.Ipa:
-      return s.romanizationIpa;
-  }
+  return switch (romanization) {
+    Romanization.Jyutping => s.romanizationJyutping,
+    Romanization.Yale => s.romanizationYale,
+  };
 }
 
 String getRomanizationDescription(
     Romanization romanization, AppLocalizations s) {
-  switch (romanization) {
-    case Romanization.Jyutping:
-      return s.romanizationJyutpingDescription;
-    case Romanization.YaleNumbers:
-      return s.romanizationYaleNumbersDescription;
-    case Romanization.YaleDiacritics:
-      return s.romanizationYaleDiacriticsDescription;
-    case Romanization.CantonesePinyin:
-      return s.romanizationCantonesePinyinDescription;
-    case Romanization.Guangdong:
-      return s.romanizationGuangdongDescription;
-    case Romanization.Ipa:
-      return s.romanizationIpaDescription;
-    case Romanization.SidneyLau:
-      return "SidneyLau is deprecated";
-  }
-}
-
-String getRomanizationShortName(
-    Romanization romanization, AppLocalizations s, Language language) {
-  if (language == Language.en) {
-    switch (romanization) {
-      case Romanization.Jyutping:
-        return s.romanizationJyutpingShort;
-      case Romanization.YaleNumbers:
-        return s.romanizationYaleNumbersShort;
-      case Romanization.YaleDiacritics:
-        return s.romanizationYaleDiacriticsShort;
-      case Romanization.CantonesePinyin:
-        return s.romanizationCantonesePinyinShort;
-      case Romanization.Guangdong:
-        return s.romanizationGuangdongShort;
-      case Romanization.SidneyLau:
-        return "SidneyLau is deprecated";
-      case Romanization.Ipa:
-        return s.romanizationIpaShort;
-    }
-  } else {
-    switch (romanization) {
-      case Romanization.Jyutping:
-        return s.romanizationJyutping;
-      case Romanization.YaleNumbers:
-        return s.romanizationYaleNumbers;
-      case Romanization.YaleDiacritics:
-        return s.romanizationYaleDiacritics;
-      case Romanization.CantonesePinyin:
-        return s.romanizationCantonesePinyin;
-      case Romanization.Guangdong:
-        return s.romanizationGuangdong;
-      case Romanization.SidneyLau:
-        return "SidneyLau is deprecated";
-      case Romanization.Ipa:
-        return s.romanizationIpa;
-    }
-  }
+  return switch (romanization) {
+    Romanization.Jyutping => s.romanizationJyutpingDescription,
+    Romanization.Yale => s.romanizationYaleDescription,
+  };
 }
 
 String getEntryLanguageName(EntryLanguage language, AppLocalizations s) {

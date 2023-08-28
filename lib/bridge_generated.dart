@@ -19,6 +19,15 @@ abstract class WordshkApi {
 
   FlutterRustBridgeTaskConstMeta get kInitApiConstMeta;
 
+  Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kUpdatePrIndicesConstMeta;
+
+  Future<Uint8List> generatePrIndices(
+      {required Romanization romanization, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kGeneratePrIndicesConstMeta;
+
   Future<List<PrSearchResult>> prSearch(
       {required int capacity,
       required String query,
@@ -69,6 +78,10 @@ abstract class WordshkApi {
   Future<List<String>> getJyutping({required String query, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetJyutpingConstMeta;
+
+  Future<String> jyutpingToYale({required String jyutping, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kJyutpingToYaleConstMeta;
 }
 
 class CombinedSearchResults {
@@ -113,12 +126,7 @@ class PrSearchResult {
 
 enum Romanization {
   Jyutping,
-  YaleNumbers,
-  YaleDiacritics,
-  CantonesePinyin,
-  Guangdong,
-  SidneyLau,
-  Ipa,
+  Yale,
 }
 
 enum Script {
@@ -167,6 +175,41 @@ class WordshkApiImpl implements WordshkApi {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "init_api",
         argNames: ["apiJson", "englishIndexJson", "wordList"],
+      );
+
+  Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint}) {
+    var arg0 = _platform.api2wire_uint_8_list(prIndices);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_update_pr_indices(port_, arg0),
+      parseSuccessData: _wire2api_unit,
+      constMeta: kUpdatePrIndicesConstMeta,
+      argValues: [prIndices],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kUpdatePrIndicesConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "update_pr_indices",
+        argNames: ["prIndices"],
+      );
+
+  Future<Uint8List> generatePrIndices(
+      {required Romanization romanization, dynamic hint}) {
+    var arg0 = api2wire_romanization(romanization);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_generate_pr_indices(port_, arg0),
+      parseSuccessData: _wire2api_uint_8_list,
+      constMeta: kGeneratePrIndicesConstMeta,
+      argValues: [romanization],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kGeneratePrIndicesConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "generate_pr_indices",
+        argNames: ["romanization"],
       );
 
   Future<List<PrSearchResult>> prSearch(
@@ -338,6 +381,23 @@ class WordshkApiImpl implements WordshkApi {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "get_jyutping",
         argNames: ["query"],
+      );
+
+  Future<String> jyutpingToYale({required String jyutping, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(jyutping);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_jyutping_to_yale(port_, arg0),
+      parseSuccessData: _wire2api_String,
+      constMeta: kJyutpingToYaleConstMeta,
+      argValues: [jyutping],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kJyutpingToYaleConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "jyutping_to_yale",
+        argNames: ["jyutping"],
       );
 
   void dispose() {
@@ -606,6 +666,39 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
       void Function(int, ffi.Pointer<wire_uint_8_list>,
           ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
+  void wire_update_pr_indices(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> pr_indices,
+  ) {
+    return _wire_update_pr_indices(
+      port_,
+      pr_indices,
+    );
+  }
+
+  late final _wire_update_pr_indicesPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_update_pr_indices');
+  late final _wire_update_pr_indices = _wire_update_pr_indicesPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_generate_pr_indices(
+    int port_,
+    int romanization,
+  ) {
+    return _wire_generate_pr_indices(
+      port_,
+      romanization,
+    );
+  }
+
+  late final _wire_generate_pr_indicesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Int32)>>(
+          'wire_generate_pr_indices');
+  late final _wire_generate_pr_indices =
+      _wire_generate_pr_indicesPtr.asFunction<void Function(int, int)>();
+
   void wire_pr_search(
     int port_,
     int capacity,
@@ -774,6 +867,23 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
           ffi.Void Function(
               ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_get_jyutping');
   late final _wire_get_jyutping = _wire_get_jyutpingPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_jyutping_to_yale(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> jyutping,
+  ) {
+    return _wire_jyutping_to_yale(
+      port_,
+      jyutping,
+    );
+  }
+
+  late final _wire_jyutping_to_yalePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_jyutping_to_yale');
+  late final _wire_jyutping_to_yale = _wire_jyutping_to_yalePtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(

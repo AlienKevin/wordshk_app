@@ -19,7 +19,6 @@ import '../models/search_mode.dart';
 import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
-import '../states/search_romanization_state.dart';
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
@@ -221,8 +220,8 @@ class _HomePageState extends State<HomePage> {
     } else {
       final searchMode = context.read<SearchModeState>().mode;
       final script = getScript(context);
-      final searchRomanization =
-          context.read<SearchRomanizationState>().romanization;
+      final romanization =
+          context.read<RomanizationState>().romanization;
       switch (searchMode) {
         case SearchMode.pr:
           api
@@ -230,7 +229,7 @@ class _HomePageState extends State<HomePage> {
                   capacity: 10,
                   query: query,
                   script: script,
-                  romanization: searchRomanization)
+                  romanization: romanization)
               .then((results) {
             setState(() {
               prSearchResults = results.unique((result) => result.variant);
@@ -254,7 +253,7 @@ class _HomePageState extends State<HomePage> {
                   capacity: 10,
                   query: query,
                   script: script,
-                  romanization: searchRomanization)
+                  romanization: romanization)
               .then((results) {
             setState(() {
               prSearchResults =
@@ -327,19 +326,27 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> showPrSearchResults(TextStyle textStyle) {
     return prSearchResults.map((result) {
-      return showSearchResult(
-          result.id,
-          TextSpan(
-            children: [
-              TextSpan(text: result.variant + " ", style: textStyle),
+      return FutureBuilder<String>(
+        future: context.read<RomanizationState>().showPrs(result.pr.split(" ")),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return showSearchResult(
+              result.id,
               TextSpan(
-                  text: context.read<RomanizationState>().showPrs(
-                      result.pr.split(" "),
-                      romanization:
-                          context.read<SearchRomanizationState>().romanization),
-                  style: textStyle.copyWith(color: greyColor)),
-            ],
-          ));
+                children: [
+                  TextSpan(text: "${result.variant} ", style: textStyle),
+                  TextSpan(text: snapshot.data, style: textStyle.copyWith(color: greyColor)),
+                ],
+              ),
+            );
+          } else {
+            if (snapshot.hasError) {
+              print("showPrSearchResults: " + snapshot.error.toString());
+            }
+            return Container(); // or any other widget to show while waiting
+          }
+        },
+      );
     }).toList();
   }
 
@@ -359,9 +366,9 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> showCombinedSearchResults(TextStyle textStyle) {
     final s = AppLocalizations.of(context)!;
-    final searchRomanization =
-        context.read<SearchRomanizationState>().romanization;
-    final searchRomanizationName = getRomanizationName(searchRomanization, s);
+    final romanization =
+        context.read<RomanizationState>().romanization;
+    final romanizationName = getRomanizationName(romanization, s);
     return [
       ...variantSearchResults.isNotEmpty
           ? [
@@ -371,7 +378,7 @@ class _HomePageState extends State<HomePage> {
           : [],
       ...showVariantSearchResults(textStyle),
       ...prSearchResults.isNotEmpty
-          ? [showSearchResultCategory(s.searchResults(searchRomanizationName))]
+          ? [showSearchResultCategory(s.searchResults(romanizationName))]
           : [],
       ...showPrSearchResults(textStyle),
       ...englishSearchResults.isNotEmpty

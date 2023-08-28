@@ -1,20 +1,28 @@
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
+use std::io::prelude::*;
 use std::io::Read;
 
+use flate2::Compression;
+use flate2::read::GzDecoder;
+use flate2::write::GzEncoder;
+use lazy_static::lazy_static;
+use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use wordshk_tools::dict::clause_to_string;
 use wordshk_tools::english_index::{EnglishIndex, EnglishIndexData};
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
+use wordshk_tools::pr_index::PrIndices;
 use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, Script, VariantsMap};
 use wordshk_tools::unicode::is_cjk;
 
-use flate2::read::GzDecoder;
-
 use crate::api::{CombinedSearchResults, EnglishSearchResult, PrSearchResult, VariantSearchResult};
+
+// use oslog::{OsLogger};
+// use log::{LevelFilter, info};
 
 #[derive(Deserialize, Serialize)]
 pub struct Api {
@@ -22,14 +30,20 @@ pub struct Api {
     #[serde(skip)]
     pub english_index: EnglishIndex,
     #[serde(skip)]
+    pub pr_indices: PrIndices,
+    #[serde(skip)]
     pub variants_map: VariantsMap,
     #[serde(skip)]
     pub word_list: HashMap<String, Vec<String>>,
 }
 
+lazy_static! {
+    static ref IS_LOG_INITIALIZED: Mutex<bool> = Mutex::new(false);
+}
+
 impl Api {
     pub fn new(api_json: Vec<u8>, english_index_json: Vec<u8>, word_list: String) -> Api {
-        // if !*IS_LOG_INITIALIZED.lock() {
+        // if !(*IS_LOG_INITIALIZED.lock()) {
         //     OsLogger::new("hk.words")
         //         .level_filter(LevelFilter::Debug)
         //         .category_level_filter("Settings", LevelFilter::Trace)
@@ -43,12 +57,15 @@ impl Api {
         api_decompressor.read_to_string(&mut api_str).unwrap();
         let mut api: Api = serde_json::from_str(&api_str).unwrap();
         api.variants_map = search::rich_dict_to_variants_map(&api.dict);
+        // info!("Loaded dict");
 
         let mut english_index_decompressor = GzDecoder::new(&english_index_json[..]);
         let mut english_index_str = String::new();
         english_index_decompressor.read_to_string(&mut english_index_str).unwrap();
         let english_index: EnglishIndex = serde_json::from_str(&english_index_str).unwrap();
         api.english_index = english_index;
+        // info!("Loaded english index");
+
         let mut rdr = csv::ReaderBuilder::new()
             .has_headers(false)
             .delimiter(b'\t')
@@ -67,12 +84,32 @@ impl Api {
             word_list.entry(trad).or_insert(vec![]).push(pr);
         }
         api.word_list = word_list;
+
+        // info!("Loaded word list");
         api
+    }
+
+    pub fn update_pr_indices(&mut self, pr_indices_json: Vec<u8>) {
+        let mut pr_indices_decompressor = GzDecoder::new(&pr_indices_json[..]);
+        let mut pr_indices_str = String::new();
+        pr_indices_decompressor.read_to_string(&mut pr_indices_str).unwrap();
+        let pr_indices: PrIndices = serde_json::from_str(&pr_indices_str).unwrap();
+        self.pr_indices = pr_indices;
+    }
+
+    pub fn generate_pr_indices(&mut self, romanization: Romanization) -> Vec<u8> {
+        // info!("in generate_pr_indices");
+        let pr_indices = wordshk_tools::pr_index::generate_pr_indices(&self.dict, romanization);
+        self.pr_indices = pr_indices;
+        let mut e = GzEncoder::new(Vec::new(), Compression::default());
+        e.write_all(serde_json::to_string(&self.pr_indices).expect("failed to serialize pr_indices to JSON").as_bytes())
+            .expect("failed to compress pr_indices");
+        e.finish().expect("failed to finish compressing the stream of pr_indices")
     }
 
     pub fn pr_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
         let mut results = vec![];
-        let mut ranks = search::pr_search(&self.variants_map, &query, romanization);
+        let mut ranks = search::pr_search(&self.pr_indices, &self.dict, &query, romanization);
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
             let search::PrSearchRank {
@@ -111,7 +148,7 @@ impl Api {
     }
 
     pub fn combined_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
-        match &mut search::combined_search(&self.variants_map, &self.english_index, &query, script, romanization) {
+        match &mut search::combined_search(&self.variants_map, &self.pr_indices, &self.english_index, &self.dict, &query, script, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
@@ -188,17 +225,15 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
     let mut i = 0;
     while pr_ranks.len() > 0 && i < capacity {
         let search::PrSearchRank {
-            id, variant_index, pr_index, score, ..
+            id, variant_index, pr_index, ..
         } = pr_ranks.pop().unwrap();
-        if score > 70 {
-            let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
-            pr_search_results.push(PrSearchResult {
-                id: id as u32,
-                variant: variant.word.clone(),
-                pr: variant.prs.0[pr_index].to_string(),
-            });
-            i += 1;
-        }
+        let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
+        pr_search_results.push(PrSearchResult {
+            id: id as u32,
+            variant: variant.word.clone(),
+            pr: variant.prs.0[pr_index].to_string(),
+        });
+        i += 1;
     }
     pr_search_results
 }
