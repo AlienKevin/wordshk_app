@@ -3,7 +3,7 @@ description: words.hk dictionary for mobile
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.2.0 # Android requires bumping build version (after +) to 4
+version: 2.2.0+2 # Android requires bumping build version (after +)
 
 environment:
   sdk: "^3.0.0"
