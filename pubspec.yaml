@@ -3,7 +3,7 @@ description: words.hk dictionary for mobile
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.1.1+4 # Android requires bumping build version (after +) to 4
+version: 2.2.0 # Android requires bumping build version (after +) to 4
 
 environment:
   sdk: "^3.0.0"
@@ -15,29 +15,29 @@ dependencies:
     sdk: flutter
   flutter_rust_bridge: ^1.80.1
   equatable: ^2.0.0
-  flutter_native_splash: ^2.0.4
-  just_audio: ^0.9.27
+  flutter_native_splash: ^2.3.2
+  just_audio: ^0.9.34
   expandable: ^5.0.1
-  url_launcher: ^6.1.0
-  intl: ^0.18.0
-  provider: ^6.0.2
-  flutter_portal: ^1.1.0
+  url_launcher: ^6.1.12
+  intl: ^0.18.1
+  provider: ^6.0.5
+  flutter_portal: ^1.1.4
   flutter_web_browser: ^0.17.1
-  shared_preferences: ^2.0.15
-  scrollable_positioned_list: ^0.3.2
+  shared_preferences: ^2.2.0
+  scrollable_positioned_list: ^0.3.8
   scroll_to_index: ^3.0.1
-  flutter_tts: ^3.5.0
-  audio_session: ^0.1.8
-  keyboard_actions: ^4.0.0
-  csv: ^5.0.1
-  flutter_keyboard_visibility: ^5.2.0
-  google_mlkit_digital_ink_recognition: ^0.8.0
+  flutter_tts: ^3.7.0
+  audio_session: ^0.1.16
+  keyboard_actions: ^4.2.0
+  csv: ^5.0.2
+  flutter_keyboard_visibility: ^5.4.1
+  google_mlkit_digital_ink_recognition: ^0.9.0
   settings_ui: ^2.0.2
   cupertino_icons: ^1.0.5
   flutter_platform_widgets: ^3.3.5
-  introduction_screen: ^3.0.2
-  permission_handler: ^10.0.0
-  ffi: ^2.0.1
+  introduction_screen: ^3.1.11
+  permission_handler: ^10.4.3
+  ffi: ^2.1.0
   path_provider: ^2.1.0
 #  freezed_annotation: ^1.1.0
 

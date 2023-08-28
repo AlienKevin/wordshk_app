@@ -48,6 +48,8 @@ post_install do |installer|
 
     # Start of the permission_handler configuration
     target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
+
       # You can enable the permissions needed here. For example to enable camera
       # permission, just remove the `#` character in front so it looks like this:
       #
@@ -71,10 +73,10 @@ post_install do |installer|
         # 'PERMISSION_CAMERA=1',
 
         ## dart: PermissionGroup.microphone
-        'PERMISSION_MICROPHONE=1',
+        # 'PERMISSION_MICROPHONE=1',
 
         ## dart: PermissionGroup.speech
-        'PERMISSION_SPEECH_RECOGNIZER=1',
+        # 'PERMISSION_SPEECH_RECOGNIZER=1',
 
         ## dart: PermissionGroup.photos
         # 'PERMISSION_PHOTOS=1',
