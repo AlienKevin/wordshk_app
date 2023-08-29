@@ -19,6 +19,8 @@ use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, Script, VariantsMap};
 use wordshk_tools::unicode::is_cjk;
 
+use rmp_serde::Serializer;
+
 use crate::api::{CombinedSearchResults, EnglishSearchResult, PrSearchResult, VariantSearchResult};
 
 // use oslog::{OsLogger};
@@ -95,11 +97,12 @@ impl Api {
         api
     }
 
-    pub fn update_pr_indices(&mut self, pr_indices_json: Vec<u8>) {
-        let mut pr_indices_decompressor = GzDecoder::new(&pr_indices_json[..]);
-        let mut pr_indices_str = String::new();
-        pr_indices_decompressor.read_to_string(&mut pr_indices_str).unwrap();
-        let pr_indices: PrIndices = serde_json::from_str(&pr_indices_str).unwrap();
+    pub fn update_pr_indices(&mut self, pr_indices_msgpack: Vec<u8>) {
+        let mut pr_indices_decompressor = GzDecoder::new(&pr_indices_msgpack[..]);
+        let mut pr_indices_bytes = Vec::new();
+        pr_indices_decompressor.read_to_end(&mut pr_indices_bytes).unwrap();
+        let pr_indices: PrIndices = rmp_serde::from_slice(&pr_indices_bytes[..])
+            .expect("Failed to deserialize pr_indices from msgpack format");
         self.pr_indices = pr_indices;
     }
 
@@ -107,9 +110,14 @@ impl Api {
         // info!("in generate_pr_indices");
         let pr_indices = wordshk_tools::pr_index::generate_pr_indices(&self.dict, romanization);
         self.pr_indices = pr_indices;
+
+        let mut buf = Vec::new();
+        self.pr_indices
+            .serialize(&mut Serializer::new(&mut buf))
+            .unwrap();
+
         let mut e = GzEncoder::new(Vec::new(), Compression::default());
-        e.write_all(serde_json::to_string(&self.pr_indices).expect("failed to serialize pr_indices to JSON").as_bytes())
-            .expect("failed to compress pr_indices");
+        e.write_all(&buf).expect("failed to compress pr_indices");
         e.finish().expect("failed to finish compressing the stream of pr_indices")
     }
 
