@@ -220,8 +220,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       final searchMode = context.read<SearchModeState>().mode;
       final script = getScript(context);
-      final romanization =
-          context.read<RomanizationState>().romanization;
+      final romanization = context.read<RomanizationState>().romanization;
       switch (searchMode) {
         case SearchMode.pr:
           api
@@ -312,11 +311,11 @@ class _HomePageState extends State<HomePage> {
           defIndex: result.defIndex,
           TextSpan(
             children: [
-              TextSpan(text: result.variant + " ", style: textStyle),
+              TextSpan(text: "${result.variant} ", style: textStyle),
               TextSpan(
                   text: result.pr, style: textStyle.copyWith(color: greyColor)),
               TextSpan(
-                  text: "\n" + result.eng,
+                  text: "\n${result.eng}",
                   style: textStyle.copyWith(
                       fontWeight: FontWeight.normal, color: greyColor)),
             ],
@@ -335,14 +334,15 @@ class _HomePageState extends State<HomePage> {
               TextSpan(
                 children: [
                   TextSpan(text: "${result.variant} ", style: textStyle),
-                  TextSpan(text: snapshot.data, style: textStyle.copyWith(color: greyColor)),
+                  TextSpan(
+                      text: snapshot.data,
+                      style: textStyle.copyWith(color: greyColor)),
                 ],
               ),
             );
+          } else if (snapshot.hasError) {
+            return Text("showPrSearchResults: ${snapshot.error}");
           } else {
-            if (snapshot.hasError) {
-              print("showPrSearchResults: " + snapshot.error.toString());
-            }
             return Container(); // or any other widget to show while waiting
           }
         },
@@ -353,7 +353,9 @@ class _HomePageState extends State<HomePage> {
   List<Widget> showVariantSearchResults(TextStyle textStyle) {
     return variantSearchResults.map((result) {
       return showSearchResult(
-          result.id, showFirstEntryInGroupInitially: true, TextSpan(text: result.variant, style: textStyle));
+          result.id,
+          showFirstEntryInGroupInitially: true,
+          TextSpan(text: result.variant, style: textStyle));
     }).toList();
   }
 
@@ -366,8 +368,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> showCombinedSearchResults(TextStyle textStyle) {
     final s = AppLocalizations.of(context)!;
-    final romanization =
-        context.read<RomanizationState>().romanization;
+    final romanization = context.read<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);
     return [
       ...variantSearchResults.isNotEmpty
@@ -391,7 +392,8 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-  Widget showSearchResult(int id, TextSpan resultText, {int? defIndex, bool showFirstEntryInGroupInitially = false }) {
+  Widget showSearchResult(int id, TextSpan resultText,
+      {int? defIndex, bool showFirstEntryInGroupInitially = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -404,7 +406,12 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               CustomPageRoute(
-                  builder: (context) => EntryPage(id: id, defIndex: defIndex, showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,)),
+                  builder: (context) => EntryPage(
+                        id: id,
+                        defIndex: defIndex,
+                        showFirstEntryInGroupInitially:
+                            showFirstEntryInGroupInitially,
+                      )),
             );
           },
           child: Padding(

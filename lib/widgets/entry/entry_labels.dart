@@ -22,7 +22,7 @@ class EntryLabels extends StatelessWidget {
                 child: RichText(
                     textScaleFactor: MediaQuery.of(context).textScaleFactor,
                     text: TextSpan(
-                        text: "[" + AppLocalizations.of(context)!.label + "]",
+                        text: "[${AppLocalizations.of(context)!.label}]",
                         style: lineTextStyle.copyWith(
                             fontWeight: FontWeight.w600)))),
             ...labels

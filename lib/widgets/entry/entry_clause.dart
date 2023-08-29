@@ -20,6 +20,7 @@ class EntryClause extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: clause.lines.asMap().keys.toList().map((index) {
           return EntryLine(
             line: clause.lines[index],
@@ -29,6 +30,5 @@ class EntryClause extends StatelessWidget {
             isCantonese: isCantonese,
           );
         }).toList(),
-        crossAxisAlignment: CrossAxisAlignment.start,
       );
 }

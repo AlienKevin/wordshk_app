@@ -27,12 +27,12 @@ import 'states/player_state.dart';
 
 const base = 'wordshk_api';
 final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
-late final dylib = Platform.isIOS
+final dylib = Platform.isIOS
     ? DynamicLibrary.process()
     : Platform.isMacOS
         ? DynamicLibrary.executable()
         : DynamicLibrary.open(path);
-late final api = WordshkApiImpl(dylib);
+final api = WordshkApiImpl(dylib);
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized(); // mandatory when awaiting on main
@@ -96,6 +96,8 @@ class _MyAppState extends State<MyApp> {
   initState() {
     super.initState();
 
+    context.read<RomanizationState>().initPrIndices();
+
     Future.wait([
       rootBundle.load("assets/api.json"),
       rootBundle.load("assets/english_index.json"),
@@ -103,7 +105,6 @@ class _MyAppState extends State<MyApp> {
     ]).then((files) async {
       await api.initApi(
           apiJson: files[0].buffer.asUint8List(), englishIndexJson: files[1].buffer.asUint8List(), wordList: utf8.decode(files[2].buffer.asUint8List()));
-      context.read<RomanizationState>().initPrIndices();
     });
   }
 
@@ -186,9 +187,9 @@ class _MyAppState extends State<MyApp> {
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.dark,
         accentColor: lightBlueColor,
+        backgroundColor: blackColor,
       ),
       scaffoldBackgroundColor: Colors.black,
-      backgroundColor: blackColor,
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
       appBarTheme: appBarTheme,

@@ -81,12 +81,10 @@ class _EntryWidgetState extends State<EntryWidget>
                     .asMap()
                     .entries
                     .map((entry) => Tab(
-                        text: (entry.key + 1).toString() +
-                            " " +
-                            entry.value.poses
+                        text: "${entry.key + 1} ${entry.value.poses
                                 .map((pos) =>
                                     translatePos(pos, localizationContext))
-                                .join("/")))
+                                .join("/")}"))
                     .toList(),
               )),
           Expanded(

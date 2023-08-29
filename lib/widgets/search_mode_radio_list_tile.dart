@@ -170,7 +170,7 @@ class SearchModeRadioListTile<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
       child: ListTileTheme.merge(
-        selectedColor: activeColor ?? Theme.of(context).toggleableActiveColor,
+        selectedColor: activeColor,
         child: ListTile(
           leading: secondary,
           title: title,

@@ -32,6 +32,7 @@ class EntryDef extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ...entryLanguage == EntryLanguage.cantonese ||
                     entryLanguage == EntryLanguage.both
@@ -39,9 +40,7 @@ class EntryDef extends StatelessWidget {
                     EntryClause(
                         clause:
                             script == Script.Simplified ? def.yueSimp : def.yue,
-                        tag: "(" +
-                            AppLocalizations.of(context)!.cantonese +
-                            ") ",
+                        tag: "(${AppLocalizations.of(context)!.cantonese}) ",
                         lineTextStyle: lineTextStyle,
                         onTapLink: onTapLink,
                         isCantonese: true)
@@ -54,9 +53,7 @@ class EntryDef extends StatelessWidget {
                         ? const SizedBox.shrink()
                         : EntryClause(
                             clause: def.eng!,
-                            tag: "(" +
-                                AppLocalizations.of(context)!.english +
-                                ") ",
+                            tag: "(${AppLocalizations.of(context)!.english}) ",
                             lineTextStyle: lineTextStyle,
                             onTapLink: onTapLink,
                             isCantonese: false)
@@ -73,7 +70,6 @@ class EntryDef extends StatelessWidget {
               onTapLink: onTapLink,
             )
           ],
-          crossAxisAlignment: CrossAxisAlignment.start,
         );
       });
 }

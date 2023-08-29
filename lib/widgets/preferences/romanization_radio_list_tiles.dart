@@ -31,7 +31,7 @@ class RomanizationRadioListTiles extends StatelessWidget {
       }
     }
 
-    RomanizationRadioListTile(Romanization value) =>
+    romanizationRadioListTile(Romanization value) =>
         PreferencesRadioListTile<Romanization>(
             title: getRomanizationName(value, s),
             subtitle: getRomanizationDescription(value, s),
@@ -40,8 +40,8 @@ class RomanizationRadioListTiles extends StatelessWidget {
             onChanged: onRomanizationChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      RomanizationRadioListTile(Romanization.Jyutping),
-      RomanizationRadioListTile(Romanization.Yale),
+      romanizationRadioListTile(Romanization.Jyutping),
+      romanizationRadioListTile(Romanization.Yale),
     ]);
   }
 }

@@ -108,7 +108,7 @@ class _EntryTabState extends State<EntryTab> {
                         lineTextStyle: widget.lineTextStyle),
                     EntrySimsOrAnts(
                         label:
-                            "[" + AppLocalizations.of(context)!.synonym + "]",
+                            "[${AppLocalizations.of(context)!.synonym}]",
                         simsOrAnts: widget.entry.sims,
                         simsOrAntsSimp: widget.entry.simsSimp,
                         script: widget.script,
@@ -116,7 +116,7 @@ class _EntryTabState extends State<EntryTab> {
                         onTapLink: widget.onTapLink),
                     EntrySimsOrAnts(
                         label:
-                            "[" + AppLocalizations.of(context)!.antonym + "]",
+                            "[${AppLocalizations.of(context)!.antonym}]",
                         simsOrAnts: widget.entry.ants,
                         simsOrAntsSimp: widget.entry.antsSimp,
                         script: widget.script,

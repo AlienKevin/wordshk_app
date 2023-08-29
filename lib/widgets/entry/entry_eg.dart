@@ -41,6 +41,7 @@ class EntryEg extends StatelessWidget {
         ),
         padding: EdgeInsets.only(left: lineTextStyle.fontSize! / 1.5),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // TODO: add tags for chinese vs cantonese
             eg.zho == null
@@ -75,7 +76,6 @@ class EntryEg extends StatelessWidget {
                   ]
                 : [],
           ],
-          crossAxisAlignment: CrossAxisAlignment.start,
         ),
       ));
 }

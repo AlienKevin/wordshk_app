@@ -26,7 +26,7 @@ class DigitalInkView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _DigitalInkViewState createState() => _DigitalInkViewState();
+  DigitalInkViewState createState() => DigitalInkViewState();
 }
 
 enum DownloadEndStatus {
@@ -34,7 +34,7 @@ enum DownloadEndStatus {
   failure,
 }
 
-class _DigitalInkViewState extends State<DigitalInkView> {
+class DigitalInkViewState extends State<DigitalInkView> {
   final DigitalInkRecognizerModelManager _modelManager =
       DigitalInkRecognizerModelManager();
   final String _language = 'zh-Hani-HK';
@@ -217,11 +217,11 @@ class _DigitalInkViewState extends State<DigitalInkView> {
                           .read<InputModeState>()
                           .updateInputMode(InputMode.done);
                     },
-                    child: Text(AppLocalizations.of(context)!.done),
                     style: ButtonStyle(
                         padding: MaterialStateProperty.all(
                             const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 15.0)))),
+                                vertical: 10.0, horizontal: 15.0))),
+                    child: Text(AppLocalizations.of(context)!.done)),
                 const SizedBox(width: 20),
               ]),
             ],
