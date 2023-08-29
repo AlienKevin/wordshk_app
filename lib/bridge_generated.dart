@@ -11,14 +11,6 @@ import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class WordshkApi {
-  Future<void> initApi(
-      {required Uint8List apiJson,
-      required Uint8List englishIndexJson,
-      required String wordList,
-      dynamic hint});
-
-  FlutterRustBridgeTaskConstMeta get kInitApiConstMeta;
-
   Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kUpdatePrIndicesConstMeta;
@@ -153,30 +145,6 @@ class WordshkApiImpl implements WordshkApi {
   factory WordshkApiImpl.wasm(FutureOr<WasmModule> module) =>
       WordshkApiImpl(module as ExternalLibrary);
   WordshkApiImpl.raw(this._platform);
-  Future<void> initApi(
-      {required Uint8List apiJson,
-      required Uint8List englishIndexJson,
-      required String wordList,
-      dynamic hint}) {
-    var arg0 = _platform.api2wire_uint_8_list(apiJson);
-    var arg1 = _platform.api2wire_uint_8_list(englishIndexJson);
-    var arg2 = _platform.api2wire_String(wordList);
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) =>
-          _platform.inner.wire_init_api(port_, arg0, arg1, arg2),
-      parseSuccessData: _wire2api_unit,
-      constMeta: kInitApiConstMeta,
-      argValues: [apiJson, englishIndexJson, wordList],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kInitApiConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "init_api",
-        argNames: ["apiJson", "englishIndexJson", "wordList"],
-      );
-
   Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint}) {
     var arg0 = _platform.api2wire_uint_8_list(prIndices);
     return _platform.executeNormal(FlutterRustBridgeTask(
@@ -640,31 +608,6 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
           'init_frb_dart_api_dl');
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
-
-  void wire_init_api(
-    int port_,
-    ffi.Pointer<wire_uint_8_list> api_json,
-    ffi.Pointer<wire_uint_8_list> english_index_json,
-    ffi.Pointer<wire_uint_8_list> word_list,
-  ) {
-    return _wire_init_api(
-      port_,
-      api_json,
-      english_index_json,
-      word_list,
-    );
-  }
-
-  late final _wire_init_apiPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(
-              ffi.Int64,
-              ffi.Pointer<wire_uint_8_list>,
-              ffi.Pointer<wire_uint_8_list>,
-              ffi.Pointer<wire_uint_8_list>)>>('wire_init_api');
-  late final _wire_init_api = _wire_init_apiPtr.asFunction<
-      void Function(int, ffi.Pointer<wire_uint_8_list>,
-          ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_update_pr_indices(
     int port_,

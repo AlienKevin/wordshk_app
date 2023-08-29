@@ -19,6 +19,8 @@ class RomanizationState with ChangeNotifier {
     romanization = romanizationIndex == null
         ? Romanization.Jyutping
         : Romanization.values[romanizationIndex];
+
+    initPrIndices();
   }
 
   Future<File> get _prIndicesFile async {

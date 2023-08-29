@@ -3,16 +3,6 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
-pub extern "C" fn wire_init_api(
-    port_: i64,
-    api_json: *mut wire_uint_8_list,
-    english_index_json: *mut wire_uint_8_list,
-    word_list: *mut wire_uint_8_list,
-) {
-    wire_init_api_impl(port_, api_json, english_index_json, word_list)
-}
-
-#[no_mangle]
 pub extern "C" fn wire_update_pr_indices(port_: i64, pr_indices: *mut wire_uint_8_list) {
     wire_update_pr_indices_impl(port_, pr_indices)
 }

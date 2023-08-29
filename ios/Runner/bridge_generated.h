@@ -26,11 +26,6 @@ uintptr_t new_dart_opaque(Dart_Handle handle);
 
 intptr_t init_frb_dart_api_dl(void *obj);
 
-void wire_init_api(int64_t port_,
-                   struct wire_uint_8_list *api_json,
-                   struct wire_uint_8_list *english_index_json,
-                   struct wire_uint_8_list *word_list);
-
 void wire_update_pr_indices(int64_t port_, struct wire_uint_8_list *pr_indices);
 
 void wire_generate_pr_indices(int64_t port_, int32_t romanization);
@@ -73,7 +68,6 @@ void free_WireSyncReturn(WireSyncReturn ptr);
 
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
-    dummy_var ^= ((int64_t) (void*) wire_init_api);
     dummy_var ^= ((int64_t) (void*) wire_update_pr_indices);
     dummy_var ^= ((int64_t) (void*) wire_generate_pr_indices);
     dummy_var ^= ((int64_t) (void*) wire_pr_search);

@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +17,6 @@ import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 
 import 'constants.dart';
-import 'ffi.dart';
 import 'states/player_state.dart';
 
 main() async {
@@ -80,21 +76,6 @@ class _MyAppState extends State<MyApp> {
     800: blueColor,
     900: blueColor,
   };
-
-  @override
-  initState() {
-    super.initState();
-
-    context.read<RomanizationState>().initPrIndices();
-    Future.wait([
-      rootBundle.load("assets/api.json"),
-      rootBundle.load("assets/english_index.json"),
-      rootBundle.load("assets/word_list.tsv"),
-    ]).then((files) async {
-      await api.initApi(
-          apiJson: files[0].buffer.asUint8List(), englishIndexJson: files[1].buffer.asUint8List(), wordList: utf8.decode(files[2].buffer.asUint8List()));
-    });
-  }
 
   // This widget is the root of your application.
   @override

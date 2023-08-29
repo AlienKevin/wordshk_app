@@ -27,26 +27,6 @@ use crate::api::*;
 
 // Section: wire functions
 
-fn wire_init_api_impl(
-    port_: MessagePort,
-    api_json: impl Wire2Api<Vec<u8>> + UnwindSafe,
-    english_index_json: impl Wire2Api<Vec<u8>> + UnwindSafe,
-    word_list: impl Wire2Api<String> + UnwindSafe,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, ()>(
-        WrapInfo {
-            debug_name: "init_api",
-            port: Some(port_),
-            mode: FfiCallMode::Normal,
-        },
-        move || {
-            let api_api_json = api_json.wire2api();
-            let api_english_index_json = english_index_json.wire2api();
-            let api_word_list = word_list.wire2api();
-            move |task_callback| init_api(api_api_json, api_english_index_json, api_word_list)
-        },
-    )
-}
 fn wire_update_pr_indices_impl(
     port_: MessagePort,
     pr_indices: impl Wire2Api<Vec<u8>> + UnwindSafe,

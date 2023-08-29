@@ -47,13 +47,7 @@ pub struct EnglishSearchResult {
 }
 
 lazy_static! {
-    static ref API: Mutex<Api> = Mutex::new(Api::default());
-}
-
-pub fn init_api(api_json: Vec<u8>, english_index_json: Vec<u8>, word_list: String) -> Result<()> {
-    // info!("Calling init_api()...");
-    (*API.lock()).load(api_json, english_index_json, word_list);
-    Ok(())
+    static ref API: Mutex<Api> = Mutex::new(Api::new());
 }
 
 pub fn update_pr_indices(pr_indices: Vec<u8>) -> Result<()> {
