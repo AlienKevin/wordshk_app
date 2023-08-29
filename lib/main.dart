@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
+import 'package:wordshk/sentry_dsn.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
@@ -20,36 +22,53 @@ import 'constants.dart';
 import 'states/player_state.dart';
 
 main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // mandatory when awaiting on main
-  final prefs = await SharedPreferences.getInstance();
-  final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<SearchModeState>(
-            create: (_) => SearchModeState()),
-        ChangeNotifierProvider<SearchQueryState>(
-            create: (_) => SearchQueryState()),
-        ChangeNotifierProvider<InputModeState>(create: (_) => InputModeState()),
-        ChangeNotifierProvider<LanguageState>(
-            create: (context) => LanguageState(prefs, context), lazy: false),
-        ChangeNotifierProvider<EntryLanguageState>(
-            create: (_) => EntryLanguageState(prefs)),
-        ChangeNotifierProvider<PronunciationMethodState>(
-            create: (_) => PronunciationMethodState(prefs)),
-        ChangeNotifierProvider<EntryEgFontSizeState>(
-            create: (_) => EntryEgFontSizeState(prefs)),
-        ChangeNotifierProvider<RomanizationState>(
-            create: (_) => RomanizationState(prefs), lazy: false),
-        ChangeNotifierProvider<EntryEgJumpyPrsState>(
-            create: (_) => EntryEgJumpyPrsState(prefs)),
-        ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
-        ChangeNotifierProvider<SpeechRateState>(
-            create: (_) => SpeechRateState()),
-      ],
-      child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
-    ),
-  );
+  await SentryFlutter.init((options) {
+    options.dsn = sentry_dsn;
+    // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+    // We recommend adjusting this value in production.
+    options.tracesSampleRate = 0;
+  }, appRunner: () async {
+    try {
+      WidgetsFlutterBinding
+          .ensureInitialized(); // mandatory when awaiting on main
+      final prefs = await SharedPreferences.getInstance();
+      final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
+      runApp(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<SearchModeState>(
+                create: (_) => SearchModeState()),
+            ChangeNotifierProvider<SearchQueryState>(
+                create: (_) => SearchQueryState()),
+            ChangeNotifierProvider<InputModeState>(
+                create: (_) => InputModeState()),
+            ChangeNotifierProvider<LanguageState>(
+                create: (context) => LanguageState(prefs, context),
+                lazy: false),
+            ChangeNotifierProvider<EntryLanguageState>(
+                create: (_) => EntryLanguageState(prefs)),
+            ChangeNotifierProvider<PronunciationMethodState>(
+                create: (_) => PronunciationMethodState(prefs)),
+            ChangeNotifierProvider<EntryEgFontSizeState>(
+                create: (_) => EntryEgFontSizeState(prefs)),
+            ChangeNotifierProvider<RomanizationState>(
+                create: (_) => RomanizationState(prefs), lazy: false),
+            ChangeNotifierProvider<EntryEgJumpyPrsState>(
+                create: (_) => EntryEgJumpyPrsState(prefs)),
+            ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
+            ChangeNotifierProvider<SpeechRateState>(
+                create: (_) => SpeechRateState()),
+          ],
+          child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
+        ),
+      );
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    }
+  });
 }
 
 class MyApp extends StatefulWidget {

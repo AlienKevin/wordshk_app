@@ -53,6 +53,8 @@ dev_dependencies:
       url: https://github.com/AlienKevin/flutter_launcher_name
       ref: "0.11.1"
   ffigen: ^8.0.2
+  sentry_flutter: ^7.9.0
+  sentry_dart_plugin: ^1.0.0
 #  build_runner:
 #  freezed: ^1.1.0
 
@@ -86,3 +88,9 @@ flutter_icons:
 
 flutter_launcher_name:
   name: "words.hk"
+
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: true
+  upload_sources: true
+  # rest of the configs need to be set by running `source set_sentry_env_vars.sh`
