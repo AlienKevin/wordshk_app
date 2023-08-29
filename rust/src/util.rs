@@ -24,7 +24,7 @@ use crate::api::{CombinedSearchResults, EnglishSearchResult, PrSearchResult, Var
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 pub struct Api {
     pub dict: RichDict,
     #[serde(skip)]
@@ -42,7 +42,7 @@ lazy_static! {
 }
 
 impl Api {
-    pub fn new(api_json: Vec<u8>, english_index_json: Vec<u8>, word_list: String) -> Api {
+    pub fn load(&mut self, api_json: Vec<u8>, english_index_json: Vec<u8>, word_list: String) {
         // if !(*IS_LOG_INITIALIZED.lock()) {
         //     OsLogger::new("hk.words")
         //         .level_filter(LevelFilter::Debug)
@@ -55,15 +55,17 @@ impl Api {
         let mut api_decompressor = GzDecoder::new(&api_json[..]);
         let mut api_str = String::new();
         api_decompressor.read_to_string(&mut api_str).unwrap();
-        let mut api: Api = serde_json::from_str(&api_str).unwrap();
-        api.variants_map = search::rich_dict_to_variants_map(&api.dict);
+        let api: Api = serde_json::from_str(&api_str).unwrap();
+
+        self.variants_map = search::rich_dict_to_variants_map(&api.dict);
+        self.dict = api.dict;
         // info!("Loaded dict");
 
         let mut english_index_decompressor = GzDecoder::new(&english_index_json[..]);
         let mut english_index_str = String::new();
         english_index_decompressor.read_to_string(&mut english_index_str).unwrap();
         let english_index: EnglishIndex = serde_json::from_str(&english_index_str).unwrap();
-        api.english_index = english_index;
+        self.english_index = english_index;
         // info!("Loaded english index");
 
         let mut rdr = csv::ReaderBuilder::new()
@@ -83,10 +85,8 @@ impl Api {
             // push traditional variant
             word_list.entry(trad).or_insert(vec![]).push(pr);
         }
-        api.word_list = word_list;
-
+        self.word_list = word_list;
         // info!("Loaded word list");
-        api
     }
 
     pub fn update_pr_indices(&mut self, pr_indices_json: Vec<u8>) {

@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bridge_generated.dart' show Romanization;
-import '../main.dart';
+import '../ffi.dart';
 
 class RomanizationState with ChangeNotifier {
   late Romanization romanization;

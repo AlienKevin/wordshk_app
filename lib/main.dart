@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,18 +19,9 @@ import 'package:wordshk/states/search_mode_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 
-import 'bridge_generated.dart';
 import 'constants.dart';
+import 'ffi.dart';
 import 'states/player_state.dart';
-
-const base = 'wordshk_api';
-final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
-final dylib = Platform.isIOS
-    ? DynamicLibrary.process()
-    : Platform.isMacOS
-        ? DynamicLibrary.executable()
-        : DynamicLibrary.open(path);
-final api = WordshkApiImpl(dylib);
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized(); // mandatory when awaiting on main
@@ -97,7 +86,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     context.read<RomanizationState>().initPrIndices();
-
     Future.wait([
       rootBundle.load("assets/api.json"),
       rootBundle.load("assets/english_index.json"),

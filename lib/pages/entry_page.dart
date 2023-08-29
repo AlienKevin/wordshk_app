@@ -11,7 +11,7 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 
-import '../main.dart';
+import '../ffi.dart';
 import '../models/entry.dart';
 import '../states/player_state.dart';
 import '../utils.dart';

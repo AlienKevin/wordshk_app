@@ -13,7 +13,7 @@ import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import '../bridge_generated.dart';
 import '../constants.dart';
 import '../custom_page_route.dart';
-import '../main.dart';
+import '../ffi.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../states/romanization_state.dart';
