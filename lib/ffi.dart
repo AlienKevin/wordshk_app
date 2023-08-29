@@ -6,5 +6,5 @@ import 'bridge_generated.dart';
 
 const base = 'flutter_rust_bridge_example';
 final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
-final dylib = loadLibForFlutter(path);
-final api = WordshkApiImpl(dylib);
+late final dylib = loadLibForFlutter(path);
+late final api = WordshkApiImpl(dylib);
