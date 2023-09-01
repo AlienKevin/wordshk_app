@@ -15,15 +15,19 @@ class RomanizationState with ChangeNotifier {
     // Reset invalid romanization index to the jyutping default
     if (romanizationIndex != null && romanizationIndex >= Romanization.values.length) {
       prefs.setInt("romanization", Romanization.Jyutping.index);
+      romanization = Romanization.Jyutping;
+    } else {
+      romanization = romanizationIndex == null
+          ? Romanization.Jyutping
+          : Romanization.values[romanizationIndex];
     }
-    romanization = romanizationIndex == null
-        ? Romanization.Jyutping
-        : Romanization.values[romanizationIndex];
-
     initPrIndices();
   }
 
   Future<File> get _prIndicesFile async {
+    // TODO: consider changing to getApplicationCacheDirectory
+    // to avoid storing index in user data folder
+    // also remember to delete the past index stored in the Documents folder.
     final directory = await getApplicationDocumentsDirectory();
     return File('${directory.path}/prIndices.msgpack');
   }
