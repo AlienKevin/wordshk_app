@@ -4,6 +4,17 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 typedef OnTapLink = void Function(String entryVariant);
 typedef UpdateEntryIndex = void Function(int newIndex);
 typedef EntryGroup = List<Entry>;
+typedef Dict = Map<int, Entry>;
+
+extension DictExtensions on Dict {
+  static Dict fromJson(Map<String, dynamic> json) {
+    return json["dict"].map<int, Entry>(
+          (key, value) {
+            return MapEntry(int.parse(key), Entry.fromJson(value));
+          },
+    );
+  }
+}
 
 class Entry extends Equatable {
   final int id;
@@ -44,6 +55,7 @@ class Entry extends Equatable {
             List.from(json['poses']).map((pos) => stringToPos(pos)).toList(),
         labels = List.from(json['labels'])
             .map((label) => stringToLabel(label))
+            .whereType<Label>()
             .toList(),
         sims = List.from(json['sims']).map((segment) {
           return Segment.fromJson(segment);
@@ -544,7 +556,7 @@ enum Label {
   folkEtymology,
 }
 
-Label stringToLabel(String str) {
+Label? stringToLabel(String str) {
   switch (str) {
     case "粗俗":
       return Label.vulgar;
@@ -590,6 +602,8 @@ Label stringToLabel(String str) {
       return Label.nsfw;
     case "民間傳説":
       return Label.folkEtymology;
+    case "gpt":
+      return null;
     default:
       throw "Invalid label \"$str\".";
   }
