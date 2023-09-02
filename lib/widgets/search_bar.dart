@@ -89,29 +89,6 @@ class IsSearching extends State<SearchBar> {
   void initState() {
     super.initState();
 
-    context.read<InputModeState>().setSearchFieldFocusNode(focusNode);
-    context
-        .read<SearchQueryState>()
-        .setSearchBarCallbacks(typeCharacter, backspace, moveToEndOfSelection);
-
-    controller.addListener(() {
-      if (controller.text.isEmpty) {
-        // If clear is already disabled, don't disable it
-        if (_clearActive) {
-          setState(() {
-            _clearActive = false;
-          });
-        }
-      }
-      // If clear is already enabled, don't enable it
-      else if (!_clearActive) {
-        setState(() {
-          _clearActive = true;
-        });
-      }
-    });
-    controller.text = context.read<SearchQueryState>().query;
-
     var keyboardVisibilityController = KeyboardVisibilityController();
 
     // Subscribe
@@ -120,6 +97,34 @@ class IsSearching extends State<SearchBar> {
       if (!visible) {
         focusNode.unfocus();
       }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<InputModeState>().setSearchFieldFocusNode(focusNode);
+      context
+          .read<SearchQueryState>()
+          .setSearchBarCallbacks(
+          typeCharacter, backspace, moveToEndOfSelection);
+
+      controller.addListener(() {
+        if (controller.text.isEmpty) {
+          // If clear is already disabled, don't disable it
+          if (_clearActive) {
+            setState(() {
+              _clearActive = false;
+            });
+          }
+        }
+        // If clear is already enabled, don't enable it
+        else if (!_clearActive) {
+          setState(() {
+            _clearActive = true;
+          });
+        }
+      });
+      controller.text = context
+          .read<SearchQueryState>()
+          .query;
     });
   }
 

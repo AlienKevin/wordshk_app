@@ -44,18 +44,21 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    final query = context.read<SearchQueryState>().query;
-    if (query.isNotEmpty) {
-      queryEmptied = false;
-      doSearch(query, context);
-    }
-    context.read<SearchModeState>().addListener(() {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final query = context.read<SearchQueryState>().query;
-      doSearch(query, context);
+      if (query.isNotEmpty) {
+        queryEmptied = false;
+        doSearch(query, context);
+      }
+      context.read<SearchModeState>().addListener(() {
+        final query = context.read<SearchQueryState>().query;
+        doSearch(query, context);
+      });
+      context
+          .read<InputModeState>()
+          .setOnDone(() => onSearchDone(context.read<SearchQueryState>().query));
     });
-    context
-        .read<InputModeState>()
-        .setOnDone(() => onSearchDone(context.read<SearchQueryState>().query));
   }
 
   onSearchDone(String query) {
