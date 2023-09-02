@@ -52,14 +52,12 @@ class RomanizationState with ChangeNotifier {
     prIndicesFile.writeAsBytes(await api.generatePrIndices(romanization: romanization));
   }
 
-  Future<String> showPrs(List<String> jyutpings) {
+  String showPrs(List<String> jyutpings) {
     return switch (romanization) {
-      Romanization.Jyutping => Future.value(jyutpings.join(" ")),
-      Romanization.Yale => (() {
-        return Future.value(jyutpings.map((jyutping) {
+      Romanization.Jyutping => jyutpings.join(" "),
+      Romanization.Yale => jyutpings.map((jyutping) {
           return jyutpingToYale[jyutping] ?? jyutping;
-        }).join(" "));
-      })(),
+        }).join(" ")
     };
   }
 }

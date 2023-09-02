@@ -35,22 +35,13 @@ class EntryVariant extends StatelessWidget {
                   TextSpan(text: pr),
                   style: prTextStyle,
                 ),
-              Romanization.Yale => FutureBuilder<String>(
-                  future:
-                      context.read<RomanizationState>().showPrs(pr.split(" ")),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      return SelectableText.rich(
-                        TextSpan(text: snapshot.data),
-                        style: prTextStyle,
-                        // selectionWidthStyle: BoxWidthStyle.max,
-                      );
-                    } else {
-                      // You can return an empty container or a loading indicator based on your requirements.
-                      return Container();
-                    }
-                  },
+              Romanization.Yale => SelectableText.rich(
+                  TextSpan(
+                      text: context
+                          .read<RomanizationState>()
+                          .showPrs(pr.split(" "))),
+                  style: prTextStyle,
+                  // selectionWidthStyle: BoxWidthStyle.max,
                 )
             },
             SyllablePronunciationButton(

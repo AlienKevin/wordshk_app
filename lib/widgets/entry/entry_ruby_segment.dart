@@ -21,7 +21,7 @@ List<Widget> showRubySegment(
 ) {
   final double rubyYPos = rubySize * textScaleFactor;
   late final Widget text;
-  late final Future<List<String>> prs;
+  late final String prs;
   late final List<int?> prsTones;
   switch (segment.type) {
     case RubySegmentType.punc:
@@ -32,7 +32,7 @@ List<Widget> showRubySegment(
                 style: TextStyle(
                     fontSize: rubySize, height: 1, color: textColor)));
       });
-      prs = Future.value([""]);
+      prs = "";
       prsTones = [6]; // empty pr defaults to 6 tones (this is arbitrary)
       break;
     case RubySegmentType.word:
@@ -43,10 +43,7 @@ List<Widget> showRubySegment(
                 style: TextStyle(
                     fontSize: rubySize, height: 1, color: textColor)));
       });
-      prs = context
-          .read<RomanizationState>()
-          .showPrs(segment.segment.prs)
-          .then((prs) => prs.split(" "));
+      prs = context.read<RomanizationState>().showPrs(segment.segment.prs);
       prsTones = segment.segment.prsTones;
       break;
     case RubySegmentType.linkedWord:
@@ -81,55 +78,44 @@ List<Widget> showRubySegment(
                         color: Theme.of(context).dividerColor,
                         height: rubySize,
                       ))),
-              FutureBuilder(
-                  future: prs,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: IterableZip([snapshot.data!, prsTones])
-                              .map((pair) {
-                            final pr = pair[0] as String;
-                            final tone = (pair[1] as int?) ?? 1;
-                            final double yPos = ((tone == 1)
-                                    ? 2.6
-                                    : tone == 2
-                                        ? 2.3
-                                        : tone == 3
-                                            ? 2
-                                            : tone == 5
-                                                ? 1.7
-                                                : tone == 4
-                                                    ? 1.4
-                                                    : 1.5) *
-                                -rubyYPos;
-                            final double angle =
-                                (tone == 1 || tone == 3 || tone == 6)
-                                    ? 0
-                                    : tone == 2
-                                        ? -pi / 6.0
-                                        : (tone == 5 ? -pi / 7.0 : pi / 7.0);
-                            return Container(
-                                alignment: Alignment.bottomCenter,
-                                child: Center(
-                                    child: Transform(
-                                        alignment: Alignment.center,
-                                        transform: Matrix4.translationValues(
-                                            0, yPos, 0)
-                                          ..rotateZ(angle),
-                                        child: Builder(builder: (context) {
-                                          return RichText(
-                                              text: ScalableTextSpan(context,
-                                                  text: pr,
-                                                  style: TextStyle(
-                                                      fontSize: rubySize * 0.5,
-                                                      color: textColor)));
-                                        }))));
-                          }).toList());
-                    } else {
-                      return Container();
-                    }
-                  })
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: IterableZip([prs.split(" "), prsTones]).map((pair) {
+                    final pr = pair[0] as String;
+                    final tone = (pair[1] as int?) ?? 1;
+                    final double yPos = ((tone == 1)
+                            ? 2.6
+                            : tone == 2
+                                ? 2.3
+                                : tone == 3
+                                    ? 2
+                                    : tone == 5
+                                        ? 1.7
+                                        : tone == 4
+                                            ? 1.4
+                                            : 1.5) *
+                        -rubyYPos;
+                    final double angle = (tone == 1 || tone == 3 || tone == 6)
+                        ? 0
+                        : tone == 2
+                            ? -pi / 6.0
+                            : (tone == 5 ? -pi / 7.0 : pi / 7.0);
+                    return Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Center(
+                            child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.translationValues(0, yPos, 0)
+                                  ..rotateZ(angle),
+                                child: Builder(builder: (context) {
+                                  return RichText(
+                                      text: ScalableTextSpan(context,
+                                          text: pr,
+                                          style: TextStyle(
+                                              fontSize: rubySize * 0.5,
+                                              color: textColor)));
+                                }))));
+                  }).toList())
             ]
           // normal non-jumpy version
           : [
@@ -139,20 +125,12 @@ List<Widget> showRubySegment(
                       child: Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.translationValues(0, -rubySize, 0),
-                          child: FutureBuilder<List<String>>(
-                              future: prs,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return RichText(
-                                      text: ScalableTextSpan(context,
-                                          text: snapshot.data!.join(" "),
-                                          style: TextStyle(
-                                              fontSize: rubySize * 0.5,
-                                              color: textColor)));
-                                } else {
-                                  return Container();
-                                }
-                              }))))
+                          child: RichText(
+                              text: ScalableTextSpan(context,
+                                  text: prs,
+                                  style: TextStyle(
+                                      fontSize: rubySize * 0.5,
+                                      color: textColor))))))
             ]),
       text
     ])

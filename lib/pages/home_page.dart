@@ -55,9 +55,8 @@ class _HomePageState extends State<HomePage> {
         final query = context.read<SearchQueryState>().query;
         doSearch(query, context);
       });
-      context
-          .read<InputModeState>()
-          .setOnDone(() => onSearchDone(context.read<SearchQueryState>().query));
+      context.read<InputModeState>().setOnDone(
+          () => onSearchDone(context.read<SearchQueryState>().query));
     });
   }
 
@@ -327,30 +326,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> showPrSearchResults(TextStyle textStyle) {
-    return prSearchResults.map((result) {
-      return FutureBuilder<String>(
-        future: context.read<RomanizationState>().showPrs(result.pr.split(" ")),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return showSearchResult(
+    return prSearchResults
+        .map((result) => showSearchResult(
               result.id,
               TextSpan(
                 children: [
                   TextSpan(text: "${result.variant} ", style: textStyle),
                   TextSpan(
-                      text: snapshot.data,
+                      text: context
+                          .read<RomanizationState>()
+                          .showPrs(result.pr.split(" ")),
                       style: textStyle.copyWith(color: greyColor)),
                 ],
               ),
-            );
-          } else if (snapshot.hasError) {
-            return Text("showPrSearchResults: ${snapshot.error}");
-          } else {
-            return Container(); // or any other widget to show while waiting
-          }
-        },
-      );
-    }).toList();
+            ))
+        .toList();
   }
 
   List<Widget> showVariantSearchResults(TextStyle textStyle) {
