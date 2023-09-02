@@ -202,19 +202,6 @@ fn wire_get_jyutping_impl(port_: MessagePort, query: impl Wire2Api<String> + Unw
         },
     )
 }
-fn wire_jyutping_to_yale_impl(port_: MessagePort, jyutping: impl Wire2Api<String> + UnwindSafe) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String>(
-        WrapInfo {
-            debug_name: "jyutping_to_yale",
-            port: Some(port_),
-            mode: FfiCallMode::Normal,
-        },
-        move || {
-            let api_jyutping = jyutping.wire2api();
-            move |task_callback| Ok(jyutping_to_yale(api_jyutping))
-        },
-    )
-}
 // Section: wrapper structs
 
 // Section: static checks

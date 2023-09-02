@@ -90,7 +90,3 @@ pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
 pub fn get_jyutping(query: String) -> Vec<String> {
     (*API.lock()).get_jyutping(query)
 }
-
-pub fn jyutping_to_yale(jyutping: String) -> String {
-    wordshk_tools::jyutping::jyutping_to_yale(jyutping)
-}

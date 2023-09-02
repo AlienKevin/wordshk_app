@@ -74,11 +74,6 @@ pub extern "C" fn wire_get_jyutping(port_: i64, query: *mut wire_uint_8_list) {
     wire_get_jyutping_impl(port_, query)
 }
 
-#[no_mangle]
-pub extern "C" fn wire_jyutping_to_yale(port_: i64, jyutping: *mut wire_uint_8_list) {
-    wire_jyutping_to_yale_impl(port_, jyutping)
-}
-
 // Section: allocate functions
 
 #[no_mangle]
