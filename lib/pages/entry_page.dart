@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -54,19 +55,20 @@ class _EntryPageState extends State<EntryPage> {
           entryGroup = json
               .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
               .toList();
+          entryIndex = widget.showFirstEntryInGroupInitially
+              ? 0
+              : entryGroup.indexWhere((entry) => entry.id == widget.id);
+          isLoading = false;
         });
       } catch (err) {
-        print(err);
+        if (kDebugMode) {
+          print(err);
+        }
         setState(() {
           hasError = true;
+          isLoading = false;
         });
       }
-      setState(() {
-        entryIndex = widget.showFirstEntryInGroupInitially
-            ? 0
-            : entryGroup.indexWhere((entry) => entry.id == widget.id);
-        isLoading = false;
-      });
     }();
   }
 
