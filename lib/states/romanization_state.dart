@@ -45,10 +45,10 @@ class RomanizationState with ChangeNotifier {
     }
 
     // delete unused past index stored in the Documents folder.
-    compute(clearDocumentsDirectory, ());
+    clearDocumentsDirectory();
   }
 
-  Future<void> clearDocumentsDirectory(_) async {
+  Future<void> clearDocumentsDirectory() async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       directory.listSync().forEach((e) => e.deleteSync(recursive: true));
