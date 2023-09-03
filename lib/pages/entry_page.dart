@@ -11,7 +11,6 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 
-import '../dict.dart';
 import '../ffi.dart';
 import '../models/entry.dart';
 import '../states/player_state.dart';
@@ -189,23 +188,26 @@ class _EntryPageState extends State<EntryPage> {
           updateEntryIndex: updateEntryIndex,
           onTapLink: (entryVariant) {
             log("Tapped on link $entryVariant");
-            final id = getEntryId(entryVariant, getScript(context));
-            context.read<PlayerState>().refreshPlayerState();
-            if (id == null) {
-              Navigator.push(
-                context,
-                CustomPageRoute(
-                    builder: (context) =>
-                        EntryNotPublishedPage(entryVariant: entryVariant)),
-              );
-            } else {
-              Navigator.push(
-                context,
-                CustomPageRoute(
-                    builder: (context) => EntryPage(
-                        id: id, showFirstEntryInGroupInitially: true)),
-              );
-            }
+            api
+                .getEntryId(query: entryVariant, script: getScript(context))
+                .then((id) {
+              context.read<PlayerState>().refreshPlayerState();
+              if (id == null) {
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                      builder: (context) =>
+                          EntryNotPublishedPage(entryVariant: entryVariant)),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                      builder: (context) => EntryPage(
+                          id: id, showFirstEntryInGroupInitially: true)),
+                );
+              }
+            });
           },
         ),
       );
