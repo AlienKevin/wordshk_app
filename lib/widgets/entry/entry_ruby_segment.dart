@@ -73,10 +73,18 @@ List<Widget> showRubySegment(
                   bottom: 0,
                   child: Transform(
                       transform:
-                          Matrix4.translationValues(0, -rubySize * 1.25, 0),
+                          Matrix4.translationValues(0, -rubyYPos * 1.3, 0),
                       child: Container(
                         color: Theme.of(context).dividerColor,
-                        height: rubySize,
+                        height: rubyYPos,
+                      ))),
+              Positioned.fill(
+                  bottom: 0,
+                  child: Transform(
+                      transform: Matrix4.translationValues(0, -rubyYPos * 1.15 * 2, 0),
+                      child: Container(
+                        color: Theme.of(context).dividerColor.withOpacity(0.5),
+                        height: rubyYPos,
                       ))),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -84,17 +92,17 @@ List<Widget> showRubySegment(
                     final pr = pair[0] as String;
                     final tone = (pair[1] as int?) ?? 1;
                     final double yPos = ((tone == 1)
-                            ? 2.6
+                            ? 2.4
                             : tone == 2
-                                ? 2.3
+                                ? 2.1
                                 : tone == 3
-                                    ? 2
+                                    ? 1.75
                                     : tone == 5
-                                        ? 1.7
+                                        ? 1.4
                                         : tone == 4
-                                            ? 1.4
-                                            : 1.5) *
-                        -rubyYPos;
+                                            ? 1.0
+                                            : 1.2) *
+                        -rubyYPos * 1.15;
                     final double angle = (tone == 1 || tone == 3 || tone == 6)
                         ? 0
                         : tone == 2
