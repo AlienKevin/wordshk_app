@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/bridge_generated.dart';
 
 import '../../models/entry.dart';
 import '../../states/romanization_state.dart';
@@ -22,34 +21,31 @@ class EntryVariant extends StatelessWidget {
   Widget build(BuildContext context) {
     final prs = variant.prs.split(", ");
 
-    return Row(children: [
+    return Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
       SelectableText.rich(
         TextSpan(text: variant.word),
         style: variantTextStyle,
       ),
       const SizedBox(width: 10),
-      ...prs.takeWhile((pr) => !pr.contains("!")).expand((pr) => [
-            // TODO: Remove the glitch seen when loading Yale pr
-            switch (context.read<RomanizationState>().romanization) {
-              Romanization.Jyutping => SelectableText.rich(
-                  TextSpan(text: pr),
-                  style: prTextStyle,
-                ),
-              Romanization.Yale => SelectableText.rich(
-                  TextSpan(
-                      text: context
-                          .read<RomanizationState>()
-                          .showPrs(pr.split(" "))),
-                  style: prTextStyle,
-                  // selectionWidthStyle: BoxWidthStyle.max,
-                )
-            },
-            SyllablePronunciationButton(
-              prs: pr.split(" "),
-              alignment: Alignment.center,
-              atHeader: true,
-            )
-          ])
+      ...prs
+          .takeWhile((pr) => !pr.contains("!"))
+          .map((pr) => SelectableText.rich(
+                TextSpan(
+                    text: context
+                        .read<RomanizationState>()
+                        .showPrs(pr.split(" ")),
+                    style: prTextStyle,
+                    children: [
+                      WidgetSpan(
+                          child: SyllablePronunciationButton(
+                        prs: pr.split(" "),
+                        alignment: Alignment.center,
+                        atHeader: true,
+                      ),
+                      alignment: PlaceholderAlignment.middle,
+                      )
+                    ]),
+              ))
     ]);
   }
 }

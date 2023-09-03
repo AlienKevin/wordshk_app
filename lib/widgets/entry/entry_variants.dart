@@ -29,57 +29,49 @@ class EntryVariants extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => variants.length <= 1
-      ? SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: EntryVariant(
-            variant:
-                script == Script.Simplified ? variantsSimp[0] : variants[0],
-            variantTextStyle: variantTextStyle,
-            prTextStyle: prTextStyle,
-          ))
+      ? EntryVariant(
+          variant: script == Script.Simplified ? variantsSimp[0] : variants[0],
+          variantTextStyle: variantTextStyle,
+          prTextStyle: prTextStyle,
+        )
       : ExpandableNotifier(
           child: applyExpandableTheme(Expandable(
-              collapsed: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        EntryVariant(
-                          variant: script == Script.Simplified
-                              ? variantsSimp[0]
-                              : variants[0],
-                          variantTextStyle: variantTextStyle,
-                          prTextStyle: prTextStyle,
-                        ),
-                        Builder(builder: (context) {
-                          return expandButton(
-                              AppLocalizations.of(context)!.entryMoreVariants,
-                              isMaterial(context)
-                                  ? Icons.expand_more
-                                  : CupertinoIcons.chevron_down,
-                              lineTextStyle.copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary));
-                        })
-                      ])),
+              collapsed: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    EntryVariant(
+                      variant: script == Script.Simplified
+                          ? variantsSimp[0]
+                          : variants[0],
+                      variantTextStyle: variantTextStyle,
+                      prTextStyle: prTextStyle,
+                    ),
+                    Builder(builder: (context) {
+                      return expandButton(
+                          AppLocalizations.of(context)!.entryMoreVariants,
+                          isMaterial(context)
+                              ? Icons.expand_more
+                              : CupertinoIcons.chevron_down,
+                          lineTextStyle.copyWith(
+                              color: Theme.of(context).colorScheme.secondary));
+                    })
+                  ]),
               expanded: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: variants
-                                .asMap()
-                                .entries
-                                .map((variant) => EntryVariant(
-                                      variant: script == Script.Simplified
-                                          ? variantsSimp[variant.key]
-                                          : variant.value,
-                                      variantTextStyle: variantTextStyle,
-                                      prTextStyle: prTextStyle,
-                                    ))
-                                .toList())),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: variants
+                            .asMap()
+                            .entries
+                            .map((variant) => EntryVariant(
+                                  variant: script == Script.Simplified
+                                      ? variantsSimp[variant.key]
+                                      : variant.value,
+                                  variantTextStyle: variantTextStyle,
+                                  prTextStyle: prTextStyle,
+                                ))
+                            .toList()),
                     Builder(builder: (context) {
                       return expandButton(
                           AppLocalizations.of(context)!.entryCollapseVariants,
