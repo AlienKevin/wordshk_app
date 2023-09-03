@@ -25,19 +25,37 @@ class RomanizationState with ChangeNotifier {
   }
 
   Future<File> get _prIndicesFile async {
-    // TODO: consider changing to getApplicationCacheDirectory
-    // to avoid storing index in user data folder
-    // also remember to delete the past index stored in the Documents folder.
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getApplicationCacheDirectory();
     return File('${directory.path}/prIndices.msgpack');
   }
 
   void initPrIndices() async {
     final prIndicesFile = await _prIndicesFile;
     if (prIndicesFile.existsSync()) {
-      api.updatePrIndices(prIndices: await prIndicesFile.readAsBytes());
+      try {
+        api.updatePrIndices(prIndices: await prIndicesFile.readAsBytes());
+      } catch (err) {
+        if (kDebugMode) {
+          print(err);
+        }
+        prIndicesFile.writeAsBytes(await api.generatePrIndices(romanization: romanization));
+      }
     } else {
       prIndicesFile.writeAsBytes(await api.generatePrIndices(romanization: romanization));
+    }
+
+    // delete unused past index stored in the Documents folder.
+    compute(clearDocumentsDirectory, ());
+  }
+
+  Future<void> clearDocumentsDirectory(_) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      directory.listSync().forEach((e) => e.deleteSync(recursive: true));
+    } catch (e) {
+      // ignore any error because deletion of files is optional
+      // only to save user's space
+      return;
     }
   }
 

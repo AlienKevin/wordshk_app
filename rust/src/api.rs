@@ -51,7 +51,7 @@ lazy_static! {
 }
 
 pub fn update_pr_indices(pr_indices: Vec<u8>) -> Result<()> {
-    Ok((*API.lock()).update_pr_indices(pr_indices))
+    (*API.lock()).update_pr_indices(pr_indices)
 }
 
 pub fn generate_pr_indices(romanization: Romanization) -> Result<Vec<u8>> {

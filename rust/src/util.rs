@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::io::prelude::*;
 use std::io::Read;
 
+use anyhow::Result;
 use flate2::Compression;
 use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
@@ -97,13 +98,13 @@ impl Api {
         api
     }
 
-    pub fn update_pr_indices(&mut self, pr_indices_msgpack: Vec<u8>) {
+    pub fn update_pr_indices(&mut self, pr_indices_msgpack: Vec<u8>) -> Result<()> {
         let mut pr_indices_decompressor = GzDecoder::new(&pr_indices_msgpack[..]);
         let mut pr_indices_bytes = Vec::new();
-        pr_indices_decompressor.read_to_end(&mut pr_indices_bytes).unwrap();
-        let pr_indices: PrIndices = rmp_serde::from_slice(&pr_indices_bytes[..])
-            .expect("Failed to deserialize pr_indices from msgpack format");
+        pr_indices_decompressor.read_to_end(&mut pr_indices_bytes)?;
+        let pr_indices: PrIndices = rmp_serde::from_slice(&pr_indices_bytes[..])?;
         self.pr_indices = pr_indices;
+        Ok(())
     }
 
     pub fn generate_pr_indices(&mut self, romanization: Romanization) -> Vec<u8> {
