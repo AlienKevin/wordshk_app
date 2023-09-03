@@ -101,9 +101,7 @@ class IsSearching extends State<SearchBar> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InputModeState>().setSearchFieldFocusNode(focusNode);
-      context
-          .read<SearchQueryState>()
-          .setSearchBarCallbacks(
+      context.read<SearchQueryState>().setSearchBarCallbacks(
           typeCharacter, backspace, moveToEndOfSelection);
 
       controller.addListener(() {
@@ -122,9 +120,7 @@ class IsSearching extends State<SearchBar> {
           });
         }
       });
-      controller.text = context
-          .read<SearchQueryState>()
-          .query;
+      controller.text = context.read<SearchQueryState>().query;
     });
   }
 
@@ -146,6 +142,54 @@ class IsSearching extends State<SearchBar> {
     final inputModeState = context.read<InputModeState>();
     if (inputModeState.mode == InputMode.done) {
       inputModeState.updateInputMode(InputMode.keyboard);
+    }
+  }
+
+  String addDiacriticToVowel(String diacritic, String vowel) {
+    return switch ((diacritic, vowel)) {
+      // macron
+      ('̄', 'a') => 'ā',
+      ('̄', 'e') => 'ē',
+      ('̄', 'o') => 'ō',
+      ('̄', 'i') => 'ī',
+      ('̄', 'u') => 'ū',
+      // acute accent
+      ('́', 'a') => 'á',
+      ('́', 'e') => 'é',
+      ('́', 'o') => 'ó',
+      ('́', 'i') => 'í',
+      ('́', 'u') => 'ú',
+      // grave accent
+      ('̀', 'a') => 'à',
+      ('̀', 'e') => 'è',
+      ('̀', 'o') => 'ò',
+      ('̀', 'i') => 'ì',
+      ('̀', 'u') => 'ù',
+      _ => throw Exception(
+          'Invalid arguments to addDiacriticToVowel. Found diacritic=$diacritic and vowel=$vowel')
+    };
+  }
+
+  void typeDiacritic(String diacritic) {
+    final baseOffset = controller.selection.baseOffset;
+    final extentOffset = controller.selection.extentOffset;
+    final query = controller.text;
+    // delete selection and add character in place of selection
+    final start = query.substring(0, baseOffset);
+    final startWithDiacritic = switch (start) {
+      "" => diacritic,
+      _ when 'aeiou'.contains(start[start.length - 1]) =>
+        start.substring(0, start.length - 1) +
+            addDiacriticToVowel(diacritic, start[start.length - 1]),
+      _ => start + diacritic,
+    };
+    final newQuery = startWithDiacritic + query.substring(extentOffset);
+    controller.value = TextEditingValue(
+        text: newQuery,
+        selection: TextSelection.collapsed(offset: baseOffset + startWithDiacritic.length - start.length));
+    context.read<SearchQueryState>().updateSearchQuery(newQuery);
+    if (widget.onChanged != null) {
+      widget.onChanged!(newQuery);
     }
   }
 
@@ -236,8 +280,26 @@ class IsSearching extends State<SearchBar> {
     controller.selection = TextSelection.collapsed(offset: extentOffset);
   }
 
-  Widget digitButton(int digit) =>
-      button(() => typeDigit(digit), TextScaleFactorClamper(maxScaleFactor: 1.2, child: Text(digit.toString(), textAlign: TextAlign.center, style: const TextStyle(height: 1.2))));
+  Widget digitButton(int digit) => button(
+      () => typeDigit(digit),
+      TextScaleFactorClamper(
+          maxScaleFactor: 1.2,
+          child: Text(digit.toString(),
+              textAlign: TextAlign.center,
+              style: const TextStyle(height: 1.2))));
+
+  Widget diacriticButton(String diacritic) => Padding(
+      padding: const EdgeInsets.only(
+        left: 5,
+        right: 5,
+      ),
+      child: button(
+          () => typeDiacritic(diacritic),
+          TextScaleFactorClamper(
+              maxScaleFactor: 1.2,
+              child: Text("$diacritic  ",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(height: 1.2)))));
 
   Widget inkInputModeButton() => button(() {
         context.read<InputModeState>().updateInputMode(InputMode.ink);
@@ -287,16 +349,24 @@ class IsSearching extends State<SearchBar> {
               context.watch<InputModeState>().mode == InputMode.keyboard,
           displayArrows: false,
           displayDoneButton: false,
-          toolbarButtons: [
-            (_) => digitButton(1),
-            (_) => digitButton(2),
-            (_) => digitButton(3),
-            (_) => digitButton(4),
-            (_) => digitButton(5),
-            (_) => digitButton(6),
-            (_) => const Spacer(),
-            (_) => inkInputModeButton(),
-          ],
+          toolbarButtons: switch (
+              context.watch<RomanizationState>().romanization) {
+            Romanization.Jyutping => [
+                (_) => digitButton(1),
+                (_) => digitButton(2),
+                (_) => digitButton(3),
+                (_) => digitButton(4),
+                (_) => digitButton(5),
+                (_) => digitButton(6),
+                (_) => const Spacer(),
+                (_) => inkInputModeButton(),
+              ],
+            Romanization.Yale => [
+                (_) => diacriticButton("̄"),
+                (_) => diacriticButton("́"),
+                (_) => diacriticButton("̀")
+              ]
+          },
           toolbarAlignment: MainAxisAlignment.start,
         ),
       ],
@@ -315,8 +385,7 @@ class IsSearching extends State<SearchBar> {
     Color? buttonColor = theme.textTheme.bodyMedium!.color;
     final textColor = theme.textTheme.bodyMedium!.color;
 
-    final romanization =
-        context.watch<RomanizationState>().romanization;
+    final romanization = context.watch<RomanizationState>().romanization;
     final romanizationName =
         getRomanizationName(romanization, AppLocalizations.of(context)!);
     late final String searchRomanizationExample;
@@ -438,60 +507,72 @@ class IsSearching extends State<SearchBar> {
             ),
       actions: [
         Consumer<SearchModeState>(
-            builder: (context, searchModeState, child) => TextScaleFactorClamper(child: Builder(
-              builder: (context) {
-                return PortalTarget(
-                    visible: searchModeState.showSearchModeSelector,
-                    anchor: const Aligned(
-                      follower: Alignment.topRight,
-                      target: Alignment.bottomRight,
-                      offset: Offset(0, 4),
-                    ),
-                    portalFollower: Material(
-                        color: Theme.of(context).canvasColor,
-                        child: Container(
-                          width: 270.0 * (log(MediaQuery.of(context).textScaleFactor) * 1/1.4 + 1),
-                          height: 275.0 * (log(MediaQuery.of(context).textScaleFactor) * 0.95 + 1),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              left:
-                                  BorderSide(width: 2.0, color: theme.dividerColor),
-                              bottom:
-                                  BorderSide(width: 2.0, color: theme.dividerColor),
+            builder: (context, searchModeState, child) =>
+                TextScaleFactorClamper(child: Builder(builder: (context) {
+                  return PortalTarget(
+                      visible: searchModeState.showSearchModeSelector,
+                      anchor: const Aligned(
+                        follower: Alignment.topRight,
+                        target: Alignment.bottomRight,
+                        offset: Offset(0, 4),
+                      ),
+                      portalFollower: Material(
+                          color: Theme.of(context).canvasColor,
+                          child: Container(
+                            width: 270.0 *
+                                (log(MediaQuery.of(context).textScaleFactor) *
+                                        1 /
+                                        1.4 +
+                                    1),
+                            height: 275.0 *
+                                (log(MediaQuery.of(context).textScaleFactor) *
+                                        0.95 +
+                                    1),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                    width: 2.0, color: theme.dividerColor),
+                                bottom: BorderSide(
+                                    width: 2.0, color: theme.dividerColor),
+                              ),
+                              color: Theme.of(context).canvasColor,
                             ),
-                            color: Theme.of(context).canvasColor,
-                          ),
-                          child: Consumer<SearchModeState>(
-                              builder: (context, searchModeState, child) => Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: <Widget>[
-                                        searchModeRadioListTile(
-                                            SearchMode.combined,
-                                            "好彩/$searchRomanizationExample/lucky",
-                                            searchModeState.mode),
-                                        const Divider(thickness: 2),
-                                        searchModeRadioListTile(SearchMode.variant,
-                                            "好彩", searchModeState.mode),
-                                        const Divider(thickness: 2),
-                                        searchModeRadioListTile(
-                                            SearchMode.pr,
-                                            searchRomanizationExample,
-                                            searchModeState.mode),
-                                        const Divider(thickness: 2),
-                                        searchModeRadioListTile(SearchMode.english,
-                                            "lucky", searchModeState.mode),
-                                      ])),
-                        )),
-                    child: SearchModeButton(
-                      getMode: (mode) => mode,
-                      highlighted: true,
-                      inAppBar: true,
-                      onPressed: () => context
-                          .read<SearchModeState>()
-                          .toggleSearchModeSelector(),
-                    ));
-              }
-            ))),
+                            child: Consumer<SearchModeState>(
+                                builder: (context, searchModeState, child) =>
+                                    Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: <Widget>[
+                                          searchModeRadioListTile(
+                                              SearchMode.combined,
+                                              "好彩/$searchRomanizationExample/lucky",
+                                              searchModeState.mode),
+                                          const Divider(thickness: 2),
+                                          searchModeRadioListTile(
+                                              SearchMode.variant,
+                                              "好彩",
+                                              searchModeState.mode),
+                                          const Divider(thickness: 2),
+                                          searchModeRadioListTile(
+                                              SearchMode.pr,
+                                              searchRomanizationExample,
+                                              searchModeState.mode),
+                                          const Divider(thickness: 2),
+                                          searchModeRadioListTile(
+                                              SearchMode.english,
+                                              "lucky",
+                                              searchModeState.mode),
+                                        ])),
+                          )),
+                      child: SearchModeButton(
+                        getMode: (mode) => mode,
+                        highlighted: true,
+                        inAppBar: true,
+                        onPressed: () => context
+                            .read<SearchModeState>()
+                            .toggleSearchModeSelector(),
+                      ));
+                }))),
       ],
     );
   }
