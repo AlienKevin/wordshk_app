@@ -34,7 +34,7 @@ class EntryWordLine extends StatelessWidget {
                   alignment: PlaceholderAlignment.middle,
                   child: TtsPronunciationButton(
                     text: line.toString(),
-                    alignment: Alignment.center,
+                    alignment: Alignment.topCenter,
                     atHeader: false,
                   ))
             ],

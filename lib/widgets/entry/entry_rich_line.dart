@@ -36,7 +36,7 @@ class EntryRichLine extends StatelessWidget {
           line: line.line,
           textColor: lineTextStyle.color!,
           linkColor: linkColor,
-          fontSize: rubyFontSize,
+          fontSize: lineTextStyle.fontSize!,
           onTapLink: onTapLink,
         );
     }

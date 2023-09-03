@@ -8,7 +8,13 @@ InlineSpan showWordSegment(WordSegment segment, Color linkColor,
     double fontSize, OnTapLink onTapLink) {
   switch (segment.type) {
     case SegmentType.text:
-      return TextSpan(children: showWord(segment.word));
+      return WidgetSpan(
+          child: Builder(
+              builder: (context) => RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  text: ScalableTextSpan(context,
+                      children: showWord(segment.word),
+                      style: TextStyle(fontSize: fontSize)))));
     case SegmentType.link:
       return WidgetSpan(
           child: GestureDetector(
