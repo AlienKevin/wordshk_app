@@ -44,6 +44,7 @@ class Entry extends Equatable {
             List.from(json['poses']).map((pos) => stringToPos(pos)).toList(),
         labels = List.from(json['labels'])
             .map((label) => stringToLabel(label))
+            .whereType<Label>()
             .toList(),
         sims = List.from(json['sims']).map((segment) {
           return Segment.fromJson(segment);
@@ -544,7 +545,7 @@ enum Label {
   folkEtymology,
 }
 
-Label stringToLabel(String str) {
+Label? stringToLabel(String str) {
   switch (str) {
     case "粗俗":
       return Label.vulgar;
@@ -590,6 +591,8 @@ Label stringToLabel(String str) {
       return Label.nsfw;
     case "民間傳説":
       return Label.folkEtymology;
+    case "gpt":
+      return null;
     default:
       throw "Invalid label \"$str\".";
   }
