@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../models/entry.dart';
+
 class BookmarkState with ChangeNotifier {
   Database? _database;
   List<int> _bookmarks = [];
@@ -39,15 +41,20 @@ class BookmarkState with ChangeNotifier {
     notifyListeners();
   }
 
-  bool isBookmarked(int entryId) {
-    return _bookmarks.contains(entryId);
+  bool isBookmarked(List<Entry> entryGroup) {
+    return entryGroup.any((entry) => _bookmarks.contains(entry.id));
   }
 
-  Future<void> toggleBookmark(int entryId) async {
-    if (isBookmarked(entryId)) {
-      await removeBookmark(entryId);
+  int getBookmarkedEntryIndex(List<Entry> entryGroup) {
+    return entryGroup.indexWhere((entry) => _bookmarks.contains(entry.id));
+  }
+
+  Future<void> toggleBookmark(List<Entry> entryGroup, int entryIndex) async {
+    final bookmarkedIndex = getBookmarkedEntryIndex(entryGroup);
+    if (bookmarkedIndex < 0) {
+      await addBookmark(entryGroup[entryIndex].id);
     } else {
-      await addBookmark(entryId);
+      await removeBookmark(entryGroup[bookmarkedIndex].id);
     }
   }
 

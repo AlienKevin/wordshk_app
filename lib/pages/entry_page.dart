@@ -142,11 +142,11 @@ class _EntryPageState extends State<EntryPage> {
                             onPressed: () {
                               context
                                   .read<BookmarkState>()
-                                  .toggleBookmark(entryGroup[entryIndex].id);
+                                  .toggleBookmark(entryGroup, entryIndex);
                             },
                             icon: context
                                     .watch<BookmarkState>()
-                                    .isBookmarked(entryGroup[entryIndex].id)
+                                    .isBookmarked(entryGroup)
                                 ? Icon(PlatformIcons(context).bookmarkSolid)
                                 : Icon(PlatformIcons(context).bookmarkOutline)),
                         IconButton(
