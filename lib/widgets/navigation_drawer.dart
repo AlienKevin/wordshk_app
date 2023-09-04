@@ -88,6 +88,13 @@ class NavigationDrawer extends StatelessWidget {
                   (_) => const HomePage(title: 'words.hk')),
               const Divider(),
               drawerButton(
+                  AppLocalizations.of(context)!.preferences,
+                  isMaterial(context)
+                      ? Icons.settings_outlined
+                      : CupertinoIcons.settings,
+                      (_) => const PreferencesPage()),
+              const Divider(),
+              drawerButton(
                   AppLocalizations.of(context)!.aboutWordshk,
                   isMaterial(context)
                       ? Icons.info_outline
@@ -98,13 +105,6 @@ class NavigationDrawer extends StatelessWidget {
                   AppLocalizations.of(context)!.qualityControl,
                   PlatformIcons(context).checkMark,
                   (_) => const QualityControlPage(useBackNavigation: false)),
-              const Divider(),
-              drawerButton(
-                  AppLocalizations.of(context)!.preferences,
-                  isMaterial(context)
-                      ? Icons.settings_outlined
-                      : CupertinoIcons.settings,
-                  (_) => const PreferencesPage()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.dictionaryLicense,
