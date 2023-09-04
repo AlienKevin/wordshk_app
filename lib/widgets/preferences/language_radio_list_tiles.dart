@@ -22,10 +22,10 @@ class LanguageRadioListTiles extends StatelessWidget {
         title: value.toString(), value: value, groupValue: language, onChanged: onLanguageChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      languageRadioListTile(Language.zhHantHK),
+      languageRadioListTile(Language.yue),
       languageRadioListTile(Language.en),
-      languageRadioListTile(Language.zhHansCN),
-      languageRadioListTile(Language.zhHantTW),
+      languageRadioListTile(Language.zhHans),
+      languageRadioListTile(Language.zhHant),
     ]);
   }
 }

@@ -2,21 +2,21 @@ import 'package:flutter/material.dart' show Locale;
 
 enum Language {
   en,
-  zhHansCN,
-  zhHantTW,
-  zhHantHK;
+  zhHans,
+  zhHant,
+  yue;
 
   Locale get toLocale {
     switch (this) {
       case Language.en:
         return const Locale.fromSubtags(languageCode: 'en');
-      case Language.zhHansCN:
+      case Language.zhHans:
         return const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN');
-      case Language.zhHantTW:
+            languageCode: 'zh', scriptCode: 'Hans');
+      case Language.zhHant:
         return const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW');
-      case Language.zhHantHK:
+            languageCode: 'zh', scriptCode: 'Hant');
+      case Language.yue:
         return const Locale.fromSubtags(
             languageCode: 'zh', scriptCode: 'Hant', countryCode: 'HK');
     }
@@ -27,11 +27,11 @@ enum Language {
     switch (this) {
       case Language.en:
         return "English";
-      case Language.zhHansCN:
+      case Language.zhHans:
         return "简体中文";
-      case Language.zhHantTW:
+      case Language.zhHant:
         return "繁體中文";
-      case Language.zhHantHK:
+      case Language.yue:
         return "廣東話";
     }
   }

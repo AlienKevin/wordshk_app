@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
@@ -197,31 +199,32 @@ class _MyAppState extends State<MyApp> {
       locale: context.watch<LanguageState>().language?.toLocale,
       title: 'words.hk',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      localeResolutionCallback: (
-        locale,
+      localeListResolutionCallback: (
+        locales,
         supportedLocales,
       ) {
-        late final Locale resolvedLocale;
-        if (locale?.languageCode == 'yue') {
-          resolvedLocale = const Locale.fromSubtags(
-              languageCode: 'zh',
-              scriptCode: 'Hant',
-              countryCode: 'HK'); // 'zh_Hant_HK'
-        } else if (locale != null && supportedLocales.contains(locale)) {
-          resolvedLocale = locale;
-        } else if (locale?.languageCode == 'zh') {
-          if (locale?.scriptCode == 'Hant') {
-            resolvedLocale = const Locale.fromSubtags(
-                languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW');
-          } else {
-            resolvedLocale = const Locale.fromSubtags(
-                languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN');
-          }
-        } else {
-          resolvedLocale = const Locale.fromSubtags(languageCode: 'en');
+        if (kDebugMode) {
+          print("Detected locales: $locales");
         }
-        context.read<LanguageState>().syncLocale(resolvedLocale);
-        return resolvedLocale;
+        for (final locale in locales ?? []) {
+          if (locale.languageCode == 'en') {
+            return context.read<LanguageState>().initLanguage(Language.en);
+          } else if (locale.languageCode == 'yue') {
+            return context.read<LanguageState>().initLanguage(Language.yue);
+          } else if (locale.languageCode == 'zh') {
+            if (locale.scriptCode == 'Hant') {
+              return context
+                  .read<LanguageState>()
+                  .initLanguage(Language.zhHant);
+            } else {
+              return context
+                  .read<LanguageState>()
+                  .initLanguage(Language.zhHans);
+            }
+          }
+        }
+        // fallback to English
+        return context.read<LanguageState>().initLanguage(Language.en);
       },
       supportedLocales: const [
         Locale.fromSubtags(

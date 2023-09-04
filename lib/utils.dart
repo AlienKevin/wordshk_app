@@ -114,7 +114,7 @@ String getPronunciationMethodShortName(
 }
 
 Script getScript(BuildContext context) =>
-    context.read<LanguageState>().language == Language.zhHansCN
+    context.read<LanguageState>().language == Language.zhHans
         ? Script.Simplified
         : Script.Traditional;
 

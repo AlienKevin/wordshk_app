@@ -13,9 +13,9 @@ class LanguageState with ChangeNotifier {
     }
   }
 
-  void syncLocale(Locale newLocale) {
-    language =
-        Language.values.byName(newLocale.toLanguageTag().replaceAll("-", ""));
+  Locale initLanguage(Language newLanguage) {
+    updateLanguage(newLanguage);
+    return newLanguage.toLocale;
   }
 
   void updateLanguage(Language newLanguage) {
