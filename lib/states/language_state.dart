@@ -14,7 +14,7 @@ class LanguageState with ChangeNotifier {
   }
 
   Locale initLanguage(Language newLanguage) {
-    updateLanguage(newLanguage);
+    language = newLanguage;
     return newLanguage.toLocale;
   }
 
