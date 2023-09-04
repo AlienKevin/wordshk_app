@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
+import 'package:wordshk/states/bookmark_state.dart';
 
 import '../ffi.dart';
 import '../models/entry.dart';
@@ -83,7 +84,7 @@ class _EntryPageState extends State<EntryPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            actions: [
               Visibility(
                   maintainSize: true,
                   maintainAnimation: true,
@@ -134,24 +135,33 @@ class _EntryPageState extends State<EntryPage> {
                       icon: Icon(isMaterial(context)
                           ? Icons.warning_amber_outlined
                           : CupertinoIcons.exclamationmark_triangle))),
-              Text(AppLocalizations.of(context)!.entry),
-              SizedBox(
-                  width: 3 * Theme.of(context).textTheme.bodyMedium!.fontSize!),
-            ]),
-            actions: [
-              Visibility(
-                  visible: !(isLoading || hasError),
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  child: IconButton(
-                      onPressed: () {
-                        print(entryGroup[entryIndex].id);
-                        openLink(
-                            "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
-                        context.read<PlayerState>().stop();
-                      },
-                      icon: Icon(PlatformIcons(context).edit)))
+              !(isLoading || hasError)
+                  ? Row(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              context
+                                  .read<BookmarkState>()
+                                  .toggleBookmark(entryGroup[entryIndex].id);
+                            },
+                            icon: context
+                                    .watch<BookmarkState>()
+                                    .isBookmarked(entryGroup[entryIndex].id)
+                                ? Icon(PlatformIcons(context).bookmarkSolid)
+                                : Icon(PlatformIcons(context).bookmarkOutline)),
+                        IconButton(
+                            onPressed: () {
+                              if (kDebugMode) {
+                                print(entryGroup[entryIndex].id);
+                              }
+                              openLink(
+                                  "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
+                              context.read<PlayerState>().stop();
+                            },
+                            icon: Icon(PlatformIcons(context).edit)),
+                      ],
+                    )
+                  : const SizedBox.shrink()
             ],
           ),
           body: showEntry(),

@@ -9,6 +9,7 @@ import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
+import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
@@ -60,6 +61,8 @@ main() async {
             ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
             ChangeNotifierProvider<SpeechRateState>(
                 create: (_) => SpeechRateState()),
+            ChangeNotifierProvider<BookmarkState>(
+                create: (_) => BookmarkState()),
           ],
           child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
         ),
