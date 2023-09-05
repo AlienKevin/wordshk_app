@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -24,17 +25,20 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPageState extends State<BookmarkPage> {
-  final _bookmarkSummaries = <EntrySummary>[];
+  final _bookmarkSummaries = <int, EntrySummary>{};
   bool _isLoading = false;
   bool _hasMore = true;
 
   @override
   void initState() {
     super.initState();
+    context.read<BookmarkState>().registerRemoveBookmarkListener((id) {
+      _bookmarkSummaries.remove(id);
+    });
     _loadMore();
   }
 
-  Future<List<EntrySummary>> _fetchMoreBookmarks(int amount) {
+  Future<LinkedHashMap<int, EntrySummary>> _fetchMoreBookmarks(int amount) {
     final allBookmarks = context.read<BookmarkState>().bookmarks;
     if (allBookmarks.length > _bookmarkSummaries.length) {
       final ids = allBookmarks.sublist(_bookmarkSummaries.length,
@@ -42,13 +46,16 @@ class _BookmarkPageState extends State<BookmarkPage> {
       final script = getScript(context);
       final isEngDef =
           context.read<EntryLanguageState>().language == EntryLanguage.english;
-      return api.getEntrySummaries(
-        entryIds: Uint32List.fromList(ids),
-        script: script,
-        isEngDef: isEngDef,
-      );
+      return api
+          .getEntrySummaries(
+            entryIds: Uint32List.fromList(ids),
+            script: script,
+            isEngDef: isEngDef,
+          )
+          .then((summaries) =>
+              LinkedHashMap.fromIterables(ids, summaries));
     } else {
-      return Future.value([]);
+      return Future.value(LinkedHashMap<int, EntrySummary>());
     }
   }
 
@@ -93,7 +100,8 @@ class _BookmarkPageState extends State<BookmarkPage> {
                       _loadMore();
                       return const Center(child: CircularProgressIndicator());
                     }
-                    var summary = _bookmarkSummaries.elementAt(index);
+                    final id = s.bookmarks[index];
+                    final summary = _bookmarkSummaries[id]!;
                     return ListTile(
                       title: Text(
                         summary.variant,
@@ -111,10 +119,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                         onPressed: _isLoading
                             ? null
                             : () async {
-                                _bookmarkSummaries.removeAt(index);
-                                await s.removeBookmark(context
-                                    .read<BookmarkState>()
-                                    .bookmarks[index]);
+                                await s.removeBookmark(id);
                               },
                       ),
                       onTap: () {
@@ -122,9 +127,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                           context,
                           CustomPageRoute(
                               builder: (context) => EntryPage(
-                                    id: context
-                                        .read<BookmarkState>()
-                                        .bookmarks[index],
+                                    id: id,
                                     showFirstEntryInGroupInitially: false,
                                   )),
                         );

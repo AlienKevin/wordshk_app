@@ -4,12 +4,24 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/entry.dart';
 
+typedef BookmarkCallback = void Function(int entryId);
+
 class BookmarkState with ChangeNotifier {
   Database? _database;
   List<int> _bookmarks = [];
+  final List<BookmarkCallback> _onRemoveListeners = [];
 
   BookmarkState() {
     _initDatabase();
+  }
+
+  // Methods to add and remove listeners
+  void registerRemoveBookmarkListener(BookmarkCallback listener) {
+    _onRemoveListeners.add(listener);
+  }
+
+  void unregisterRemoveBookmarkListener(BookmarkCallback listener) {
+    _onRemoveListeners.remove(listener);
   }
 
   List<int> get bookmarks => _bookmarks;
@@ -45,6 +57,9 @@ class BookmarkState with ChangeNotifier {
   Future<void> removeBookmark(int entryId) async {
     await _database!.delete('bookmarks', where: 'id = ?', whereArgs: [entryId]);
     _bookmarks.remove(entryId);
+    for (final listener in _onRemoveListeners) {
+      listener(entryId);
+    }
     notifyListeners();
   }
 
