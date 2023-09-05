@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,6 +75,23 @@ main() async {
       );
     }
   });
+}
+
+// previous release 2.2.2 already cleared the user's directory of unused prIndices.msgpack
+// so we don't need to call this function any more :)
+Future<void> clearDocumentsDirectory() async {
+  try {
+    final directory = await getApplicationDocumentsDirectory();
+    directory.listSync().forEach((e) {
+      if (!e.path.endsWith("bookmarkedEntries.db")) {
+        e.deleteSync(recursive: true);
+      }
+    });
+  } catch (e) {
+    // ignore any error because deletion of files is optional
+    // only to save user's space
+    return;
+  }
 }
 
 class MyApp extends StatefulWidget {

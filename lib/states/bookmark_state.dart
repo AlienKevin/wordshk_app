@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,6 +17,9 @@ class BookmarkState with ChangeNotifier {
   Future<void> _initDatabase() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'bookmarkedEntries.db');
+
+    // Avoid errors caused by flutter upgrade.
+    WidgetsFlutterBinding.ensureInitialized();
 
     _database = await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
       await db.execute('CREATE TABLE bookmarks (id INTEGER PRIMARY KEY)');

@@ -43,20 +43,6 @@ class RomanizationState with ChangeNotifier {
     } else {
       prIndicesFile.writeAsBytes(await api.generatePrIndices(romanization: romanization));
     }
-
-    // delete unused past index stored in the Documents folder.
-    clearDocumentsDirectory();
-  }
-
-  Future<void> clearDocumentsDirectory() async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      directory.listSync().forEach((e) => e.deleteSync(recursive: true));
-    } catch (e) {
-      // ignore any error because deletion of files is optional
-      // only to save user's space
-      return;
-    }
   }
 
   void updateRomanization(Romanization newRomanization) async {
