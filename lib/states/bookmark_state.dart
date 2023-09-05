@@ -12,6 +12,8 @@ class BookmarkState with ChangeNotifier {
     _initDatabase();
   }
 
+  List<int> get bookmarks => _bookmarks;
+
   Future<void> _initDatabase() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'bookmarkedEntries.db');

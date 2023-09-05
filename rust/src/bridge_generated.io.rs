@@ -3,6 +3,11 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
+pub extern "C" fn wire_get_entry_summary(port_: i64, entry_id: u32, script: i32, is_eng_def: bool) {
+    wire_get_entry_summary_impl(port_, entry_id, script, is_eng_def)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_update_pr_indices(port_: i64, pr_indices: *mut wire_uint_8_list) {
     wire_update_pr_indices_impl(port_, pr_indices)
 }

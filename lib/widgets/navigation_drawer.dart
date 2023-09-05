@@ -8,6 +8,7 @@ import 'package:wordshk/pages/quality_control_page.dart';
 import '../constants.dart';
 import '../custom_page_route.dart';
 import '../pages/about_page.dart';
+import '../pages/bookmark_page.dart';
 import '../pages/dictionary_license_page.dart';
 import '../pages/home_page.dart';
 
@@ -86,6 +87,11 @@ class NavigationDrawer extends StatelessWidget {
                   AppLocalizations.of(context)!.dictionary,
                   PlatformIcons(context).search,
                   (_) => const HomePage(title: 'words.hk')),
+              const Divider(),
+              drawerButton(
+                  AppLocalizations.of(context)!.bookmarks,
+                  PlatformIcons(context).bookmarkOutline,
+                      (_) => BookmarkPage()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.preferences,

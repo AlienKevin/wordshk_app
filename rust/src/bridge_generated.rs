@@ -27,6 +27,26 @@ use crate::api::*;
 
 // Section: wire functions
 
+fn wire_get_entry_summary_impl(
+    port_: MessagePort,
+    entry_id: impl Wire2Api<u32> + UnwindSafe,
+    script: impl Wire2Api<Script> + UnwindSafe,
+    is_eng_def: impl Wire2Api<bool> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, EntrySummary>(
+        WrapInfo {
+            debug_name: "get_entry_summary",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_entry_id = entry_id.wire2api();
+            let api_script = script.wire2api();
+            let api_is_eng_def = is_eng_def.wire2api();
+            move |task_callback| get_entry_summary(api_entry_id, api_script, api_is_eng_def)
+        },
+    )
+}
 fn wire_update_pr_indices_impl(
     port_: MessagePort,
     pr_indices: impl Wire2Api<Vec<u8>> + UnwindSafe,
@@ -225,6 +245,11 @@ where
     }
 }
 
+impl Wire2Api<bool> for bool {
+    fn wire2api(self) -> bool {
+        self
+    }
+}
 impl Wire2Api<i32> for i32 {
     fn wire2api(self) -> i32 {
         self
@@ -292,6 +317,22 @@ impl support::IntoDart for EnglishSearchResult {
 }
 impl support::IntoDartExceptPrimitive for EnglishSearchResult {}
 impl rust2dart::IntoIntoDart<EnglishSearchResult> for EnglishSearchResult {
+    fn into_into_dart(self) -> Self {
+        self
+    }
+}
+
+impl support::IntoDart for EntrySummary {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.variant.into_into_dart().into_dart(),
+            self.def.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for EntrySummary {}
+impl rust2dart::IntoIntoDart<EntrySummary> for EntrySummary {
     fn into_into_dart(self) -> Self {
         self
     }
