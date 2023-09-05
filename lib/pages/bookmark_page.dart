@@ -40,7 +40,7 @@ class BookmarkPage extends StatelessWidget {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return ListTile(
                           title:
-                              const CircularProgressIndicator(), // Show a loading indicator while waiting
+                              const LinearProgressIndicator(), // Show a loading indicator while waiting
                           trailing: IconButton(
                             icon: Icon(PlatformIcons(context).deleteOutline),
                             onPressed:
