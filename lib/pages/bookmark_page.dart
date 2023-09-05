@@ -23,67 +23,71 @@ class BookmarkPage extends StatelessWidget {
         title: Text(AppLocalizations.of(context)!.bookmarks),
       ),
       body: Consumer<BookmarkState>(
-          builder: (BuildContext context, BookmarkState s, Widget? child) =>
-              ListView.separated(
-                itemCount: s.bookmarks.length,
-                itemBuilder: (context, index) {
-                  var bookmarkedEntryId = s.bookmarks.elementAt(index);
+          builder: (BuildContext context, BookmarkState s, Widget? child) => s
+                  .bookmarks.isEmpty
+              ? Center(child: Text(AppLocalizations.of(context)!.noBookmarks))
+              : ListView.separated(
+                  itemCount: s.bookmarks.length,
+                  itemBuilder: (context, index) {
+                    var bookmarkedEntryId = s.bookmarks.elementAt(index);
 
-                  return FutureBuilder<EntrySummary>(
-                    future: api.getEntrySummary(
-                        entryId: bookmarkedEntryId,
-                        script: getScript(context),
-                        isEngDef: context.read<EntryLanguageState>().language ==
-                            EntryLanguage.english),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<EntrySummary> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return ListTile(
-                          title:
-                              const LinearProgressIndicator(), // Show a loading indicator while waiting
-                          trailing: IconButton(
-                            icon: Icon(PlatformIcons(context).deleteOutline),
-                            onPressed:
-                                null, // Disable the button while fetching
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        // TODO: Figure out how to add await before captureMessage
-                        Sentry.captureMessage(
-                            'bookmark_page.dart failed to getEntrySummary: ${snapshot.error}');
-                        return const SizedBox.shrink();
-                      } else {
-                        return ListTile(
-                          title: Text(snapshot.data!.variant),
-                          subtitle: Text(
-                            snapshot.data!.def,
-                            style: Theme.of(context).textTheme.bodySmall,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: IconButton(
-                            icon: Icon(PlatformIcons(context).deleteOutline),
-                            onPressed: () async {
-                              await s.removeBookmark(bookmarkedEntryId);
+                    return FutureBuilder<EntrySummary>(
+                      future: api.getEntrySummary(
+                          entryId: bookmarkedEntryId,
+                          script: getScript(context),
+                          isEngDef:
+                              context.read<EntryLanguageState>().language ==
+                                  EntryLanguage.english),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<EntrySummary> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ListTile(
+                            title:
+                                const LinearProgressIndicator(), // Show a loading indicator while waiting
+                            trailing: IconButton(
+                              icon: Icon(PlatformIcons(context).deleteOutline),
+                              onPressed:
+                                  null, // Disable the button while fetching
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          // TODO: Figure out how to add await before captureMessage
+                          Sentry.captureMessage(
+                              'bookmark_page.dart failed to getEntrySummary: ${snapshot.error}');
+                          return const SizedBox.shrink();
+                        } else {
+                          return ListTile(
+                            title: Text(snapshot.data!.variant),
+                            subtitle: Text(
+                              snapshot.data!.def,
+                              style: Theme.of(context).textTheme.bodySmall,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(PlatformIcons(context).deleteOutline),
+                              onPressed: () async {
+                                await s.removeBookmark(bookmarkedEntryId);
+                              },
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                CustomPageRoute(
+                                    builder: (context) => EntryPage(
+                                          id: bookmarkedEntryId,
+                                          showFirstEntryInGroupInitially: false,
+                                        )),
+                              );
                             },
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              CustomPageRoute(
-                                  builder: (context) => EntryPage(
-                                    id: bookmarkedEntryId,
-                                    showFirstEntryInGroupInitially: false,
-                                  )),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  );
-                },
-                separatorBuilder: (context, index) => const Divider(),
-              )),
+                          );
+                        }
+                      },
+                    );
+                  },
+                  separatorBuilder: (context, index) => const Divider(),
+                )),
     );
   }
 }
