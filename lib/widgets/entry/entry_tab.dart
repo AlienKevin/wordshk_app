@@ -47,11 +47,11 @@ class _EntryTabState extends State<EntryTab> {
   initState() {
     super.initState();
     if (widget.initialDefIndex != null) {
+      scrollController = AutoScrollController(
+          viewportBoundaryGetter: () =>
+              Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+          axis: Axis.vertical);
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        scrollController = AutoScrollController(
-            viewportBoundaryGetter: () =>
-                Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
-            axis: Axis.vertical);
         await scrollController!.scrollToIndex(widget.initialDefIndex!,
             preferPosition: AutoScrollPosition.begin,
             duration: const Duration(milliseconds: 15));

@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/states/bookmark_state.dart';
@@ -39,8 +38,6 @@ class EntryPage extends StatefulWidget {
 class _EntryPageState extends State<EntryPage> {
   late int entryIndex;
   late List<Entry> entryGroup;
-  late final AutoScrollController scrollController;
-  bool scrolledToInitialDef = false;
   bool hasError = false;
   bool isLoading = true;
 
