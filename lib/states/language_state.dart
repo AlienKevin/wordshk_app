@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,11 +11,14 @@ class LanguageState with ChangeNotifier {
     final languageIndex = prefs.getInt("language");
     if (languageIndex != null) {
       language = Language.values[languageIndex];
+      if (kDebugMode) {
+        print("Loaded user language $language");
+      }
     }
   }
 
   Locale initLanguage(Language newLanguage) {
-    language = newLanguage;
+    language ??= newLanguage;
     return newLanguage.toLocale;
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Locale;
 
 enum Language {
@@ -7,18 +8,18 @@ enum Language {
   yue;
 
   Locale get toLocale {
+    if (kDebugMode) {
+      print("toLocale called on $this");
+    }
     switch (this) {
       case Language.en:
         return const Locale.fromSubtags(languageCode: 'en');
       case Language.zhHans:
-        return const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hans');
+        return const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
       case Language.zhHant:
-        return const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hant');
+        return const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
       case Language.yue:
-        return const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hant', countryCode: 'HK');
+        return const Locale.fromSubtags(languageCode: 'yue');
     }
   }
 

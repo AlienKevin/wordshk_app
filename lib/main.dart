@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -219,7 +221,11 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       locale: context.watch<LanguageState>().language?.toLocale,
       title: 'words.hk',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: const [
+        ...AppLocalizations.localizationsDelegates,
+        MaterialLocalizationYueDelegate(),
+        CupertinoLocalizationYueDelegate(),
+      ],
       localeListResolutionCallback: (
         locales,
         supportedLocales,
@@ -245,35 +251,23 @@ class _MyAppState extends State<MyApp> {
           }
         }
         // fallback to English
-        return context.read<LanguageState>().initLanguage(Language.en);
+        return Language.en.toLocale;
       },
       supportedLocales: const [
         Locale.fromSubtags(
             languageCode:
-                'en'), // generic English (defaults to American English)// 'yue_Hant_HK'
+                'en'), // generic English (defaults to American English)
         Locale.fromSubtags(
             languageCode:
-                'zh'), // generic Chinese 'zh' (defaults to zh_Hans_CN)
+                'yue'), // generic Cantonese 'yue' (traditional script)
+        Locale.fromSubtags(
+            languageCode: 'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
         Locale.fromSubtags(
             languageCode: 'zh',
-            scriptCode:
-                'Hans'), // generic simplified Chinese 'zh_Hans' (defaults to zh_Hans_CN)
+            scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
         Locale.fromSubtags(
             languageCode: 'zh',
-            scriptCode:
-                'Hant'), // generic traditional Chinese 'zh_Hant' (defaults to zh_Hant_TW)
-        Locale.fromSubtags(
-            languageCode: 'zh',
-            scriptCode: 'Hans',
-            countryCode: 'CN'), // 'zh_Hans_CN'
-        Locale.fromSubtags(
-            languageCode: 'zh',
-            scriptCode: 'Hant',
-            countryCode: 'TW'), // 'zh_Hant_TW'
-        Locale.fromSubtags(
-            languageCode: 'zh',
-            scriptCode: 'Hant',
-            countryCode: 'HK'), // 'zh_Hant_HK'
+            scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
       ],
       theme: lightTheme,
       darkTheme: darkTheme,
@@ -283,4 +277,40 @@ class _MyAppState extends State<MyApp> {
           : const HomePage(title: "words.hk"),
     ));
   }
+}
+
+class MaterialLocalizationYueDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const MaterialLocalizationYueDelegate();
+
+  @override
+  bool isSupported(Locale locale) => locale.languageCode == 'yue';
+
+  @override
+  Future<MaterialLocalizations> load(Locale locale) async {
+    // Here we load the 'zh_Hant_HK' locale instead.
+    return await GlobalMaterialLocalizations.delegate
+        .load(const Locale('zh', 'HK'));
+  }
+
+  @override
+  bool shouldReload(MaterialLocalizationYueDelegate old) => false;
+}
+
+class CupertinoLocalizationYueDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  const CupertinoLocalizationYueDelegate();
+
+  @override
+  bool isSupported(Locale locale) => locale.languageCode == 'yue';
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) async {
+    // Here we load the 'zh_Hant_HK' locale instead.
+    return await DefaultCupertinoLocalizations.delegate
+        .load(const Locale('zh', 'HK'));
+  }
+
+  @override
+  bool shouldReload(CupertinoLocalizationYueDelegate old) => false;
 }
