@@ -22,7 +22,7 @@ class BookmarkState with ChangeNotifier {
     WidgetsFlutterBinding.ensureInitialized();
 
     _database = await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
-      await db.execute('CREATE TABLE bookmarks (id INTEGER PRIMARY KEY)');
+      await db.execute('CREATE TABLE bookmarks (id INTEGER PRIMARY KEY, time INTEGER)');
     });
 
     _loadBookmarks();
@@ -30,12 +30,14 @@ class BookmarkState with ChangeNotifier {
 
   Future<void> _loadBookmarks() async {
     List<Map<String, dynamic>> results = await _database!.query('bookmarks');
+    // sort by ordering more recent bookmarks first
+    results.sort((a, b) => b['time'] - a['time']);
     _bookmarks = results.map((e) => e['id'] as int).toList();
     notifyListeners();
   }
 
   Future<void> addBookmark(int entryId) async {
-    await _database!.insert('bookmarks', {'id': entryId});
+    await _database!.insert('bookmarks', {'id': entryId, 'time': DateTime.now().millisecondsSinceEpoch});
     _bookmarks.add(entryId);
     notifyListeners();
   }
