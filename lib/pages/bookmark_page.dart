@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +11,7 @@ import '../ffi.dart';
 import '../states/bookmark_state.dart';
 import '../states/entry_language_state.dart';
 import '../utils.dart';
+import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
 
 class BookmarkPage extends StatelessWidget {
@@ -22,6 +23,7 @@ class BookmarkPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.bookmarks),
       ),
+      drawer: const NavigationDrawer(),
       body: Consumer<BookmarkState>(
           builder: (BuildContext context, BookmarkState s, Widget? child) => s
                   .bookmarks.isEmpty
