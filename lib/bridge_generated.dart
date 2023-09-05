@@ -11,13 +11,13 @@ import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class WordshkApi {
-  Future<EntrySummary> getEntrySummary(
-      {required int entryId,
+  Future<List<EntrySummary>> getEntrySummaries(
+      {required Uint32List entryIds,
       required Script script,
       required bool isEngDef,
       dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kGetEntrySummaryConstMeta;
+  FlutterRustBridgeTaskConstMeta get kGetEntrySummariesConstMeta;
 
   Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint});
 
@@ -159,28 +159,28 @@ class WordshkApiImpl implements WordshkApi {
   factory WordshkApiImpl.wasm(FutureOr<WasmModule> module) =>
       WordshkApiImpl(module as ExternalLibrary);
   WordshkApiImpl.raw(this._platform);
-  Future<EntrySummary> getEntrySummary(
-      {required int entryId,
+  Future<List<EntrySummary>> getEntrySummaries(
+      {required Uint32List entryIds,
       required Script script,
       required bool isEngDef,
       dynamic hint}) {
-    var arg0 = api2wire_u32(entryId);
+    var arg0 = _platform.api2wire_uint_32_list(entryIds);
     var arg1 = api2wire_script(script);
     var arg2 = isEngDef;
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) =>
-          _platform.inner.wire_get_entry_summary(port_, arg0, arg1, arg2),
-      parseSuccessData: _wire2api_entry_summary,
-      constMeta: kGetEntrySummaryConstMeta,
-      argValues: [entryId, script, isEngDef],
+          _platform.inner.wire_get_entry_summaries(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_list_entry_summary,
+      constMeta: kGetEntrySummariesConstMeta,
+      argValues: [entryIds, script, isEngDef],
       hint: hint,
     ));
   }
 
-  FlutterRustBridgeTaskConstMeta get kGetEntrySummaryConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kGetEntrySummariesConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "get_entry_summary",
-        argNames: ["entryId", "script", "isEngDef"],
+        debugName: "get_entry_summaries",
+        argNames: ["entryIds", "script", "isEngDef"],
       );
 
   Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint}) {
@@ -444,6 +444,10 @@ class WordshkApiImpl implements WordshkApi {
     return (raw as List<dynamic>).map(_wire2api_english_search_result).toList();
   }
 
+  List<EntrySummary> _wire2api_list_entry_summary(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_entry_summary).toList();
+  }
+
   List<PrSearchResult> _wire2api_list_pr_search_result(dynamic raw) {
     return (raw as List<dynamic>).map(_wire2api_pr_search_result).toList();
   }
@@ -536,6 +540,13 @@ class WordshkApiPlatform extends FlutterRustBridgeBase<WordshkApiWire> {
   @protected
   ffi.Pointer<wire_uint_8_list> api2wire_String(String raw) {
     return api2wire_uint_8_list(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_uint_32_list> api2wire_uint_32_list(Uint32List raw) {
+    final ans = inner.new_uint_32_list_0(raw.length);
+    ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
+    return ans;
   }
 
   @protected
@@ -645,26 +656,27 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
 
-  void wire_get_entry_summary(
+  void wire_get_entry_summaries(
     int port_,
-    int entry_id,
+    ffi.Pointer<wire_uint_32_list> entry_ids,
     int script,
     bool is_eng_def,
   ) {
-    return _wire_get_entry_summary(
+    return _wire_get_entry_summaries(
       port_,
-      entry_id,
+      entry_ids,
       script,
       is_eng_def,
     );
   }
 
-  late final _wire_get_entry_summaryPtr = _lookup<
+  late final _wire_get_entry_summariesPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64, ffi.Uint32, ffi.Int32,
-              ffi.Bool)>>('wire_get_entry_summary');
-  late final _wire_get_entry_summary = _wire_get_entry_summaryPtr
-      .asFunction<void Function(int, int, int, bool)>();
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_32_list>,
+              ffi.Int32, ffi.Bool)>>('wire_get_entry_summaries');
+  late final _wire_get_entry_summaries =
+      _wire_get_entry_summariesPtr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_32_list>, int, bool)>();
 
   void wire_update_pr_indices(
     int port_,
@@ -869,6 +881,21 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
   late final _wire_get_jyutping = _wire_get_jyutpingPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
+  ffi.Pointer<wire_uint_32_list> new_uint_32_list_0(
+    int len,
+  ) {
+    return _new_uint_32_list_0(
+      len,
+    );
+  }
+
+  late final _new_uint_32_list_0Ptr = _lookup<
+          ffi
+          .NativeFunction<ffi.Pointer<wire_uint_32_list> Function(ffi.Int32)>>(
+      'new_uint_32_list_0');
+  late final _new_uint_32_list_0 = _new_uint_32_list_0Ptr
+      .asFunction<ffi.Pointer<wire_uint_32_list> Function(int)>();
+
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,
   ) {
@@ -900,6 +927,13 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
 }
 
 final class _Dart_Handle extends ffi.Opaque {}
+
+final class wire_uint_32_list extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint32> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
 
 final class wire_uint_8_list extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> ptr;

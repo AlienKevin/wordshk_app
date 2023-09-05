@@ -27,23 +27,23 @@ use crate::api::*;
 
 // Section: wire functions
 
-fn wire_get_entry_summary_impl(
+fn wire_get_entry_summaries_impl(
     port_: MessagePort,
-    entry_id: impl Wire2Api<u32> + UnwindSafe,
+    entry_ids: impl Wire2Api<Vec<u32>> + UnwindSafe,
     script: impl Wire2Api<Script> + UnwindSafe,
     is_eng_def: impl Wire2Api<bool> + UnwindSafe,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, EntrySummary>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<EntrySummary>>(
         WrapInfo {
-            debug_name: "get_entry_summary",
+            debug_name: "get_entry_summaries",
             port: Some(port_),
             mode: FfiCallMode::Normal,
         },
         move || {
-            let api_entry_id = entry_id.wire2api();
+            let api_entry_ids = entry_ids.wire2api();
             let api_script = script.wire2api();
             let api_is_eng_def = is_eng_def.wire2api();
-            move |task_callback| get_entry_summary(api_entry_id, api_script, api_is_eng_def)
+            move |task_callback| get_entry_summaries(api_entry_ids, api_script, api_is_eng_def)
         },
     )
 }

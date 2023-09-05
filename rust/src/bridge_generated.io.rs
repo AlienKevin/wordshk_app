@@ -3,8 +3,13 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
-pub extern "C" fn wire_get_entry_summary(port_: i64, entry_id: u32, script: i32, is_eng_def: bool) {
-    wire_get_entry_summary_impl(port_, entry_id, script, is_eng_def)
+pub extern "C" fn wire_get_entry_summaries(
+    port_: i64,
+    entry_ids: *mut wire_uint_32_list,
+    script: i32,
+    is_eng_def: bool,
+) {
+    wire_get_entry_summaries_impl(port_, entry_ids, script, is_eng_def)
 }
 
 #[no_mangle]
@@ -82,6 +87,15 @@ pub extern "C" fn wire_get_jyutping(port_: i64, query: *mut wire_uint_8_list) {
 // Section: allocate functions
 
 #[no_mangle]
+pub extern "C" fn new_uint_32_list_0(len: i32) -> *mut wire_uint_32_list {
+    let ans = wire_uint_32_list {
+        ptr: support::new_leak_vec_ptr(Default::default(), len),
+        len,
+    };
+    support::new_leak_box_ptr(ans)
+}
+
+#[no_mangle]
 pub extern "C" fn new_uint_8_list_0(len: i32) -> *mut wire_uint_8_list {
     let ans = wire_uint_8_list {
         ptr: support::new_leak_vec_ptr(Default::default(), len),
@@ -101,6 +115,14 @@ impl Wire2Api<String> for *mut wire_uint_8_list {
     }
 }
 
+impl Wire2Api<Vec<u32>> for *mut wire_uint_32_list {
+    fn wire2api(self) -> Vec<u32> {
+        unsafe {
+            let wrap = support::box_from_leak_ptr(self);
+            support::vec_from_leak_ptr(wrap.ptr, wrap.len)
+        }
+    }
+}
 impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
     fn wire2api(self) -> Vec<u8> {
         unsafe {
@@ -110,6 +132,13 @@ impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
     }
 }
 // Section: wire structs
+
+#[repr(C)]
+#[derive(Clone)]
+pub struct wire_uint_32_list {
+    ptr: *mut u32,
+    len: i32,
+}
 
 #[repr(C)]
 #[derive(Clone)]

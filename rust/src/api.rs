@@ -56,26 +56,29 @@ pub struct EntrySummary {
     pub def: String,
 }
 
-pub fn get_entry_summary(entry_id: u32, script: Script, is_eng_def: bool) -> Result<EntrySummary> {
+pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script, is_eng_def: bool) -> Result<Vec<EntrySummary>> {
     let api = API.lock();
-    let entry = api.dict.get(&(entry_id as usize)).unwrap();
-    let variant = match script {
-        Script::Traditional => entry.variants.to_words().first().unwrap().to_string(),
-        Script::Simplified => entry.variants_simp.first().unwrap().to_string(),
-    };
-    let defs = entry.defs.first().unwrap();
-    let def = if is_eng_def {
-        defs.eng
-            .as_ref()
-            .map(|c| clause_to_string(c))
-            .unwrap_or("".to_string())
-    } else {
-        match script {
-            Script::Traditional => clause_to_string(&defs.yue),
-            Script::Simplified => clause_to_string(&defs.yue_simp),
-        }
-    };
-    Ok(EntrySummary { variant, def })
+    let summaries = entry_ids.into_iter().map(|entry_id| {
+        let entry = api.dict.get(&(entry_id as usize)).unwrap();
+        let variant = match script {
+            Script::Traditional => entry.variants.to_words().first().unwrap().to_string(),
+            Script::Simplified => entry.variants_simp.first().unwrap().to_string(),
+        };
+        let defs = entry.defs.first().unwrap();
+        let def = if is_eng_def {
+            defs.eng
+                .as_ref()
+                .map(|c| clause_to_string(c))
+                .unwrap_or("".to_string())
+        } else {
+            match script {
+                Script::Traditional => clause_to_string(&defs.yue),
+                Script::Simplified => clause_to_string(&defs.yue_simp),
+            }
+        };
+        EntrySummary { variant, def }
+    }).collect();
+    Ok(summaries)
 }
 
 pub fn update_pr_indices(pr_indices: Vec<u8>) -> Result<()> {
