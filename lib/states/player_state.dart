@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
@@ -57,7 +58,7 @@ class PlayerState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> syllablesPlay(int newKey, List<String> prs,
+  Future<void> syllablesPlay(int newKey, List<List<String>> prs,
       PronunciationMethod method, SpeechRate rate) async {
     if (await setPlayerKey(newKey)) {
       return;
@@ -66,8 +67,17 @@ class PlayerState with ChangeNotifier {
     notifyListeners();
     await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
         children: prs
-            .map((syllable) => AudioSource.uri(
-                Uri.parse("asset:///assets/jyutping_female/$syllable.mp3")))
+            .mapIndexed((index, syllables) => [
+                  ...syllables.map((syllable) => AudioSource.uri(Uri.parse(
+                      "asset:///assets/jyutping_female/$syllable.mp3"))),
+                  ...(index == prs.length - 1
+                      ? <AudioSource>[]
+                      : [
+                          AudioSource.uri(Uri.parse(
+                              "asset:///assets/silence_800ms.mp3"))
+                        ])
+                ])
+            .expand((syllable) => syllable)
             .toList()));
     syllablesPlayer.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {

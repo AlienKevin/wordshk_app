@@ -8,7 +8,8 @@ import '../constants.dart';
 import '../states/player_state.dart';
 
 class SyllablePronunciationButton extends StatelessWidget {
-  final List<String> prs;
+  // a list of pr segments
+  final List<List<String>> prs;
   final Alignment alignment;
   final bool atHeader;
 
@@ -22,7 +23,7 @@ class SyllablePronunciationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<PronunciationMethodState>(
       builder: (context, prMethodState, child) => Visibility(
-            visible: jyutpingFemaleSyllableNames.containsAll(prs),
+            visible: jyutpingFemaleSyllableNames.containsAll(prs.expand((x) => x)),
             child: PronunciationButton(
               play: (key) {
                 final prMethodState = context.read<PronunciationMethodState>();

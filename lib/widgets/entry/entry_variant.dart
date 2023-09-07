@@ -38,7 +38,7 @@ class EntryVariant extends StatelessWidget {
                     children: [
                       WidgetSpan(
                           child: SyllablePronunciationButton(
-                        prs: pr.split(" "),
+                        prs: [pr.split(" ")],
                         alignment: Alignment.center,
                         atHeader: true,
                       ),
