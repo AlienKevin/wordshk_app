@@ -68,11 +68,11 @@ pub extern "C" fn wire_english_search(
 pub extern "C" fn wire_eg_search(
     port_: i64,
     capacity: u32,
-    max_eg_length: u32,
+    max_first_index_in_eg: u32,
     query: *mut wire_uint_8_list,
     script: i32,
 ) {
-    wire_eg_search_impl(port_, capacity, max_eg_length, query, script)
+    wire_eg_search_impl(port_, capacity, max_first_index_in_eg, query, script)
 }
 
 #[no_mangle]

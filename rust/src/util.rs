@@ -206,8 +206,8 @@ impl Api {
             .collect()
     }
 
-    pub fn eg_search(&self, capacity: u32, max_eg_length: u32, query: String, script: Script) -> (Option<String>, Vec<EgSearchResult>) {
-        let (query_found, mut ranks) = search::eg_search(&self.dict, &query, max_eg_length as usize, script);
+    pub fn eg_search(&self, capacity: u32, max_first_index_in_eg: u32, query: String, script: Script) -> (Option<String>, Vec<EgSearchResult>) {
+        let (query_found, mut ranks) = search::eg_search(&self.dict, &query, max_first_index_in_eg as usize, script);
         let mut results = vec![];
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {

@@ -252,7 +252,7 @@ class _HomePageState extends State<HomePage> {
               api
                   .egSearch(
                       capacity: 10,
-                      maxEgLength: 18,
+                      maxFirstIndexInEg: 10,
                       query: query,
                       script: script)
                   .then((result) {

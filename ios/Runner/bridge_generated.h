@@ -64,7 +64,7 @@ void wire_english_search(int64_t port_,
 
 void wire_eg_search(int64_t port_,
                     uint32_t capacity,
-                    uint32_t max_eg_length,
+                    uint32_t max_first_index_in_eg,
                     struct wire_uint_8_list *query,
                     int32_t script);
 

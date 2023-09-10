@@ -168,7 +168,7 @@ fn wire_english_search_impl(
 fn wire_eg_search_impl(
     port_: MessagePort,
     capacity: impl Wire2Api<u32> + UnwindSafe,
-    max_eg_length: impl Wire2Api<u32> + UnwindSafe,
+    max_first_index_in_eg: impl Wire2Api<u32> + UnwindSafe,
     query: impl Wire2Api<String> + UnwindSafe,
     script: impl Wire2Api<Script> + UnwindSafe,
 ) {
@@ -180,10 +180,17 @@ fn wire_eg_search_impl(
         },
         move || {
             let api_capacity = capacity.wire2api();
-            let api_max_eg_length = max_eg_length.wire2api();
+            let api_max_first_index_in_eg = max_first_index_in_eg.wire2api();
             let api_query = query.wire2api();
             let api_script = script.wire2api();
-            move |task_callback| eg_search(api_capacity, api_max_eg_length, api_query, api_script)
+            move |task_callback| {
+                eg_search(
+                    api_capacity,
+                    api_max_first_index_in_eg,
+                    api_query,
+                    api_script,
+                )
+            }
         },
     )
 }

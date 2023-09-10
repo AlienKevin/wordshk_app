@@ -64,7 +64,7 @@ abstract class WordshkApi {
 
   Future<(String?, List<EgSearchResult>)> egSearch(
       {required int capacity,
-      required int maxEgLength,
+      required int maxFirstIndexInEg,
       required String query,
       required Script script,
       dynamic hint});
@@ -343,12 +343,12 @@ class WordshkApiImpl implements WordshkApi {
 
   Future<(String?, List<EgSearchResult>)> egSearch(
       {required int capacity,
-      required int maxEgLength,
+      required int maxFirstIndexInEg,
       required String query,
       required Script script,
       dynamic hint}) {
     var arg0 = api2wire_u32(capacity);
-    var arg1 = api2wire_u32(maxEgLength);
+    var arg1 = api2wire_u32(maxFirstIndexInEg);
     var arg2 = _platform.api2wire_String(query);
     var arg3 = api2wire_script(script);
     return _platform.executeNormal(FlutterRustBridgeTask(
@@ -356,7 +356,7 @@ class WordshkApiImpl implements WordshkApi {
           _platform.inner.wire_eg_search(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api___record__opt_String_list_eg_search_result,
       constMeta: kEgSearchConstMeta,
-      argValues: [capacity, maxEgLength, query, script],
+      argValues: [capacity, maxFirstIndexInEg, query, script],
       hint: hint,
     ));
   }
@@ -364,7 +364,7 @@ class WordshkApiImpl implements WordshkApi {
   FlutterRustBridgeTaskConstMeta get kEgSearchConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "eg_search",
-        argNames: ["capacity", "maxEgLength", "query", "script"],
+        argNames: ["capacity", "maxFirstIndexInEg", "query", "script"],
       );
 
   Future<String> getEntryJson({required int id, dynamic hint}) {
@@ -897,14 +897,14 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
   void wire_eg_search(
     int port_,
     int capacity,
-    int max_eg_length,
+    int max_first_index_in_eg,
     ffi.Pointer<wire_uint_8_list> query,
     int script,
   ) {
     return _wire_eg_search(
       port_,
       capacity,
-      max_eg_length,
+      max_first_index_in_eg,
       query,
       script,
     );

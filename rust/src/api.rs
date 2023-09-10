@@ -133,11 +133,11 @@ pub fn english_search(
 
 pub fn eg_search(
     capacity: u32,
-    max_eg_length: u32,
+    max_first_index_in_eg: u32,
     query: String,
     script: Script,
 ) -> Result<(Option<String>, Vec<EgSearchResult>)> {
-    Ok((*API.lock()).eg_search(capacity, max_eg_length, query, script))
+    Ok((*API.lock()).eg_search(capacity, max_first_index_in_eg, query, script))
 }
 
 pub fn get_entry_json(id: u32) -> Result<String> {
