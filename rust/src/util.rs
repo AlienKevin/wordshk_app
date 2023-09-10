@@ -2,13 +2,13 @@ use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::io::prelude::*;
 use std::io::Read;
+use std::sync::Mutex;
 
 use anyhow::Result;
 use flate2::Compression;
 use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use lazy_static::lazy_static;
-use parking_lot::Mutex;
 use rmp_serde::Serializer;
 use serde::{Deserialize, Serialize};
 use wordshk_tools::dict::clause_to_string;
@@ -32,7 +32,7 @@ pub struct Api {
     #[serde(skip)]
     pub english_index: EnglishIndex,
     #[serde(skip)]
-    pub pr_indices: PrIndices,
+    pub pr_indices: Mutex<PrIndices>,
     #[serde(skip)]
     pub variants_map: VariantsMap,
     #[serde(skip)]
@@ -97,24 +97,25 @@ impl Api {
         api
     }
 
-    pub fn update_pr_indices(&mut self, pr_indices_msgpack: Vec<u8>) -> Result<()> {
+    pub fn update_pr_indices(&self, pr_indices_msgpack: Vec<u8>) -> Result<()> {
         let mut pr_indices_decompressor = GzDecoder::new(&pr_indices_msgpack[..]);
         let mut pr_indices_bytes = Vec::new();
         pr_indices_decompressor.read_to_end(&mut pr_indices_bytes)?;
         let pr_indices: PrIndices = rmp_serde::from_slice(&pr_indices_bytes[..])?;
-        self.pr_indices = pr_indices;
+        *self.pr_indices.lock().unwrap() = pr_indices;
         Ok(())
     }
 
-    pub fn generate_pr_indices(&mut self, romanization: Romanization) -> Vec<u8> {
+    pub fn generate_pr_indices(&self, romanization: Romanization) -> Vec<u8> {
         // info!("in generate_pr_indices");
         let pr_indices = wordshk_tools::pr_index::generate_pr_indices(&self.dict, romanization);
-        self.pr_indices = pr_indices;
 
         let mut buf = Vec::new();
-        self.pr_indices
+        pr_indices
             .serialize(&mut Serializer::new(&mut buf))
             .unwrap();
+
+        *self.pr_indices.lock().unwrap() = pr_indices;
 
         let mut e = GzEncoder::new(Vec::new(), Compression::default());
         e.write_all(&buf).expect("failed to compress pr_indices");
@@ -123,7 +124,7 @@ impl Api {
 
     pub fn pr_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
         let mut results = vec![];
-        let mut ranks = search::pr_search(&self.pr_indices, &self.dict, &query, romanization);
+        let mut ranks = search::pr_search(&self.pr_indices.lock().unwrap(), &self.dict, &query, romanization);
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
             let search::PrSearchRank {
@@ -162,7 +163,7 @@ impl Api {
     }
 
     pub fn combined_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
-        match &mut search::combined_search(&self.variants_map, &self.pr_indices, &self.english_index, &self.dict, &query, script, romanization) {
+        match &mut search::combined_search(&self.variants_map, &self.pr_indices.lock().unwrap(), &self.english_index, &self.dict, &query, script, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),

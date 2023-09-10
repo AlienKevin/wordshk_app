@@ -1,18 +1,17 @@
-import 'package:flutter/cupertino.dart';
-import 'package:path/path.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:wordshk/main.dart';
 
 import '../models/entry.dart';
 
 typedef BookmarkCallback = void Function(int entryId);
 
 class BookmarkState with ChangeNotifier {
-  Database? _database;
   List<int> _bookmarks = [];
   final List<BookmarkCallback> _onRemoveListeners = [];
 
   BookmarkState() {
-    _initDatabase();
+    _loadBookmarks();
   }
 
   // Methods to add and remove listeners
@@ -26,22 +25,9 @@ class BookmarkState with ChangeNotifier {
 
   List<int> get bookmarks => _bookmarks;
 
-  Future<void> _initDatabase() async {
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'bookmarkedEntries.db');
-
-    // Avoid errors caused by flutter upgrade.
-    WidgetsFlutterBinding.ensureInitialized();
-
-    _database = await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
-      await db.execute('CREATE TABLE bookmarks (id INTEGER PRIMARY KEY, time INTEGER)');
-    });
-
-    _loadBookmarks();
-  }
-
   Future<void> _loadBookmarks() async {
-    List<Map<String, dynamic>> results = await _database!.query('bookmarks');
+    final db = await bookmarkDatabase;
+    List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(await db.query('bookmarks'));
     // sort by ordering more recent bookmarks first
     results.sort((a, b) => b['time'] - a['time']);
     _bookmarks = results.map((e) => e['id'] as int).toList();
@@ -49,13 +35,22 @@ class BookmarkState with ChangeNotifier {
   }
 
   Future<void> addBookmark(int entryId) async {
-    await _database!.insert('bookmarks', {'id': entryId, 'time': DateTime.now().millisecondsSinceEpoch});
-    _bookmarks.add(entryId);
+    final db = await bookmarkDatabase;
+    final result = await db.insert(
+      'bookmarks',
+      {'id': entryId, 'time': DateTime.now().millisecondsSinceEpoch},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    if (kDebugMode) {
+      print("addBookmark: $result");
+    }
+    _bookmarks.insert(0, entryId);
     notifyListeners();
   }
 
   Future<void> removeBookmark(int entryId) async {
-    await _database!.delete('bookmarks', where: 'id = ?', whereArgs: [entryId]);
+    final db = await bookmarkDatabase;
+    await db.delete('bookmarks', where: 'id = ?', whereArgs: [entryId]);
     _bookmarks.remove(entryId);
     for (final listener in _onRemoveListeners) {
       listener(entryId);
@@ -78,15 +73,5 @@ class BookmarkState with ChangeNotifier {
     } else {
       await removeBookmark(entryGroup[bookmarkedIndex].id);
     }
-  }
-
-  Future<void> disposeDatabase() async {
-    await _database!.close();
-  }
-
-  @override
-  void dispose() {
-    disposeDatabase();
-    super.dispose();
   }
 }

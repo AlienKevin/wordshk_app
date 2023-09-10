@@ -1,7 +1,8 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
-use parking_lot::Mutex;
 use wordshk_tools::dict::clause_to_string;
 pub use wordshk_tools::jyutping::Romanization;
 pub use wordshk_tools::search::Script;
@@ -55,7 +56,7 @@ pub struct EgSearchResult {
 }
 
 lazy_static! {
-    static ref API: Mutex<Api> = Mutex::new(Api::new());
+    static ref API: Arc<Api> = Arc::new(Api::new());
 }
 
 pub struct EntrySummary {
@@ -64,9 +65,8 @@ pub struct EntrySummary {
 }
 
 pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script, is_eng_def: bool) -> Result<Vec<EntrySummary>> {
-    let api = API.lock();
     let summaries = entry_ids.into_iter().map(|entry_id| {
-        let entry = api.dict.get(&(entry_id as usize)).unwrap();
+        let entry = API.dict.get(&(entry_id as usize)).unwrap();
         let variant = match script {
             Script::Traditional => entry.variants.to_words().first().unwrap().to_string(),
             Script::Simplified => entry.variants_simp.first().unwrap().to_string(),
@@ -89,12 +89,12 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script, is_eng_def: bool
 }
 
 pub fn update_pr_indices(pr_indices: Vec<u8>) -> Result<()> {
-    (*API.lock()).update_pr_indices(pr_indices)
+    API.update_pr_indices(pr_indices)
 }
 
 pub fn generate_pr_indices(romanization: Romanization) -> Result<Vec<u8>> {
     // info!("api.rs generate_pr_indices");
-    Ok((*API.lock()).generate_pr_indices(romanization))
+    Ok(API.generate_pr_indices(romanization))
 }
 
 pub fn pr_search(
@@ -103,7 +103,7 @@ pub fn pr_search(
     script: Script,
     romanization: Romanization,
 ) -> Result<Vec<PrSearchResult>> {
-    Ok((*API.lock()).pr_search(capacity, query, script, romanization))
+    Ok(API.pr_search(capacity, query, script, romanization))
 }
 
 pub fn variant_search(
@@ -111,7 +111,7 @@ pub fn variant_search(
     query: String,
     script: Script,
 ) -> Result<Vec<VariantSearchResult>> {
-    Ok((*API.lock()).variant_search(capacity, query, script))
+    Ok(API.variant_search(capacity, query, script))
 }
 
 pub fn combined_search(
@@ -120,7 +120,7 @@ pub fn combined_search(
     script: Script,
     romanization: Romanization,
 ) -> Result<CombinedSearchResults> {
-    Ok((*API.lock()).combined_search(capacity, query, script, romanization))
+    Ok(API.combined_search(capacity, query, script, romanization))
 }
 
 pub fn english_search(
@@ -128,7 +128,7 @@ pub fn english_search(
     query: String,
     script: Script,
 ) -> Result<Vec<EnglishSearchResult>> {
-    Ok((*API.lock()).english_search(capacity, query, script))
+    Ok(API.english_search(capacity, query, script))
 }
 
 pub fn eg_search(
@@ -137,21 +137,21 @@ pub fn eg_search(
     query: String,
     script: Script,
 ) -> Result<(Option<String>, Vec<EgSearchResult>)> {
-    Ok((*API.lock()).eg_search(capacity, max_first_index_in_eg, query, script))
+    Ok(API.eg_search(capacity, max_first_index_in_eg, query, script))
 }
 
 pub fn get_entry_json(id: u32) -> Result<String> {
-    Ok((*API.lock()).get_entry_json(id as usize))
+    Ok(API.get_entry_json(id as usize))
 }
 
 pub fn get_entry_group_json(id: u32) -> Result<Vec<String>> {
-    Ok((*API.lock()).get_entry_group_json(id as usize))
+    Ok(API.get_entry_group_json(id as usize))
 }
 
 pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
-    (*API.lock()).get_entry_id(query, script)
+    API.get_entry_id(query, script)
 }
 
 pub fn get_jyutping(query: String) -> Vec<String> {
-    (*API.lock()).get_jyutping(query)
+    API.get_jyutping(query)
 }

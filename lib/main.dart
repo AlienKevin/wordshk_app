@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
@@ -27,7 +29,28 @@ import 'package:wordshk/states/speech_rate_state.dart';
 import 'constants.dart';
 import 'states/player_state.dart';
 
+late final Future<Database> bookmarkDatabase;
+
 main() async {
+  // Avoid errors caused by flutter upgrade.
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (kDebugMode) {
+    print("Opening database...");
+  }
+
+  final databasesPath = await getApplicationDocumentsDirectory();
+  String path = join(databasesPath.path, 'bookmarkedEntries.db');
+
+  bookmarkDatabase = openDatabase(path, version: 1,
+      onCreate: (Database db, int version) async {
+        if (kDebugMode) {
+          print("Create database");
+        }
+        await db.execute(
+            'CREATE TABLE bookmarks (id INTEGER PRIMARY KEY, time INTEGER)');
+      });
+
   await SentryFlutter.init((options) {
     options.dsn = sentry_dsn;
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
@@ -39,6 +62,7 @@ main() async {
           .ensureInitialized(); // mandatory when awaiting on main
       final prefs = await SharedPreferences.getInstance();
       final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
+
       runApp(
         MultiProvider(
           providers: [
@@ -65,7 +89,7 @@ main() async {
             ChangeNotifierProvider<SpeechRateState>(
                 create: (_) => SpeechRateState()),
             ChangeNotifierProvider<BookmarkState>(
-                create: (_) => BookmarkState()),
+                create: (_) => BookmarkState(), lazy: false),
           ],
           child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
         ),
