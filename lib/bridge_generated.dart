@@ -62,6 +62,15 @@ abstract class WordshkApi {
 
   FlutterRustBridgeTaskConstMeta get kEnglishSearchConstMeta;
 
+  Future<(String?, List<EgSearchResult>)> egSearch(
+      {required int capacity,
+      required int maxEgLength,
+      required String query,
+      required Script script,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kEgSearchConstMeta;
+
   Future<String> getEntryJson({required int id, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetEntryJsonConstMeta;
@@ -89,6 +98,20 @@ class CombinedSearchResults {
     required this.variantResults,
     required this.prResults,
     required this.englishResults,
+  });
+}
+
+class EgSearchResult {
+  final int id;
+  final int defIndex;
+  final int egIndex;
+  final String eg;
+
+  const EgSearchResult({
+    required this.id,
+    required this.defIndex,
+    required this.egIndex,
+    required this.eg,
   });
 }
 
@@ -318,6 +341,32 @@ class WordshkApiImpl implements WordshkApi {
         argNames: ["capacity", "query", "script"],
       );
 
+  Future<(String?, List<EgSearchResult>)> egSearch(
+      {required int capacity,
+      required int maxEgLength,
+      required String query,
+      required Script script,
+      dynamic hint}) {
+    var arg0 = api2wire_u32(capacity);
+    var arg1 = api2wire_u32(maxEgLength);
+    var arg2 = _platform.api2wire_String(query);
+    var arg3 = api2wire_script(script);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_eg_search(port_, arg0, arg1, arg2, arg3),
+      parseSuccessData: _wire2api___record__opt_String_list_eg_search_result,
+      constMeta: kEgSearchConstMeta,
+      argValues: [capacity, maxEgLength, query, script],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kEgSearchConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "eg_search",
+        argNames: ["capacity", "maxEgLength", "query", "script"],
+      );
+
   Future<String> getEntryJson({required int id, dynamic hint}) {
     var arg0 = api2wire_u32(id);
     return _platform.executeNormal(FlutterRustBridgeTask(
@@ -402,6 +451,18 @@ class WordshkApiImpl implements WordshkApi {
     return (raw as List<dynamic>).cast<String>();
   }
 
+  (String?, List<EgSearchResult>)
+      _wire2api___record__opt_String_list_eg_search_result(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      _wire2api_opt_String(arr[0]),
+      _wire2api_list_eg_search_result(arr[1]),
+    );
+  }
+
   int _wire2api_box_autoadd_u32(dynamic raw) {
     return raw as int;
   }
@@ -414,6 +475,18 @@ class WordshkApiImpl implements WordshkApi {
       variantResults: _wire2api_list_variant_search_result(arr[0]),
       prResults: _wire2api_list_pr_search_result(arr[1]),
       englishResults: _wire2api_list_english_search_result(arr[2]),
+    );
+  }
+
+  EgSearchResult _wire2api_eg_search_result(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return EgSearchResult(
+      id: _wire2api_u32(arr[0]),
+      defIndex: _wire2api_u32(arr[1]),
+      egIndex: _wire2api_u32(arr[2]),
+      eg: _wire2api_String(arr[3]),
     );
   }
 
@@ -440,6 +513,10 @@ class WordshkApiImpl implements WordshkApi {
     );
   }
 
+  List<EgSearchResult> _wire2api_list_eg_search_result(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_eg_search_result).toList();
+  }
+
   List<EnglishSearchResult> _wire2api_list_english_search_result(dynamic raw) {
     return (raw as List<dynamic>).map(_wire2api_english_search_result).toList();
   }
@@ -454,6 +531,10 @@ class WordshkApiImpl implements WordshkApi {
 
   List<VariantSearchResult> _wire2api_list_variant_search_result(dynamic raw) {
     return (raw as List<dynamic>).map(_wire2api_variant_search_result).toList();
+  }
+
+  String? _wire2api_opt_String(dynamic raw) {
+    return raw == null ? null : _wire2api_String(raw);
   }
 
   int? _wire2api_opt_box_autoadd_u32(dynamic raw) {
@@ -812,6 +893,29 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
               ffi.Int32)>>('wire_english_search');
   late final _wire_english_search = _wire_english_searchPtr.asFunction<
       void Function(int, int, ffi.Pointer<wire_uint_8_list>, int)>();
+
+  void wire_eg_search(
+    int port_,
+    int capacity,
+    int max_eg_length,
+    ffi.Pointer<wire_uint_8_list> query,
+    int script,
+  ) {
+    return _wire_eg_search(
+      port_,
+      capacity,
+      max_eg_length,
+      query,
+      script,
+    );
+  }
+
+  late final _wire_eg_searchPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Uint32, ffi.Uint32,
+              ffi.Pointer<wire_uint_8_list>, ffi.Int32)>>('wire_eg_search');
+  late final _wire_eg_search = _wire_eg_searchPtr.asFunction<
+      void Function(int, int, int, ffi.Pointer<wire_uint_8_list>, int)>();
 
   void wire_get_entry_json(
     int port_,

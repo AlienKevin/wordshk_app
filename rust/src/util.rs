@@ -9,6 +9,7 @@ use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use lazy_static::lazy_static;
 use parking_lot::Mutex;
+use rmp_serde::Serializer;
 use serde::{Deserialize, Serialize};
 use wordshk_tools::dict::clause_to_string;
 use wordshk_tools::english_index::{EnglishIndex, EnglishIndexData};
@@ -20,9 +21,7 @@ use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, Script, VariantsMap};
 use wordshk_tools::unicode::is_cjk;
 
-use rmp_serde::Serializer;
-
-use crate::api::{CombinedSearchResults, EnglishSearchResult, PrSearchResult, VariantSearchResult};
+use crate::api::{CombinedSearchResults, EgSearchResult, EnglishSearchResult, PrSearchResult, VariantSearchResult};
 
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
@@ -205,6 +204,28 @@ impl Api {
                 }
             })
             .collect()
+    }
+
+    pub fn eg_search(&self, capacity: u32, max_eg_length: u32, query: String, script: Script) -> (Option<String>, Vec<EgSearchResult>) {
+        let (query_found, mut ranks) = search::eg_search(&self.dict, &query, max_eg_length as usize, script);
+        let mut results = vec![];
+        let mut i = 0;
+        while ranks.len() > 0 && i < capacity {
+            let search::EgSearchRank {
+                id, def_index, eg_index, ..
+            } = ranks.pop().unwrap();
+            results.push(EgSearchResult {
+                id: id as u32,
+                def_index: def_index as u32,
+                eg_index: eg_index as u32,
+                eg: match script {
+                    Script::Traditional => self.dict[&id].defs[def_index].egs[eg_index].yue.as_ref().unwrap().to_string(),
+                    Script::Simplified => self.dict[&id].defs[def_index].egs[eg_index].yue_simp.as_ref().unwrap().to_string(),
+                }
+            });
+            i += 1;
+        }
+        (query_found, results)
     }
 
     pub fn get_entry_json(&self, id: usize) -> String {

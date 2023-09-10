@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-wordshk_tools = { git = "https://github.com/AlienKevin/wordshk-tools.git", rev = "4c17e84d4492d2e369b852f5b1c78953edd9f92b" }
+wordshk_tools = { git = "https://github.com/AlienKevin/wordshk-tools.git", rev = "9d869f1d115c8f82a3288eba26d5ea35228112b5" }
 flutter_rust_bridge = "=1.80.1"
 anyhow = { version = "1.0.52", features = ["backtrace"] }
 serde = { version = "1.0", features = ["derive"] }

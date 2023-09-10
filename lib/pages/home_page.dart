@@ -36,7 +36,10 @@ class _HomePageState extends State<HomePage> {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
+  List<EgSearchResult> egSearchResults = [];
+  String? egSearchQueryNormalized;
   bool finishedSearch = false;
+  bool isSearchResultsEmpty = false;
   bool queryEmptied = true;
   bool showSearchModeSelector = false;
   OverlayEntry? searchModeSelectors;
@@ -85,24 +88,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isSearchResultsEmpty;
     final SearchModeState searchMode = context.watch<SearchModeState>();
-    switch (searchMode.mode) {
-      case SearchMode.pr:
-        isSearchResultsEmpty = prSearchResults.isEmpty;
-        break;
-      case SearchMode.variant:
-        isSearchResultsEmpty = variantSearchResults.isEmpty;
-        break;
-      case SearchMode.combined:
-        isSearchResultsEmpty = prSearchResults.isEmpty &&
-            variantSearchResults.isEmpty &&
-            englishSearchResults.isEmpty;
-        break;
-      case SearchMode.english:
-        isSearchResultsEmpty = englishSearchResults.isEmpty;
-        break;
-    }
     final InputMode inputMode = context.watch<InputModeState>().mode;
 
     return KeyboardVisibilityProvider(
@@ -217,6 +203,8 @@ class _HomePageState extends State<HomePage> {
         variantSearchResults.clear();
         prSearchResults.clear();
         englishSearchResults.clear();
+        egSearchResults.clear();
+        egSearchQueryNormalized = null;
         finishedSearch = false;
       });
     } else {
@@ -234,6 +222,7 @@ class _HomePageState extends State<HomePage> {
               .then((results) {
             setState(() {
               prSearchResults = results.unique((result) => result.variant);
+              isSearchResultsEmpty = prSearchResults.isEmpty;
               finishedSearch = true;
             });
           });
@@ -244,19 +233,45 @@ class _HomePageState extends State<HomePage> {
               .then((results) {
             setState(() {
               variantSearchResults = results.unique((result) => result.variant);
+              isSearchResultsEmpty = variantSearchResults.isEmpty;
               finishedSearch = true;
             });
           });
           break;
         case SearchMode.combined:
-          api
-              .combinedSearch(
-                  capacity: 10,
-                  query: query,
-                  script: script,
-                  romanization: romanization)
-              .then((results) {
+          final combinedResults = api.combinedSearch(
+              capacity: 10,
+              query: query,
+              script: script,
+              romanization: romanization);
+          combinedResults.then((results) {
+            final isCombinedResultsEmpty = results.prResults.isEmpty &&
+                results.variantResults.isEmpty &&
+                results.englishResults.isEmpty;
+            if (isCombinedResultsEmpty) {
+              api
+                  .egSearch(
+                      capacity: 10,
+                      maxEgLength: 18,
+                      query: query,
+                      script: script)
+                  .then((result) {
+                    final (queryNormalized, results) = result;
+                    // print("Query: $query");
+                    // print("Result: ${results.map((res) => res.eg)}");
+                    if (isSearchResultsEmpty && query == context.read<SearchQueryState>().query) {
+                      setState(() {
+                        egSearchResults = results.unique((result) => result.eg);
+                        egSearchQueryNormalized = queryNormalized;
+                        isSearchResultsEmpty = egSearchResults.isEmpty;
+                      });
+                    }
+              });
+            }
             setState(() {
+              isSearchResultsEmpty = isCombinedResultsEmpty;
+              egSearchResults.clear();
+              egSearchQueryNormalized = null;
               prSearchResults =
                   results.prResults.unique((result) => result.variant);
               variantSearchResults =
@@ -325,6 +340,23 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
+  List<Widget> showEgSearchResults(String queryFound) {
+    return egSearchResults.map((result) {
+      final List<InlineSpan> egs = result.eg.split(queryFound).mapIndexed((i, segment) =>
+          <InlineSpan>[
+            ...(i == 0 ? <InlineSpan>[] : [TextSpan(text: queryFound, style: Theme.of(context).textTheme.titleSmall)]),
+            TextSpan(text: segment, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: greyColor)),
+          ]
+      ).expand((x) => x).toList();
+      return showSearchResult(
+          result.id,
+          TextSpan(children: egs),
+          maxLines: 1,
+          defIndex: result.defIndex,
+      );
+    }).toList();
+  }
+
   List<Widget> showPrSearchResults(TextStyle textStyle) {
     return prSearchResults
         .map((result) => showSearchResult(
@@ -381,12 +413,19 @@ class _HomePageState extends State<HomePage> {
                   s.searchResults(s.searchResultsCategoryEnglish))
             ]
           : [],
-      ...showEnglishSearchResults(textStyle)
+      ...showEnglishSearchResults(textStyle),
+      ...egSearchResults.isNotEmpty
+          ? [
+              showSearchResultCategory(
+                  s.searchResults(s.searchResultsCategoryExample)),
+              ...showEgSearchResults(egSearchQueryNormalized!),
+            ]
+          : [],
     ];
   }
 
   Widget showSearchResult(int id, TextSpan resultText,
-      {int? defIndex, bool showFirstEntryInGroupInitially = false}) {
+      {int maxLines = 2, int? defIndex, bool showFirstEntryInGroupInitially = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -412,7 +451,7 @@ class _HomePageState extends State<HomePage> {
             child: RichText(
               text: resultText,
               textAlign: TextAlign.start,
-              maxLines: 2,
+              maxLines: maxLines,
               overflow: TextOverflow.ellipsis,
               textScaleFactor: MediaQuery.of(context).textScaleFactor,
             ),

@@ -65,6 +65,17 @@ pub extern "C" fn wire_english_search(
 }
 
 #[no_mangle]
+pub extern "C" fn wire_eg_search(
+    port_: i64,
+    capacity: u32,
+    max_eg_length: u32,
+    query: *mut wire_uint_8_list,
+    script: i32,
+) {
+    wire_eg_search_impl(port_, capacity, max_eg_length, query, script)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_get_entry_json(port_: i64, id: u32) {
     wire_get_entry_json_impl(port_, id)
 }

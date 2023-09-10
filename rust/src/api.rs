@@ -47,6 +47,13 @@ pub struct EnglishSearchResult {
     pub eng: String,
 }
 
+pub struct EgSearchResult {
+    pub id: u32,
+    pub def_index: u32,
+    pub eg_index: u32,
+    pub eg: String,
+}
+
 lazy_static! {
     static ref API: Mutex<Api> = Mutex::new(Api::new());
 }
@@ -122,6 +129,15 @@ pub fn english_search(
     script: Script,
 ) -> Result<Vec<EnglishSearchResult>> {
     Ok((*API.lock()).english_search(capacity, query, script))
+}
+
+pub fn eg_search(
+    capacity: u32,
+    max_eg_length: u32,
+    query: String,
+    script: Script,
+) -> Result<(Option<String>, Vec<EgSearchResult>)> {
+    Ok((*API.lock()).eg_search(capacity, max_eg_length, query, script))
 }
 
 pub fn get_entry_json(id: u32) -> Result<String> {
