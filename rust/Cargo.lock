@@ -1907,6 +1907,7 @@ dependencies = [
  "flutter_rust_bridge",
  "lazy_static",
  "openssl",
+ "parking_lot",
  "rmp-serde",
  "serde",
  "serde_json",

@@ -9,6 +9,7 @@ use flate2::Compression;
 use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use lazy_static::lazy_static;
+use parking_lot::RwLock;
 use rmp_serde::Serializer;
 use serde::{Deserialize, Serialize};
 use wordshk_tools::dict::clause_to_string;
@@ -32,7 +33,7 @@ pub struct Api {
     #[serde(skip)]
     pub english_index: EnglishIndex,
     #[serde(skip)]
-    pub pr_indices: Mutex<PrIndices>,
+    pub pr_indices: RwLock<PrIndices>,
     #[serde(skip)]
     pub variants_map: VariantsMap,
     #[serde(skip)]
@@ -102,7 +103,7 @@ impl Api {
         let mut pr_indices_bytes = Vec::new();
         pr_indices_decompressor.read_to_end(&mut pr_indices_bytes)?;
         let pr_indices: PrIndices = rmp_serde::from_slice(&pr_indices_bytes[..])?;
-        *self.pr_indices.lock().unwrap() = pr_indices;
+        *self.pr_indices.write() = pr_indices;
         Ok(())
     }
 
@@ -115,16 +116,16 @@ impl Api {
             .serialize(&mut Serializer::new(&mut buf))
             .unwrap();
 
-        *self.pr_indices.lock().unwrap() = pr_indices;
-
         let mut e = GzEncoder::new(Vec::new(), Compression::default());
         e.write_all(&buf).expect("failed to compress pr_indices");
-        e.finish().expect("failed to finish compressing the stream of pr_indices")
+        let result = e.finish().expect("failed to finish compressing the stream of pr_indices");
+        *self.pr_indices.write() = pr_indices;
+        result
     }
 
     pub fn pr_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
         let mut results = vec![];
-        let mut ranks = search::pr_search(&self.pr_indices.lock().unwrap(), &self.dict, &query, romanization);
+        let mut ranks = search::pr_search(&self.pr_indices.read(), &self.dict, &query, romanization);
         let mut i = 0;
         while ranks.len() > 0 && i < capacity {
             let search::PrSearchRank {
@@ -163,7 +164,7 @@ impl Api {
     }
 
     pub fn combined_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
-        match &mut search::combined_search(&self.variants_map, &self.pr_indices.lock().unwrap(), &self.english_index, &self.dict, &query, script, romanization) {
+        match &mut search::combined_search(&self.variants_map, &self.pr_indices.read(), &self.english_index, &self.dict, &query, script, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
