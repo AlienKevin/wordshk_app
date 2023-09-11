@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage> {
   List<EnglishSearchResult> englishSearchResults = [];
   List<EgSearchResult> egSearchResults = [];
   String? egSearchQueryNormalized;
+  int lastSearchStartTime = 0;
   bool finishedSearch = false;
   bool isSearchResultsEmpty = false;
   bool queryEmptied = true;
@@ -88,7 +89,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final SearchModeState searchMode = context.watch<SearchModeState>();
     final InputMode inputMode = context.watch<InputModeState>().mode;
 
     return KeyboardVisibilityProvider(
@@ -208,6 +208,11 @@ class _HomePageState extends State<HomePage> {
         finishedSearch = false;
       });
     } else {
+      final searchStartTime = DateTime.now().millisecondsSinceEpoch;
+      setState(() {
+        finishedSearch = false;
+        lastSearchStartTime = searchStartTime;
+      });
       final searchMode = context.read<SearchModeState>().mode;
       final script = getScript(context);
       final romanization = context.read<RomanizationState>().romanization;
@@ -220,22 +225,28 @@ class _HomePageState extends State<HomePage> {
                   script: script,
                   romanization: romanization)
               .then((results) {
-            setState(() {
-              prSearchResults = results.unique((result) => result.variant);
-              isSearchResultsEmpty = prSearchResults.isEmpty;
-              finishedSearch = true;
-            });
+                if (searchStartTime >= lastSearchStartTime) {
+                  setState(() {
+                    prSearchResults =
+                        results.unique((result) => result.variant);
+                    isSearchResultsEmpty = prSearchResults.isEmpty;
+                    finishedSearch = true;
+                  });
+                }
           });
           break;
         case SearchMode.variant:
           api
               .variantSearch(capacity: 10, query: query, script: script)
               .then((results) {
-            setState(() {
-              variantSearchResults = results.unique((result) => result.variant);
-              isSearchResultsEmpty = variantSearchResults.isEmpty;
-              finishedSearch = true;
-            });
+            if (searchStartTime >= lastSearchStartTime) {
+              setState(() {
+                variantSearchResults =
+                    results.unique((result) => result.variant);
+                isSearchResultsEmpty = variantSearchResults.isEmpty;
+                finishedSearch = true;
+              });
+            }
           });
           break;
         case SearchMode.combined:
@@ -245,50 +256,61 @@ class _HomePageState extends State<HomePage> {
               script: script,
               romanization: romanization);
           combinedResults.then((results) {
-            final isCombinedResultsEmpty = results.prResults.isEmpty &&
-                results.variantResults.isEmpty &&
-                results.englishResults.isEmpty;
-            if (isCombinedResultsEmpty) {
-              api
-                  .egSearch(
-                      capacity: 10,
-                      maxFirstIndexInEg: 10,
-                      query: query,
-                      script: script)
-                  .then((result) {
+            if (searchStartTime >= lastSearchStartTime) {
+              final isCombinedResultsEmpty = results.prResults.isEmpty &&
+                  results.variantResults.isEmpty &&
+                  results.englishResults.isEmpty;
+              if (isCombinedResultsEmpty) {
+                api
+                    .egSearch(
+                    capacity: 10,
+                    maxFirstIndexInEg: 10,
+                    query: query,
+                    script: script)
+                    .then((result) {
+                  if (searchStartTime >= lastSearchStartTime) {
                     final (queryNormalized, results) = result;
                     // print("Query: $query");
                     // print("Result: ${results.map((res) => res.eg)}");
-                    if (isSearchResultsEmpty && query == context.read<SearchQueryState>().query) {
+                    if (isSearchResultsEmpty && query == context
+                        .read<SearchQueryState>()
+                        .query) {
                       setState(() {
                         egSearchResults = results.unique((result) => result.eg);
                         egSearchQueryNormalized = queryNormalized;
                         isSearchResultsEmpty = egSearchResults.isEmpty;
+                        finishedSearch = true;
                       });
                     }
+                  }
+                });
+              }
+              setState(() {
+                isSearchResultsEmpty = isCombinedResultsEmpty;
+                egSearchResults.clear();
+                egSearchQueryNormalized = null;
+                prSearchResults =
+                    results.prResults.unique((result) => result.variant);
+                variantSearchResults =
+                    results.variantResults.unique((result) => result.variant);
+                englishSearchResults = results.englishResults;
+                if (!isCombinedResultsEmpty) {
+                  finishedSearch = true;
+                }
               });
             }
-            setState(() {
-              isSearchResultsEmpty = isCombinedResultsEmpty;
-              egSearchResults.clear();
-              egSearchQueryNormalized = null;
-              prSearchResults =
-                  results.prResults.unique((result) => result.variant);
-              variantSearchResults =
-                  results.variantResults.unique((result) => result.variant);
-              englishSearchResults = results.englishResults;
-              finishedSearch = true;
-            });
           });
           break;
         case SearchMode.english:
           api
               .englishSearch(capacity: 10, query: query, script: script)
               .then((results) {
-            setState(() {
-              englishSearchResults = results;
-              finishedSearch = true;
-            });
+            if (searchStartTime >= lastSearchStartTime) {
+              setState(() {
+                englishSearchResults = results;
+                finishedSearch = true;
+              });
+            }
           });
           break;
       }
