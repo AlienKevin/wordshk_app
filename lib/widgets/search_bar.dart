@@ -364,7 +364,9 @@ class IsSearching extends State<SearchBar> {
             Romanization.Yale => [
                 (_) => diacriticButton("̄"),
                 (_) => diacriticButton("́"),
-                (_) => diacriticButton("̀")
+                (_) => diacriticButton("̀"),
+                (_) => const Spacer(),
+                (_) => inkInputModeButton(),
               ]
           },
           toolbarAlignment: MainAxisAlignment.start,
