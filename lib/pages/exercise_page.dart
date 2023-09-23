@@ -8,6 +8,7 @@ import 'package:sentry/sentry.dart';
 import 'package:wordshk/constants.dart';
 
 import '../states/romanization_state.dart';
+import '../widgets/pronunciation_button.dart';
 import '../widgets/syllable_pronunciation_button.dart';
 
 class ExercisePage extends StatefulWidget {
@@ -91,10 +92,15 @@ class ExercisePageState extends State<ExercisePage> {
       selectedTone: null,
       expectedSyllableIndex:
           Random().nextInt(jyutpingFemaleSyllableNames.length));
+  final GlobalKey<PronunciationButtonState> pronunciationButtonKey =
+      GlobalKey<PronunciationButtonState>();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      pronunciationButtonKey.currentState?.triggerPlay();
+    });
   }
 
   Tone6? getExpectedTone6() {
@@ -115,6 +121,7 @@ class ExercisePageState extends State<ExercisePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SyllablePronunciationButton(
+              buttonKey: pronunciationButtonKey,
               prs: [
                 [syllables[state.expectedSyllableIndex]],
               ],
@@ -123,8 +130,7 @@ class ExercisePageState extends State<ExercisePage> {
               large: true,
             ),
             SizedBox(
-                height:
-                    Theme.of(context).textTheme.displaySmall!.fontSize!),
+                height: Theme.of(context).textTheme.displaySmall!.fontSize!),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -149,14 +155,14 @@ class ExercisePageState extends State<ExercisePage> {
                 height: Theme.of(context).textTheme.displaySmall!.fontSize!,
                 child: Center(
                     child: Text(switch (state) {
-                  CheckedState(isCorrect: true) =>
-                    AppLocalizations.of(context)!.correctTone(context.read<RomanizationState>().showPrs([
-                    syllables[state.expectedSyllableIndex]
-                    ])),
+                  CheckedState(isCorrect: true) => AppLocalizations.of(context)!
+                      .correctTone(context
+                          .read<RomanizationState>()
+                          .showPrs([syllables[state.expectedSyllableIndex]])),
                   CheckedState(isCorrect: false) =>
-                      AppLocalizations.of(context)!.shouldBeTone(context.read<RomanizationState>().showPrs([
-                        syllables[state.expectedSyllableIndex]
-                      ])),
+                    AppLocalizations.of(context)!.shouldBeTone(context
+                        .read<RomanizationState>()
+                        .showPrs([syllables[state.expectedSyllableIndex]])),
                   _ => ""
                 }))),
             ElevatedButton(
@@ -193,6 +199,10 @@ class ExercisePageState extends State<ExercisePage> {
                           expectedSyllableIndex: Random()
                               .nextInt(jyutpingFemaleSyllableNames.length),
                           selectedTone: null);
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      pronunciationButtonKey.currentState?.triggerPlay();
                     });
                   },
               },

@@ -18,11 +18,20 @@ class PronunciationButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<PronunciationButton> createState() => _PronunciationButtonState();
+  State<PronunciationButton> createState() => PronunciationButtonState();
 }
 
-class _PronunciationButtonState extends State<PronunciationButton> {
+class PronunciationButtonState extends State<PronunciationButton> {
   int? playerKey;
+
+  void triggerPlay() {
+    if (playerKey == null) {
+      setState(() {
+        playerKey = context.read<PlayerState>().getPlayerKey();
+      });
+    }
+    widget.play(playerKey!);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +40,7 @@ class _PronunciationButtonState extends State<PronunciationButton> {
             height: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
             width: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
             child: ElevatedButton(
+              onPressed: triggerPlay,
               child: Icon(
                   playerKey != null &&
                           context.watch<PlayerState>().playerKey == playerKey
@@ -40,14 +50,6 @@ class _PronunciationButtonState extends State<PronunciationButton> {
                       : PlatformIcons(context).volumeUp,
                   size: Theme.of(context).textTheme.displaySmall!.fontSize! *
                       1.5),
-              onPressed: () {
-                if (playerKey == null) {
-                  setState(() {
-                    playerKey = context.read<PlayerState>().getPlayerKey();
-                  });
-                }
-                widget.play(playerKey!);
-              },
             ),
           )
         : IconButton(
@@ -62,14 +64,6 @@ class _PronunciationButtonState extends State<PronunciationButton> {
                 : PlatformIcons(context).volumeUp),
             color: Theme.of(context).colorScheme.secondary,
             padding: EdgeInsets.zero,
-            onPressed: () {
-              if (playerKey == null) {
-                setState(() {
-                  playerKey = context.read<PlayerState>().getPlayerKey();
-                });
-              }
-              widget.play(playerKey!);
-            },
-          );
+            onPressed: triggerPlay);
   }
 }

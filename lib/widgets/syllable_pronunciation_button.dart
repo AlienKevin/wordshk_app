@@ -13,21 +13,24 @@ class SyllablePronunciationButton extends StatelessWidget {
   final Alignment alignment;
   final bool atHeader;
   final bool large;
+  final Key? buttonKey;
 
-  const SyllablePronunciationButton(
-      {Key? key,
-      required this.prs,
-      required this.alignment,
-      required this.atHeader,
-      this.large = false,
-      })
-      : super(key: key);
+  const SyllablePronunciationButton({
+    Key? key,
+    this.buttonKey,
+    required this.prs,
+    required this.alignment,
+    required this.atHeader,
+    this.large = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Consumer<PronunciationMethodState>(
       builder: (context, prMethodState, child) => Visibility(
-            visible: jyutpingFemaleSyllableNames.containsAll(prs.expand((x) => x)),
+            visible:
+                jyutpingFemaleSyllableNames.containsAll(prs.expand((x) => x)),
             child: PronunciationButton(
+              key: buttonKey,
               play: (key) {
                 final prMethodState = context.read<PronunciationMethodState>();
                 final method = prMethodState.entryEgMethod;
