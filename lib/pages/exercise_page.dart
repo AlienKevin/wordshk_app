@@ -116,9 +116,10 @@ class ExercisePageState extends State<ExercisePage> {
         title: Text(AppLocalizations.of(context)!.toneExercise),
       ),
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.center,
+          runSpacing: Theme.of(context).textTheme.displayMedium!.fontSize! / 2,
           children: [
             SyllablePronunciationButton(
               buttonKey: pronunciationButtonKey,
@@ -129,30 +130,26 @@ class ExercisePageState extends State<ExercisePage> {
               atHeader: true,
               large: true,
             ),
-            SizedBox(
-                height: Theme.of(context).textTheme.displaySmall!.fontSize!),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 toneButton(Tone4.highLevel),
                 SizedBox(
-                    width: Theme.of(context).textTheme.displaySmall!.fontSize!),
+                    width: Theme.of(context).textTheme.displayMedium!.fontSize! / 2),
                 toneButton(Tone4.rising),
               ],
             ),
-            SizedBox(
-                height: Theme.of(context).textTheme.displaySmall!.fontSize!),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 toneButton(Tone4.lowLevel),
                 SizedBox(
-                    width: Theme.of(context).textTheme.displaySmall!.fontSize!),
+                    width: Theme.of(context).textTheme.displayMedium!.fontSize! / 2),
                 toneButton(Tone4.falling),
               ],
             ),
             SizedBox(
-                height: Theme.of(context).textTheme.displaySmall!.fontSize!,
+                height: Theme.of(context).textTheme.displayMedium!.fontSize!,
                 child: Center(
                     child: Text(switch (state) {
                   CheckedState(isCorrect: true) => AppLocalizations.of(context)!
