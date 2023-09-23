@@ -41,6 +41,7 @@ dependencies:
   path_provider: ^2.1.0
   sqflite: ^2.3.0
   path: ^1.8.3
+  chiclet: ^1.0.2
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:

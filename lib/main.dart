@@ -192,7 +192,7 @@ class _MyAppState extends State<MyApp> {
         ));
     elevatedButtonTheme(Brightness brightness) => ElevatedButtonThemeData(
             style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(accentColor(brightness)),
+          backgroundColor: MaterialStateProperty.all(blueColor),
           textStyle: MaterialStateProperty.all(
               bodyLarge.copyWith(color: Colors.white)),
           padding: MaterialStateProperty.all(

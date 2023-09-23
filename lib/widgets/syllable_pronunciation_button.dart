@@ -12,12 +12,15 @@ class SyllablePronunciationButton extends StatelessWidget {
   final List<List<String>> prs;
   final Alignment alignment;
   final bool atHeader;
+  final bool large;
 
   const SyllablePronunciationButton(
       {Key? key,
       required this.prs,
       required this.alignment,
-      required this.atHeader})
+      required this.atHeader,
+      this.large = false,
+      })
       : super(key: key);
 
   @override
@@ -37,6 +40,7 @@ class SyllablePronunciationButton extends StatelessWidget {
                     .syllablesPlay(key, prs, method, rate);
               },
               alignment: alignment,
+              large: large,
             ),
           ));
 }

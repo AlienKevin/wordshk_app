@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  chiclet:
+    dependency: "direct main"
+    description:
+      name: chiclet
+      sha256: dbecf71e3fa10fd7cb3fec7c90a9171e0e0630a8f3a72ac96cd4e8e4443134b3
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   cli_util:
     dependency: transitive
     description:

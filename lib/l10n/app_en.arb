@@ -113,6 +113,9 @@
     "bookmarks": "Bookmarks",
     "noBookmarks": "No bookmarks yet",
 
+    "exercise": "Exercise",
+    "toneExercise": "Tone Exercise",
+
     "preferences": "Preferences",
 
     "general": "General",
