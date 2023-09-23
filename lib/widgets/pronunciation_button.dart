@@ -27,26 +27,28 @@ class _PronunciationButtonState extends State<PronunciationButton> {
   @override
   Widget build(BuildContext context) {
     return widget.large
-        ? ElevatedButton(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: 0,
-                  horizontal: Theme.of(context).textTheme.bodyLarge!.fontSize!),
-              child: Icon(playerKey != null &&
-                      context.watch<PlayerState>().playerKey == playerKey
-                  ? isMaterial(context)
-                      ? Icons.stop_circle
-                      : CupertinoIcons.stop_circle_fill
-                  : PlatformIcons(context).volumeUp),
+        ? SizedBox(
+            height: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
+            width: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
+            child: ElevatedButton(
+              child: Icon(
+                  playerKey != null &&
+                          context.watch<PlayerState>().playerKey == playerKey
+                      ? isMaterial(context)
+                          ? Icons.stop_circle
+                          : CupertinoIcons.stop_circle_fill
+                      : PlatformIcons(context).volumeUp,
+                  size: Theme.of(context).textTheme.displaySmall!.fontSize! *
+                      1.5),
+              onPressed: () {
+                if (playerKey == null) {
+                  setState(() {
+                    playerKey = context.read<PlayerState>().getPlayerKey();
+                  });
+                }
+                widget.play(playerKey!);
+              },
             ),
-            onPressed: () {
-              if (playerKey == null) {
-                setState(() {
-                  playerKey = context.read<PlayerState>().getPlayerKey();
-                });
-              }
-              widget.play(playerKey!);
-            },
           )
         : IconButton(
             visualDensity: VisualDensity.compact,

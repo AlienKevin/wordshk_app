@@ -124,7 +124,7 @@ class ExercisePageState extends State<ExercisePage> {
             ),
             SizedBox(
                 height:
-                    Theme.of(context).textTheme.displaySmall!.fontSize! * 2),
+                    Theme.of(context).textTheme.displaySmall!.fontSize!),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -146,7 +146,7 @@ class ExercisePageState extends State<ExercisePage> {
               ],
             ),
             SizedBox(
-                height: Theme.of(context).textTheme.displaySmall!.fontSize! * 2,
+                height: Theme.of(context).textTheme.displaySmall!.fontSize!,
                 child: Center(
                     child: Text(switch (state) {
                   CheckedState(isCorrect: true) =>
