@@ -104,6 +104,10 @@
 
     "exercise": "練習",
     "toneExercise": "聲調練習",
+    "check": "核對",
+    "next": "下一個",
+    "correctTone": "✅ {tone}",
+    "shouldBeTone": "❌應該是: {tone}",
 
     "preferences": "設定",
 

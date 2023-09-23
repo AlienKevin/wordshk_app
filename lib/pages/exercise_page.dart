@@ -150,13 +150,13 @@ class ExercisePageState extends State<ExercisePage> {
                 child: Center(
                     child: Text(switch (state) {
                   CheckedState(isCorrect: true) =>
-                    "✅ Correct: ${context.read<RomanizationState>().showPrs([
-                          syllables[state.expectedSyllableIndex]
-                        ])}",
+                    AppLocalizations.of(context)!.correctTone(context.read<RomanizationState>().showPrs([
+                    syllables[state.expectedSyllableIndex]
+                    ])),
                   CheckedState(isCorrect: false) =>
-                    "❌ Should be: ${context.read<RomanizationState>().showPrs([
-                          syllables[state.expectedSyllableIndex]
-                        ])}",
+                      AppLocalizations.of(context)!.shouldBeTone(context.read<RomanizationState>().showPrs([
+                        syllables[state.expectedSyllableIndex]
+                      ])),
                   _ => ""
                 }))),
             ElevatedButton(
@@ -198,8 +198,8 @@ class ExercisePageState extends State<ExercisePage> {
               },
               style: ElevatedButton.styleFrom(elevation: 10),
               child: switch (state) {
-                ThinkingState() => Text("Check"),
-                CheckedState() => Text("Next"),
+                ThinkingState() => Text(AppLocalizations.of(context)!.check),
+                CheckedState() => Text(AppLocalizations.of(context)!.next),
               },
             ),
           ],
