@@ -3,8 +3,11 @@ import "dart:math";
 import 'package:chiclet/chiclet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:sentry/sentry.dart';
 import 'package:wordshk/constants.dart';
 
+import '../states/romanization_state.dart';
 import '../widgets/syllable_pronunciation_button.dart';
 
 class ExercisePage extends StatefulWidget {
@@ -21,15 +24,83 @@ enum Tone4 {
   falling,
 }
 
+enum Tone6 {
+  t1,
+  t2,
+  t3,
+  t4,
+  t5,
+  t6,
+}
+
+Tone6? tone6FromString(String s) {
+  return switch (s) {
+    "1" => Tone6.t1,
+    "2" => Tone6.t2,
+    "3" => Tone6.t3,
+    "4" => Tone6.t4,
+    "5" => Tone6.t5,
+    "6" => Tone6.t6,
+    _ => null,
+  };
+}
+
+bool tone4MatchesTone6(Tone4 tone4, Tone6 tone6) {
+  return switch ((tone4, tone6)) {
+    (Tone4.highLevel, Tone6.t1) ||
+    (Tone4.rising, Tone6.t2 || Tone6.t5) ||
+    (Tone4.lowLevel, Tone6.t3 || Tone6.t6) ||
+    (Tone4.falling, Tone6.t4) =>
+      true,
+    _ => false,
+  };
+}
+
+sealed class ExerciseState {
+  final int expectedSyllableIndex;
+  Tone4? selectedTone;
+
+  ExerciseState(
+      {required this.expectedSyllableIndex, required this.selectedTone});
+}
+
+class ThinkingState implements ExerciseState {
+  @override
+  final int expectedSyllableIndex;
+  @override
+  Tone4? selectedTone;
+  ThinkingState(
+      {required this.expectedSyllableIndex, required this.selectedTone});
+}
+
+class CheckedState implements ExerciseState {
+  @override
+  final int expectedSyllableIndex;
+  @override
+  Tone4? selectedTone;
+  final bool isCorrect;
+  CheckedState(
+      {required this.expectedSyllableIndex,
+      required this.selectedTone,
+      required this.isCorrect});
+}
+
 class ExercisePageState extends State<ExercisePage> {
-  final ValueNotifier<Tone4?> selectedTone = ValueNotifier(null);
-  int syllableIndex = Random().nextInt(jyutpingFemaleSyllableNames.length);
   List<String> syllables = jyutpingFemaleSyllableNames.toList();
-  bool? isCorrect;
+  ExerciseState state = ThinkingState(
+      selectedTone: null,
+      expectedSyllableIndex:
+          Random().nextInt(jyutpingFemaleSyllableNames.length));
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Tone6? getExpectedTone6() {
+    final syllable = syllables[state.expectedSyllableIndex];
+    final toneNumber = syllable[syllable.length - 1];
+    return tone6FromString(toneNumber);
   }
 
   @override
@@ -45,7 +116,7 @@ class ExercisePageState extends State<ExercisePage> {
           children: [
             SyllablePronunciationButton(
               prs: [
-                [syllables[syllableIndex]],
+                [syllables[state.expectedSyllableIndex]],
               ],
               alignment: Alignment.bottomCenter,
               atHeader: true,
@@ -75,19 +146,61 @@ class ExercisePageState extends State<ExercisePage> {
               ],
             ),
             SizedBox(
-                height:
-                    Theme.of(context).textTheme.displaySmall!.fontSize! * 2),
+                height: Theme.of(context).textTheme.displaySmall!.fontSize! * 2,
+                child: Center(
+                    child: Text(switch (state) {
+                  CheckedState(isCorrect: true) =>
+                    "✅ Correct: ${context.read<RomanizationState>().showPrs([
+                          syllables[state.expectedSyllableIndex]
+                        ])}",
+                  CheckedState(isCorrect: false) =>
+                    "❌ Should be: ${context.read<RomanizationState>().showPrs([
+                          syllables[state.expectedSyllableIndex]
+                        ])}",
+                  _ => ""
+                }))),
             ElevatedButton(
-              onPressed: (selectedTone.value == null)
-                  ? null
-                  : () {
+              onPressed: switch (state) {
+                ThinkingState(selectedTone: final selectedTone)
+                    when selectedTone != null =>
+                  () async {
+                    final tone6 = getExpectedTone6();
+                    if (tone6 == null) {
+                      // This shouldn't happen
+                      await Sentry.captureMessage(
+                          "Tone exercise generated a syllable without ending tone number: ${syllables[state.expectedSyllableIndex]}");
+                      // Set to correct because we don't have a ground truth tone number anyways
                       setState(() {
-                        isCorrect = syllables[syllableIndex]
-                            .endsWith(selectedTone.value.toString());
+                        state = CheckedState(
+                            expectedSyllableIndex: state.expectedSyllableIndex,
+                            selectedTone: state.selectedTone,
+                            isCorrect: true);
                       });
-                    },
+                    } else {
+                      final isCorrect = tone4MatchesTone6(selectedTone, tone6);
+                      setState(() {
+                        state = CheckedState(
+                            expectedSyllableIndex: state.expectedSyllableIndex,
+                            selectedTone: state.selectedTone,
+                            isCorrect: isCorrect);
+                      });
+                    }
+                  },
+                ThinkingState() => null,
+                CheckedState() => () {
+                    setState(() {
+                      state = ThinkingState(
+                          expectedSyllableIndex: Random()
+                              .nextInt(jyutpingFemaleSyllableNames.length),
+                          selectedTone: null);
+                    });
+                  },
+              },
               style: ElevatedButton.styleFrom(elevation: 10),
-              child: Text("Check"),
+              child: switch (state) {
+                ThinkingState() => Text("Check"),
+                CheckedState() => Text("Next"),
+              },
             ),
           ],
         ),
@@ -96,39 +209,38 @@ class ExercisePageState extends State<ExercisePage> {
   }
 
   Widget toneButton(Tone4 tone) {
-    return ValueListenableBuilder<Tone4?>(
-      valueListenable: selectedTone,
-      builder: (context, value, child) => ChicletOutlinedButton(
-        onPressed: () {
-          setState(() {
-            if (value == tone) {
-              selectedTone.value = null;
-            } else {
-              selectedTone.value = tone;
-            }
-          });
-        },
-        isPressed: selectedTone.value == tone,
-        width: 100,
-        height: 100,
-        buttonHeight: 8,
-        borderColor: Theme.of(context)
-            .elevatedButtonTheme
-            .style
-            ?.backgroundColor
-            ?.resolve({})?.withAlpha(150),
-        backgroundColor: Theme.of(context)
-                .elevatedButtonTheme
-                .style
-                ?.backgroundColor
-                ?.resolve({}),
-        splashFactory: InkRipple.splashFactory,
-        child: CustomPaint(
-          painter: ToneLinePainter(
-              tone: tone,
-              strokeWidth: selectedTone.value == tone ? 12 : 4),
-          size: const Size.square(50.0),
-        ),
+    return ChicletOutlinedButton(
+      onPressed: switch (state) {
+        ThinkingState() => () {
+            setState(() {
+              if (state.selectedTone == tone) {
+                state.selectedTone = null;
+              } else {
+                state.selectedTone = tone;
+              }
+            });
+          },
+        _ => null,
+      },
+      isPressed: state.selectedTone == tone,
+      width: 100,
+      height: 100,
+      buttonHeight: 8,
+      borderColor: Theme.of(context)
+          .elevatedButtonTheme
+          .style
+          ?.backgroundColor
+          ?.resolve({})?.withAlpha(150),
+      backgroundColor: Theme.of(context)
+          .elevatedButtonTheme
+          .style
+          ?.backgroundColor
+          ?.resolve({}),
+      splashFactory: InkRipple.splashFactory,
+      child: CustomPaint(
+        painter: ToneLinePainter(
+            tone: tone, strokeWidth: state.selectedTone == tone ? 12 : 4),
+        size: const Size.square(50.0),
       ),
     );
   }
