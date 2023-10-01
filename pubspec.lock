@@ -89,14 +89,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  chiclet:
-    dependency: "direct main"
-    description:
-      name: chiclet
-      sha256: dbecf71e3fa10fd7cb3fec7c90a9171e0e0630a8f3a72ac96cd4e8e4443134b3
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   cli_util:
     dependency: transitive
     description:
@@ -177,6 +169,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  draw_on_path:
+    dependency: "direct main"
+    description:
+      name: draw_on_path
+      sha256: "1542d67357a79d37fc5b741d3b7698ed73aa1a5e94d699f237fbbf61ec453683"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   equatable:
     dependency: "direct main"
     description:
