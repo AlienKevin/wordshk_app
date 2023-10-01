@@ -18,6 +18,7 @@ import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
+import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
@@ -90,6 +91,8 @@ main() async {
                 create: (_) => SpeechRateState()),
             ChangeNotifierProvider<BookmarkState>(
                 create: (_) => BookmarkState(), lazy: false),
+            ChangeNotifierProvider<ExerciseIntroductionState>(
+                create: (_) => ExerciseIntroductionState(prefs)),
           ],
           child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:wordshk/pages/tone_exercise_page.dart';
+import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
 
 class ExercisePage extends StatelessWidget {
   @override
@@ -24,7 +24,7 @@ class ExercisePage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ToneExercisePage()),
+                    MaterialPageRoute(builder: (context) => const ToneExerciseIntroductionPage()),
                   );
                 },
               ),
