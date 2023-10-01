@@ -21,8 +21,8 @@ class ToneExercisePage extends StatefulWidget {
 enum Tone4 {
   highLevel,
   rising,
-  lowLevel,
-  falling,
+  midLevel,
+  low,
 }
 
 enum Tone6 {
@@ -47,19 +47,23 @@ Tone6? tone6FromString(String s) {
 }
 
 bool tone4MatchesTone6(Tone4 tone4, Tone6 tone6) {
+  print(tone4);
+  print(tone6);
   return switch ((tone4, tone6)) {
     (Tone4.highLevel, Tone6.t1) ||
     (Tone4.rising, Tone6.t2 || Tone6.t5) ||
-    (Tone4.lowLevel, Tone6.t3 || Tone6.t6) ||
-    (Tone4.falling, Tone6.t4) =>
+    (Tone4.midLevel, Tone6.t3) ||
+    (Tone4.low, Tone6.t4 || Tone6.t6)=>
       true,
     _ => false,
   };
 }
 
+const Tone4 defaultTone = Tone4.midLevel;
+
 sealed class ExerciseState {
   final int expectedSyllableIndex;
-  Tone4 selectedTone = Tone4.lowLevel;
+  Tone4 selectedTone = defaultTone;
 
   ExerciseState(
       {required this.expectedSyllableIndex, required this.selectedTone});
@@ -89,12 +93,12 @@ class CheckedState implements ExerciseState {
 class ToneExercisePageState extends State<ToneExercisePage> {
   List<String> syllables = jyutpingFemaleSyllableNames.toList();
   ExerciseState state = ThinkingState(
-      selectedTone: Tone4.lowLevel,
+      selectedTone: defaultTone,
       expectedSyllableIndex:
           Random().nextInt(jyutpingFemaleSyllableNames.length));
   final GlobalKey<PronunciationButtonState> pronunciationButtonKey =
       GlobalKey<PronunciationButtonState>();
-  // item 2 is the default selected tone: low level tone
+  // item 2 is the default selected tone: mid level tone
   final ScrollController _scrollController = FixedExtentScrollController(initialItem: 2);
 
   @override
@@ -144,8 +148,8 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                   final tone = switch (index) {
                     0 => Tone4.highLevel,
                     1 => Tone4.rising,
-                    2 => Tone4.lowLevel,
-                    3 => Tone4.falling,
+                    2 => Tone4.midLevel,
+                    3 => Tone4.low,
                     _ => await (() async {
                       await Sentry.captureMessage("Tone exercise selected tone index $index outside the range from 0 to 3");
                       return state.selectedTone;
@@ -159,8 +163,8 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                 children: [
                   toneButton(Tone4.highLevel),
                   toneButton(Tone4.rising),
-                  toneButton(Tone4.lowLevel),
-                  toneButton(Tone4.falling),
+                  toneButton(Tone4.midLevel),
+                  toneButton(Tone4.low),
                 ],
               ),
             ),
@@ -209,12 +213,12 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                       state = ThinkingState(
                           expectedSyllableIndex: Random()
                               .nextInt(jyutpingFemaleSyllableNames.length),
-                          selectedTone: Tone4.lowLevel);
+                          selectedTone: defaultTone);
                     });
 
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       pronunciationButtonKey.currentState?.triggerPlay();
-                      // item 2 is the default selected tone: low level tone
+                      // item 2 is the default selected tone: mid level tone
                       _scrollController.jumpTo(2 * 100.0);
                     });
                   },
@@ -278,25 +282,25 @@ class ToneLinePainter extends CustomPainter {
         switch (tone) {
           Tone4.highLevel => strokeWidth / 2,
           Tone4.rising => 0.5 * size.height,
-          Tone4.lowLevel => 0.5 * size.height,
-          Tone4.falling => 0.5 * size.height,
+          Tone4.midLevel => 0.5 * size.height,
+          Tone4.low => 1.0 * size.height - strokeWidth / 2,
         });
     final endPoint = Offset(
         size.width,
         switch (tone) {
           Tone4.highLevel => strokeWidth / 2,
           Tone4.rising => 0.2,
-          Tone4.lowLevel => 0.5 * size.height,
-          Tone4.falling => 1.0 * size.height,
+          Tone4.midLevel => 0.5 * size.height,
+          Tone4.low => 1.0 * size.height - strokeWidth / 2,
         });
 
     var path = Path();
     path.moveTo(startPoint.dx, startPoint.dy);
     path.lineTo(endPoint.dx, endPoint.dy);
     canvas.drawTextOnPath(
-        (tone == Tone4.falling || tone == Tone4.rising) ? "  $syllable" : "   $syllable", path,
-        textAlignment: tone == Tone4.falling ? TextAlignment.bottom : TextAlignment.up,
-        textStyle: TextStyle(fontSize: 22, height: tone == Tone4.falling ? 2.5 : 1.4, letterSpacing: -1));
+        (tone == Tone4.low || tone == Tone4.rising) ? "  $syllable" : "   $syllable", path,
+        textAlignment: tone == Tone4.low ? TextAlignment.bottom : TextAlignment.up,
+        textStyle: TextStyle(fontSize: 22, height: tone == Tone4.low ? 2.5 : 1.4, letterSpacing: -1));
     canvas.drawLine(startPoint, endPoint, paint);
   }
 
