@@ -564,7 +564,6 @@ const jyutpingFemaleSyllableNames = {
   "ti6",
   "teon1",
   "dip6",
-  "index",
   "mi4",
   "dek1",
   "zau3",
