@@ -137,11 +137,11 @@ class ToneExercisePageState extends State<ToneExercisePage> {
               large: true,
             ),
             SizedBox(
-              height: 100,
+              height: 160,
               child: ListWheelScrollView(
                 itemExtent: 100,
                 clipBehavior: Clip.antiAlias,
-                physics: const PageScrollPhysics(),
+                physics: const FixedExtentScrollPhysics(),
                 controller: _scrollController,
                 onSelectedItemChanged: (index) async {
                   print(index);
