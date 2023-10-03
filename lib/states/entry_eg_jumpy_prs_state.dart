@@ -2,20 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EntryEgJumpyPrsState with ChangeNotifier {
-  bool isJumpy = false;
+  late bool isJumpy;
 
   EntryEgJumpyPrsState(SharedPreferences prefs) {
     final newIsJumpy = prefs.getBool("entryEgJumpyPrs");
-    isJumpy = newIsJumpy == null ? false : true;
+    isJumpy = newIsJumpy ?? false;
   }
 
-  void updateIsJumpy(bool newIsJumpy, {bool saveToSharedPreferences = true}) {
+  void updateIsJumpy(bool newIsJumpy) {
     isJumpy = newIsJumpy;
     notifyListeners();
-    if (saveToSharedPreferences) {
-      SharedPreferences.getInstance().then((prefs) async {
-        prefs.setBool("entryEgJumpyPrs", newIsJumpy);
-      });
-    }
+    SharedPreferences.getInstance().then((prefs) async {
+      prefs.setBool("entryEgJumpyPrs", newIsJumpy);
+    });
   }
 }
