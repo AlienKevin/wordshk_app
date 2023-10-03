@@ -88,7 +88,7 @@ main() async {
                 create: (_) => EntryEgJumpyPrsState(prefs)),
             ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
             ChangeNotifierProvider<SpeechRateState>(
-                create: (_) => SpeechRateState()),
+                create: (_) => SpeechRateState(prefs)),
             ChangeNotifierProvider<BookmarkState>(
                 create: (_) => BookmarkState(), lazy: false),
             ChangeNotifierProvider<ExerciseIntroductionState>(
