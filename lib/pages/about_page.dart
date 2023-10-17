@@ -185,6 +185,20 @@ class AboutPage extends StatelessWidget {
                                 .aboutWordshkPlatformsText3),
                       ]),
                 ),
+                const SizedBox(height: 10),
+                RichText(
+                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                    text: TextSpan(
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: [
+                          linkedTextSpan(
+                              AppLocalizations.of(context)!
+                                  .aboutWordshkCheckOutPrivacyNotice,
+                              "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md",
+                              icon: isMaterial(context)
+                                  ? Icons.lock_outlined
+                                  : CupertinoIcons.lock),
+                        ])),
                 const SizedBox(height: 40),
                 section(
                     AppLocalizations.of(context)!.aboutWordshkWantToHelpTitle,
