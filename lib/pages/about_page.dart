@@ -5,7 +5,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
-import '../widgets/scalable_text_span.dart';
+import 'dictionary_license_page.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -30,25 +30,37 @@ class AboutPage extends StatelessWidget {
               text: paragraph),
         ]);
 
-    linkedTextSpan(String text, String link, {IconData? icon}) {
+    linkedTextSpanWithOnTap(String text, void Function() onTap,
+        {IconData? icon}) {
       final color = Theme.of(context).colorScheme.secondary;
       return WidgetSpan(
           child: GestureDetector(
-              onTap: () => openLink(link),
+              onTap: onTap,
               child: Builder(builder: (context) {
                 return RichText(
-                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                    text: ScalableTextSpan(
-                      context,
-                      children: [
-                        icon == null
-                            ? const TextSpan()
-                            : WidgetSpan(child: Icon(icon, color: color)),
-                        TextSpan(text: text),
-                      ],
-                      style: TextStyle(color: color),
-                    ));
+                    text: TextSpan(
+                        children: [
+                      icon == null
+                          ? const TextSpan()
+                          : WidgetSpan(child: Icon(icon, color: color)),
+                      TextSpan(text: text),
+                    ],
+                        style: TextStyle(
+                            color: color,
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .fontSize)));
               })));
+    }
+
+    linkedTextSpan(String text, String link, {IconData? icon}) {
+      return linkedTextSpanWithOnTap(text, () => openLink(link), icon: icon);
+    }
+
+    internalLinkedTextSpan(String text, void Function() onTap,
+        {IconData? icon}) {
+      return linkedTextSpanWithOnTap(text, onTap, icon: icon);
     }
 
     bulletTextSpan(String text, String link) => [
@@ -109,6 +121,23 @@ class AboutPage extends StatelessWidget {
                   AppLocalizations.of(context)!.aboutWordshkOpenContentText,
                   "assets/images/wordshk_open_data.jpeg",
                 ),
+                const SizedBox(height: 10),
+                RichText(
+                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                    text: TextSpan(
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: [
+                          internalLinkedTextSpan(
+                              AppLocalizations.of(context)!
+                                  .aboutWordshkCheckOutLicense, () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DictionaryLicensePage()),
+                            );
+                          })
+                        ])),
                 const SizedBox(height: 40),
                 section(
                   AppLocalizations.of(context)!.aboutWordshkPlatformsTitle,

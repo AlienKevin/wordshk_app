@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../widgets/navigation_drawer.dart';
-
 class DictionaryLicensePage extends StatelessWidget {
   const DictionaryLicensePage({Key? key}) : super(key: key);
 
@@ -11,7 +9,6 @@ class DictionaryLicensePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
             title: Text(AppLocalizations.of(context)!.dictionaryLicense)),
-        drawer: const NavigationDrawer(),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
