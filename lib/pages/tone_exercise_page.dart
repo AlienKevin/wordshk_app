@@ -303,7 +303,7 @@ class ToneLinePainter extends CustomPainter {
     path.moveTo(startPoint.dx, startPoint.dy);
     path.lineTo(endPoint.dx, endPoint.dy);
     canvas.drawTextOnPath(
-        (tone == Tone4.low || tone == Tone4.rising) ? "  $syllable" : "   $syllable", path,
+        (tone == Tone4.rising) ? "  $syllable" : "   $syllable", path,
         textAlignment: tone == Tone4.low ? TextAlignment.bottom : TextAlignment.up,
         textStyle: TextStyle(fontSize: 22, height: tone == Tone4.low ? 2.5 : 1.4, letterSpacing: -1));
     canvas.drawLine(startPoint, endPoint, paint);
