@@ -136,7 +136,10 @@ class AboutPage extends StatelessWidget {
                                   builder: (context) =>
                                       const DictionaryLicensePage()),
                             );
-                          })
+                          },
+                              icon: isMaterial(context)
+                                  ? Icons.article_outlined
+                                  : CupertinoIcons.doc_text),
                         ])),
                 const SizedBox(height: 40),
                 section(
