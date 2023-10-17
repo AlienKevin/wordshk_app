@@ -29,6 +29,7 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
           if (openedInExercise) {
             Navigator.pop(context);
           } else {
+            Navigator.pop(context);
             Navigator.push(
               context,
               CustomPageRoute(builder: (context) => const ToneExercisePage()),
