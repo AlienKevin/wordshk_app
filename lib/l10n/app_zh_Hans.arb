@@ -109,8 +109,6 @@
     "toneExercise": "声调练习",
     "check": "核对",
     "next": "下一个",
-    "correctTone": "✅ {tone}",
-    "shouldBeTone": "❌应该是: {tone}",
 
     "preferences": "设置",
 

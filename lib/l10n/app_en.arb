@@ -120,8 +120,6 @@
     "toneExercise": "Tone Exercise",
     "check": "Check",
     "next": "Next",
-    "correctTone": "✅ Correct: {tone}",
-    "shouldBeTone": "❌ Should be: {tone}",
 
     "preferences": "Preferences",
 

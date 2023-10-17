@@ -26,7 +26,7 @@
 
     "inkModelDownloading": "下載緊手寫識別模型...",
     "inkModelFailedToDownload": "無法下載手寫識別模型。請檢查您嘅網路連結後重試。",
-    "tryAgain": "重試",
+    "tryAgain": "試多次",
     "done": "完成",
 
     "entry": "詞條",
@@ -111,8 +111,6 @@
     "toneExercise": "聲調練習",
     "check": "核對",
     "next": "下一個",
-    "correctTone": "✅ {tone}",
-    "shouldBeTone": "❌應該係: {tone}",
 
     "preferences": "設定",
 

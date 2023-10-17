@@ -3,11 +3,9 @@ import "dart:math";
 import 'package:draw_on_path/draw_on_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/constants.dart';
 
-import '../states/romanization_state.dart';
 import '../widgets/pronunciation_button.dart';
 import '../widgets/syllable_pronunciation_button.dart';
 
@@ -172,14 +170,8 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                 height: Theme.of(context).textTheme.displayMedium!.fontSize! / 2,
                 child: Center(
                     child: Text(switch (state) {
-                  CheckedState(isCorrect: true) => AppLocalizations.of(context)!
-                      .correctTone(context
-                          .read<RomanizationState>()
-                          .showPrs([syllables[state.expectedSyllableIndex]])),
-                  CheckedState(isCorrect: false) =>
-                    AppLocalizations.of(context)!.shouldBeTone(context
-                        .read<RomanizationState>()
-                        .showPrs([syllables[state.expectedSyllableIndex]])),
+                  CheckedState(isCorrect: true) => "✅",
+                  CheckedState(isCorrect: false) => "❌",
                   _ => ""
                 }))),
             ElevatedButton(
@@ -208,25 +200,38 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                       });
                     }
                   },
-                CheckedState() => () {
-                    setState(() {
-                      state = ThinkingState(
-                          expectedSyllableIndex: Random()
-                              .nextInt(jyutpingFemaleSyllableNames.length),
-                          selectedTone: defaultTone);
-                    });
+                CheckedState(isCorrect: final isCorrect) => () {
+                    // Go to next syllable is correct
+                    // Otherwise stay and try again
+                    if (isCorrect) {
+                      setState(() {
+                        state = ThinkingState(
+                            expectedSyllableIndex: Random()
+                                .nextInt(jyutpingFemaleSyllableNames.length),
+                            selectedTone: defaultTone);
+                      });
 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      pronunciationButtonKey.currentState?.triggerPlay();
-                      // item 2 is the default selected tone: mid level tone
-                      _scrollController.jumpTo(2 * 100.0);
-                    });
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        pronunciationButtonKey.currentState?.triggerPlay();
+                        // item 2 is the default selected tone: mid level tone
+                        _scrollController.jumpTo(2 * 100.0);
+                      });
+                    } else {
+                      setState(() {
+                        state = ThinkingState(
+                            expectedSyllableIndex: state.expectedSyllableIndex,
+                            selectedTone: state.selectedTone);
+                      });
+                    }
                   },
               },
               style: ElevatedButton.styleFrom(elevation: 10),
               child: switch (state) {
                 ThinkingState() => Text(AppLocalizations.of(context)!.check),
-                CheckedState() => Text(AppLocalizations.of(context)!.next),
+                CheckedState(isCorrect: final isCorrect) =>
+                    Text(isCorrect ?
+                      AppLocalizations.of(context)!.next
+                      : AppLocalizations.of(context)!.tryAgain),
               },
             ),
           ],
