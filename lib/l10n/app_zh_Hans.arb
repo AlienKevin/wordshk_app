@@ -106,6 +106,7 @@
     "toneExerciseIntroductionText1": "在这个练习中，你将练习识别广东话的调。传统上，广东话有六个调，编号1至6。以下，我们将以线条形式绘出这些调的音高水平。 ",
     "toneExerciseIntroductionText2": "不用担心6个调太多难以区分。近期，有些调已经渐渐融合。有些本地人都分不清楚2和5、4和6的区别，因为他们很相似。所以，你在练习中只需要分辨4个调。2和5会被视为同一个上升调，4和6会被视为同一个低平调。",
     "startExercise": "开始训练",
+    "backToExercise": "返回训练",
     "toneExercise": "声调练习",
     "check": "核对",
     "next": "下一个",

@@ -24,7 +24,7 @@ class ExercisePage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ToneExerciseIntroductionPage()),
+                    MaterialPageRoute(builder: (context) => const ToneExerciseIntroductionPage(openedInExercise: false)),
                   );
                 },
               ),

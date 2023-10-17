@@ -10,7 +10,9 @@ import '../custom_page_route.dart';
 import '../widgets/syllable_pronunciation_button.dart';
 
 class ToneExerciseIntroductionPage extends StatelessWidget {
-  const ToneExerciseIntroductionPage({Key? key}) : super(key: key);
+  final bool openedInExercise;
+
+  const ToneExerciseIntroductionPage({Key? key, required this.openedInExercise}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +25,17 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
     return IntroductionScreen(
         safeAreaList: const [false, false, true, true],
         onDone: () {
-          Navigator.push(
-            context,
-            CustomPageRoute(builder: (context) => const ToneExercisePage()),
-          );
-          context.read<ExerciseIntroductionState>().setToneExerciseIntroduced();
+          // Go back to previous tone exercise if there is any
+          if (openedInExercise) {
+            Navigator.pop(context);
+          } else {
+            Navigator.push(
+              context,
+              CustomPageRoute(builder: (context) => const ToneExercisePage()),
+            );
+            context.read<ExerciseIntroductionState>()
+                .setToneExerciseIntroduced();
+          }
         },
         showSkipButton: false,
         skipOrBackFlex: 0,
@@ -35,7 +43,7 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
         showBackButton: true,
         back: const Icon(Icons.arrow_back),
         next: const Icon(Icons.arrow_forward),
-        done: Text(s.startExercise, style: const TextStyle(fontWeight: FontWeight.w600)),
+        done: Text(openedInExercise ? s.backToExercise : s.startExercise, style: const TextStyle(fontWeight: FontWeight.w600)),
         pages: [
           PageViewModel(
             titleWidget: Align(
