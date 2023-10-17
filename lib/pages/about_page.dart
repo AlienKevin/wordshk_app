@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:wordshk/pages/quality_control_page.dart';
 
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
@@ -109,6 +110,24 @@ class AboutPage extends StatelessWidget {
                   AppLocalizations.of(context)!.aboutWordshkTenetsText,
                   "assets/images/cantonese_map.png",
                 ),
+                const SizedBox(height: 10),
+                RichText(
+                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                    text: TextSpan(
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: [
+                          internalLinkedTextSpan(
+                              AppLocalizations.of(context)!
+                                  .aboutWordshkCheckOutQualityControl, () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const QualityControlPage()),
+                            );
+                          },
+                              icon: PlatformIcons(context).checkMarkCircledOutline),
+                        ])),
                 const SizedBox(height: 40),
                 sectionWithImage(
                   AppLocalizations.of(context)!.aboutWordshkPurposeTitle,

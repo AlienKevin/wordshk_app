@@ -113,8 +113,7 @@ class _EntryPageState extends State<EntryPage> {
                                           context,
                                           CustomPageRoute(
                                               builder: (context) =>
-                                                  const QualityControlPage(
-                                                      useBackNavigation: true)),
+                                                  const QualityControlPage()),
                                         );
                                       },
                                       child: Text(AppLocalizations.of(context)!

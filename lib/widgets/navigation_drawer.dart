@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/preferences_page.dart';
-import 'package:wordshk/pages/quality_control_page.dart';
 
 import '../constants.dart';
 import '../custom_page_route.dart';
@@ -111,11 +110,6 @@ class NavigationDrawer extends StatelessWidget {
                       ? Icons.info_outline
                       : CupertinoIcons.info,
                   (_) => const AboutPage()),
-              const Divider(),
-              drawerButton(
-                  AppLocalizations.of(context)!.qualityControl,
-                  PlatformIcons(context).checkMark,
-                  (_) => const QualityControlPage(useBackNavigation: false)),
             ],
           ),
         ));
