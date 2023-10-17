@@ -286,15 +286,15 @@ class ToneLinePainter extends CustomPainter {
         -strokeWidth,
         switch (tone) {
           Tone4.highLevel => strokeWidth / 2,
-          Tone4.rising => 0.5 * size.height,
+          Tone4.rising => 0.7 * size.height,
           Tone4.midLevel => 0.5 * size.height,
           Tone4.low => 1.0 * size.height - strokeWidth / 2,
         });
     final endPoint = Offset(
-        size.width,
+        size.width + strokeWidth,
         switch (tone) {
           Tone4.highLevel => strokeWidth / 2,
-          Tone4.rising => 0.2,
+          Tone4.rising => 0.2 * size.height,
           Tone4.midLevel => 0.5 * size.height,
           Tone4.low => 1.0 * size.height - strokeWidth / 2,
         });
