@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +44,6 @@ class _EntryPageState extends State<EntryPage> {
   void initState() {
     super.initState();
     () async {
-      final session = await AudioSession.instance;
-      await session.configure(const AudioSessionConfiguration.speech());
       try {
         final json = await api.getEntryGroupJson(id: widget.id);
         setState(() {
