@@ -69,14 +69,25 @@ class _BookmarkPageState extends State<BookmarkPage> {
   }
 
   @override
-  void dispose() {
+  void activate() {
+    super.activate();
+    context
+        .read<BookmarkState>()
+        .registerRemoveItemListener(removeBookmarkListener);
+    context
+        .read<BookmarkState>()
+        .registerAddItemListener(addBookmarkListener);
+  }
+
+  @override
+  void deactivate() {
     context
         .read<BookmarkState>()
         .unregisterRemoveItemListener(removeBookmarkListener);
     context
         .read<BookmarkState>()
         .unregisterAddItemListener(addBookmarkListener);
-    super.dispose();
+    super.deactivate();
   }
 
   Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
