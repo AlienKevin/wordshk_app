@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:wordshk/states/speech_rate_state.dart';
+import 'package:wordshk/models/player.dart';
 import 'package:wordshk/widgets/pronunciation_button.dart';
-
-import '../states/player_state.dart';
 
 class TtsPronunciationButton extends StatelessWidget {
   final String text;
@@ -19,13 +16,8 @@ class TtsPronunciationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Consumer<SpeechRateState>(builder: (context, speechRateState, child) {
-        final rate = atHeader
-            ? speechRateState.entryHeaderRate
-            : speechRateState.entryEgRate;
-        return PronunciationButton(
-          play: (key) => context.read<PlayerState>().ttsPlay(key, text, rate),
+      PronunciationButton(
+          player: TtsPlayer(text: text, atHeader: atHeader),
           alignment: alignment,
         );
-      });
 }

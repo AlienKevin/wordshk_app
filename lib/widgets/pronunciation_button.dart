@@ -2,17 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/states/speech_rate_state.dart';
 
+import '../models/player.dart';
 import '../states/player_state.dart';
 
 class PronunciationButton extends StatefulWidget {
-  final void Function(int) play;
+  final Player player;
   final Alignment alignment;
   final bool large;
 
   const PronunciationButton({
     Key? key,
-    required this.play,
+    required this.player,
     required this.alignment,
     this.large = false,
   }) : super(key: key);
@@ -22,15 +24,8 @@ class PronunciationButton extends StatefulWidget {
 }
 
 class PronunciationButtonState extends State<PronunciationButton> {
-  int? playerKey;
-
   void triggerPlay() {
-    if (playerKey == null) {
-      setState(() {
-        playerKey = context.read<PlayerState>().getPlayerKey();
-      });
-    }
-    widget.play(playerKey!);
+    context.read<PlayerState>().play(widget.player, context.read<SpeechRateState>());
   }
 
   @override
@@ -41,9 +36,7 @@ class PronunciationButtonState extends State<PronunciationButton> {
             width: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
             child: ElevatedButton(
               onPressed: triggerPlay,
-              child: Icon(
-                  playerKey != null &&
-                          context.watch<PlayerState>().playerKey == playerKey
+              child: Icon(context.watch<PlayerState>().currentPlayer == widget.player
                       ? isMaterial(context)
                           ? Icons.stop_circle
                           : CupertinoIcons.stop_circle_fill
@@ -56,8 +49,7 @@ class PronunciationButtonState extends State<PronunciationButton> {
             visualDensity: VisualDensity.compact,
             tooltip: "Pronunciation",
             alignment: widget.alignment,
-            icon: Icon(playerKey != null &&
-                    context.watch<PlayerState>().playerKey == playerKey
+            icon: Icon(context.watch<PlayerState>().currentPlayer == widget.player
                 ? isMaterial(context)
                     ? Icons.stop_circle
                     : CupertinoIcons.stop_circle_fill

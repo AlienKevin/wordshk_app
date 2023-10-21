@@ -2,20 +2,19 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:wordshk/states/speech_rate_state.dart';
 
-import '../models/player_mode.dart';
-import '../models/pronunciation_method.dart';
+import '../models/player.dart';
 import '../models/speech_rate.dart';
 
 class PlayerState with ChangeNotifier {
   final FlutterTts ttsPlayer = FlutterTts();
   late AudioPlayer syllablesPlayer = AudioPlayer();
-  PlayerMode playerMode = PlayerMode.none;
-  int? playerKey;
-  int nextPlayerKey = 0;
+  Player? currentPlayer;
   bool playerStoppedDueToSwitch = false;
 
   PlayerState() {
@@ -29,17 +28,11 @@ class PlayerState with ChangeNotifier {
     })();
   }
 
-  int getPlayerKey() {
-    nextPlayerKey += 1;
-    return nextPlayerKey - 1;
-  }
-
-  Future<bool> setPlayerKey(int newKey) async {
-    if (playerKey != null) {
+  Future<bool> play(Player newPlayer, SpeechRateState speechRateState) async {
+    if (currentPlayer != null) {
       await stopHelper();
-      if (playerKey == newKey) {
-        playerMode = PlayerMode.none;
-        playerKey = null;
+      if (currentPlayer == newPlayer) {
+        currentPlayer = null;
         notifyListeners();
         playerStoppedDueToSwitch = false;
         return true; // break
@@ -47,30 +40,33 @@ class PlayerState with ChangeNotifier {
         playerStoppedDueToSwitch = true;
       }
     }
-    playerKey = newKey;
+    currentPlayer = newPlayer;
+    notifyListeners();
+    switch (newPlayer) {
+      case TtsPlayer():
+        await ttsPlay(newPlayer, speechRateState);
+        break;
+      case SyllablesPlayer():
+        await syllablesPlay(newPlayer, speechRateState);
+        break;
+    }
     return false;
   }
 
   refreshPlayerState() async {
     await stop();
-    nextPlayerKey = 0;
+    currentPlayer = null;
     playerStoppedDueToSwitch = false;
     notifyListeners();
   }
 
-  Future<void> syllablesPlay(int newKey, List<List<String>> prs,
-      PronunciationMethod method, SpeechRate rate) async {
-    if (await setPlayerKey(newKey)) {
-      return;
-    }
-    playerMode = PlayerMode.syllables;
-    notifyListeners();
+  Future<void> syllablesPlay(SyllablesPlayer player, SpeechRateState speechRateState) async {
     await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
-        children: prs
+        children: player.prs
             .mapIndexed((index, syllables) => [
                   ...syllables.map((syllable) => AudioSource.uri(Uri.parse(
                       "asset:///assets/jyutping_female/$syllable.mp3"))),
-                  ...(index == prs.length - 1
+                  ...(index == player.prs.length - 1
                       ? <AudioSource>[]
                       : [
                           AudioSource.uri(Uri.parse(
@@ -82,14 +78,16 @@ class PlayerState with ChangeNotifier {
     syllablesPlayer.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
         if (!playerStoppedDueToSwitch) {
-          playerMode = PlayerMode.none;
-          playerKey = null;
+          currentPlayer = null;
           notifyListeners();
         } else {
           playerStoppedDueToSwitch = false;
         }
       }
     });
+    final rate = player.atHeader
+        ? speechRateState.entryHeaderRate
+        : speechRateState.entryEgRate;
     final speed = rate == SpeechRate.verySlow
         ? 0.8
         : rate == SpeechRate.slow
@@ -102,23 +100,21 @@ class PlayerState with ChangeNotifier {
     await syllablesPlayer.play();
   }
 
-  Future<void> ttsPlay(int newKey, String text, SpeechRate rate) async {
-    if (await setPlayerKey(newKey)) {
-      return;
-    }
-    playerMode = PlayerMode.tts;
-    notifyListeners();
+  Future<void> ttsPlay(TtsPlayer player, SpeechRateState speechRateState) async {
+    final rate = player.atHeader
+        ? speechRateState.entryHeaderRate
+        : speechRateState.entryEgRate;
+
     final speed = rate == SpeechRate.verySlow
         ? 0.15
         : rate == SpeechRate.slow
             ? 0.3
             : 0.5;
     await ttsPlayer.setSpeechRate(speed);
-    await ttsPlayer.speak(text);
+    await ttsPlayer.speak(player.text);
     ttsPlayer.setCompletionHandler(() {
       if (!playerStoppedDueToSwitch) {
-        playerMode = PlayerMode.none;
-        playerKey = null;
+        currentPlayer = null;
         notifyListeners();
       } else {
         playerStoppedDueToSwitch = false;
@@ -127,23 +123,19 @@ class PlayerState with ChangeNotifier {
   }
 
   stop() async {
-    if (playerMode != PlayerMode.none) {
+    if (currentPlayer != null) {
       await stopHelper();
-      playerMode = PlayerMode.none;
-      playerKey = null;
+      currentPlayer = null;
     }
   }
 
   stopHelper() async {
-    switch (playerMode) {
-      case PlayerMode.tts:
+    switch (currentPlayer!) {
+      case TtsPlayer():
         await ttsPlayer.stop();
         break;
-      case PlayerMode.syllables:
+      case SyllablesPlayer():
         await syllablesPlayer.stop();
-        break;
-      case PlayerMode.none:
-        // do nothing
         break;
     }
   }
