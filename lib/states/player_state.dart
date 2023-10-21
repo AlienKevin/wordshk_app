@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:audio_session/audio_session.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:sentry/sentry_io.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 
 import '../models/player.dart';
@@ -96,21 +98,50 @@ class PlayerState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> syllablesPlay(SyllablesPlayer player, SpeechRateState speechRateState) async {
-    await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
-        children: player.prs
-            .mapIndexed((index, syllables) => [
-                  ...syllables.map((syllable) => AudioSource.uri(Uri.parse(
-                      "asset:///assets/jyutping_female/$syllable.mp3"))),
-                  ...(index == player.prs.length - 1
-                      ? <AudioSource>[]
-                      : [
-                          AudioSource.uri(Uri.parse(
-                              "asset:///assets/silence_800ms.mp3"))
-                        ])
-                ])
-            .expand((syllable) => syllable)
-            .toList()));
+  Future<void> syllablesPlay(
+      SyllablesPlayer player, SpeechRateState speechRateState) async {
+    try {
+      await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
+          children: player.prs
+              .mapIndexed((index, syllables) => [
+                    ...syllables.map((syllable) => AudioSource.uri(Uri.parse(
+                        "asset:///assets/jyutping_female/$syllable.mp3"))),
+                    ...(index == player.prs.length - 1
+                        ? <AudioSource>[]
+                        : [
+                            AudioSource.uri(
+                                Uri.parse("asset:///assets/silence_800ms.mp3"))
+                          ])
+                  ])
+              .expand((syllable) => syllable)
+              .toList()));
+    } on PlayerException catch (e) {
+      if (kDebugMode) {
+        print(
+            "player_state[syllable audio load error]: error code=${e.code} message=${e.message}");
+      }
+      currentPlayer = null;
+      notifyListeners();
+      Sentry.captureMessage(
+          "player_state[syllable audio load error]: error code=${e.code} message=${e.message}");
+    } on PlayerInterruptedException catch (e) {
+      // This call was interrupted since another audio source was loaded or the
+      // player was stopped or disposed before this audio source could complete
+      // loading.
+      if (kDebugMode) {
+        print("player_state[syllable audio load interrupted]: ${e.message}");
+      }
+      currentPlayer = null;
+      notifyListeners();
+    } catch (e) {
+      // Fallback for all other errors
+      if (kDebugMode) {
+        print("player_state[syllable audio load error]: $e");
+      }
+      currentPlayer = null;
+      notifyListeners();
+      Sentry.captureMessage("player_state[syllable audio load error]: $e");
+    }
     final rate = player.atHeader
         ? speechRateState.entryHeaderRate
         : speechRateState.entryEgRate;
@@ -137,7 +168,8 @@ class PlayerState with ChangeNotifier {
     await syllablesPlayer.play();
   }
 
-  Future<void> ttsPlay(TtsPlayer player, SpeechRateState speechRateState) async {
+  Future<void> ttsPlay(
+      TtsPlayer player, SpeechRateState speechRateState) async {
     final rate = player.atHeader
         ? speechRateState.entryHeaderRate
         : speechRateState.entryEgRate;
