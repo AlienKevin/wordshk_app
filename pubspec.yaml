@@ -16,7 +16,7 @@ dependencies:
   flutter_rust_bridge: ^1.80.1
   equatable: ^2.0.0
   flutter_native_splash: ^2.3.2
-  just_audio: ^0.9.34
+  just_audio: ^0.9.35
   expandable: ^5.0.1
   url_launcher: ^6.1.12
   intl: ^0.18.1
@@ -26,7 +26,8 @@ dependencies:
   shared_preferences: ^2.2.0
   scrollable_positioned_list: ^0.3.8
   scroll_to_index: ^3.0.1
-  flutter_tts: ^3.7.0
+  flutter_tts: ^3.8.3
+  audio_session: ^0.1.16
   keyboard_actions: ^4.2.0
   csv: ^5.0.2
   flutter_keyboard_visibility: ^5.4.1

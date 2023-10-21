@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
@@ -12,20 +12,56 @@ import '../models/player.dart';
 import '../models/speech_rate.dart';
 
 class PlayerState with ChangeNotifier {
-  final FlutterTts ttsPlayer = FlutterTts();
-  late AudioPlayer syllablesPlayer = AudioPlayer();
+  late final FlutterTts ttsPlayer;
+  late final AudioPlayer syllablesPlayer;
+  late final AudioSession session;
   Player? currentPlayer;
   bool playerStoppedDueToSwitch = false;
 
   PlayerState() {
-    (() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.speech());
+      session.interruptionEventStream.listen((event) async {
+        if (event.begin) {
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+            case AudioInterruptionType.pause:
+            case AudioInterruptionType.unknown:
+              // Another app started playing audio and we should pause.
+              await stop();
+              break;
+          }
+        } else {
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+            case AudioInterruptionType.pause:
+            case AudioInterruptionType.unknown:
+              // The interruption ended but we should not resume.
+              // For now we don't resume and let the user manually replays.
+              break;
+          }
+        }
+      });
+
+      syllablesPlayer = AudioPlayer();
+
+      ttsPlayer = FlutterTts();
       await ttsPlayer.setSharedInstance(true);
       await ttsPlayer.setLanguage("zh-HK");
       await ttsPlayer.setSpeechRate(0.5);
       await ttsPlayer.setVolume(Platform.isIOS ? 0.3 : 1.0);
       await ttsPlayer.setPitch(1.0);
       await ttsPlayer.isLanguageAvailable("zh-HK");
-    })();
+      ttsPlayer.setCompletionHandler(() {
+        if (!playerStoppedDueToSwitch) {
+          currentPlayer = null;
+          notifyListeners();
+        } else {
+          playerStoppedDueToSwitch = false;
+        }
+      });
+    });
   }
 
   Future<bool> play(Player newPlayer, SpeechRateState speechRateState) async {
@@ -75,16 +111,6 @@ class PlayerState with ChangeNotifier {
                 ])
             .expand((syllable) => syllable)
             .toList()));
-    syllablesPlayer.playerStateStream.listen((state) {
-      if (state.processingState == ProcessingState.completed) {
-        if (!playerStoppedDueToSwitch) {
-          currentPlayer = null;
-          notifyListeners();
-        } else {
-          playerStoppedDueToSwitch = false;
-        }
-      }
-    });
     final rate = player.atHeader
         ? speechRateState.entryHeaderRate
         : speechRateState.entryEgRate;
@@ -97,6 +123,17 @@ class PlayerState with ChangeNotifier {
     await syllablesPlayer.setSpeed(speed);
     await syllablesPlayer.setVolume(volume);
     await syllablesPlayer.seek(Duration.zero, index: 0);
+
+    syllablesPlayer.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        if (!playerStoppedDueToSwitch) {
+          currentPlayer = null;
+          notifyListeners();
+        } else {
+          playerStoppedDueToSwitch = false;
+        }
+      }
+    });
     await syllablesPlayer.play();
   }
 
@@ -111,21 +148,22 @@ class PlayerState with ChangeNotifier {
             ? 0.3
             : 0.5;
     await ttsPlayer.setSpeechRate(speed);
-    await ttsPlayer.speak(player.text);
-    ttsPlayer.setCompletionHandler(() {
-      if (!playerStoppedDueToSwitch) {
-        currentPlayer = null;
-        notifyListeners();
-      } else {
-        playerStoppedDueToSwitch = false;
-      }
-    });
+    if (await session.setActive(true)) {
+      await ttsPlayer.speak(player.text);
+    } else {
+      // The request was denied and the app should not play audio
+      // e.g. a phone call is in progress.
+      currentPlayer = null;
+      notifyListeners();
+      return;
+    }
   }
 
   stop() async {
     if (currentPlayer != null) {
       await stopHelper();
       currentPlayer = null;
+      notifyListeners();
     }
   }
 
