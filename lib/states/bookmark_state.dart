@@ -5,12 +5,10 @@ import 'package:wordshk/main.dart';
 import '../models/entry.dart';
 
 typedef RemoveBookmarkCallback = void Function(int entryId);
-typedef ClearBookmarkCallback = void Function();
 
 class BookmarkState with ChangeNotifier {
   List<int> _bookmarks = [];
   final List<RemoveBookmarkCallback> _onRemoveListeners = [];
-  final List<ClearBookmarkCallback> _onClearListeners = [];
 
   BookmarkState() {
     _loadBookmarks();
@@ -23,14 +21,6 @@ class BookmarkState with ChangeNotifier {
 
   void unregisterRemoveBookmarkListener(RemoveBookmarkCallback listener) {
     _onRemoveListeners.remove(listener);
-  }
-
-  void registerClearBookmarkListener(ClearBookmarkCallback listener) {
-    _onClearListeners.add(listener);
-  }
-
-  void unregisterClearBookmarkListener(ClearBookmarkCallback listener) {
-    _onClearListeners.remove(listener);
   }
 
   List<int> get bookmarks => _bookmarks;
@@ -65,13 +55,6 @@ class BookmarkState with ChangeNotifier {
     for (final listener in _onRemoveListeners) {
       listener(entryId);
     }
-    notifyListeners();
-  }
-
-  Future<void> clearBookmarks() async {
-    final db = await bookmarkDatabase;
-    await db.delete('bookmarks');
-    _bookmarks.clear();
     notifyListeners();
   }
 

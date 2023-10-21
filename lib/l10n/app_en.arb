@@ -113,7 +113,10 @@
     "bookmarks": "Bookmarks",
     "noBookmarks": "No bookmarks yet",
     "edit": "Edit",
+    "all": "All",
+    "none": "None",
     "bookmarkDeleteConfirmation": "Are you sure you want to delete those bookmarks?",
+    "delete": "Delete",
     "cancel": "Cancel",
     "confirm": "Confirm",
 

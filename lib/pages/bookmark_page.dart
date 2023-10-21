@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry/sentry.dart';
 import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/models/entry_language.dart';
 
@@ -37,7 +38,6 @@ class EditMode extends Mode {
 class _BookmarkPageState extends State<BookmarkPage> {
   final _bookmarkSummaries = <int, EntrySummary>{};
   late RemoveBookmarkCallback removeBookmarkListener;
-  late ClearBookmarkCallback clearBookmarkListener;
   bool _isLoading = false;
   bool _hasMore = true;
   Mode _mode = ViewMode();
@@ -52,18 +52,9 @@ class _BookmarkPageState extends State<BookmarkPage> {
       });
     };
 
-    clearBookmarkListener = () {
-      setState(() {
-        _bookmarkSummaries.clear();
-      });
-    };
-
     context
         .read<BookmarkState>()
         .registerRemoveBookmarkListener(removeBookmarkListener);
-    context
-        .read<BookmarkState>()
-        .registerClearBookmarkListener(clearBookmarkListener);
 
     _loadMore();
   }
@@ -73,9 +64,6 @@ class _BookmarkPageState extends State<BookmarkPage> {
     context
         .read<BookmarkState>()
         .unregisterRemoveBookmarkListener(removeBookmarkListener);
-    context
-        .read<BookmarkState>()
-        .unregisterClearBookmarkListener(clearBookmarkListener);
     super.dispose();
   }
 
@@ -125,16 +113,30 @@ class _BookmarkPageState extends State<BookmarkPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.bookmarks),
-        actions: [
-          IconButton(
-            icon: Icon(PlatformIcons(context).edit),
-            onPressed: () {
-              setState(() {
-                _mode = EditMode(selectedBookmarks: HashSet<int>());
-              });
-            },
-          ),
-        ],
+        actions: _bookmarkSummaries.isEmpty
+            ? []
+            : [
+                TextButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                  child: Text(switch (_mode) {
+                    ViewMode() => AppLocalizations.of(context)!.edit,
+                    EditMode() => AppLocalizations.of(context)!.done,
+                  }),
+                  onPressed: () {
+                    setState(() {
+                      _mode = switch (_mode) {
+                        ViewMode() =>
+                          EditMode(selectedBookmarks: HashSet<int>()),
+                        EditMode() => ViewMode(),
+                      };
+                    });
+                  },
+                ),
+              ],
       ),
       drawer: const NavigationDrawer(),
       body: Consumer<BookmarkState>(
@@ -212,6 +214,129 @@ class _BookmarkPageState extends State<BookmarkPage> {
                   },
                   separatorBuilder: (context, index) => const Divider(),
                 )),
+      bottomNavigationBar: switch (_mode) {
+        EditMode(selectedBookmarks: var selectedBookmarks)
+            when _bookmarkSummaries.isNotEmpty =>
+          BottomAppBar(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            height: Theme.of(context)
+                    .elevatedButtonTheme
+                    .style!
+                    .textStyle!
+                    .resolve({})!.fontSize! *
+                4,
+            child: Row(
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
+                  ),
+                  onPressed: selectedBookmarks.isEmpty
+                      ? null
+                      : () {
+                          showPlatformDialog(
+                            context: context,
+                            builder: (_) => PlatformAlertDialog(
+                              title: Text(AppLocalizations.of(context)!
+                                  .bookmarkDeleteConfirmation),
+                              actions: [
+                                PlatformDialogAction(
+                                  child: PlatformText(
+                                      AppLocalizations.of(context)!.cancel),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                PlatformDialogAction(
+                                  child: PlatformText(
+                                      AppLocalizations.of(context)!.confirm),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    for (final id in selectedBookmarks) {
+                                      context
+                                          .read<BookmarkState>()
+                                          .removeBookmark(id);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                  child: Text(AppLocalizations.of(context)!.delete),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      ),
+                    ),
+                    onPressed: () async {
+                      switch (_mode) {
+                        case ViewMode():
+                          {
+                            await Sentry.captureMessage(
+                                'bookmark_page: All button pressed in ViewMode even though it should only be present in EditMode.');
+                            break;
+                          }
+                        case EditMode(selectedBookmarks: var selectedBookmarks):
+                          if (selectedBookmarks.length <
+                              _bookmarkSummaries.length) {
+                            setState(() {
+                              for (final id in _bookmarkSummaries.keys) {
+                                selectedBookmarks.add(id);
+                              }
+                            });
+                          } else {
+                            setState(() {
+                              selectedBookmarks.clear();
+                            });
+                          }
+                          break;
+                      }
+                    },
+                    child: (() {
+                      final textStyle = DefaultTextStyle.of(context).style;
+                      final maxWidth = getMaxWidthForTexts(
+                        AppLocalizations.of(context)!.all,
+                        AppLocalizations.of(context)!.none,
+                        textStyle,
+                      );
+                      return SizedBox(
+                        width: maxWidth,
+                        child: Text(
+                          selectedBookmarks.length < _bookmarkSummaries.length
+                              ? AppLocalizations.of(context)!.all
+                              : AppLocalizations.of(context)!.none,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    })()),
+              ],
+            ),
+          ),
+        _ => null,
+      },
     );
   }
+}
+
+double getMaxWidthForTexts(String text1, String text2, TextStyle style) {
+  final textPainter1 = TextPainter(
+    text: TextSpan(text: text1, style: style),
+    textDirection: TextDirection.ltr,
+  );
+
+  final textPainter2 = TextPainter(
+    text: TextSpan(text: text2, style: style),
+    textDirection: TextDirection.ltr,
+  );
+
+  textPainter1.layout();
+  textPainter2.layout();
+
+  return [textPainter1.width, textPainter2.width]
+          .reduce((a, b) => a > b ? a : b) *
+      0.5;
 }
