@@ -6,12 +6,14 @@ import 'package:sqflite/sqflite.dart';
 import '../models/entry.dart';
 
 typedef RemoveItemCallback = void Function(int entryId);
+typedef AddItemCallback = Future<void> Function(int entryId);
 
 class EntryItemState with ChangeNotifier {
   final String tableName;
   final Future<Database> Function() getDatabase;
   List<int> _items = [];
   final List<RemoveItemCallback> _onRemoveListeners = [];
+  final List<AddItemCallback> _onAddListeners = [];
 
   EntryItemState({required this.tableName, required this.getDatabase}) {
     _loadItems();
@@ -24,6 +26,14 @@ class EntryItemState with ChangeNotifier {
 
   void unregisterRemoveItemListener(RemoveItemCallback listener) {
     _onRemoveListeners.remove(listener);
+  }
+
+  void registerAddItemListener(AddItemCallback listener) {
+    _onAddListeners.add(listener);
+  }
+
+  void unregisterAddItemListener(AddItemCallback listener) {
+    _onAddListeners.remove(listener);
   }
 
   List<int> get items => _items;
@@ -63,6 +73,9 @@ class EntryItemState with ChangeNotifier {
       print("added to $tableName: $result");
     }
     _items.insert(0, entryId);
+    for (final listener in _onAddListeners) {
+      await listener(entryId);
+    }
     notifyListeners();
   }
 

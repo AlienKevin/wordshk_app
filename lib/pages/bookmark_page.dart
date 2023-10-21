@@ -38,7 +38,8 @@ class EditMode extends Mode {
 
 class _BookmarkPageState extends State<BookmarkPage> {
   final _bookmarkSummaries = <int, EntrySummary>{};
-  late RemoveItemCallback removeBookmarkListener;
+  late final RemoveItemCallback removeBookmarkListener;
+  late final AddItemCallback addBookmarkListener;
   bool _isLoading = false;
   bool _hasMore = true;
   Mode _mode = ViewMode();
@@ -52,10 +53,17 @@ class _BookmarkPageState extends State<BookmarkPage> {
         _bookmarkSummaries.remove(id);
       });
     };
-
     context
         .read<BookmarkState>()
         .registerRemoveItemListener(removeBookmarkListener);
+
+    addBookmarkListener = (id) async {
+      final summaries = await fetchSummaries([id]);
+      setState(() {
+        _bookmarkSummaries.addAll(summaries);
+      });
+    };
+    context.read<BookmarkState>().registerAddItemListener(addBookmarkListener);
 
     _loadMore();
   }
@@ -65,7 +73,23 @@ class _BookmarkPageState extends State<BookmarkPage> {
     context
         .read<BookmarkState>()
         .unregisterRemoveItemListener(removeBookmarkListener);
+    context
+        .read<BookmarkState>()
+        .unregisterAddItemListener(addBookmarkListener);
     super.dispose();
+  }
+
+  Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
+    final script = getScript(context);
+    final isEngDef =
+        context.read<EntryLanguageState>().language == EntryLanguage.english;
+    return api
+        .getEntrySummaries(
+          entryIds: Uint32List.fromList(ids),
+          script: script,
+          isEngDef: isEngDef,
+        )
+        .then((summaries) => LinkedHashMap.fromIterables(ids, summaries));
   }
 
   Future<LinkedHashMap<int, EntrySummary>> _fetchMoreBookmarks(int amount) {
@@ -73,16 +97,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
     if (allBookmarks.length > _bookmarkSummaries.length) {
       final ids = allBookmarks.sublist(_bookmarkSummaries.length,
           min(_bookmarkSummaries.length + amount, allBookmarks.length));
-      final script = getScript(context);
-      final isEngDef =
-          context.read<EntryLanguageState>().language == EntryLanguage.english;
-      return api
-          .getEntrySummaries(
-            entryIds: Uint32List.fromList(ids),
-            script: script,
-            isEngDef: isEngDef,
-          )
-          .then((summaries) => LinkedHashMap.fromIterables(ids, summaries));
+      return fetchSummaries(ids);
     } else {
       return Future.value(LinkedHashMap<int, EntrySummary>());
     }
