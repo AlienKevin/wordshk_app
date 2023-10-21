@@ -289,6 +289,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                       ),
                     ),
                     onPressed: () async {
+                      final allBookmarks = context.read<BookmarkState>().items;
                       switch (_mode) {
                         case ViewMode():
                           {
@@ -298,11 +299,9 @@ class _BookmarkPageState extends State<BookmarkPage> {
                           }
                         case EditMode(selectedBookmarks: var selectedBookmarks):
                           if (selectedBookmarks.length <
-                              _bookmarkSummaries.length) {
+                              allBookmarks.length) {
                             setState(() {
-                              for (final id in _bookmarkSummaries.keys) {
-                                selectedBookmarks.add(id);
-                              }
+                              selectedBookmarks.addAll(allBookmarks);
                             });
                           } else {
                             setState(() {
