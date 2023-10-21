@@ -101,6 +101,13 @@
 
     "bookmarks": "收藏",
     "noBookmarks": "尚无收藏～",
+    "edit": "编辑",
+    "all": "全选",
+    "none": "全不选",
+    "bookmarkDeleteConfirmation": "请问你是否确定要刪除这些收藏？",
+    "delete": "刪除",
+    "cancel": "取消",
+    "confirm": "确定",
 
     "exercise": "练习",
     "toneExerciseIntroductionText1": "在这个练习中，你将练习识别广东话的调。传统上，广东话有六个调，编号1至6。以下，我们将以线条形式绘出这些调的音高水平。 ",

@@ -103,6 +103,13 @@
 
     "bookmarks": "收藏",
     "noBookmarks": "未有收藏～",
+    "edit": "編輯",
+    "all": "全選",
+    "none": "全唔選",
+    "bookmarkDeleteConfirmation": "請問你係咪確定要刪除呢啲收藏？",
+    "delete": "刪除",
+    "cancel": "取消",
+    "confirm": "確定",
 
     "exercise": "練習",
     "toneExerciseIntroductionText1": "喺呢個練習裡面，你會練習識別廣東話嘅調。傳統上，廣東話有六個調，編號1至6。下面，我哋會以線條形式繪出呢啲調嘅音高水平。",
