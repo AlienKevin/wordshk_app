@@ -112,6 +112,10 @@
 
     "bookmarks": "Bookmarks",
     "noBookmarks": "No bookmarks yet",
+    "edit": "Edit",
+    "bookmarkDeleteConfirmation": "Are you sure you want to delete those bookmarks?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
 
     "exercise": "Exercise",
     "toneExerciseIntroductionText1": "In this exercise, you'll practice identifying the Cantonese tones. Traditionally, there are six tones in Cantonese numbered 1 to 6. Below, we'll plot the pitch levels of these tones as lines for your reference.",

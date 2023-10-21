@@ -24,18 +24,59 @@ class BookmarkPage extends StatefulWidget {
   _BookmarkPageState createState() => _BookmarkPageState();
 }
 
+sealed class Mode {}
+
+class ViewMode extends Mode {}
+
+class EditMode extends Mode {
+  HashSet<int> selectedBookmarks;
+
+  EditMode({required this.selectedBookmarks});
+}
+
 class _BookmarkPageState extends State<BookmarkPage> {
   final _bookmarkSummaries = <int, EntrySummary>{};
+  late RemoveBookmarkCallback removeBookmarkListener;
+  late ClearBookmarkCallback clearBookmarkListener;
   bool _isLoading = false;
   bool _hasMore = true;
+  Mode _mode = ViewMode();
 
   @override
   void initState() {
     super.initState();
-    context.read<BookmarkState>().registerRemoveBookmarkListener((id) {
-      _bookmarkSummaries.remove(id);
-    });
+
+    removeBookmarkListener = (id) {
+      setState(() {
+        _bookmarkSummaries.remove(id);
+      });
+    };
+
+    clearBookmarkListener = () {
+      setState(() {
+        _bookmarkSummaries.clear();
+      });
+    };
+
+    context
+        .read<BookmarkState>()
+        .registerRemoveBookmarkListener(removeBookmarkListener);
+    context
+        .read<BookmarkState>()
+        .registerClearBookmarkListener(clearBookmarkListener);
+
     _loadMore();
+  }
+
+  @override
+  void dispose() {
+    context
+        .read<BookmarkState>()
+        .unregisterRemoveBookmarkListener(removeBookmarkListener);
+    context
+        .read<BookmarkState>()
+        .unregisterClearBookmarkListener(clearBookmarkListener);
+    super.dispose();
   }
 
   Future<LinkedHashMap<int, EntrySummary>> _fetchMoreBookmarks(int amount) {
@@ -52,8 +93,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
             script: script,
             isEngDef: isEngDef,
           )
-          .then((summaries) =>
-              LinkedHashMap.fromIterables(ids, summaries));
+          .then((summaries) => LinkedHashMap.fromIterables(ids, summaries));
     } else {
       return Future.value(LinkedHashMap<int, EntrySummary>());
     }
@@ -85,6 +125,16 @@ class _BookmarkPageState extends State<BookmarkPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.bookmarks),
+        actions: [
+          IconButton(
+            icon: Icon(PlatformIcons(context).edit),
+            onPressed: () {
+              setState(() {
+                _mode = EditMode(selectedBookmarks: HashSet<int>());
+              });
+            },
+          ),
+        ],
       ),
       drawer: const NavigationDrawer(),
       body: Consumer<BookmarkState>(
@@ -103,6 +153,25 @@ class _BookmarkPageState extends State<BookmarkPage> {
                     final id = s.bookmarks[index];
                     final summary = _bookmarkSummaries[id]!;
                     return ListTile(
+                      leading: switch (_mode) {
+                        ViewMode() => null,
+                        EditMode(selectedBookmarks: var selectedBookmarks) =>
+                          Checkbox(
+                            value: selectedBookmarks.contains(id),
+                            visualDensity: VisualDensity.compact,
+                            onChanged: (value) {
+                              if (value!) {
+                                setState(() {
+                                  selectedBookmarks.add(id);
+                                });
+                              } else {
+                                setState(() {
+                                  selectedBookmarks.remove(id);
+                                });
+                              }
+                            },
+                          )
+                      },
                       title: Text(
                         summary.variant,
                         maxLines: 1,
@@ -114,23 +183,30 @@ class _BookmarkPageState extends State<BookmarkPage> {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      trailing: IconButton(
-                        icon: Icon(PlatformIcons(context).deleteOutline),
-                        onPressed: _isLoading
-                            ? null
-                            : () async {
-                                await s.removeBookmark(id);
-                              },
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) => EntryPage(
-                                    id: id,
-                                    showFirstEntryInGroupInitially: false,
-                                  )),
-                        );
+                      onTap: switch (_mode) {
+                        ViewMode() => () {
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                  builder: (context) => EntryPage(
+                                        id: id,
+                                        showFirstEntryInGroupInitially: false,
+                                      )),
+                            );
+                          },
+                        EditMode(selectedBookmarks: var selectedBookmarks) =>
+                          () {
+                            // Toggles bookmark selected state
+                            if (selectedBookmarks.contains(id)) {
+                              setState(() {
+                                selectedBookmarks.remove(id);
+                              });
+                            } else {
+                              setState(() {
+                                selectedBookmarks.add(id);
+                              });
+                            }
+                          }
                       },
                     );
                   },
