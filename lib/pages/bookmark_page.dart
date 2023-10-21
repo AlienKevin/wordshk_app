@@ -13,6 +13,7 @@ import 'package:wordshk/models/entry_language.dart';
 import '../custom_page_route.dart';
 import '../ffi.dart';
 import '../states/bookmark_state.dart';
+import '../states/entry_item_state.dart';
 import '../states/entry_language_state.dart';
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
@@ -37,7 +38,7 @@ class EditMode extends Mode {
 
 class _BookmarkPageState extends State<BookmarkPage> {
   final _bookmarkSummaries = <int, EntrySummary>{};
-  late RemoveBookmarkCallback removeBookmarkListener;
+  late RemoveItemCallback removeBookmarkListener;
   bool _isLoading = false;
   bool _hasMore = true;
   Mode _mode = ViewMode();
@@ -54,7 +55,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
 
     context
         .read<BookmarkState>()
-        .registerRemoveBookmarkListener(removeBookmarkListener);
+        .registerRemoveItemListener(removeBookmarkListener);
 
     _loadMore();
   }
@@ -63,12 +64,12 @@ class _BookmarkPageState extends State<BookmarkPage> {
   void dispose() {
     context
         .read<BookmarkState>()
-        .unregisterRemoveBookmarkListener(removeBookmarkListener);
+        .unregisterRemoveItemListener(removeBookmarkListener);
     super.dispose();
   }
 
   Future<LinkedHashMap<int, EntrySummary>> _fetchMoreBookmarks(int amount) {
-    final allBookmarks = context.read<BookmarkState>().bookmarks;
+    final allBookmarks = context.read<BookmarkState>().items;
     if (allBookmarks.length > _bookmarkSummaries.length) {
       final ids = allBookmarks.sublist(_bookmarkSummaries.length,
           min(_bookmarkSummaries.length + amount, allBookmarks.length));
@@ -141,7 +142,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
       drawer: const NavigationDrawer(),
       body: Consumer<BookmarkState>(
           builder: (BuildContext context, BookmarkState s, Widget? child) => s
-                  .bookmarks.isEmpty
+                  .items.isEmpty
               ? Center(child: Text(AppLocalizations.of(context)!.noBookmarks))
               : ListView.separated(
                   itemCount: _hasMore
@@ -152,7 +153,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                       _loadMore();
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final id = s.bookmarks[index];
+                    final id = s.items[index];
                     final summary = _bookmarkSummaries[id]!;
                     return ListTile(
                       leading: switch (_mode) {
@@ -255,7 +256,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                                     for (final id in selectedBookmarks) {
                                       context
                                           .read<BookmarkState>()
-                                          .removeBookmark(id);
+                                          .removeItem(id);
                                     }
                                   },
                                 ),
