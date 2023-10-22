@@ -58,8 +58,11 @@ pub struct EgSearchResult {
 pub struct SpotlightEntrySummary {
     pub id: usize,
     pub variants: Vec<String>,
+    pub variants_simp: Vec<String>,
     pub prs: Vec<String>,
     pub def: String,
+    pub def_simp: String,
+    pub def_en: String,
 }
 
 lazy_static! {

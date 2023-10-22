@@ -417,8 +417,11 @@ impl support::IntoDart for SpotlightEntrySummary {
         vec![
             self.id.into_into_dart().into_dart(),
             self.variants.into_into_dart().into_dart(),
+            self.variants_simp.into_into_dart().into_dart(),
             self.prs.into_into_dart().into_dart(),
             self.def.into_into_dart().into_dart(),
+            self.def_simp.into_into_dart().into_dart(),
+            self.def_en.into_into_dart().into_dart(),
         ]
         .into_dart()
     }

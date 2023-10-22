@@ -170,14 +170,20 @@ enum Script {
 class SpotlightEntrySummary {
   final int id;
   final List<String> variants;
+  final List<String> variantsSimp;
   final List<String> prs;
   final String def;
+  final String defSimp;
+  final String defEn;
 
   const SpotlightEntrySummary({
     required this.id,
     required this.variants,
+    required this.variantsSimp,
     required this.prs,
     required this.def,
+    required this.defSimp,
+    required this.defEn,
   });
 }
 
@@ -595,13 +601,16 @@ class WordshkApiImpl implements WordshkApi {
 
   SpotlightEntrySummary _wire2api_spotlight_entry_summary(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
     return SpotlightEntrySummary(
       id: _wire2api_usize(arr[0]),
       variants: _wire2api_StringList(arr[1]),
-      prs: _wire2api_StringList(arr[2]),
-      def: _wire2api_String(arr[3]),
+      variantsSimp: _wire2api_StringList(arr[2]),
+      prs: _wire2api_StringList(arr[3]),
+      def: _wire2api_String(arr[4]),
+      defSimp: _wire2api_String(arr[5]),
+      defEn: _wire2api_String(arr[6]),
     );
   }
 

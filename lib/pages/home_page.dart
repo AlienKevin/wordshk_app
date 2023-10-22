@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
       context.read<InputModeState>().setOnDone(
           () => onSearchDone(context.read<SearchQueryState>().query));
 
+      // Spotlight search only available on apple
       if (Platform.isIOS || Platform.isMacOS) {
         // Callback on searchable item selected
         FlutterCoreSpotlight.instance.configure(
@@ -76,17 +77,17 @@ class _HomePageState extends State<HomePage> {
               return;
             }
             final query =
-            userActivity.userInfo!['kCSSearchQueryString'] as String;
-            final entryId = int.parse(userActivity.uniqueIdentifier!);
+                userActivity.userInfo!['kCSSearchQueryString'] as String;
+            // Ignore the variant index and optional script type (simp/trad) after the "-"
+            final entryId = int.parse(userActivity.uniqueIdentifier!.split("-")[0]);
             if (kDebugMode) {
               print("Spotlight searched: $query, result entryId: $entryId");
             }
             Navigator.push(
               context,
               CustomPageRoute(
-                  builder: (context) =>
-                      EntryPage(
-                          id: entryId, showFirstEntryInGroupInitially: false)),
+                  builder: (context) => EntryPage(
+                      id: entryId, showFirstEntryInGroupInitially: false)),
             );
           },
         );

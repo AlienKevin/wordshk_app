@@ -1,10 +1,6 @@
-import 'dart:io' show Platform;
-
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -31,7 +27,6 @@ import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 
 import 'constants.dart';
-import 'ffi.dart';
 import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
@@ -57,51 +52,6 @@ main() async {
           .ensureInitialized(); // mandatory when awaiting on main
       final prefs = await SharedPreferences.getInstance();
       final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
-
-      // Spotlight search only available on apple
-      if (Platform.isIOS || Platform.isMacOS) {
-        // Indexing a searchable item
-        api.getSplotlightSummaries().then((summaries) {
-          if (kDebugMode) {
-            print("Indexing ${summaries.length} items");
-          }
-          Stream<List<T>> chunkIterable<T>(Iterable<T> iterable,
-              int chunkSize) async* {
-            var iterator = iterable.iterator;
-            while (iterator.moveNext()) {
-              var currentChunk = <T>[];
-              do {
-                currentChunk.add(iterator.current);
-              } while (currentChunk.length < chunkSize && iterator.moveNext());
-              yield currentChunk;
-            }
-          }
-
-          const batchSize = 10000;
-
-          final batches = chunkIterable(
-              summaries.expand((summary) =>
-                  summary.variants
-                      .mapIndexed((i, variant) =>
-                      FlutterSpotlightItem(
-                        uniqueIdentifier: summary.id.toString(),
-                        domainIdentifier: 'hk.words.wordshk',
-                        attributeTitle: '解釋 $variant ${summary.prs[i]}',
-                        attributeDescription: summary.def,
-                      ))),
-              batchSize);
-
-          (() async {
-            int batchIndex = 0;
-            await for (final batch in batches) {
-              String result =
-              await FlutterCoreSpotlight.instance.indexSearchableItems(batch);
-              print("Index spotlight batch $batchIndex result: $result");
-              batchIndex++;
-            }
-          })();
-        });
-      }
 
       runApp(
         MultiProvider(

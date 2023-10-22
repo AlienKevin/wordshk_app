@@ -237,8 +237,11 @@ impl Api {
                 SpotlightEntrySummary {
                     id: *id,
                     variants: entry.variants.to_words().iter().map(|word| word.to_string()).collect(),
+                    variants_simp: entry.variants_simp.clone(),
                     prs: entry.variants.0.iter().map(|variant| variant.prs.0[0].to_string()).collect(),
                     def: clause_to_string(&entry.defs[0].yue),
+                    def_simp: clause_to_string(&entry.defs[0].yue_simp),
+                    def_en: entry.defs[0].eng.as_ref().map(|c| clause_to_string(c)).unwrap_or("".to_string()),
                 }
             })
             .collect();
