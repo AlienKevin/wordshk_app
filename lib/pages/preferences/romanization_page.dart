@@ -18,7 +18,9 @@ class RomanizationPreferencesPage extends StatelessWidget {
 
     onRomanizationChange(Romanization? newRomanization) {
       if (newRomanization != null) {
-        context.read<RomanizationState>().updateRomanization(newRomanization);
+        context
+            .read<RomanizationState>()
+            .updateRomanization(newRomanization);
       }
     }
 

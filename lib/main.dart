@@ -25,11 +25,14 @@ import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_mode_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
+import 'package:wordshk/states/spotlight_indexing_state.dart';
 
 import 'constants.dart';
 import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
+
+final spotlightIndexingState = SpotlightIndexingState();
 
 main() async {
   // Avoid errors caused by flutter upgrade.
@@ -63,8 +66,7 @@ main() async {
             ChangeNotifierProvider<InputModeState>(
                 create: (_) => InputModeState()),
             ChangeNotifierProvider<LanguageState>(
-                create: (context) => LanguageState(prefs, context),
-                lazy: false),
+                create: (context) => LanguageState(prefs), lazy: false),
             ChangeNotifierProvider<EntryLanguageState>(
                 create: (_) => EntryLanguageState(prefs)),
             ChangeNotifierProvider<PronunciationMethodState>(
@@ -84,7 +86,7 @@ main() async {
                     getDatabase: () => bookmarkDatabase),
                 lazy: false),
             ChangeNotifierProvider<ExerciseIntroductionState>(
-                create: (_) => ExerciseIntroductionState(prefs)),
+                create: (_) => ExerciseIntroductionState(prefs))
           ],
           child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
         ),
