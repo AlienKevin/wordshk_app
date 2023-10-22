@@ -51,10 +51,10 @@ class SpotlightIndexingState {
       scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
           content: Text(
               switch (language) {
-                Language.en => 'Quick heads-up: The app might be a bit jerky for a few minutes while we update the search index. Thanks for your patience.',
-                Language.yue => '小提示：我哋喺度更新緊索引，app喺接落嚟嘅幾分鐘內可能會lag機。多謝你嘅耐心等候。',
-                Language.zhHant => '小提示：我們正在更新索引，APP在接下來的幾分鐘内可能會有卡頓。感謝您的耐心等待。',
-                Language.zhHans => '小提示：我们正在更新索引，APP在接下来的两分钟内可能会有卡顿。感谢您的耐心等待。',
+                Language.en => 'Notice: The app might be a bit jerky for a few minutes while we update the dictionary data. Thanks for your patience.',
+                Language.yue => '小提示：我哋喺度更新緊詞典資料，嗰app喺接落嚟嘅幾分鐘內可能會lag機。多謝你嘅耐心等候。',
+                Language.zhHant => '小提示：我們正在更新詞典資料，APP在接下來的幾分鐘内可能會有卡頓。感謝您的耐心等待。',
+                Language.zhHans => '小提示：我们正在更新词典资料，APP在接下来的两分钟内可能会有卡顿。感谢您的耐心等待。',
               }),
           duration: const Duration(minutes: 2),
           action: SnackBarAction(
