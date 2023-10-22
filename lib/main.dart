@@ -32,7 +32,9 @@ import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
 
-final spotlightIndexingState = SpotlightIndexingState();
+late final spotlightIndexingState = SpotlightIndexingState();
+late final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 main() async {
   // Avoid errors caused by flutter upgrade.
@@ -221,65 +223,67 @@ class _MyAppState extends State<MyApp> {
       dividerTheme: dividerTheme,
     );
     return Portal(
-        child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      locale: context.watch<LanguageState>().language?.toLocale,
-      title: 'words.hk',
-      localizationsDelegates: const [
-        ...AppLocalizations.localizationsDelegates,
-        MaterialLocalizationYueDelegate(),
-        CupertinoLocalizationYueDelegate(),
-      ],
-      localeListResolutionCallback: (
-        locales,
-        supportedLocales,
-      ) {
-        if (kDebugMode) {
-          print("Detected locales: $locales");
-        }
-        for (final locale in locales ?? []) {
-          if (locale.languageCode == 'en') {
-            return context.read<LanguageState>().initLanguage(Language.en);
-          } else if (locale.languageCode == 'yue') {
-            return context.read<LanguageState>().initLanguage(Language.yue);
-          } else if (locale.languageCode == 'zh') {
-            if (locale.scriptCode == 'Hant') {
-              return context
-                  .read<LanguageState>()
-                  .initLanguage(Language.zhHant);
-            } else {
-              return context
-                  .read<LanguageState>()
-                  .initLanguage(Language.zhHans);
+      child: MaterialApp(
+          scaffoldMessengerKey: scaffoldMessengerKey,
+          debugShowCheckedModeBanner: false,
+          locale: context.watch<LanguageState>().language?.toLocale,
+          title: 'words.hk',
+          localizationsDelegates: const [
+            ...AppLocalizations.localizationsDelegates,
+            MaterialLocalizationYueDelegate(),
+            CupertinoLocalizationYueDelegate(),
+          ],
+          localeListResolutionCallback: (
+            locales,
+            supportedLocales,
+          ) {
+            if (kDebugMode) {
+              print("Detected locales: $locales");
             }
-          }
-        }
-        // fallback to English
-        return Language.en.toLocale;
-      },
-      supportedLocales: const [
-        Locale.fromSubtags(
-            languageCode:
-                'en'), // generic English (defaults to American English)
-        Locale.fromSubtags(
-            languageCode:
-                'yue'), // generic Cantonese 'yue' (traditional script)
-        Locale.fromSubtags(
-            languageCode: 'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
-        Locale.fromSubtags(
-            languageCode: 'zh',
-            scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
-        Locale.fromSubtags(
-            languageCode: 'zh',
-            scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
-      ],
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      // home: const HomePage(title: 'words.hk'),
-      home: widget.firstTimeUser
-          ? IntroductionPage(prefs: widget.prefs)
-          : const HomePage(title: "words.hk"),
-    ));
+            for (final locale in locales ?? []) {
+              if (locale.languageCode == 'en') {
+                return context.read<LanguageState>().initLanguage(Language.en);
+              } else if (locale.languageCode == 'yue') {
+                return context.read<LanguageState>().initLanguage(Language.yue);
+              } else if (locale.languageCode == 'zh') {
+                if (locale.scriptCode == 'Hant') {
+                  return context
+                      .read<LanguageState>()
+                      .initLanguage(Language.zhHant);
+                } else {
+                  return context
+                      .read<LanguageState>()
+                      .initLanguage(Language.zhHans);
+                }
+              }
+            }
+            // fallback to English
+            return Language.en.toLocale;
+          },
+          supportedLocales: const [
+            Locale.fromSubtags(
+                languageCode:
+                    'en'), // generic English (defaults to American English)
+            Locale.fromSubtags(
+                languageCode:
+                    'yue'), // generic Cantonese 'yue' (traditional script)
+            Locale.fromSubtags(
+                languageCode:
+                    'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
+            Locale.fromSubtags(
+                languageCode: 'zh',
+                scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
+            Locale.fromSubtags(
+                languageCode: 'zh',
+                scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
+          ],
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          // home: const HomePage(title: 'words.hk'),
+          home: widget.firstTimeUser
+              ? IntroductionPage(prefs: widget.prefs)
+              : const HomePage(title: "words.hk")),
+    );
   }
 }
 
