@@ -95,6 +95,11 @@ pub extern "C" fn wire_get_jyutping(port_: i64, query: *mut wire_uint_8_list) {
     wire_get_jyutping_impl(port_, query)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_get_splotlight_summaries(port_: i64) {
+    wire_get_splotlight_summaries_impl(port_)
+}
+
 // Section: allocate functions
 
 #[no_mangle]

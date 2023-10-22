@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide SearchBar, NavigationDrawer;
+import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
@@ -61,6 +64,33 @@ class _HomePageState extends State<HomePage> {
       });
       context.read<InputModeState>().setOnDone(
           () => onSearchDone(context.read<SearchQueryState>().query));
+
+      if (Platform.isIOS || Platform.isMacOS) {
+        // Callback on searchable item selected
+        FlutterCoreSpotlight.instance.configure(
+          onSearchableItemSelected: (userActivity) {
+            if (userActivity == null) {
+              if (kDebugMode) {
+                print("Spotlight searched returned null");
+              }
+              return;
+            }
+            final query =
+            userActivity.userInfo!['kCSSearchQueryString'] as String;
+            final entryId = int.parse(userActivity.uniqueIdentifier!);
+            if (kDebugMode) {
+              print("Spotlight searched: $query, result entryId: $entryId");
+            }
+            Navigator.push(
+              context,
+              CustomPageRoute(
+                  builder: (context) =>
+                      EntryPage(
+                          id: entryId, showFirstEntryInGroupInitially: false)),
+            );
+          },
+        );
+      }
     });
   }
 
@@ -225,14 +255,13 @@ class _HomePageState extends State<HomePage> {
                   script: script,
                   romanization: romanization)
               .then((results) {
-                if (searchStartTime >= lastSearchStartTime) {
-                  setState(() {
-                    prSearchResults =
-                        results.unique((result) => result.variant);
-                    isSearchResultsEmpty = prSearchResults.isEmpty;
-                    finishedSearch = true;
-                  });
-                }
+            if (searchStartTime >= lastSearchStartTime) {
+              setState(() {
+                prSearchResults = results.unique((result) => result.variant);
+                isSearchResultsEmpty = prSearchResults.isEmpty;
+                finishedSearch = true;
+              });
+            }
           });
           break;
         case SearchMode.variant:
@@ -263,18 +292,17 @@ class _HomePageState extends State<HomePage> {
               if (isCombinedResultsEmpty) {
                 api
                     .egSearch(
-                    capacity: 10,
-                    maxFirstIndexInEg: 10,
-                    query: query,
-                    script: script)
+                        capacity: 10,
+                        maxFirstIndexInEg: 10,
+                        query: query,
+                        script: script)
                     .then((result) {
                   if (searchStartTime >= lastSearchStartTime) {
                     final (queryNormalized, results) = result;
                     // print("Query: $query");
                     // print("Result: ${results.map((res) => res.eg)}");
-                    if (isSearchResultsEmpty && query == context
-                        .read<SearchQueryState>()
-                        .query) {
+                    if (isSearchResultsEmpty &&
+                        query == context.read<SearchQueryState>().query) {
                       setState(() {
                         egSearchResults = results.unique((result) => result.eg);
                         egSearchQueryNormalized = queryNormalized;
@@ -364,17 +392,30 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> showEgSearchResults(String queryFound) {
     return egSearchResults.map((result) {
-      final List<InlineSpan> egs = result.eg.split(queryFound).mapIndexed((i, segment) =>
-          <InlineSpan>[
-            ...(i == 0 ? <InlineSpan>[] : [TextSpan(text: queryFound, style: Theme.of(context).textTheme.titleSmall)]),
-            TextSpan(text: segment, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: greyColor)),
-          ]
-      ).expand((x) => x).toList();
+      final List<InlineSpan> egs = result.eg
+          .split(queryFound)
+          .mapIndexed((i, segment) => <InlineSpan>[
+                ...(i == 0
+                    ? <InlineSpan>[]
+                    : [
+                        TextSpan(
+                            text: queryFound,
+                            style: Theme.of(context).textTheme.titleSmall)
+                      ]),
+                TextSpan(
+                    text: segment,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(color: greyColor)),
+              ])
+          .expand((x) => x)
+          .toList();
       return showSearchResult(
-          result.id,
-          TextSpan(children: egs),
-          maxLines: 1,
-          defIndex: result.defIndex,
+        result.id,
+        TextSpan(children: egs),
+        maxLines: 1,
+        defIndex: result.defIndex,
       );
     }).toList();
   }
@@ -447,7 +488,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget showSearchResult(int id, TextSpan resultText,
-      {int maxLines = 2, int? defIndex, bool showFirstEntryInGroupInitially = false}) {
+      {int maxLines = 2,
+      int? defIndex,
+      bool showFirstEntryInGroupInitially = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

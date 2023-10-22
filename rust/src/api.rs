@@ -55,6 +55,13 @@ pub struct EgSearchResult {
     pub eg: String,
 }
 
+pub struct SpotlightEntrySummary {
+    pub id: usize,
+    pub variants: Vec<String>,
+    pub prs: Vec<String>,
+    pub def: String,
+}
+
 lazy_static! {
     static ref API: Arc<Api> = Arc::new(Api::new());
 }
@@ -154,4 +161,8 @@ pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
 
 pub fn get_jyutping(query: String) -> Vec<String> {
     API.get_jyutping(query)
+}
+
+pub fn get_splotlight_summaries() -> Vec<SpotlightEntrySummary> {
+    API.get_splotlight_summaries()
 }

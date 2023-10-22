@@ -251,6 +251,16 @@ fn wire_get_jyutping_impl(port_: MessagePort, query: impl Wire2Api<String> + Unw
         },
     )
 }
+fn wire_get_splotlight_summaries_impl(port_: MessagePort) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<SpotlightEntrySummary>>(
+        WrapInfo {
+            debug_name: "get_splotlight_summaries",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || move |task_callback| Ok(get_splotlight_summaries()),
+    )
+}
 // Section: wrapper structs
 
 // Section: static checks
@@ -397,6 +407,24 @@ impl support::IntoDart for PrSearchResult {
 }
 impl support::IntoDartExceptPrimitive for PrSearchResult {}
 impl rust2dart::IntoIntoDart<PrSearchResult> for PrSearchResult {
+    fn into_into_dart(self) -> Self {
+        self
+    }
+}
+
+impl support::IntoDart for SpotlightEntrySummary {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.id.into_into_dart().into_dart(),
+            self.variants.into_into_dart().into_dart(),
+            self.prs.into_into_dart().into_dart(),
+            self.def.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for SpotlightEntrySummary {}
+impl rust2dart::IntoIntoDart<SpotlightEntrySummary> for SpotlightEntrySummary {
     fn into_into_dart(self) -> Self {
         self
     }

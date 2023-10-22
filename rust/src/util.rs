@@ -17,12 +17,12 @@ use wordshk_tools::english_index::{EnglishIndex, EnglishIndexData};
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::pr_index::PrIndices;
-use wordshk_tools::rich_dict::RichDict;
+use wordshk_tools::rich_dict::{RichDict, RichEntry};
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, Script, VariantsMap};
 use wordshk_tools::unicode::is_cjk;
 
-use crate::api::{CombinedSearchResults, EgSearchResult, EnglishSearchResult, PrSearchResult, VariantSearchResult};
+use crate::api::{CombinedSearchResults, EgSearchResult, EnglishSearchResult, PrSearchResult, SpotlightEntrySummary, VariantSearchResult};
 
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
@@ -228,6 +228,22 @@ impl Api {
             i += 1;
         }
         (query_found, results)
+    }
+
+    pub fn get_splotlight_summaries(&self) -> Vec<SpotlightEntrySummary> {
+        // Create the final EntrySummary list
+        let summaries: Vec<SpotlightEntrySummary> = self.dict.iter()
+            .map(|(id, entry)| {
+                SpotlightEntrySummary {
+                    id: *id,
+                    variants: entry.variants.to_words().iter().map(|word| word.to_string()).collect(),
+                    prs: entry.variants.0.iter().map(|variant| variant.prs.0[0].to_string()).collect(),
+                    def: clause_to_string(&entry.defs[0].yue),
+                }
+            })
+            .collect();
+
+        summaries
     }
 
     pub fn get_entry_json(&self, id: usize) -> String {

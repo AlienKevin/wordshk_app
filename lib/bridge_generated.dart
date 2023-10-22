@@ -87,6 +87,10 @@ abstract class WordshkApi {
   Future<List<String>> getJyutping({required String query, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetJyutpingConstMeta;
+
+  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kGetSplotlightSummariesConstMeta;
 }
 
 class CombinedSearchResults {
@@ -161,6 +165,20 @@ enum Romanization {
 enum Script {
   Simplified,
   Traditional,
+}
+
+class SpotlightEntrySummary {
+  final int id;
+  final List<String> variants;
+  final List<String> prs;
+  final String def;
+
+  const SpotlightEntrySummary({
+    required this.id,
+    required this.variants,
+    required this.prs,
+    required this.def,
+  });
 }
 
 class VariantSearchResult {
@@ -438,6 +456,22 @@ class WordshkApiImpl implements WordshkApi {
         argNames: ["query"],
       );
 
+  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_get_splotlight_summaries(port_),
+      parseSuccessData: _wire2api_list_spotlight_entry_summary,
+      constMeta: kGetSplotlightSummariesConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kGetSplotlightSummariesConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "get_splotlight_summaries",
+        argNames: [],
+      );
+
   void dispose() {
     _platform.dispose();
   }
@@ -529,6 +563,13 @@ class WordshkApiImpl implements WordshkApi {
     return (raw as List<dynamic>).map(_wire2api_pr_search_result).toList();
   }
 
+  List<SpotlightEntrySummary> _wire2api_list_spotlight_entry_summary(
+      dynamic raw) {
+    return (raw as List<dynamic>)
+        .map(_wire2api_spotlight_entry_summary)
+        .toList();
+  }
+
   List<VariantSearchResult> _wire2api_list_variant_search_result(dynamic raw) {
     return (raw as List<dynamic>).map(_wire2api_variant_search_result).toList();
   }
@@ -552,6 +593,18 @@ class WordshkApiImpl implements WordshkApi {
     );
   }
 
+  SpotlightEntrySummary _wire2api_spotlight_entry_summary(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return SpotlightEntrySummary(
+      id: _wire2api_usize(arr[0]),
+      variants: _wire2api_StringList(arr[1]),
+      prs: _wire2api_StringList(arr[2]),
+      def: _wire2api_String(arr[3]),
+    );
+  }
+
   int _wire2api_u32(dynamic raw) {
     return raw as int;
   }
@@ -566,6 +619,10 @@ class WordshkApiImpl implements WordshkApi {
 
   void _wire2api_unit(dynamic raw) {
     return;
+  }
+
+  int _wire2api_usize(dynamic raw) {
+    return castInt(raw);
   }
 
   VariantSearchResult _wire2api_variant_search_result(dynamic raw) {
@@ -984,6 +1041,20 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
               ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_get_jyutping');
   late final _wire_get_jyutping = _wire_get_jyutpingPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_get_splotlight_summaries(
+    int port_,
+  ) {
+    return _wire_get_splotlight_summaries(
+      port_,
+    );
+  }
+
+  late final _wire_get_splotlight_summariesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_get_splotlight_summaries');
+  late final _wire_get_splotlight_summaries =
+      _wire_get_splotlight_summariesPtr.asFunction<void Function(int)>();
 
   ffi.Pointer<wire_uint_32_list> new_uint_32_list_0(
     int len,
