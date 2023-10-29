@@ -52,17 +52,19 @@ class SpotlightIndexingState {
           content: Text(
               switch (language) {
                 Language.en => 'Notice: The app might be a bit jerky for a few minutes while we update the dictionary data. Thanks for your patience.',
-                Language.yue => '小提示：我哋喺度更新緊詞典資料，嗰app喺接落嚟嘅幾分鐘內可能會lag機。多謝你嘅耐心等候。',
+                Language.yue => '小提示：我哋喺度更新緊詞典資料，個app喺接落嚟嘅幾分鐘內可能會lag機。多謝你嘅耐心等候。',
                 Language.zhHant => '小提示：我們正在更新詞典資料，APP在接下來的幾分鐘内可能會有卡頓。感謝您的耐心等待。',
                 Language.zhHans => '小提示：我们正在更新词典资料，APP在接下来的两分钟内可能会有卡顿。感谢您的耐心等待。',
               }),
           duration: const Duration(minutes: 2),
+          margin: const EdgeInsets.only(bottom: 50.0),
+          behavior: SnackBarBehavior.floating,
+          dismissDirection: DismissDirection.none,
           action: SnackBarAction(
             label: switch (language) {
               Language.en => 'OK',
-              Language.yue || Language.zhHant || Language.zhHans => '了解',
+              Language.yue || Language.zhHant || Language.zhHans => '好的',
             },
-            textColor: Colors.white,
             onPressed: () {
               scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
             },

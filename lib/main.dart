@@ -182,11 +182,14 @@ class _MyAppState extends State<MyApp> {
         ));
     const dividerTheme = DividerThemeData(space: 0, thickness: 1);
 
+    const lightThemeAccentColor = blueColor;
+    const darkThemeAccentColor = lightBlueColor;
+
     var lightTheme = ThemeData(
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.light,
-        accentColor: blueColor,
+        accentColor: lightThemeAccentColor,
       ),
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
@@ -206,7 +209,7 @@ class _MyAppState extends State<MyApp> {
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.dark,
         accentColor: lightBlueColor,
-        backgroundColor: blackColor,
+        backgroundColor: darkThemeAccentColor,
       ),
       scaffoldBackgroundColor: Colors.black,
       primarySwatch: blueSwatch,
@@ -220,7 +223,6 @@ class _MyAppState extends State<MyApp> {
       textButtonTheme: textButtonTheme(Brightness.dark),
       elevatedButtonTheme: elevatedButtonTheme(Brightness.dark),
       dividerColor: darkGreyColor,
-      dividerTheme: dividerTheme,
     );
     return Portal(
       child: MaterialApp(
