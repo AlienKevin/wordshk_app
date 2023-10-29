@@ -104,6 +104,7 @@ class PreferencesPage extends StatelessWidget {
               title: Text(s.advanced),
               tiles: <SettingsTile>[
                 SettingsTile.switchTile(
+                    description: Text(s.spotlightSearchDescription),
                     initialValue:
                         context.watch<SpotlightIndexingState>().enabled,
                     onToggle: (newEnabled) {
@@ -111,7 +112,7 @@ class PreferencesPage extends StatelessWidget {
                           .read<SpotlightIndexingState>()
                           .updateSpotlightIndexEnabled(newEnabled);
                     },
-                    title: Text(s.spotlightSearch))
+                    title: Text(s.spotlightSearch)),
               ],
             ),
           ],
