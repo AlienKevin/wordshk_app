@@ -16,6 +16,9 @@ late final api = WordshkApiImpl(dylib);
 
 Future<void> indexSpotlightSearch(
     Language language, Romanization romanization) async {
+  // Delete previous index
+  await deleteSpotlightSearchIndex();
+
   // Indexing a searchable item
   final summaries = await api.getSplotlightSummaries();
   // Run the indexing in a separate isolate
