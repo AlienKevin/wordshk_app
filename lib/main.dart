@@ -32,7 +32,6 @@ import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
 
-late final spotlightIndexingState = SpotlightIndexingState();
 late final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
@@ -61,6 +60,7 @@ main() async {
       runApp(
         MultiProvider(
           providers: [
+            ChangeNotifierProvider<SpotlightIndexingState>(create: (_) => SpotlightIndexingState(prefs)),
             ChangeNotifierProvider<SearchModeState>(
                 create: (_) => SearchModeState()),
             ChangeNotifierProvider<SearchQueryState>(
@@ -68,7 +68,7 @@ main() async {
             ChangeNotifierProvider<InputModeState>(
                 create: (_) => InputModeState()),
             ChangeNotifierProvider<LanguageState>(
-                create: (context) => LanguageState(prefs), lazy: false),
+                create: (context) => LanguageState(prefs, Provider.of<SpotlightIndexingState>(context, listen: false)), lazy: false),
             ChangeNotifierProvider<EntryLanguageState>(
                 create: (_) => EntryLanguageState(prefs)),
             ChangeNotifierProvider<PronunciationMethodState>(
@@ -76,7 +76,7 @@ main() async {
             ChangeNotifierProvider<EntryEgFontSizeState>(
                 create: (_) => EntryEgFontSizeState(prefs)),
             ChangeNotifierProvider<RomanizationState>(
-                create: (_) => RomanizationState(prefs), lazy: false),
+                create: (context) => RomanizationState(prefs, Provider.of<SpotlightIndexingState>(context, listen: false)), lazy: false),
             ChangeNotifierProvider<EntryEgJumpyPrsState>(
                 create: (_) => EntryEgJumpyPrsState(prefs)),
             ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),

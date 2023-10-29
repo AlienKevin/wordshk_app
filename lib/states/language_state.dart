@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshk/states/spotlight_indexing_state.dart';
 
-import '../main.dart';
 import '../models/language.dart';
 
 class LanguageState with ChangeNotifier {
   Language? language;
+  final SpotlightIndexingState spotlightIndexingState;
 
-  LanguageState(SharedPreferences prefs) {
+  LanguageState(SharedPreferences prefs, this.spotlightIndexingState) {
     final languageIndex = prefs.getInt("language");
     if (languageIndex != null) {
       language = Language.values[languageIndex];

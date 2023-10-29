@@ -8,6 +8,7 @@ import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
 import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
 import 'package:wordshk/pages/preferences/language_page.dart';
 import 'package:wordshk/pages/preferences/romanization_page.dart';
+import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'package:wordshk/utils.dart';
 
 import '../states/entry_language_state.dart';
@@ -51,14 +52,13 @@ class PreferencesPage extends StatelessWidget {
                 ),
                 SettingsTile.navigation(
                   title: Text(s.romanization),
-                  value:
-                  Text(getRomanizationName(romanization, s)),
+                  value: Text(getRomanizationName(romanization, s)),
                   onPressed: (context) {
                     Navigator.push(
                         context,
                         CustomPageRoute(
                             builder: (context) =>
-                            const RomanizationPreferencesPage()));
+                                const RomanizationPreferencesPage()));
                   },
                 ),
               ],
@@ -98,6 +98,20 @@ class PreferencesPage extends StatelessWidget {
                                 const EntryEgPreferencesPage()));
                   },
                 ),
+              ],
+            ),
+            SettingsSection(
+              title: Text(s.advanced),
+              tiles: <SettingsTile>[
+                SettingsTile.switchTile(
+                    initialValue:
+                        context.watch<SpotlightIndexingState>().enabled,
+                    onToggle: (newEnabled) {
+                      context
+                          .read<SpotlightIndexingState>()
+                          .updateSpotlightIndexEnabled(newEnabled);
+                    },
+                    title: Text(s.spotlightSearch))
               ],
             ),
           ],

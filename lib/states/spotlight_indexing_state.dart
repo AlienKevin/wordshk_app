@@ -2,20 +2,46 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bridge_generated.dart';
 import '../ffi.dart';
 import '../main.dart';
 import '../models/language.dart';
 
-class SpotlightIndexingState {
+class SpotlightIndexingState with ChangeNotifier {
   Timer? _indexingTimer;
   bool _isIndexingInProgress = false; // Flag to keep track of indexing status
   Language? language;
   Romanization? romanization;
+  bool? enabled;
+
+  SpotlightIndexingState(SharedPreferences prefs) {
+    // Load the initial value of the enabled flag
+    enabled = prefs.getBool("spotlightIndexingEnabled") ?? false;
+  }
+
+  updateSpotlightIndexEnabled(bool newEnabled) {
+    // Enable Spotlight if previously disabled
+    if (newEnabled && !(enabled ?? false)) {
+      if (language != null && romanization != null) {
+        _deferIndexSpotlightSearch(language!, romanization!);
+      }
+    } else {
+      // Cancel any existing timer
+      if (kDebugMode) {
+        print("Cancelling existing timer");
+      }
+      _indexingTimer?.cancel();
+    }
+    enabled = newEnabled;
+    notifyListeners();
+    SharedPreferences.getInstance().then((prefs) async {
+      prefs.setBool("spotlightIndexingEnabled", newEnabled);
+    });
+  }
 
   updateSpotlightIndexLanguage(Language newLanguage) {
-    print("updateSpotlightIndexLanguage");
     language = newLanguage;
     if (language != null && romanization != null) {
       _deferIndexSpotlightSearch(language!, romanization!);
@@ -23,7 +49,6 @@ class SpotlightIndexingState {
   }
 
   updateSpotlightIndexRomanization(Romanization newRomanization) {
-    print("updateSpotlightIndexRomanization");
     romanization = newRomanization;
     if (language != null && romanization != null) {
       _deferIndexSpotlightSearch(language!, romanization!);
@@ -32,10 +57,15 @@ class SpotlightIndexingState {
 
   void _deferIndexSpotlightSearch(
       Language language, Romanization romanization) {
-    print("_deferIndexSpotlightSearch");
+    if (kDebugMode) {
+      print("_deferIndexSpotlightSearch");
+    }
     _indexingTimer?.cancel(); // Cancel any existing timer
     _indexingTimer = Timer(const Duration(seconds: 10), () async {
-      print("Running indexing. _isIndexingInProgress: $_isIndexingInProgress");
+      if (kDebugMode) {
+        print(
+            "Running indexing. _isIndexingInProgress: $_isIndexingInProgress");
+      }
 
       // Check if an indexing operation is in progress
       if (_isIndexingInProgress) {

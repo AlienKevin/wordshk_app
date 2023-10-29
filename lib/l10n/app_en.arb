@@ -172,6 +172,9 @@
     "enabled": "Enabled",
     "disabled": "Disabled",
 
+    "advanced": "Advanced",
+    "spotlightSearch": "Spotlight Search",
+
     "dictionaryLicense": "Dictionary License",
     "dictionaryLicenseSummary": "Contents of this words.hk app are licensed under the Non-Commercial Open Data License:",
     "dictionaryLicenseText": "ALREADY INCLUDED IN CODE",

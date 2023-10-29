@@ -3,15 +3,16 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshk/states/spotlight_indexing_state.dart';
 
 import '../../bridge_generated.dart' show Romanization;
 import '../ffi.dart';
-import '../main.dart';
 
 class RomanizationState with ChangeNotifier {
   late Romanization romanization;
+  final SpotlightIndexingState spotlightIndexingState;
 
-  RomanizationState(SharedPreferences prefs) {
+  RomanizationState(SharedPreferences prefs, this.spotlightIndexingState) {
     final romanizationIndex = prefs.getInt("romanization");
     // Reset invalid romanization index to the jyutping default
     if (romanizationIndex != null &&
