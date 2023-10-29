@@ -25,7 +25,7 @@ class RomanizationState with ChangeNotifier {
           : Romanization.values[romanizationIndex];
     }
 
-    spotlightIndexingState.updateSpotlightIndexRomanization(romanization);
+    spotlightIndexingState.initSpotlightIndexRomanization(romanization);
 
     initPrIndices();
   }

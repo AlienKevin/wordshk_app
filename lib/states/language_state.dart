@@ -22,7 +22,7 @@ class LanguageState with ChangeNotifier {
   Locale initLanguage(Language newLanguage) {
     language ??= newLanguage;
 
-    spotlightIndexingState.updateSpotlightIndexLanguage(newLanguage);
+    spotlightIndexingState.initSpotlightIndexLanguage(newLanguage);
 
     return newLanguage.toLocale;
   }

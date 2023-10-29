@@ -105,3 +105,49 @@ Future<void> indexSpotlightSearch(
     }
   }
 }
+
+Future<void> deleteSpotlightSearchIndex() async {
+  // Indexing a searchable item
+  final summaries = await api.getSplotlightSummaries();
+  // Run the deletion in a separate isolate
+  // to prevent janking the UI
+  BackgroundIsolateBinaryMessenger.ensureInitialized(
+      RootIsolateToken.instance!);
+  Stream<(int, List<T>)> chunkIterable<T>(
+      Iterable<T> iterable, int chunkSize) async* {
+    var iterator = iterable.iterator;
+    var i = 0;
+    while (iterator.moveNext()) {
+      var currentChunk = <T>[];
+      do {
+        currentChunk.add(iterator.current);
+      } while (currentChunk.length < chunkSize && iterator.moveNext());
+      yield (i, currentChunk);
+      i += 1;
+    }
+  }
+
+  final items = summaries.expand((summary) => summary.variants
+      .mapIndexed((i, variant) => [
+            "${summary.id}-$i-simp",
+            "${summary.id}-$i-trad",
+          ])
+      .expand((i) => i));
+
+  if (kDebugMode) {
+    print("Deleting ${items.length} items");
+  }
+
+  const batchSize = 10000;
+
+  final batches = chunkIterable(items, batchSize);
+
+  await for (final (i, batch) in batches) {
+    String result =
+        await FlutterCoreSpotlight.instance.deleteSearchableItems(batch);
+    if (kDebugMode) {
+      print(
+          "Deleting spotlight index batch ${i + 1}/${(items.length / batchSize).ceil()} result: $result");
+    }
+  }
+}
