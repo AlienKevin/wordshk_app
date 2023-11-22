@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -143,17 +145,17 @@ class _MyAppState extends State<MyApp> {
     accentColor(Brightness brightness) =>
         brightness == Brightness.light ? blueColor : lightBlueColor;
     const headlineLarge =
-        TextStyle(fontSize: 46.0, fontWeight: FontWeight.w600);
+        TextStyle(fontSize: 46.0, fontVariations: [FontVariation('wght', 600)]);
     const headlineMedium =
-        TextStyle(fontSize: 36.0, fontWeight: FontWeight.w600);
+        TextStyle(fontSize: 36.0, fontVariations: [FontVariation('wght', 600)]);
     const headlineSmall =
-        TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600);
-    const titleLarge = TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600);
-    const titleMedium = TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600);
-    const titleSmall = TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600);
-    const bodyLarge = TextStyle(fontSize: 22.0);
-    const bodyMedium = TextStyle(fontSize: 18.0);
-    const bodySmall = TextStyle(fontSize: 16.0);
+        TextStyle(fontSize: 28.0, fontVariations: [FontVariation('wght', 600)]);
+    const titleLarge = TextStyle(fontSize: 22.0, fontVariations: [FontVariation('wght', 600)]);
+    const titleMedium = TextStyle(fontSize: 18.0, fontVariations: [FontVariation('wght', 600)]);
+    const titleSmall = TextStyle(fontSize: 16.0, fontVariations: [FontVariation('wght', 600)]);
+    const bodyLarge = TextStyle(fontSize: 22.0, fontVariations: [FontVariation('wght', 400)]);
+    const bodyMedium = TextStyle(fontSize: 18.0, fontVariations: [FontVariation('wght', 400)]);
+    const bodySmall = TextStyle(fontSize: 16.0, fontVariations: [FontVariation('wght', 400)]);
     var textTheme = const TextTheme(
       headlineLarge: headlineLarge,
       headlineMedium: headlineMedium,
@@ -167,6 +169,10 @@ class _MyAppState extends State<MyApp> {
     var appBarTheme = AppBarTheme.of(context).copyWith(
       backgroundColor: blueColor,
       centerTitle: true,
+    );
+    var tabBarTheme = const TabBarTheme(
+      labelStyle: TextStyle(fontWeight: FontWeight.w600), // Bold weight for selected tab
+      unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400), // Normal weight for unselected tabs
     );
     textSelectionTheme(Brightness brightness) => TextSelectionThemeData(
         selectionColor: lightBlueColor.withAlpha(50),
@@ -204,6 +210,7 @@ class _MyAppState extends State<MyApp> {
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
       appBarTheme: appBarTheme,
+      tabBarTheme: tabBarTheme,
       textSelectionTheme: textSelectionTheme(Brightness.light),
       fontFamily: 'ChironHeiHK',
       textTheme: textTheme.copyWith(
@@ -226,6 +233,7 @@ class _MyAppState extends State<MyApp> {
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
       appBarTheme: appBarTheme,
+      tabBarTheme: tabBarTheme,
       textSelectionTheme: textSelectionTheme(Brightness.dark),
       fontFamily: 'ChironHeiHK',
       textTheme: textTheme.copyWith(

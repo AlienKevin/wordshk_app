@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -28,10 +30,8 @@ class NavigationDrawer extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 label,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.normal),
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontVariations: [const FontVariation('wght', 400)]),
               )),
           onPressed: () {
             Navigator.of(context).pop();
@@ -106,13 +106,13 @@ class NavigationDrawer extends StatelessWidget {
                   isMaterial(context)
                       ? Icons.access_time_rounded
                       : CupertinoIcons.time,
-                      (_) => EntryItemsPage<HistoryState>(
-                    title: AppLocalizations.of(context)!.history,
-                    emptyMessage: AppLocalizations.of(context)!.noHistory,
-                    deletionConfirmationMessage:
-                    AppLocalizations.of(context)!
-                        .historyDeleteConfirmation,
-                  )),
+                  (_) => EntryItemsPage<HistoryState>(
+                        title: AppLocalizations.of(context)!.history,
+                        emptyMessage: AppLocalizations.of(context)!.noHistory,
+                        deletionConfirmationMessage:
+                            AppLocalizations.of(context)!
+                                .historyDeleteConfirmation,
+                      )),
               const Divider(),
               drawerButton(AppLocalizations.of(context)!.exercise,
                   PlatformIcons(context).volumeUp, (_) => ExercisePage()),

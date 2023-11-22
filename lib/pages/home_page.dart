@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -388,7 +389,7 @@ class _HomePageState extends State<HomePage> {
               TextSpan(
                   text: "\n${result.eng}",
                   style: textStyle.copyWith(
-                      fontWeight: FontWeight.normal, color: greyColor)),
+                      fontVariations: [const FontVariation('wght', 400)], color: greyColor)),
             ],
           ));
     }).toList();

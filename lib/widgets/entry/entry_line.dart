@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
@@ -31,7 +33,7 @@ class EntryLine extends StatelessWidget {
             children: [
               TextSpan(
                   text: tag,
-                  style: const TextStyle(fontWeight: FontWeight.w600)),
+                  style: const TextStyle(fontVariations: [FontVariation('wght', 600)])),
               ...line.segments
                   .map((segment) => showSegment(segment,
                       Theme.of(context).colorScheme.secondary, onTapLink))

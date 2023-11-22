@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -24,7 +26,7 @@ class EntryLabels extends StatelessWidget {
                     text: TextSpan(
                         text: "[${AppLocalizations.of(context)!.label}]",
                         style: lineTextStyle.copyWith(
-                            fontWeight: FontWeight.w600)))),
+                            fontVariations: [const FontVariation('wght', 600)])))),
             ...labels
                 .map((label) => [
                       const WidgetSpan(child: SizedBox(width: 10)),
