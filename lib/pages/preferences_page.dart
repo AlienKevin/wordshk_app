@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -100,21 +102,25 @@ class PreferencesPage extends StatelessWidget {
                 ),
               ],
             ),
-            SettingsSection(
-              title: Text(s.advanced),
-              tiles: <SettingsTile>[
-                SettingsTile.switchTile(
-                    description: Text(s.spotlightSearchDescription),
-                    initialValue:
-                        context.watch<SpotlightIndexingState>().enabled,
-                    onToggle: (newEnabled) {
-                      context
-                          .read<SpotlightIndexingState>()
-                          .updateSpotlightIndexEnabled(newEnabled);
-                    },
-                    title: Text(s.spotlightSearch)),
-              ],
-            ),
+            ...((Platform.isIOS || Platform.isMacOS)
+                ? [
+                    SettingsSection(
+                      title: Text(s.advanced),
+                      tiles: <SettingsTile>[
+                        SettingsTile.switchTile(
+                            description: Text(s.spotlightSearchDescription),
+                            initialValue:
+                                context.watch<SpotlightIndexingState>().enabled,
+                            onToggle: (newEnabled) {
+                              context
+                                  .read<SpotlightIndexingState>()
+                                  .updateSpotlightIndexEnabled(newEnabled);
+                            },
+                            title: Text(s.spotlightSearch)),
+                      ],
+                    )
+                  ]
+                : []),
           ],
         ));
   }
