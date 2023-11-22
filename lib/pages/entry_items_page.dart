@@ -12,8 +12,10 @@ import 'package:wordshk/models/entry_language.dart';
 
 import '../custom_page_route.dart';
 import '../ffi.dart';
+import '../models/language.dart';
 import '../states/entry_item_state.dart';
 import '../states/entry_language_state.dart';
+import '../states/language_state.dart';
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
@@ -90,8 +92,10 @@ class _EntryItemsState<T extends EntryItemState>
 
   Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
     final script = getScript(context);
-    final isEngDef =
-        context.read<EntryLanguageState>().language == EntryLanguage.english;
+    final entryLanguage = context.read<EntryLanguageState>().language;
+    final language = context.read<LanguageState>().language;
+    final isEngDef = entryLanguage == EntryLanguage.english ||
+        (entryLanguage == EntryLanguage.both && language == Language.en);
     return api
         .getEntrySummaries(
           entryIds: Uint32List.fromList(ids),
