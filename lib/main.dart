@@ -232,6 +232,7 @@ class _MyAppState extends State<MyApp> {
       textButtonTheme: textButtonTheme(Brightness.dark),
       elevatedButtonTheme: elevatedButtonTheme(Brightness.dark),
       dividerColor: darkGreyColor,
+      dividerTheme: dividerTheme,
     );
     return Portal(
       child: MaterialApp(
