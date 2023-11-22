@@ -366,5 +366,5 @@ double getMaxWidthForTexts(String text1, String text2, TextStyle style) {
 
   return [textPainter1.width, textPainter2.width]
       .reduce((a, b) => a > b ? a : b) *
-      0.5;
+      0.6;
 }
