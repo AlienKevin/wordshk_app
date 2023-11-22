@@ -19,7 +19,11 @@ import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
 
 class EntryItemsPage<T extends EntryItemState> extends StatefulWidget {
-  const EntryItemsPage({Key? key}) : super(key: key);
+  final String title;
+  final String emptyMessage;
+  final String deletionConfirmationMessage;
+  const EntryItemsPage({Key? key, required this.title, required this.emptyMessage,
+    required this.deletionConfirmationMessage}) : super(key: key);
 
   @override
   _EntryItemsState<T> createState() => _EntryItemsState<T>();
@@ -138,7 +142,7 @@ class _EntryItemsState<T extends EntryItemState> extends State<EntryItemsPage<T>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.bookmarks),
+        title: Text(widget.title),
         actions: _entryItemSummaries.isEmpty
             ? []
             : [
@@ -168,7 +172,7 @@ class _EntryItemsState<T extends EntryItemState> extends State<EntryItemsPage<T>
       body: Consumer<T>(
           builder: (BuildContext context, EntryItemState s, Widget? child) => s
               .items.isEmpty
-              ? Center(child: Text(AppLocalizations.of(context)!.noBookmarks))
+              ? Center(child: Text(widget.emptyMessage))
               : ListView.separated(
             itemCount: _hasMore
                 ? _entryItemSummaries.length + 1
@@ -265,8 +269,7 @@ class _EntryItemsState<T extends EntryItemState> extends State<EntryItemsPage<T>
                       showPlatformDialog(
                         context: context,
                         builder: (_) => PlatformAlertDialog(
-                          title: Text(AppLocalizations.of(context)!
-                              .bookmarkDeleteConfirmation),
+                          title: Text(widget.deletionConfirmationMessage),
                           actions: [
                             PlatformDialogAction(
                               child: PlatformText(

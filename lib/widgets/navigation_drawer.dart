@@ -91,19 +91,23 @@ class NavigationDrawer extends StatelessWidget {
               drawerButton(
                   AppLocalizations.of(context)!.bookmarks,
                   PlatformIcons(context).bookmarkOutline,
-                      (_) => EntryItemsPage<BookmarkState>()),
+                  (_) => EntryItemsPage<BookmarkState>(
+                        title: AppLocalizations.of(context)!.bookmarks,
+                        emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+                        deletionConfirmationMessage:
+                            AppLocalizations.of(context)!
+                                .bookmarkDeleteConfirmation,
+                      )),
               const Divider(),
-              drawerButton(
-                  AppLocalizations.of(context)!.exercise,
-                  PlatformIcons(context).volumeUp,
-                      (_) => ExercisePage()),
+              drawerButton(AppLocalizations.of(context)!.exercise,
+                  PlatformIcons(context).volumeUp, (_) => ExercisePage()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.preferences,
                   isMaterial(context)
                       ? Icons.settings_outlined
                       : CupertinoIcons.settings,
-                      (_) => const PreferencesPage()),
+                  (_) => const PreferencesPage()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.aboutWordshk,
