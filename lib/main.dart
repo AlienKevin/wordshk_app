@@ -195,6 +195,7 @@ class _MyAppState extends State<MyApp> {
     const darkThemeAccentColor = lightBlueColor;
 
     var lightTheme = ThemeData(
+      useMaterial3: false,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.light,
@@ -214,6 +215,7 @@ class _MyAppState extends State<MyApp> {
       dividerTheme: dividerTheme,
     );
     var darkTheme = ThemeData(
+      useMaterial3: false,
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.dark,
