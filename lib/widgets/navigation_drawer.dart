@@ -58,6 +58,7 @@ class NavigationDrawer extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                   ),
+                  margin: EdgeInsets.zero,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
