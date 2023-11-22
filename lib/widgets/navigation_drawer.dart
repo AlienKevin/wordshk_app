@@ -2,13 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:wordshk/pages/entry_items_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/preferences_page.dart';
+import 'package:wordshk/states/bookmark_state.dart';
 
 import '../constants.dart';
 import '../custom_page_route.dart';
 import '../pages/about_page.dart';
-import '../pages/bookmark_page.dart';
 import '../pages/home_page.dart';
 
 class NavigationDrawer extends StatelessWidget {
@@ -90,7 +91,7 @@ class NavigationDrawer extends StatelessWidget {
               drawerButton(
                   AppLocalizations.of(context)!.bookmarks,
                   PlatformIcons(context).bookmarkOutline,
-                      (_) => BookmarkPage()),
+                      (_) => EntryItemsPage<BookmarkState>()),
               const Divider(),
               drawerButton(
                   AppLocalizations.of(context)!.exercise,
