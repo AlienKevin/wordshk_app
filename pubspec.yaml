@@ -15,7 +15,7 @@ dependencies:
     sdk: flutter
   flutter_rust_bridge: ^1.80.1
   equatable: ^2.0.0
-  flutter_native_splash: ^2.3.2
+  flutter_native_splash: ^2.3.6
   just_audio: ^0.9.35
   expandable: ^5.0.1
   url_launcher: ^6.1.12
