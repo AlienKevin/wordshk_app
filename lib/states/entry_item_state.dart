@@ -62,6 +62,16 @@ class EntryItemState with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateItem(int entryId) async {
+    if (_items.contains(entryId)) {
+      // remove and add again to update time
+      await removeItem(entryId);
+      await addItem(entryId);
+    } else {
+      await addItem(entryId);
+    }
+  }
+
   Future<void> addItem(int entryId) async {
     final db = await getDatabase();
     final result = await db.insert(

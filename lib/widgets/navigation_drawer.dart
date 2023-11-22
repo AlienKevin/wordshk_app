@@ -6,6 +6,7 @@ import 'package:wordshk/pages/entry_items_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/preferences_page.dart';
 import 'package:wordshk/states/bookmark_state.dart';
+import 'package:wordshk/states/history_state.dart';
 
 import '../constants.dart';
 import '../custom_page_route.dart';
@@ -98,6 +99,19 @@ class NavigationDrawer extends StatelessWidget {
                             AppLocalizations.of(context)!
                                 .bookmarkDeleteConfirmation,
                       )),
+              const Divider(),
+              drawerButton(
+                  AppLocalizations.of(context)!.history,
+                  isMaterial(context)
+                      ? Icons.access_time_rounded
+                      : CupertinoIcons.time,
+                      (_) => EntryItemsPage<HistoryState>(
+                    title: AppLocalizations.of(context)!.history,
+                    emptyMessage: AppLocalizations.of(context)!.noHistory,
+                    deletionConfirmationMessage:
+                    AppLocalizations.of(context)!
+                        .historyDeleteConfirmation,
+                  )),
               const Divider(),
               drawerButton(AppLocalizations.of(context)!.exercise,
                   PlatformIcons(context).volumeUp, (_) => ExercisePage()),

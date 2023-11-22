@@ -18,6 +18,7 @@ import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/entry_item_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
+import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
@@ -31,6 +32,7 @@ import 'constants.dart';
 import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
+late final Future<Database> historyDatabase;
 
 late final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -51,6 +53,8 @@ main() async {
       }
       bookmarkDatabase = EntryItemState.createDatabase(
           tableName: "bookmarks", databaseName: "bookmarkedEntries");
+      historyDatabase = EntryItemState.createDatabase(
+          tableName: "history", databaseName: "historyEntries");
 
       WidgetsFlutterBinding
           .ensureInitialized(); // mandatory when awaiting on main
@@ -86,6 +90,11 @@ main() async {
                 create: (_) => BookmarkState(
                     tableName: "bookmarks",
                     getDatabase: () => bookmarkDatabase),
+                lazy: false),
+            ChangeNotifierProvider<HistoryState>(
+                create: (_) => HistoryState(
+                    tableName: "history",
+                    getDatabase: () => historyDatabase),
                 lazy: false),
             ChangeNotifierProvider<ExerciseIntroductionState>(
                 create: (_) => ExerciseIntroductionState(prefs))

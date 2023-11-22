@@ -112,10 +112,15 @@
 
     "bookmarks": "Bookmarks",
     "noBookmarks": "No bookmarks yet",
+    "bookmarkDeleteConfirmation": "Are you sure you want to delete those bookmarks?",
+
+    "history": "Search History",
+    "noHistory": "No search record yet",
+    "historyDeleteConfirmation": "Are you sure you want to delete those search history?",
+
     "edit": "Edit",
     "all": "All",
     "none": "None",
-    "bookmarkDeleteConfirmation": "Are you sure you want to delete those bookmarks?",
     "delete": "Delete",
     "cancel": "Cancel",
     "confirm": "Confirm",

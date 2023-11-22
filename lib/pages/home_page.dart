@@ -8,6 +8,7 @@ import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/widgets/digital_ink_view.dart';
 import 'package:wordshk/widgets/search_bar.dart';
@@ -63,7 +64,7 @@ class _HomePageState extends State<HomePage> {
         doSearch(query, context);
       });
       context.read<InputModeState>().setOnDone(
-          () => onSearchDone(context.read<SearchQueryState>().query));
+          () => onSearchSubmitted(context.read<SearchQueryState>().query));
 
       // Spotlight search only available on apple
       if (Platform.isIOS || Platform.isMacOS) {
@@ -83,6 +84,7 @@ class _HomePageState extends State<HomePage> {
             if (kDebugMode) {
               print("Spotlight searched: $query, result entryId: $entryId");
             }
+            context.read<HistoryState>().updateItem(entryId);
             Navigator.push(
               context,
               CustomPageRoute(
@@ -95,7 +97,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  onSearchDone(String query) {
+  onSearchSubmitted(String query) {
     final state = context.read<SearchModeState>();
     if (state.mode == SearchMode.variant || state.mode == SearchMode.combined) {
       // No search results should be produced in other modes
@@ -107,6 +109,7 @@ class _HomePageState extends State<HomePage> {
       final exactMatchVariant = variantSearchResults
           .firstWhereOrNull((result) => result.variant == query);
       if (exactMatchVariant != null) {
+        context.read<HistoryState>().updateItem(exactMatchVariant.id);
         Navigator.push(
           context,
           CustomPageRoute(
@@ -145,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                   queryEmptied = true;
                 });
               },
-              onSubmitted: onSearchDone,
+              onSubmitted: onSearchSubmitted,
             ),
             drawer: const NavigationDrawer(),
             body: inputMode == InputMode.ink
@@ -501,6 +504,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.zero,
           ),
           onPressed: () {
+            context.read<HistoryState>().updateItem(id);
             Navigator.push(
               context,
               CustomPageRoute(

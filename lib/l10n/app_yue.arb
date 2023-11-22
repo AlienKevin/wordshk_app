@@ -102,11 +102,16 @@
     "dismiss": "關閉",
 
     "bookmarks": "收藏",
-    "noBookmarks": "未有收藏～",
+    "noBookmarks": "未有收藏",
+    "bookmarkDeleteConfirmation": "請問你係咪確定要刪除呢啲收藏？",
+
+    "history": "搜尋歷史",
+    "noHistory": "未有搜尋紀錄",
+    "historyDeleteConfirmation": "請問你係咪確定要刪除呢啲搜尋紀錄？",
+
     "edit": "編輯",
     "all": "全選",
     "none": "全唔選",
-    "bookmarkDeleteConfirmation": "請問你係咪確定要刪除呢啲收藏？",
     "delete": "刪除",
     "cancel": "取消",
     "confirm": "確定",
