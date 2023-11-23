@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:wordshk/widgets/scalable_text_span.dart';
@@ -37,7 +35,7 @@ class EntrySimsOrAnts extends StatelessWidget {
                   text: TextSpan(
                       text: label,
                       style: lineTextStyle.copyWith(
-                          fontVariations: [const FontVariation('wght', 600)])))),
+                          fontWeight: FontWeight.w600)))),
           const WidgetSpan(child: SizedBox(width: 10)),
           ...(script == Script.Traditional
                   ? simsOrAnts

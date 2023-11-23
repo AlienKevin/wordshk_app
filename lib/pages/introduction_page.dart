@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -41,7 +39,7 @@ class IntroductionPage extends StatelessWidget {
         //rtl: true, // Display as right-to-left
         back: const Icon(Icons.arrow_back),
         next: const Icon(Icons.arrow_forward),
-        done: Text(s.done, style: const TextStyle(fontVariations: [FontVariation('wght', 600)])),
+        done: Text(s.done, style: const TextStyle(fontWeight: FontWeight.w600)),
         pages: [
           PageViewModel(
             titleWidget: Align(
