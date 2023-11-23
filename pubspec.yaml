@@ -75,8 +75,8 @@ flutter:
   fonts:
     - family: ChironHeiHK
       fonts:
-        - asset: fonts/ChironHeiHK-R.ttf
-        - asset: fonts/ChironHeiHK-SB.ttf
+        - asset: fonts/ChironHeiHK-Text-R.otf
+        - asset: fonts/ChironHeiHK-Text-SB.otf
           weight: 600
 
 flutter_native_splash:
