@@ -81,7 +81,8 @@ class _HomePageState extends State<HomePage> {
             final query =
                 userActivity.userInfo!['kCSSearchQueryString'] as String;
             // Ignore the variant index and optional script type (simp/trad) after the "-"
-            final entryId = int.parse(userActivity.uniqueIdentifier!.split("-")[0]);
+            final entryId =
+                int.parse(userActivity.uniqueIdentifier!.split("-")[0]);
             if (kDebugMode) {
               print("Spotlight searched: $query, result entryId: $entryId");
             }
@@ -353,7 +354,11 @@ class _HomePageState extends State<HomePage> {
   Widget showSearchResults() =>
       Consumer<SearchModeState>(builder: (context, searchModeState, child) {
         final results = showSearchResultsHelper(
-            Theme.of(context).textTheme.bodyLarge!, searchModeState.mode);
+            Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontVariations: [const FontVariation('wght', 600)]),
+            searchModeState.mode);
         return ListView.separated(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           separatorBuilder: (_, __) => const Divider(),
@@ -389,7 +394,8 @@ class _HomePageState extends State<HomePage> {
               TextSpan(
                   text: "\n${result.eng}",
                   style: textStyle.copyWith(
-                      fontVariations: [const FontVariation('wght', 400)], color: greyColor)),
+                      fontVariations: [const FontVariation('wght', 400)],
+                      color: greyColor)),
             ],
           ));
     }).toList();
