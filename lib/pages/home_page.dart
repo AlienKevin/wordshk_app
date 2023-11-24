@@ -8,6 +8,7 @@ import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/models/embedded.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/widgets/digital_ink_view.dart';
@@ -363,7 +364,9 @@ class _HomePageState extends State<HomePage> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         // Embedded search results in the right column on wide screens
-        final embedded = constraints.maxWidth > 600;
+        final embedded = constraints.maxWidth > wideScreenThreshold
+            ? Embedded.embedded
+            : Embedded.topLevel;
         final results = showSearchResultsHelper(
             Theme.of(context).textTheme.bodyLarge!,
             context.watch<SearchModeState>().mode,
@@ -374,7 +377,7 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (_, index) => results[index],
           itemCount: results.length,
         );
-        return embedded
+        return embedded == Embedded.embedded
             ? Row(
                 children: [
                   Expanded(child: resultList),
@@ -395,7 +398,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> showSearchResultsHelper(
-      TextStyle textStyle, SearchMode searchMode, bool embedded) {
+      TextStyle textStyle, SearchMode searchMode, Embedded embedded) {
     switch (searchMode) {
       case SearchMode.pr:
         return showPrSearchResults(0, textStyle, embedded);
@@ -409,7 +412,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> showEnglishSearchResults(
-      int startIndex, TextStyle textStyle, bool embedded) {
+      int startIndex, TextStyle textStyle, Embedded embedded) {
     return englishSearchResults.mapIndexed((index, result) {
       return showSearchResult(
           startIndex + index,
@@ -437,7 +440,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> showEgSearchResults(
-      int startIndex, String queryFound, bool embedded) {
+      int startIndex, String queryFound, Embedded embedded) {
     return egSearchResults.mapIndexed((index, result) {
       egs(bool selected) => result.eg
           .split(queryFound)
@@ -473,7 +476,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> showPrSearchResults(
-      int startIndex, TextStyle textStyle, bool embedded) {
+      int startIndex, TextStyle textStyle, Embedded embedded) {
     return prSearchResults
         .mapIndexed((index, result) => showSearchResult(
               startIndex + index,
@@ -499,7 +502,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> showVariantSearchResults(
-      int startIndex, TextStyle textStyle, bool embedded) {
+      int startIndex, TextStyle textStyle, Embedded embedded) {
     return variantSearchResults.mapIndexed((index, result) {
       return showSearchResult(
         startIndex + index,
@@ -523,7 +526,7 @@ class _HomePageState extends State<HomePage> {
       ));
 
   List<Widget> showCombinedSearchResults(
-      int startIndex, TextStyle textStyle, bool embedded) {
+      int startIndex, TextStyle textStyle, Embedded embedded) {
     final s = AppLocalizations.of(context)!;
     final romanization = context.read<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);
@@ -571,9 +574,9 @@ class _HomePageState extends State<HomePage> {
       {int maxLines = 2,
       int? defIndex,
       bool showFirstEntryInGroupInitially = false,
-      bool embedded = true}) {
-    final selected =
-        embedded && ValueKey(index) == selectedSearchResultEntryPage?.key!;
+      Embedded embedded = Embedded.embedded}) {
+    final selected = embedded == Embedded.embedded &&
+        ValueKey(index) == selectedSearchResultEntryPage?.key!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -596,7 +599,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               selectedSearchResultEntryPage = entryPage;
             });
-            if (!embedded) {
+            if (embedded != Embedded.embedded) {
               Navigator.push(
                 context,
                 CustomPageRoute(builder: (context) => entryPage),

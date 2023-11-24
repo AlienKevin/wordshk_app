@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/custom_page_route.dart';
+import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../ffi.dart';
+import '../models/embedded.dart';
 import '../models/entry.dart';
 import '../states/player_state.dart';
 import '../utils.dart';
@@ -19,15 +21,15 @@ class EntryPage extends StatefulWidget {
   final int id;
   final bool showFirstEntryInGroupInitially;
   final int? defIndex;
-  final bool embedded;
+  final Embedded embedded;
 
-  const EntryPage(
-      {Key? key,
-      required this.id,
-      required this.showFirstEntryInGroupInitially,
-      this.defIndex,
-      this.embedded = false})
-      : super(key: key);
+  const EntryPage({
+    Key? key,
+    required this.id,
+    required this.showFirstEntryInGroupInitially,
+    this.defIndex,
+    this.embedded = Embedded.topLevel,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _EntryPageState();
@@ -76,7 +78,7 @@ class _EntryPageState extends State<EntryPage> {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          appBar: widget.embedded
+          appBar: widget.embedded == Embedded.embedded
               ? null
               : AppBar(
                   actions: [
@@ -89,7 +91,10 @@ class _EntryPageState extends State<EntryPage> {
                     )
                   ],
                 ),
-          body: showEntry(),
+          body: switch (widget.embedded) {
+            Embedded.topLevel => ConstrainedContent(child: showEntry()),
+            Embedded.embedded || Embedded.nestedInEmbedded => showEntry(),
+          },
         ));
   }
 
@@ -124,8 +129,8 @@ class _EntryPageState extends State<EntryPage> {
               entryIndex: entryIndex!,
               isLoading: isLoading,
               hasError: hasError,
-              inAppBar: !widget.embedded
-          ),
+              inAppBar: widget.embedded == Embedded.topLevel ||
+                  widget.embedded == Embedded.nestedInEmbedded),
           entryGroup: entryGroup!,
           initialEntryIndex: entryIndex!,
           initialDefIndex: widget.defIndex,
@@ -148,7 +153,13 @@ class _EntryPageState extends State<EntryPage> {
                   context,
                   CustomPageRoute(
                       builder: (context) => EntryPage(
-                          id: id, showFirstEntryInGroupInitially: true)),
+                            id: id,
+                            showFirstEntryInGroupInitially: true,
+                            embedded: widget.embedded == Embedded.embedded ||
+                                    widget.embedded == Embedded.nestedInEmbedded
+                                ? Embedded.nestedInEmbedded
+                                : Embedded.topLevel,
+                          )),
                 );
               }
             });

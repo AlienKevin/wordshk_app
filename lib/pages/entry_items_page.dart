@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/models/entry_language.dart';
+import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../custom_page_route.dart';
 import '../ffi.dart';
@@ -168,81 +169,83 @@ class _EntryItemsState<T extends EntryItemState>
               ],
       ),
       drawer: const NavigationDrawer(),
-      body: Consumer<T>(
-          builder: (BuildContext context, EntryItemState s, Widget? child) => s
-                  .items.isEmpty
-              ? Center(child: Text(widget.emptyMessage))
-              : ListView.separated(
-                  itemCount: _hasMore
-                      ? _entryItemSummaries.length + 1
-                      : _entryItemSummaries.length,
-                  itemBuilder: (context, index) {
-                    if (index >= _entryItemSummaries.length) {
-                      _loadMore();
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    final id = s.items[index];
-                    final summary = _entryItemSummaries[id]!;
-                    return ListTile(
-                      leading: switch (_mode) {
-                        ViewMode() => null,
-                        EditMode(selectedEntryItems: var selectedEntryItems) =>
-                          Checkbox(
-                            value: selectedEntryItems.contains(id),
-                            visualDensity: VisualDensity.compact,
-                            onChanged: (value) {
-                              if (value!) {
-                                setState(() {
-                                  selectedEntryItems.add(id);
-                                });
-                              } else {
+      body: ConstrainedContent(
+        child: Consumer<T>(
+            builder: (BuildContext context, EntryItemState s, Widget? child) => s
+                    .items.isEmpty
+                ? Center(child: Text(widget.emptyMessage))
+                : ListView.separated(
+                    itemCount: _hasMore
+                        ? _entryItemSummaries.length + 1
+                        : _entryItemSummaries.length,
+                    itemBuilder: (context, index) {
+                      if (index >= _entryItemSummaries.length) {
+                        _loadMore();
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final id = s.items[index];
+                      final summary = _entryItemSummaries[id]!;
+                      return ListTile(
+                        leading: switch (_mode) {
+                          ViewMode() => null,
+                          EditMode(selectedEntryItems: var selectedEntryItems) =>
+                            Checkbox(
+                              value: selectedEntryItems.contains(id),
+                              visualDensity: VisualDensity.compact,
+                              onChanged: (value) {
+                                if (value!) {
+                                  setState(() {
+                                    selectedEntryItems.add(id);
+                                  });
+                                } else {
+                                  setState(() {
+                                    selectedEntryItems.remove(id);
+                                  });
+                                }
+                              },
+                            )
+                        },
+                        title: Text(
+                          summary.variant,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          summary.def,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        onTap: switch (_mode) {
+                          ViewMode() => () {
+                              Navigator.push(
+                                context,
+                                CustomPageRoute(
+                                    builder: (context) => EntryPage(
+                                          id: id,
+                                          showFirstEntryInGroupInitially: false,
+                                        )),
+                              );
+                            },
+                          EditMode(selectedEntryItems: var selectedEntryItems) =>
+                            () {
+                              // Toggles entryItem selected state
+                              if (selectedEntryItems.contains(id)) {
                                 setState(() {
                                   selectedEntryItems.remove(id);
                                 });
+                              } else {
+                                setState(() {
+                                  selectedEntryItems.add(id);
+                                });
                               }
-                            },
-                          )
-                      },
-                      title: Text(
-                        summary.variant,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Text(
-                        summary.def,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      onTap: switch (_mode) {
-                        ViewMode() => () {
-                            Navigator.push(
-                              context,
-                              CustomPageRoute(
-                                  builder: (context) => EntryPage(
-                                        id: id,
-                                        showFirstEntryInGroupInitially: false,
-                                      )),
-                            );
-                          },
-                        EditMode(selectedEntryItems: var selectedEntryItems) =>
-                          () {
-                            // Toggles entryItem selected state
-                            if (selectedEntryItems.contains(id)) {
-                              setState(() {
-                                selectedEntryItems.remove(id);
-                              });
-                            } else {
-                              setState(() {
-                                selectedEntryItems.add(id);
-                              });
                             }
-                          }
-                      },
-                    );
-                  },
-                  separatorBuilder: (context, index) => const Divider(),
-                )),
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  )),
+      ),
       bottomNavigationBar: switch (_mode) {
         EditMode(selectedEntryItems: var selectedEntryItems)
             when _entryItemSummaries.isNotEmpty =>
@@ -254,92 +257,94 @@ class _EntryItemsState<T extends EntryItemState>
                     .textStyle!
                     .resolve({})!.fontSize! *
                 4,
-            child: Row(
-              children: [
-                ElevatedButton(
+            child: ConstrainedContent(
+              child: Row(
+                children: [
+                  ElevatedButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        ),
+                      ),
+                      onPressed: () async {
+                        final allEntryItems = context.read<T>().items;
+                        switch (_mode) {
+                          case ViewMode():
+                            {
+                              await Sentry.captureMessage(
+                                  'entryItem_page: All button pressed in ViewMode even though it should only be present in EditMode.');
+                              break;
+                            }
+                          case EditMode(
+                          selectedEntryItems: var selectedEntryItems
+                          ):
+                            if (selectedEntryItems.length <
+                                allEntryItems.length) {
+                              setState(() {
+                                selectedEntryItems.addAll(allEntryItems);
+                              });
+                            } else {
+                              setState(() {
+                                selectedEntryItems.clear();
+                              });
+                            }
+                            break;
+                        }
+                      },
+                      child: (() {
+                        return ConstrainedBox(
+                          constraints: const BoxConstraints(minWidth: 80),
+                          child: Text(
+                            selectedEntryItems.length < _entryItemSummaries.length
+                                ? AppLocalizations.of(context)!.all
+                                : AppLocalizations.of(context)!.none,
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      })()),
+                  const Spacer(),
+                  ElevatedButton(
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       ),
                     ),
-                    onPressed: () async {
-                      final allEntryItems = context.read<T>().items;
-                      switch (_mode) {
-                        case ViewMode():
-                          {
-                            await Sentry.captureMessage(
-                                'entryItem_page: All button pressed in ViewMode even though it should only be present in EditMode.');
-                            break;
-                          }
-                        case EditMode(
-                        selectedEntryItems: var selectedEntryItems
-                        ):
-                          if (selectedEntryItems.length <
-                              allEntryItems.length) {
-                            setState(() {
-                              selectedEntryItems.addAll(allEntryItems);
-                            });
-                          } else {
-                            setState(() {
-                              selectedEntryItems.clear();
-                            });
-                          }
-                          break;
-                      }
-                    },
-                    child: (() {
-                      return ConstrainedBox(
+                    onPressed: selectedEntryItems.isEmpty
+                        ? null
+                        : () {
+                            showPlatformDialog(
+                              context: context,
+                              builder: (_) => PlatformAlertDialog(
+                                title: Text(widget.deletionConfirmationMessage),
+                                actions: [
+                                  PlatformDialogAction(
+                                    child: PlatformText(
+                                        AppLocalizations.of(context)!.cancel),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  PlatformDialogAction(
+                                    child: PlatformText(
+                                        AppLocalizations.of(context)!.confirm),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      for (final id in selectedEntryItems) {
+                                        context.read<T>().removeItem(id);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                    child: ConstrainedBox(
                         constraints: const BoxConstraints(minWidth: 80),
                         child: Text(
-                          selectedEntryItems.length < _entryItemSummaries.length
-                              ? AppLocalizations.of(context)!.all
-                              : AppLocalizations.of(context)!.none,
+                          AppLocalizations.of(context)!.delete,
                           textAlign: TextAlign.center,
-                        ),
-                      );
-                    })()),
-                const Spacer(),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    ),
+                        )),
                   ),
-                  onPressed: selectedEntryItems.isEmpty
-                      ? null
-                      : () {
-                          showPlatformDialog(
-                            context: context,
-                            builder: (_) => PlatformAlertDialog(
-                              title: Text(widget.deletionConfirmationMessage),
-                              actions: [
-                                PlatformDialogAction(
-                                  child: PlatformText(
-                                      AppLocalizations.of(context)!.cancel),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                PlatformDialogAction(
-                                  child: PlatformText(
-                                      AppLocalizations.of(context)!.confirm),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    for (final id in selectedEntryItems) {
-                                      context.read<T>().removeItem(id);
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                  child: ConstrainedBox(
-                      constraints: const BoxConstraints(minWidth: 80),
-                      child: Text(
-                        AppLocalizations.of(context)!.delete,
-                        textAlign: TextAlign.center,
-                      )),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         _ => null,

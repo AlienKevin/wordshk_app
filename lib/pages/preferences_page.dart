@@ -12,6 +12,7 @@ import 'package:wordshk/pages/preferences/language_page.dart';
 import 'package:wordshk/pages/preferences/romanization_page.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'package:wordshk/utils.dart';
+import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
@@ -36,92 +37,94 @@ class PreferencesPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: Text(s.preferences)),
         drawer: const NavigationDrawer(),
-        body: MySettingsList(
-          sections: [
-            SettingsSection(
-              title: Text(s.general),
-              tiles: <SettingsTile>[
-                SettingsTile.navigation(
-                  title: Text(s.language),
-                  value: Text(language.toString()),
-                  onPressed: (context) {
-                    Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) =>
-                                const LanguagePreferencesPage()));
-                  },
-                ),
-                SettingsTile.navigation(
-                  title: Text(s.romanization),
-                  value: Text(getRomanizationName(romanization, s)),
-                  onPressed: (context) {
-                    Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) =>
-                                const RomanizationPreferencesPage()));
-                  },
-                ),
-              ],
-            ),
-            SettingsSection(
-              title: Text(s.dictionaryDefinition),
-              tiles: <SettingsTile>[
-                SettingsTile.navigation(
-                  title: Text(s.entryExplanationsLanguage),
-                  value: Text(getEntryLanguageName(entryLanguage, s)),
-                  onPressed: (context) {
-                    Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) =>
-                                const EntryExplanationLanguagePreferencesPage()));
-                  },
-                ),
-                SettingsTile.navigation(
-                  title: Text(s.entryHeaderSpeechRate),
-                  value: Text(getSpeechRateName(entryHeaderSpeechRate, s)),
-                  onPressed: (context) {
-                    Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) =>
-                                const EntryHeaderSpeechRatePreferencesPage()));
-                  },
-                ),
-                SettingsTile.navigation(
-                  title: Text(s.dictionaryExample),
-                  onPressed: (context) {
-                    Navigator.push(
-                        context,
-                        CustomPageRoute(
-                            builder: (context) =>
-                                const EntryEgPreferencesPage()));
-                  },
-                ),
-              ],
-            ),
-            ...((Platform.isIOS || Platform.isMacOS)
-                ? [
-                    SettingsSection(
-                      title: Text(s.advanced),
-                      tiles: <SettingsTile>[
-                        SettingsTile.switchTile(
-                            description: Text(s.spotlightSearchDescription),
-                            initialValue:
-                                context.watch<SpotlightIndexingState>().enabled,
-                            onToggle: (newEnabled) {
-                              context
-                                  .read<SpotlightIndexingState>()
-                                  .updateSpotlightIndexEnabled(newEnabled);
-                            },
-                            title: Text(s.spotlightSearch)),
-                      ],
-                    )
-                  ]
-                : []),
-          ],
+        body: ConstrainedContent(
+          child: MySettingsList(
+            sections: [
+              SettingsSection(
+                title: Text(s.general),
+                tiles: <SettingsTile>[
+                  SettingsTile.navigation(
+                    title: Text(s.language),
+                    value: Text(language.toString()),
+                    onPressed: (context) {
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) =>
+                                  const LanguagePreferencesPage()));
+                    },
+                  ),
+                  SettingsTile.navigation(
+                    title: Text(s.romanization),
+                    value: Text(getRomanizationName(romanization, s)),
+                    onPressed: (context) {
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) =>
+                                  const RomanizationPreferencesPage()));
+                    },
+                  ),
+                ],
+              ),
+              SettingsSection(
+                title: Text(s.dictionaryDefinition),
+                tiles: <SettingsTile>[
+                  SettingsTile.navigation(
+                    title: Text(s.entryExplanationsLanguage),
+                    value: Text(getEntryLanguageName(entryLanguage, s)),
+                    onPressed: (context) {
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) =>
+                                  const EntryExplanationLanguagePreferencesPage()));
+                    },
+                  ),
+                  SettingsTile.navigation(
+                    title: Text(s.entryHeaderSpeechRate),
+                    value: Text(getSpeechRateName(entryHeaderSpeechRate, s)),
+                    onPressed: (context) {
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) =>
+                                  const EntryHeaderSpeechRatePreferencesPage()));
+                    },
+                  ),
+                  SettingsTile.navigation(
+                    title: Text(s.dictionaryExample),
+                    onPressed: (context) {
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) =>
+                                  const EntryEgPreferencesPage()));
+                    },
+                  ),
+                ],
+              ),
+              ...((Platform.isIOS || Platform.isMacOS)
+                  ? [
+                      SettingsSection(
+                        title: Text(s.advanced),
+                        tiles: <SettingsTile>[
+                          SettingsTile.switchTile(
+                              description: Text(s.spotlightSearchDescription),
+                              initialValue:
+                                  context.watch<SpotlightIndexingState>().enabled,
+                              onToggle: (newEnabled) {
+                                context
+                                    .read<SpotlightIndexingState>()
+                                    .updateSpotlightIndexEnabled(newEnabled);
+                              },
+                              title: Text(s.spotlightSearch)),
+                        ],
+                      )
+                    ]
+                  : []),
+            ],
+          ),
         ));
   }
 }

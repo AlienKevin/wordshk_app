@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/utils.dart';
+import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../../models/entry_language.dart';
 import '../../states/entry_language_state.dart';
@@ -31,15 +32,17 @@ class EntryExplanationLanguagePreferencesPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(title: Text(s.dictionaryDefinition)),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            PreferencesTitle(title: s.entryExplanationsLanguage),
-            entryLanguageRadioListTile(EntryLanguage.both),
-            entryLanguageRadioListTile(EntryLanguage.cantonese),
-            entryLanguageRadioListTile(EntryLanguage.english),
-          ]),
+        body: ConstrainedContent(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              PreferencesTitle(title: s.entryExplanationsLanguage),
+              entryLanguageRadioListTile(EntryLanguage.both),
+              entryLanguageRadioListTile(EntryLanguage.cantonese),
+              entryLanguageRadioListTile(EntryLanguage.english),
+            ]),
+          ),
         ));
   }
 }
