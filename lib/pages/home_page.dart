@@ -404,24 +404,31 @@ class _HomePageState extends State<HomePage> {
       return showSearchResult(
           result.id,
           defIndex: result.defIndex,
-          TextSpan(
-            children: [
-              TextSpan(text: "${result.variant} ", style: textStyle),
-              TextSpan(
-                  text: result.pr, style: textStyle.copyWith(color: greyColor)),
-              TextSpan(
-                  text: "\n${result.eng}",
-                  style: textStyle.copyWith(
-                      fontWeight: FontWeight.normal, color: greyColor)),
-            ],
-          ),
+          (bool selected) => TextSpan(
+                children: [
+                  TextSpan(
+                      text: "${result.variant} ",
+                      style: selected
+                          ? textStyle.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary)
+                          : textStyle),
+                  TextSpan(
+                      text: result.pr,
+                      style: textStyle.copyWith(color: greyColor)),
+                  TextSpan(
+                      text: "\n${result.eng}",
+                      style: textStyle.copyWith(
+                          fontWeight: FontWeight.normal, color: greyColor)),
+                ],
+              ),
           navigateToEntryPage: navigateToEntryPage);
     }).toList();
   }
 
-  List<Widget> showEgSearchResults(String queryFound) {
+  List<Widget> showEgSearchResults(
+      String queryFound, bool navigateToEntryPage) {
     return egSearchResults.map((result) {
-      final List<InlineSpan> egs = result.eg
+      egs(bool selected) => result.eg
           .split(queryFound)
           .mapIndexed((i, segment) => <InlineSpan>[
                 ...(i == 0
@@ -429,7 +436,15 @@ class _HomePageState extends State<HomePage> {
                     : [
                         TextSpan(
                             text: queryFound,
-                            style: Theme.of(context).textTheme.titleSmall)
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(
+                                    color: selected
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary
+                                        : null))
                       ]),
                 TextSpan(
                     text: segment,
@@ -441,11 +456,10 @@ class _HomePageState extends State<HomePage> {
           .expand((x) => x)
           .toList();
       return showSearchResult(
-        result.id,
-        TextSpan(children: egs),
-        maxLines: 1,
-        defIndex: result.defIndex,
-      );
+          result.id, (bool selected) => TextSpan(children: egs(selected)),
+          maxLines: 1,
+          defIndex: result.defIndex,
+          navigateToEntryPage: navigateToEntryPage);
     }).toList();
   }
 
@@ -454,9 +468,14 @@ class _HomePageState extends State<HomePage> {
     return prSearchResults
         .map((result) => showSearchResult(
               result.id,
-              TextSpan(
+              (bool selected) => TextSpan(
                 children: [
-                  TextSpan(text: "${result.variant} ", style: textStyle),
+                  TextSpan(
+                      text: "${result.variant} ",
+                      style: textStyle.copyWith(
+                          color: selected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : null)),
                   TextSpan(
                       text: context
                           .read<RomanizationState>()
@@ -475,7 +494,11 @@ class _HomePageState extends State<HomePage> {
       return showSearchResult(
         result.id,
         showFirstEntryInGroupInitially: true,
-        TextSpan(text: result.variant, style: textStyle),
+        (bool selected) => TextSpan(
+            text: result.variant,
+            style: textStyle.copyWith(
+                color:
+                    selected ? Theme.of(context).colorScheme.onPrimary : null)),
         navigateToEntryPage: navigateToEntryPage,
       );
     }).toList();
@@ -516,17 +539,19 @@ class _HomePageState extends State<HomePage> {
           ? [
               showSearchResultCategory(
                   s.searchResults(s.searchResultsCategoryExample)),
-              ...showEgSearchResults(egSearchQueryNormalized!),
+              ...showEgSearchResults(egSearchQueryNormalized!, navigateToEntryPage),
             ]
           : [],
     ];
   }
 
-  Widget showSearchResult(int id, TextSpan resultText,
+  Widget showSearchResult(int id, TextSpan Function(bool selected) resultText,
       {int maxLines = 2,
       int? defIndex,
       bool showFirstEntryInGroupInitially = false,
       bool navigateToEntryPage = true}) {
+    final selected =
+        !navigateToEntryPage && id == selectedSearchResultEntryPage?.id;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -534,10 +559,7 @@ class _HomePageState extends State<HomePage> {
           style: TextButton.styleFrom(
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
-            backgroundColor: (!navigateToEntryPage &&
-                    id == selectedSearchResultEntryPage?.id)
-                ? Theme.of(context).primaryColor
-                : null,
+            backgroundColor: selected ? Theme.of(context).primaryColor : null,
           ),
           onPressed: () {
             context.read<HistoryState>().updateItem(id);
@@ -561,7 +583,7 @@ class _HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: RichText(
-              text: resultText,
+              text: resultText(selected),
               textAlign: TextAlign.start,
               maxLines: maxLines,
               overflow: TextOverflow.ellipsis,
