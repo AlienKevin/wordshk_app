@@ -168,11 +168,13 @@ class _HomePageState extends State<HomePage> {
                       context.read<SearchQueryState>().moveToEndOfSelection();
                     },
                   )
-                : ((finishedSearch && isSearchResultsEmpty)
-                    ? showResultsNotFound()
-                    : (queryEmptied
-                        ? showWatermark()
-                        : showSearchResults(selectedSearchResultEntryPage)))));
+                : SafeArea(
+                    child: (finishedSearch && isSearchResultsEmpty)
+                        ? showResultsNotFound()
+                        : (queryEmptied
+                            ? showWatermark()
+                            : showSearchResults(
+                                selectedSearchResultEntryPage)))));
   }
 
   Widget showWatermark() {
