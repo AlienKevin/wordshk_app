@@ -377,7 +377,13 @@ class _HomePageState extends State<HomePage> {
                   Expanded(child: resultList),
                   Expanded(
                       flex: 2,
-                      child: selectedSearchResultEntryPage ?? Container()),
+                      child: selectedSearchResultEntryPage != null
+                          ? Navigator(
+                              key: selectedSearchResultEntryPage.key,
+                              onGenerateRoute: (settings) => MaterialPageRoute(
+                                  builder: (context) =>
+                                      selectedSearchResultEntryPage))
+                          : Container()),
                 ],
               )
             : resultList;
@@ -576,7 +582,6 @@ class _HomePageState extends State<HomePage> {
           ),
           onPressed: () {
             context.read<HistoryState>().updateItem(id);
-            print("index: $index");
             final entryPage = EntryPage(
               key: ValueKey(index),
               id: id,
