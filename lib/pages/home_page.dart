@@ -48,6 +48,8 @@ class _HomePageState extends State<HomePage> {
   bool queryEmptied = true;
   bool showSearchModeSelector = false;
   OverlayEntry? searchModeSelectors;
+  // The EntryPage corresponding to the select search result (used in wide screens)
+  EntryPage? selectedSearchResultEntryPage;
 
   @override
   void initState() {
@@ -80,7 +82,8 @@ class _HomePageState extends State<HomePage> {
             final query =
                 userActivity.userInfo!['kCSSearchQueryString'] as String;
             // Ignore the variant index and optional script type (simp/trad) after the "-"
-            final entryId = int.parse(userActivity.uniqueIdentifier!.split("-")[0]);
+            final entryId =
+                int.parse(userActivity.uniqueIdentifier!.split("-")[0]);
             if (kDebugMode) {
               print("Spotlight searched: $query, result entryId: $entryId");
             }
@@ -133,6 +136,7 @@ class _HomePageState extends State<HomePage> {
                   setState(() {
                     queryEmptied = true;
                     finishedSearch = false;
+                    selectedSearchResultEntryPage = null;
                   });
                 } else {
                   setState(() {
@@ -146,6 +150,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   // TODO: hide search results
                   queryEmptied = true;
+                  selectedSearchResultEntryPage = null;
                 });
               },
               onSubmitted: onSearchSubmitted,
@@ -165,7 +170,9 @@ class _HomePageState extends State<HomePage> {
                   )
                 : ((finishedSearch && isSearchResultsEmpty)
                     ? showResultsNotFound()
-                    : (queryEmptied ? showWatermark() : showSearchResults()))));
+                    : (queryEmptied
+                        ? showWatermark()
+                        : showSearchResults(selectedSearchResultEntryPage)))));
   }
 
   Widget showWatermark() {
@@ -349,33 +356,50 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget showSearchResults() =>
-      Consumer<SearchModeState>(builder: (context, searchModeState, child) {
+  Widget showSearchResults(EntryPage? selectedSearchResultEntryPage) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final isWideScreen = constraints.maxWidth > 600;
         final results = showSearchResultsHelper(
-            Theme.of(context).textTheme.bodyLarge!, searchModeState.mode);
-        return ListView.separated(
+            Theme.of(context).textTheme.bodyLarge!,
+            context.watch<SearchModeState>().mode,
+            !isWideScreen);
+        final resultList = ListView.separated(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           separatorBuilder: (_, __) => const Divider(),
           itemBuilder: (_, index) => results[index],
           itemCount: results.length,
         );
-      });
+        return isWideScreen
+            ? Row(
+                children: [
+                  Expanded(child: resultList),
+                  Expanded(
+                      flex: 2,
+                      child: selectedSearchResultEntryPage ?? Container()),
+                ],
+              )
+            : resultList;
+      },
+    );
+  }
 
   List<Widget> showSearchResultsHelper(
-      TextStyle textStyle, SearchMode searchMode) {
+      TextStyle textStyle, SearchMode searchMode, bool navigateToEntryPage) {
     switch (searchMode) {
       case SearchMode.pr:
-        return showPrSearchResults(textStyle);
+        return showPrSearchResults(textStyle, navigateToEntryPage);
       case SearchMode.variant:
-        return showVariantSearchResults(textStyle);
+        return showVariantSearchResults(textStyle, navigateToEntryPage);
       case SearchMode.combined:
-        return showCombinedSearchResults(textStyle);
+        return showCombinedSearchResults(textStyle, navigateToEntryPage);
       case SearchMode.english:
-        return showEnglishSearchResults(textStyle);
+        return showEnglishSearchResults(textStyle, navigateToEntryPage);
     }
   }
 
-  List<Widget> showEnglishSearchResults(TextStyle textStyle) {
+  List<Widget> showEnglishSearchResults(
+      TextStyle textStyle, bool navigateToEntryPage) {
     return englishSearchResults.map((result) {
       return showSearchResult(
           result.id,
@@ -390,7 +414,8 @@ class _HomePageState extends State<HomePage> {
                   style: textStyle.copyWith(
                       fontWeight: FontWeight.normal, color: greyColor)),
             ],
-          ));
+          ),
+          navigateToEntryPage: navigateToEntryPage);
     }).toList();
   }
 
@@ -424,7 +449,8 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
-  List<Widget> showPrSearchResults(TextStyle textStyle) {
+  List<Widget> showPrSearchResults(
+      TextStyle textStyle, bool navigateToEntryPage) {
     return prSearchResults
         .map((result) => showSearchResult(
               result.id,
@@ -438,16 +464,20 @@ class _HomePageState extends State<HomePage> {
                       style: textStyle.copyWith(color: greyColor)),
                 ],
               ),
+              navigateToEntryPage: navigateToEntryPage,
             ))
         .toList();
   }
 
-  List<Widget> showVariantSearchResults(TextStyle textStyle) {
+  List<Widget> showVariantSearchResults(
+      TextStyle textStyle, bool navigateToEntryPage) {
     return variantSearchResults.map((result) {
       return showSearchResult(
-          result.id,
-          showFirstEntryInGroupInitially: true,
-          TextSpan(text: result.variant, style: textStyle));
+        result.id,
+        showFirstEntryInGroupInitially: true,
+        TextSpan(text: result.variant, style: textStyle),
+        navigateToEntryPage: navigateToEntryPage,
+      );
     }).toList();
   }
 
@@ -458,7 +488,8 @@ class _HomePageState extends State<HomePage> {
         child: Text(category),
       ));
 
-  List<Widget> showCombinedSearchResults(TextStyle textStyle) {
+  List<Widget> showCombinedSearchResults(
+      TextStyle textStyle, bool navigateToEntryPage) {
     final s = AppLocalizations.of(context)!;
     final romanization = context.read<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);
@@ -469,18 +500,18 @@ class _HomePageState extends State<HomePage> {
                   s.searchResults(s.searchResultsCategoryCantonese))
             ]
           : [],
-      ...showVariantSearchResults(textStyle),
+      ...showVariantSearchResults(textStyle, navigateToEntryPage),
       ...prSearchResults.isNotEmpty
           ? [showSearchResultCategory(s.searchResults(romanizationName))]
           : [],
-      ...showPrSearchResults(textStyle),
+      ...showPrSearchResults(textStyle, navigateToEntryPage),
       ...englishSearchResults.isNotEmpty
           ? [
               showSearchResultCategory(
                   s.searchResults(s.searchResultsCategoryEnglish))
             ]
           : [],
-      ...showEnglishSearchResults(textStyle),
+      ...showEnglishSearchResults(textStyle, navigateToEntryPage),
       ...egSearchResults.isNotEmpty
           ? [
               showSearchResultCategory(
@@ -494,7 +525,8 @@ class _HomePageState extends State<HomePage> {
   Widget showSearchResult(int id, TextSpan resultText,
       {int maxLines = 2,
       int? defIndex,
-      bool showFirstEntryInGroupInitially = false}) {
+      bool showFirstEntryInGroupInitially = false,
+      bool navigateToEntryPage = true}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -502,19 +534,29 @@ class _HomePageState extends State<HomePage> {
           style: TextButton.styleFrom(
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
+            backgroundColor: (!navigateToEntryPage &&
+                    id == selectedSearchResultEntryPage?.id)
+                ? Theme.of(context).primaryColor
+                : null,
           ),
           onPressed: () {
             context.read<HistoryState>().updateItem(id);
-            Navigator.push(
-              context,
-              CustomPageRoute(
-                  builder: (context) => EntryPage(
-                        id: id,
-                        defIndex: defIndex,
-                        showFirstEntryInGroupInitially:
-                            showFirstEntryInGroupInitially,
-                      )),
+            final entryPage = EntryPage(
+              key: ValueKey(id),
+              id: id,
+              defIndex: defIndex,
+              showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
             );
+
+            setState(() {
+              selectedSearchResultEntryPage = entryPage;
+            });
+            if (navigateToEntryPage) {
+              Navigator.push(
+                context,
+                CustomPageRoute(builder: (context) => entryPage),
+              );
+            }
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
