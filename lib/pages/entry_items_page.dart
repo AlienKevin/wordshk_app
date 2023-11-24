@@ -257,6 +257,49 @@ class _EntryItemsState<T extends EntryItemState>
             child: Row(
               children: [
                 ElevatedButton(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      ),
+                    ),
+                    onPressed: () async {
+                      final allEntryItems = context.read<T>().items;
+                      switch (_mode) {
+                        case ViewMode():
+                          {
+                            await Sentry.captureMessage(
+                                'entryItem_page: All button pressed in ViewMode even though it should only be present in EditMode.');
+                            break;
+                          }
+                        case EditMode(
+                        selectedEntryItems: var selectedEntryItems
+                        ):
+                          if (selectedEntryItems.length <
+                              allEntryItems.length) {
+                            setState(() {
+                              selectedEntryItems.addAll(allEntryItems);
+                            });
+                          } else {
+                            setState(() {
+                              selectedEntryItems.clear();
+                            });
+                          }
+                          break;
+                      }
+                    },
+                    child: (() {
+                      return ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 80),
+                        child: Text(
+                          selectedEntryItems.length < _entryItemSummaries.length
+                              ? AppLocalizations.of(context)!.all
+                              : AppLocalizations.of(context)!.none,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    })()),
+                const Spacer(),
+                ElevatedButton(
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -296,49 +339,6 @@ class _EntryItemsState<T extends EntryItemState>
                         textAlign: TextAlign.center,
                       )),
                 ),
-                const Spacer(),
-                ElevatedButton(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      ),
-                    ),
-                    onPressed: () async {
-                      final allEntryItems = context.read<T>().items;
-                      switch (_mode) {
-                        case ViewMode():
-                          {
-                            await Sentry.captureMessage(
-                                'entryItem_page: All button pressed in ViewMode even though it should only be present in EditMode.');
-                            break;
-                          }
-                        case EditMode(
-                            selectedEntryItems: var selectedEntryItems
-                          ):
-                          if (selectedEntryItems.length <
-                              allEntryItems.length) {
-                            setState(() {
-                              selectedEntryItems.addAll(allEntryItems);
-                            });
-                          } else {
-                            setState(() {
-                              selectedEntryItems.clear();
-                            });
-                          }
-                          break;
-                      }
-                    },
-                    child: (() {
-                      return ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: 80),
-                        child: Text(
-                          selectedEntryItems.length < _entryItemSummaries.length
-                              ? AppLocalizations.of(context)!.all
-                              : AppLocalizations.of(context)!.none,
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    })()),
               ],
             ),
           ),
