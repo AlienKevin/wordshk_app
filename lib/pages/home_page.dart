@@ -386,21 +386,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> showSearchResultsHelper(
-      TextStyle textStyle, SearchMode searchMode, bool navigateToEntryPage) {
+      TextStyle textStyle, SearchMode searchMode, bool embedded) {
     switch (searchMode) {
       case SearchMode.pr:
-        return showPrSearchResults(0, textStyle, navigateToEntryPage);
+        return showPrSearchResults(0, textStyle, embedded);
       case SearchMode.variant:
-        return showVariantSearchResults(0, textStyle, navigateToEntryPage);
+        return showVariantSearchResults(0, textStyle, embedded);
       case SearchMode.combined:
-        return showCombinedSearchResults(0, textStyle, navigateToEntryPage);
+        return showCombinedSearchResults(0, textStyle, embedded);
       case SearchMode.english:
-        return showEnglishSearchResults(0, textStyle, navigateToEntryPage);
+        return showEnglishSearchResults(0, textStyle, embedded);
     }
   }
 
   List<Widget> showEnglishSearchResults(
-      int startIndex, TextStyle textStyle, bool navigateToEntryPage) {
+      int startIndex, TextStyle textStyle, bool embedded) {
     return englishSearchResults.mapIndexed((index, result) {
       return showSearchResult(
           startIndex + index,
@@ -423,12 +423,12 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.normal, color: greyColor)),
                 ],
               ),
-          navigateToEntryPage: navigateToEntryPage);
+          embedded: embedded);
     }).toList();
   }
 
   List<Widget> showEgSearchResults(
-      int startIndex, String queryFound, bool navigateToEntryPage) {
+      int startIndex, String queryFound, bool embedded) {
     return egSearchResults.mapIndexed((index, result) {
       egs(bool selected) => result.eg
           .split(queryFound)
@@ -459,14 +459,12 @@ class _HomePageState extends State<HomePage> {
           .toList();
       return showSearchResult(startIndex + index, result.id,
           (bool selected) => TextSpan(children: egs(selected)),
-          maxLines: 1,
-          defIndex: result.defIndex,
-          navigateToEntryPage: navigateToEntryPage);
+          maxLines: 1, defIndex: result.defIndex, embedded: embedded);
     }).toList();
   }
 
   List<Widget> showPrSearchResults(
-      int startIndex, TextStyle textStyle, bool navigateToEntryPage) {
+      int startIndex, TextStyle textStyle, bool embedded) {
     return prSearchResults
         .mapIndexed((index, result) => showSearchResult(
               startIndex + index,
@@ -486,13 +484,13 @@ class _HomePageState extends State<HomePage> {
                       style: textStyle.copyWith(color: greyColor)),
                 ],
               ),
-              navigateToEntryPage: navigateToEntryPage,
+              embedded: embedded,
             ))
         .toList();
   }
 
   List<Widget> showVariantSearchResults(
-      int startIndex, TextStyle textStyle, bool navigateToEntryPage) {
+      int startIndex, TextStyle textStyle, bool embedded) {
     return variantSearchResults.mapIndexed((index, result) {
       return showSearchResult(
         startIndex + index,
@@ -503,7 +501,7 @@ class _HomePageState extends State<HomePage> {
             style: textStyle.copyWith(
                 color:
                     selected ? Theme.of(context).colorScheme.onPrimary : null)),
-        navigateToEntryPage: navigateToEntryPage,
+        embedded: embedded,
       );
     }).toList();
   }
@@ -516,7 +514,7 @@ class _HomePageState extends State<HomePage> {
       ));
 
   List<Widget> showCombinedSearchResults(
-      int startIndex, TextStyle textStyle, bool navigateToEntryPage) {
+      int startIndex, TextStyle textStyle, bool embedded) {
     final s = AppLocalizations.of(context)!;
     final romanization = context.read<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);
@@ -527,12 +525,12 @@ class _HomePageState extends State<HomePage> {
                   s.searchResults(s.searchResultsCategoryCantonese))
             ]
           : [],
-      ...showVariantSearchResults(startIndex, textStyle, navigateToEntryPage),
+      ...showVariantSearchResults(startIndex, textStyle, embedded),
       ...prSearchResults.isNotEmpty
           ? [showSearchResultCategory(s.searchResults(romanizationName))]
           : [],
-      ...showPrSearchResults(startIndex + variantSearchResults.length,
-          textStyle, navigateToEntryPage),
+      ...showPrSearchResults(
+          startIndex + variantSearchResults.length, textStyle, embedded),
       ...englishSearchResults.isNotEmpty
           ? [
               showSearchResultCategory(
@@ -542,7 +540,7 @@ class _HomePageState extends State<HomePage> {
       ...showEnglishSearchResults(
           startIndex + variantSearchResults.length + prSearchResults.length,
           textStyle,
-          navigateToEntryPage),
+          embedded),
       ...egSearchResults.isNotEmpty
           ? [
               showSearchResultCategory(
@@ -553,7 +551,7 @@ class _HomePageState extends State<HomePage> {
                       prSearchResults.length +
                       englishSearchResults.length,
                   egSearchQueryNormalized!,
-                  navigateToEntryPage),
+                  embedded),
             ]
           : [],
     ];
@@ -564,9 +562,9 @@ class _HomePageState extends State<HomePage> {
       {int maxLines = 2,
       int? defIndex,
       bool showFirstEntryInGroupInitially = false,
-      bool navigateToEntryPage = true}) {
-    final selected = !navigateToEntryPage &&
-        ValueKey(index) == selectedSearchResultEntryPage?.key!;
+      bool embedded = true}) {
+    final selected =
+        !embedded && ValueKey(index) == selectedSearchResultEntryPage?.key!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -589,7 +587,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               selectedSearchResultEntryPage = entryPage;
             });
-            if (navigateToEntryPage) {
+            if (embedded) {
               Navigator.push(
                 context,
                 CustomPageRoute(builder: (context) => entryPage),
