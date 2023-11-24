@@ -171,80 +171,86 @@ class _EntryItemsState<T extends EntryItemState>
       drawer: const NavigationDrawer(),
       body: ConstrainedContent(
         child: Consumer<T>(
-            builder: (BuildContext context, EntryItemState s, Widget? child) => s
-                    .items.isEmpty
-                ? Center(child: Text(widget.emptyMessage))
-                : ListView.separated(
-                    itemCount: _hasMore
-                        ? _entryItemSummaries.length + 1
-                        : _entryItemSummaries.length,
-                    itemBuilder: (context, index) {
-                      if (index >= _entryItemSummaries.length) {
-                        _loadMore();
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      final id = s.items[index];
-                      final summary = _entryItemSummaries[id]!;
-                      return ListTile(
-                        leading: switch (_mode) {
-                          ViewMode() => null,
-                          EditMode(selectedEntryItems: var selectedEntryItems) =>
-                            Checkbox(
-                              value: selectedEntryItems.contains(id),
-                              visualDensity: VisualDensity.compact,
-                              onChanged: (value) {
-                                if (value!) {
-                                  setState(() {
-                                    selectedEntryItems.add(id);
-                                  });
-                                } else {
-                                  setState(() {
-                                    selectedEntryItems.remove(id);
-                                  });
-                                }
-                              },
-                            )
-                        },
-                        title: Text(
-                          summary.variant,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(
-                          summary.def,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        onTap: switch (_mode) {
-                          ViewMode() => () {
-                              Navigator.push(
-                                context,
-                                CustomPageRoute(
-                                    builder: (context) => EntryPage(
-                                          id: id,
-                                          showFirstEntryInGroupInitially: false,
-                                        )),
-                              );
+            builder: (BuildContext context, EntryItemState s, Widget? child) =>
+                s.items.isEmpty
+                    ? Center(child: Text(widget.emptyMessage))
+                    : ListView.separated(
+                        itemCount: _hasMore
+                            ? _entryItemSummaries.length + 1
+                            : _entryItemSummaries.length,
+                        itemBuilder: (context, index) {
+                          if (index >= _entryItemSummaries.length) {
+                            _loadMore();
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          final id = s.items[index];
+                          final summary = _entryItemSummaries[id]!;
+                          return ListTile(
+                            leading: switch (_mode) {
+                              ViewMode() => null,
+                              EditMode(
+                                selectedEntryItems: var selectedEntryItems
+                              ) =>
+                                Checkbox(
+                                  value: selectedEntryItems.contains(id),
+                                  visualDensity: VisualDensity.compact,
+                                  onChanged: (value) {
+                                    if (value!) {
+                                      setState(() {
+                                        selectedEntryItems.add(id);
+                                      });
+                                    } else {
+                                      setState(() {
+                                        selectedEntryItems.remove(id);
+                                      });
+                                    }
+                                  },
+                                )
                             },
-                          EditMode(selectedEntryItems: var selectedEntryItems) =>
-                            () {
-                              // Toggles entryItem selected state
-                              if (selectedEntryItems.contains(id)) {
-                                setState(() {
-                                  selectedEntryItems.remove(id);
-                                });
-                              } else {
-                                setState(() {
-                                  selectedEntryItems.add(id);
-                                });
-                              }
-                            }
+                            title: Text(
+                              summary.variant,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(
+                              summary.def,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            onTap: switch (_mode) {
+                              ViewMode() => () {
+                                  Navigator.push(
+                                    context,
+                                    CustomPageRoute(
+                                        builder: (context) => EntryPage(
+                                              id: id,
+                                              showFirstEntryInGroupInitially:
+                                                  false,
+                                            )),
+                                  );
+                                },
+                              EditMode(
+                                selectedEntryItems: var selectedEntryItems
+                              ) =>
+                                () {
+                                  // Toggles entryItem selected state
+                                  if (selectedEntryItems.contains(id)) {
+                                    setState(() {
+                                      selectedEntryItems.remove(id);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedEntryItems.add(id);
+                                    });
+                                  }
+                                }
+                            },
+                          );
                         },
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(),
-                  )),
+                        separatorBuilder: (context, index) => const Divider(),
+                      )),
       ),
       bottomNavigationBar: switch (_mode) {
         EditMode(selectedEntryItems: var selectedEntryItems)
@@ -263,7 +269,8 @@ class _EntryItemsState<T extends EntryItemState>
                   ElevatedButton(
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
                         ),
                       ),
                       onPressed: () async {
@@ -276,8 +283,8 @@ class _EntryItemsState<T extends EntryItemState>
                               break;
                             }
                           case EditMode(
-                          selectedEntryItems: var selectedEntryItems
-                          ):
+                              selectedEntryItems: var selectedEntryItems
+                            ):
                             if (selectedEntryItems.length <
                                 allEntryItems.length) {
                               setState(() {
@@ -295,7 +302,8 @@ class _EntryItemsState<T extends EntryItemState>
                         return ConstrainedBox(
                           constraints: const BoxConstraints(minWidth: 80),
                           child: Text(
-                            selectedEntryItems.length < _entryItemSummaries.length
+                            selectedEntryItems.length <
+                                    _entryItemSummaries.length
                                 ? AppLocalizations.of(context)!.all
                                 : AppLocalizations.of(context)!.none,
                             textAlign: TextAlign.center,
@@ -330,6 +338,10 @@ class _EntryItemsState<T extends EntryItemState>
                                       for (final id in selectedEntryItems) {
                                         context.read<T>().removeItem(id);
                                       }
+                                      setState(() {
+                                        _mode = EditMode(
+                                            selectedEntryItems: HashSet());
+                                      });
                                     },
                                   ),
                                 ],
