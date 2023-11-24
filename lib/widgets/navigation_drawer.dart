@@ -42,96 +42,100 @@ class NavigationDrawer extends StatelessWidget {
           },
         );
 
-    return SizedBox(
-        width: 250,
-        child: Drawer(
-// Add a ListView to the drawer. This ensures the user can scroll
-// through the options in the drawer if there isn't enough vertical
-// space to fit everything.
-          child: ListView(
-// Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              SizedBox(
-                height: 180 * MediaQuery.of(context).textScaleFactor,
-                child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: SizedBox(
+          width: 250,
+          child: Drawer(
+      // Add a ListView to the drawer. This ensures the user can scroll
+      // through the options in the drawer if there isn't enough vertical
+      // space to fit everything.
+            child: ListView(
+      // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: [
+                SizedBox(
+                  height: 180 * MediaQuery.of(context).textScaleFactor,
+                  child: DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    margin: EdgeInsets.zero,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "粵典 words.hk",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(color: whiteColor),
+                          ),
+                          SizedBox(
+                              height: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .fontSize! /
+                                  2),
+                          Text(
+                            AppLocalizations.of(context)!.wordshkSlogan,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: whiteColor),
+                          )
+                        ]),
                   ),
-                  margin: EdgeInsets.zero,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "粵典 words.hk",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(color: whiteColor),
-                        ),
-                        SizedBox(
-                            height: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .fontSize! /
-                                2),
-                        Text(
-                          AppLocalizations.of(context)!.wordshkSlogan,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: whiteColor),
-                        )
-                      ]),
                 ),
-              ),
-              drawerButton(
-                  AppLocalizations.of(context)!.dictionary,
-                  PlatformIcons(context).search,
-                  (_) => const HomePage(title: 'words.hk')),
-              const Divider(),
-              drawerButton(
-                  AppLocalizations.of(context)!.bookmarks,
-                  PlatformIcons(context).bookmarkOutline,
-                  (_) => EntryItemsPage<BookmarkState>(
-                        title: AppLocalizations.of(context)!.bookmarks,
-                        emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-                        deletionConfirmationMessage:
-                            AppLocalizations.of(context)!
-                                .bookmarkDeleteConfirmation,
-                      )),
-              const Divider(),
-              drawerButton(
-                  AppLocalizations.of(context)!.history,
-                  isMaterial(context)
-                      ? Icons.access_time_rounded
-                      : CupertinoIcons.time,
-                      (_) => EntryItemsPage<HistoryState>(
-                    title: AppLocalizations.of(context)!.history,
-                    emptyMessage: AppLocalizations.of(context)!.noHistory,
-                    deletionConfirmationMessage:
-                    AppLocalizations.of(context)!
-                        .historyDeleteConfirmation,
-                  )),
-              const Divider(),
-              drawerButton(AppLocalizations.of(context)!.exercise,
-                  PlatformIcons(context).volumeUp, (_) => ExercisePage()),
-              const Divider(),
-              drawerButton(
-                  AppLocalizations.of(context)!.preferences,
-                  isMaterial(context)
-                      ? Icons.settings_outlined
-                      : CupertinoIcons.settings,
-                  (_) => const PreferencesPage()),
-              const Divider(),
-              drawerButton(
-                  AppLocalizations.of(context)!.aboutWordshk,
-                  isMaterial(context)
-                      ? Icons.info_outline
-                      : CupertinoIcons.info,
-                  (_) => const AboutPage()),
-            ],
-          ),
-        ));
+                drawerButton(
+                    AppLocalizations.of(context)!.dictionary,
+                    PlatformIcons(context).search,
+                    (_) => const HomePage(title: 'words.hk')),
+                const Divider(),
+                drawerButton(
+                    AppLocalizations.of(context)!.bookmarks,
+                    PlatformIcons(context).bookmarkOutline,
+                    (_) => EntryItemsPage<BookmarkState>(
+                          title: AppLocalizations.of(context)!.bookmarks,
+                          emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+                          deletionConfirmationMessage:
+                              AppLocalizations.of(context)!
+                                  .bookmarkDeleteConfirmation,
+                        )),
+                const Divider(),
+                drawerButton(
+                    AppLocalizations.of(context)!.history,
+                    isMaterial(context)
+                        ? Icons.access_time_rounded
+                        : CupertinoIcons.time,
+                        (_) => EntryItemsPage<HistoryState>(
+                      title: AppLocalizations.of(context)!.history,
+                      emptyMessage: AppLocalizations.of(context)!.noHistory,
+                      deletionConfirmationMessage:
+                      AppLocalizations.of(context)!
+                          .historyDeleteConfirmation,
+                    )),
+                const Divider(),
+                drawerButton(AppLocalizations.of(context)!.exercise,
+                    PlatformIcons(context).volumeUp, (_) => ExercisePage()),
+                const Divider(),
+                drawerButton(
+                    AppLocalizations.of(context)!.preferences,
+                    isMaterial(context)
+                        ? Icons.settings_outlined
+                        : CupertinoIcons.settings,
+                    (_) => const PreferencesPage()),
+                const Divider(),
+                drawerButton(
+                    AppLocalizations.of(context)!.aboutWordshk,
+                    isMaterial(context)
+                        ? Icons.info_outline
+                        : CupertinoIcons.info,
+                    (_) => const AboutPage()),
+              ],
+            ),
+          )),
+    );
   }
 }
