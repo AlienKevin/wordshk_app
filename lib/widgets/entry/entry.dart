@@ -14,6 +14,7 @@ class EntryWidget extends StatefulWidget {
   final int? initialDefIndex;
   final OnTapLink onTapLink;
   final UpdateEntryIndex updateEntryIndex;
+  final Widget? entryActionButtons;
 
   const EntryWidget({
     Key? key,
@@ -22,6 +23,7 @@ class EntryWidget extends StatefulWidget {
     required this.initialDefIndex,
     required this.onTapLink,
     required this.updateEntryIndex,
+    this.entryActionButtons,
   }) : super(key: key);
 
   @override
@@ -51,42 +53,46 @@ class _EntryWidgetState extends State<EntryWidget>
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(
         child: Column(children: [
-          Align(
-              alignment: Alignment.centerLeft,
-              child: TabBar(
-                controller: _tabController,
-                onTap: (newIndex) {
-                  if (newIndex != entryIndex) {
-                    context.read<PlayerState>().stop();
-                    setState(() {
-                      entryIndex = newIndex;
-                    });
-                    widget.updateEntryIndex(newIndex);
-                  }
-                },
-                isScrollable: true,
-                // Required
-                labelColor: lineTextStyle.color,
-                unselectedLabelColor: lineTextStyle.color,
-                // Other tabs color
-                labelPadding: const EdgeInsets.symmetric(horizontal: 30),
-                // Space between tabs
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(color: lineTextStyle.color!, width: 2),
-                  // Indicator height
-                  insets: const EdgeInsets.symmetric(
-                      horizontal: 30), // Indicator width
-                ),
-                tabs: widget.entryGroup
-                    .asMap()
-                    .entries
-                    .map((entry) => Tab(
-                        text: "${entry.key + 1} ${entry.value.poses
-                                .map((pos) =>
-                                    translatePos(pos, localizationContext))
-                                .join("/")}"))
-                    .toList(),
-              )),
+          Row(children: [
+            Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: TabBar(
+                    controller: _tabController,
+                    onTap: (newIndex) {
+                      if (newIndex != entryIndex) {
+                        context.read<PlayerState>().stop();
+                        setState(() {
+                          entryIndex = newIndex;
+                        });
+                        widget.updateEntryIndex(newIndex);
+                      }
+                    },
+                    isScrollable: true,
+                    // Required
+                    labelColor: lineTextStyle.color,
+                    unselectedLabelColor: lineTextStyle.color,
+                    // Other tabs color
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 30),
+                    // Space between tabs
+                    indicator: UnderlineTabIndicator(
+                      borderSide:
+                          BorderSide(color: lineTextStyle.color!, width: 2),
+                      // Indicator height
+                      insets: const EdgeInsets.symmetric(
+                          horizontal: 30), // Indicator width
+                    ),
+                    tabs: widget.entryGroup
+                        .asMap()
+                        .entries
+                        .map((entry) => Tab(
+                            text:
+                                "${entry.key + 1} ${entry.value.poses.map((pos) => translatePos(pos, localizationContext)).join("/")}"))
+                        .toList(),
+                  ),
+                )),
+            widget.entryActionButtons ?? Container(),
+          ]),
           Expanded(
             child: TabBarView(
                 controller: _tabController,

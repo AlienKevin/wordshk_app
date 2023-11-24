@@ -1,33 +1,32 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/custom_page_route.dart';
-import 'package:wordshk/pages/quality_control_page.dart';
-import 'package:wordshk/states/bookmark_state.dart';
 
 import '../ffi.dart';
 import '../models/entry.dart';
 import '../states/player_state.dart';
 import '../utils.dart';
 import '../widgets/entry/entry.dart';
+import '../widgets/entry/entry_action_buttons.dart';
 import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;
   final bool showFirstEntryInGroupInitially;
   final int? defIndex;
+  final bool embedded;
 
   const EntryPage(
       {Key? key,
       required this.id,
       required this.showFirstEntryInGroupInitially,
-      this.defIndex})
+      this.defIndex,
+      this.embedded = false})
       : super(key: key);
 
   @override
@@ -35,8 +34,8 @@ class EntryPage extends StatefulWidget {
 }
 
 class _EntryPageState extends State<EntryPage> {
-  late int entryIndex;
-  late List<Entry> entryGroup;
+  int? entryIndex;
+  List<Entry>? entryGroup;
   bool hasError = false;
   bool isLoading = true;
 
@@ -52,7 +51,7 @@ class _EntryPageState extends State<EntryPage> {
               .toList();
           entryIndex = widget.showFirstEntryInGroupInitially
               ? 0
-              : entryGroup.indexWhere((entry) => entry.id == widget.id);
+              : entryGroup!.indexWhere((entry) => entry.id == widget.id);
           isLoading = false;
         });
       } catch (err) {
@@ -77,86 +76,19 @@ class _EntryPageState extends State<EntryPage> {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            actions: [
-              Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible: !(isLoading ||
-                      hasError ||
-                      entryGroup[entryIndex].published),
-                  child: IconButton(
-                      onPressed: () {
-                        context.read<PlayerState>().stop();
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                  icon: Icon(isMaterial(context)
-                                      ? Icons.warning_amber_outlined
-                                      : CupertinoIcons
-                                          .exclamationmark_triangle),
-                                  iconColor: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .color!,
-                                  content: Text(AppLocalizations.of(context)!
-                                      .unpublishedWarning),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        Navigator.push(
-                                          context,
-                                          CustomPageRoute(
-                                              builder: (context) =>
-                                                  const QualityControlPage()),
-                                        );
-                                      },
-                                      child: Text(AppLocalizations.of(context)!
-                                          .learnMore),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(AppLocalizations.of(context)!
-                                          .dismiss),
-                                    ),
-                                  ],
-                                ));
-                      },
-                      icon: Icon(isMaterial(context)
-                          ? Icons.warning_amber_outlined
-                          : CupertinoIcons.exclamationmark_triangle))),
-              !(isLoading || hasError)
-                  ? Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              context
-                                  .read<BookmarkState>()
-                                  .toggleItem(entryGroup, entryIndex);
-                            },
-                            icon: context
-                                    .watch<BookmarkState>()
-                                    .isItemInStore(entryGroup)
-                                ? Icon(PlatformIcons(context).bookmarkSolid)
-                                : Icon(PlatformIcons(context).bookmarkOutline)),
-                        IconButton(
-                            onPressed: () {
-                              if (kDebugMode) {
-                                print(entryGroup[entryIndex].id);
-                              }
-                              openLink(
-                                  "https://words.hk/zidin/v/${entryGroup[entryIndex].id}");
-                              context.read<PlayerState>().stop();
-                            },
-                            icon: Icon(PlatformIcons(context).edit)),
-                      ],
+          appBar: widget.embedded
+              ? null
+              : AppBar(
+                  actions: [
+                    EntryActionButtons(
+                      entryGroup: entryGroup,
+                      entryIndex: entryIndex,
+                      isLoading: isLoading,
+                      hasError: hasError,
+                      inAppBar: true,
                     )
-                  : const SizedBox.shrink()
-            ],
-          ),
+                  ],
+                ),
           body: showEntry(),
         ));
   }
@@ -185,10 +117,17 @@ class _EntryPageState extends State<EntryPage> {
       return Container();
     } else {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.only(left: 10),
         child: EntryWidget(
-          entryGroup: entryGroup,
-          initialEntryIndex: entryIndex,
+          entryActionButtons: EntryActionButtons(
+              entryGroup: entryGroup!,
+              entryIndex: entryIndex!,
+              isLoading: isLoading,
+              hasError: hasError,
+              inAppBar: !widget.embedded
+          ),
+          entryGroup: entryGroup!,
+          initialEntryIndex: entryIndex!,
           initialDefIndex: widget.defIndex,
           updateEntryIndex: updateEntryIndex,
           onTapLink: (entryVariant) {

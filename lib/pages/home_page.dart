@@ -362,18 +362,19 @@ class _HomePageState extends State<HomePage> {
   Widget showSearchResults(EntryPage? selectedSearchResultEntryPage) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final isWideScreen = constraints.maxWidth > 600;
+        // Embedded search results in the right column on wide screens
+        final embedded = constraints.maxWidth > 600;
         final results = showSearchResultsHelper(
             Theme.of(context).textTheme.bodyLarge!,
             context.watch<SearchModeState>().mode,
-            !isWideScreen);
+            embedded);
         final resultList = ListView.separated(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           separatorBuilder: (_, __) => const Divider(),
           itemBuilder: (_, index) => results[index],
           itemCount: results.length,
         );
-        return isWideScreen
+        return embedded
             ? Row(
                 children: [
                   Expanded(child: resultList),
@@ -572,7 +573,7 @@ class _HomePageState extends State<HomePage> {
       bool showFirstEntryInGroupInitially = false,
       bool embedded = true}) {
     final selected =
-        !embedded && ValueKey(index) == selectedSearchResultEntryPage?.key!;
+        embedded && ValueKey(index) == selectedSearchResultEntryPage?.key!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -589,12 +590,13 @@ class _HomePageState extends State<HomePage> {
               id: id,
               defIndex: defIndex,
               showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
+              embedded: embedded,
             );
 
             setState(() {
               selectedSearchResultEntryPage = entryPage;
             });
-            if (embedded) {
+            if (!embedded) {
               Navigator.push(
                 context,
                 CustomPageRoute(builder: (context) => entryPage),
