@@ -42,7 +42,7 @@ main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await SentryFlutter.init((options) {
-    options.dsn = sentry_dsn;
+    options.dsn = sentryDsn;
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // We recommend adjusting this value in production.
     options.tracesSampleRate = 0;
