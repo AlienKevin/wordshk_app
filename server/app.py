@@ -1,18 +1,20 @@
 import json
 import os
+import threading
 from flask import Flask, request, jsonify, abort
 
 app = Flask(__name__)
 
-# Temporary buffer
-message_buffer = []
-MAX_BUFFER_SIZE = 10
+# Temporary buffer and lock
+snapshot_buffer = []
+buffer_lock = threading.Lock()
 
 # Set file paths based on environment variable
 FLASK_ENV = os.environ.get('FLASK_ENV', 'production')
-DEBUG_FILE_PATH = 'messages_debug.jsonl'
-PROD_FILE_PATH = '/mnt/efs/messages.jsonl'
+DEBUG_FILE_PATH = 'snapshots.jsonl'
+PROD_FILE_PATH = '/mnt/efs/snapshots.jsonl'
 FILE_PATH = DEBUG_FILE_PATH if FLASK_ENV == 'development' else PROD_FILE_PATH
+MAX_BUFFER_SIZE = 1 if FLASK_ENV == 'development' else 10
 
 with open('api_key.txt', 'r') as file:
     API_KEY = file.read().strip()
@@ -25,27 +27,27 @@ def before_request():
 
 @app.route('/upload/snapshot', methods=['POST'])
 def upload():
-    global message_buffer
     content = request.json
 
-    # Append the message to the buffer
-    message_buffer.append(content)
+    with buffer_lock:
+        # Append the snapshot to the buffer
+        snapshot_buffer.append(content)
 
-    # Check if buffer size exceeds the limit
-    if len(message_buffer) >= MAX_BUFFER_SIZE:
-        flush_to_file()
+        # Check if buffer size exceeds the limit and flush if needed
+        if len(snapshot_buffer) >= MAX_BUFFER_SIZE:
+            flush_to_file()
 
     return jsonify({"status": "success"})
 
 def flush_to_file():
-    global message_buffer
+    global snapshot_buffer
     # Open file and append messages
     with open(FILE_PATH, 'a') as file:
-        for message in message_buffer:
-            file.write(json.dumps(message) + '\n')
+        for snapshot in snapshot_buffer:
+            file.write(json.dumps(snapshot) + '\n')
 
     # Clear the buffer
-    message_buffer = []
+    snapshot_buffer = []
 
 if __name__ == '__main__':
     app.run(debug=True)
