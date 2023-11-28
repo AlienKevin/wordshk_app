@@ -445,7 +445,7 @@ class IsSearching extends State<SearchBar> {
                           onTap: beginSearch,
                           key: const Key('SearchBarTextField'),
                           autocorrect: false,
-                          enableSuggestions: false,
+                          enableSuggestions: true,
                           keyboardType: context.watch<InputModeState>().mode ==
                                   InputMode.keyboard
                               ? TextInputType.text
