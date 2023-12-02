@@ -9,6 +9,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Test Flask server locally:
+```bash
+flask run
+```
+
 Install and initialize Zappa:
 ```bash
 pip install zappa
@@ -18,6 +23,11 @@ zappa init
 Deploy to AWS:
 ```bash
 zappa deploy dev
+```
+
+Update:
+```bash
+zappa update dev
 ```
 
 Dev server URL:

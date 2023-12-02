@@ -28,7 +28,7 @@ def make_request(id: int):
 NUM_REQUESTS = 1000
 num_errors = 0
 
-with ThreadPoolExecutor(max_workers=100) as executor:
+with ThreadPoolExecutor(max_workers=20) as executor:
     futures = [executor.submit(make_request, id) for id in range(NUM_REQUESTS)]
 
     for future in concurrent.futures.as_completed(futures):

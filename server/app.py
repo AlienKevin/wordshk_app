@@ -1,20 +1,12 @@
+import boto3
 import json
-import os
-import threading
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, abort
 
 app = Flask(__name__)
 
-# Temporary buffer and lock
-snapshot_buffer = []
-buffer_lock = threading.Lock()
-
-# Set file paths based on environment variable
-FLASK_ENV = os.environ.get('FLASK_ENV', 'production')
-DEBUG_FILE_PATH = 'snapshots.jsonl'
-PROD_FILE_PATH = '/mnt/efs/snapshots.jsonl'
-FILE_PATH = DEBUG_FILE_PATH if FLASK_ENV == 'development' else PROD_FILE_PATH
-MAX_BUFFER_SIZE = 1 if FLASK_ENV == 'development' else 10
+sqs_client = boto3.client('sqs')
+with open('sqs_url.txt', 'r') as file:
+    sqs_url = file.read().strip()
 
 with open('api_key.txt', 'r') as file:
     API_KEY = file.read().strip()
@@ -27,27 +19,18 @@ def before_request():
 
 @app.route('/upload/snapshot', methods=['POST'])
 def upload():
-    content = request.json
-
-    with buffer_lock:
-        # Append the snapshot to the buffer
-        snapshot_buffer.append(content)
-
-        # Check if buffer size exceeds the limit and flush if needed
-        if len(snapshot_buffer) >= MAX_BUFFER_SIZE:
-            flush_to_file()
-
-    return jsonify({"status": "success"})
-
-def flush_to_file():
-    global snapshot_buffer
-    # Open file and append messages
-    with open(FILE_PATH, 'a') as file:
-        for snapshot in snapshot_buffer:
-            file.write(json.dumps(snapshot) + '\n')
-
-    # Clear the buffer
-    snapshot_buffer = []
+    try:
+        content = request.json
+        response = sqs_client.send_message(QueueUrl=sqs_url, MessageBody=json.dumps(content))
+        # Check if MessageId is in the response (indicative of success)
+        if 'MessageId' in response:
+            return '', 200  # OK
+        else:
+            # If no MessageId, something went wrong with the send
+            return '', 500  # Internal Server Error
+    except Exception as e:
+        app.logger.error(f"Error sending message to SQS: {str(e)}")
+        return None, 500
 
 if __name__ == '__main__':
     app.run(debug=True)
