@@ -1,3 +1,4 @@
+import boto3
 import concurrent.futures
 import json
 import requests
@@ -13,13 +14,19 @@ headers = {
     'Content-Type': 'application/json'
 }
 
+sqs_client = boto3.client('sqs')
+with open('../sqs_url.txt', 'r') as file:
+    sqs_url = file.read().strip()
+
+
 def make_request(id: int):
     payload = json.dumps({
         "id": str(id),
         "date": "20231126"
     })
     try:
-        response = requests.request("POST", url, headers=headers, data=payload)
+        # response = requests.request("POST", url, headers=headers, data=payload)
+        response = sqs_client.send_message(QueueUrl=sqs_url, MessageBody=json.dumps(payload))
         return response
     except requests.RequestException as e:
         return e
@@ -28,16 +35,12 @@ def make_request(id: int):
 NUM_REQUESTS = 1000
 num_errors = 0
 
-with ThreadPoolExecutor(max_workers=20) as executor:
+with ThreadPoolExecutor(max_workers=1000) as executor:
     futures = [executor.submit(make_request, id) for id in range(NUM_REQUESTS)]
 
     for future in concurrent.futures.as_completed(futures):
         response = future.result()
-        if isinstance(response, requests.Response):
-            if response.status_code != 200:
-                num_errors += 1
-            print(f"Response: {response.status_code}")
-        else:
+        if 'MessageId' not in response:
             num_errors += 1
             print(f"Error: {response}")
     print(f"Total errors: {num_errors}")
