@@ -478,27 +478,6 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
-  List<TextSpan> showDefs(List<String> defs, textStyle) {
-    defSpan(String text, {required bool bold}) => TextSpan(
-        text: text
-            .replaceAll(RegExp(r'[;；].+'), "")
-            .replaceAll(RegExp(r'\(.+\)'), "")
-            .replaceAll(RegExp(r'（.+）'), ""),
-        style: textStyle.copyWith(
-            fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-            color: greyColor));
-    return (defs.length == 1
-        ? [defSpan(defs[0], bold: false)]
-        : defs
-            .mapIndexed((i, def) => [
-                  defSpan("${i > 0 ? "  " : ""}${i + 1} ", bold: true),
-                  defSpan(def, bold: false)
-                ])
-            .expand((x) => x)
-            .toList());
-  }
-
   List<Widget> showPrSearchResults(
       int startIndex, TextStyle textStyle, Embedded embedded) {
     return prSearchResults
@@ -518,7 +497,9 @@ class _HomePageState extends State<HomePage> {
                         text:
                             "${context.read<RomanizationState>().showPrs(result.pr.split(" "))}\n",
                         style: textStyle.copyWith(color: greyColor)),
-                    ...showDefs((isEngDef(context) ? result.engs : result.yues),
+                    ...showDefSummary(
+                        context,
+                        (isEngDef(context) ? result.engs : result.yues),
                         textStyle),
                   ],
                 );
@@ -542,7 +523,7 @@ class _HomePageState extends State<HomePage> {
                   color: selected
                       ? Theme.of(context).colorScheme.onPrimary
                       : null)),
-          ...showDefs(
+          ...showDefSummary(context,
               (isEngDef(context) ? result.engs : result.yues), textStyle),
         ]),
         embedded: embedded,

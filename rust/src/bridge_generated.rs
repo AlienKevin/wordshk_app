@@ -383,7 +383,7 @@ impl support::IntoDart for EntrySummary {
     fn into_dart(self) -> support::DartAbi {
         vec![
             self.variant.into_into_dart().into_dart(),
-            self.def.into_into_dart().into_dart(),
+            self.defs.into_into_dart().into_dart(),
         ]
         .into_dart()
     }

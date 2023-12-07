@@ -256,13 +256,12 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
             id, variant_index, pr_index, ..
         } = pr_ranks.pop().unwrap();
         let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
-        let defs = &dict.get(&id).unwrap().defs;
         pr_search_results.push(PrSearchResult {
             id: id as u32,
             variant: variant.word.clone(),
             pr: variant.prs.0[pr_index].to_string(),
-            yues: defs.iter().map(|def| clause_to_string(&def.yue)).collect(),
-            engs: defs.iter().map(|def| clause_to_string(&def.eng.as_ref().unwrap())).collect(),
+            yues: get_entry_defs(id, dict, false, script),
+            engs: get_entry_defs(id, dict, true, script)
         });
         i += 1;
     }
@@ -277,16 +276,27 @@ fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearch
             id, variant_index, ..
         } = variant_ranks.pop().unwrap();
         let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
-        let defs = &dict.get(&id).unwrap().defs;
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
             variant: variant.word.clone(),
-            yues: defs.iter().map(|def| clause_to_string(&def.yue)).collect(),
-            engs: defs.iter().map(|def| clause_to_string(&def.eng.as_ref().unwrap())).collect(),
+            yues: get_entry_defs(id, dict, false, script),
+            engs: get_entry_defs(id, dict, true, script),
         });
         i += 1;
     }
     variant_search_results
+}
+
+pub(crate) fn get_entry_defs(id: usize, dict: &RichDict, is_eng: bool, script: Script) -> Vec<String> {
+    let defs = &dict.get(&id).unwrap().defs;
+    defs.iter().filter_map(|def|
+        if is_eng {
+            def.eng.as_ref().map(|def| clause_to_string(def))
+        } else {
+            Some(clause_to_string(match script {
+                Script::Simplified => &def.yue_simp,
+                Script::Traditional => &def.yue, }))
+        }).collect()
 }
 
 fn english_ranks_to_results(english_ranks: &Vec<EnglishIndexData>, dict: &RichDict, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<EnglishSearchResult> {

@@ -137,11 +137,11 @@ class EnglishSearchResult {
 
 class EntrySummary {
   final String variant;
-  final String def;
+  final List<String> defs;
 
   const EntrySummary({
     required this.variant,
-    required this.def,
+    required this.defs,
   });
 }
 
@@ -559,7 +559,7 @@ class WordshkApiImpl implements WordshkApi {
       throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
     return EntrySummary(
       variant: _wire2api_String(arr[0]),
-      def: _wire2api_String(arr[1]),
+      defs: _wire2api_StringList(arr[1]),
     );
   }
 

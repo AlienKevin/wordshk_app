@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
@@ -135,4 +136,25 @@ bool isEngDef(BuildContext context) {
   final language = context.read<LanguageState>().language;
   return entryLanguage == EntryLanguage.english ||
       (entryLanguage == EntryLanguage.both && language == Language.en);
+}
+
+List<TextSpan> showDefSummary(BuildContext context, List<String> defs, textStyle) {
+  defSpan(String text, {required bool bold}) => TextSpan(
+      text: text
+          .replaceAll(RegExp(r'[;；].+'), "")
+          .replaceAll(RegExp(r'\(.+\)'), "")
+          .replaceAll(RegExp(r'（.+）'), ""),
+      style: textStyle.copyWith(
+          fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          color: greyColor));
+  return (defs.length == 1
+      ? [defSpan(defs[0], bold: false)]
+      : defs
+      .mapIndexed((i, def) => [
+    defSpan("${i > 0 ? "  " : ""}${i + 1} ", bold: true),
+    defSpan(def, bold: false)
+  ])
+      .expand((x) => x)
+      .toList());
 }

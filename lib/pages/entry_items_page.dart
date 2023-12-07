@@ -206,12 +206,19 @@ class _EntryItemsState<T extends EntryItemState>
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            subtitle: Text(
-                              summary.def,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
+                            subtitle: RichText(
+                                text: TextSpan(
+                                    children: showDefSummary(
+                                        context,
+                                        summary.defs,
+                                        Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!)),
+                                textAlign: TextAlign.start,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textScaleFactor:
+                                    MediaQuery.of(context).textScaleFactor),
                             onTap: switch (_mode) {
                               ViewMode() => () {
                                   Navigator.push(

@@ -3,7 +3,6 @@ use std::sync::Arc;
 use anyhow::Result;
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
-use wordshk_tools::dict::clause_to_string;
 pub use wordshk_tools::jyutping::Romanization;
 pub use wordshk_tools::search::Script;
 
@@ -76,7 +75,7 @@ lazy_static! {
 
 pub struct EntrySummary {
     pub variant: String,
-    pub def: String,
+    pub defs: Vec<String>,
 }
 
 pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script, is_eng_def: bool) -> Result<Vec<EntrySummary>> {
@@ -86,19 +85,8 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script, is_eng_def: bool
             Script::Traditional => entry.variants.to_words().first().unwrap().to_string(),
             Script::Simplified => entry.variants_simp.first().unwrap().to_string(),
         };
-        let defs = entry.defs.first().unwrap();
-        let def = if is_eng_def {
-            defs.eng
-                .as_ref()
-                .map(|c| clause_to_string(c))
-                .unwrap_or("".to_string())
-        } else {
-            match script {
-                Script::Traditional => clause_to_string(&defs.yue),
-                Script::Simplified => clause_to_string(&defs.yue_simp),
-            }
-        };
-        EntrySummary { variant, def }
+        let defs = get_entry_defs(entry.id, &API.dict, is_eng_def, script);
+        EntrySummary { variant, defs }
     }).collect();
     Ok(summaries)
 }
