@@ -428,14 +428,15 @@ class _HomePageState extends State<HomePage> {
                           : textStyle),
                   TextSpan(
                       text: result.pr,
-                      style: textStyle.copyWith(color: greyColor)),
+                      style: textStyle.copyWith(
+                          color: selected ? lightGreyColor : greyColor)),
                   TextSpan(
                       text: "\n${result.eng}",
                       style: textStyle.copyWith(
                           fontSize:
                               Theme.of(context).textTheme.bodySmall!.fontSize,
                           fontWeight: FontWeight.normal,
-                          color: greyColor)),
+                          color: selected ? lightGreyColor : greyColor)),
                 ],
               ),
           embedded: embedded);
@@ -496,11 +497,13 @@ class _HomePageState extends State<HomePage> {
                     TextSpan(
                         text:
                             "${context.read<RomanizationState>().showPrs(result.pr.split(" "))}\n",
-                        style: textStyle.copyWith(color: greyColor)),
+                        style: textStyle.copyWith(
+                            color: selected ? lightGreyColor : greyColor)),
                     ...showDefSummary(
                         context,
                         (isEngDef(context) ? result.engs : result.yues),
-                        textStyle),
+                        textStyle.copyWith(
+                            color: selected ? lightGreyColor : greyColor)),
                   ],
                 );
               },
@@ -523,8 +526,10 @@ class _HomePageState extends State<HomePage> {
                   color: selected
                       ? Theme.of(context).colorScheme.onPrimary
                       : null)),
-          ...showDefSummary(context,
-              (isEngDef(context) ? result.engs : result.yues), textStyle),
+          ...showDefSummary(
+              context,
+              (isEngDef(context) ? result.engs : result.yues),
+              textStyle.copyWith(color: selected ? lightGreyColor : greyColor)),
         ]),
         embedded: embedded,
       );
@@ -598,6 +603,7 @@ class _HomePageState extends State<HomePage> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             backgroundColor: selected ? Theme.of(context).primaryColor : null,
+            shape: const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           onPressed: () {
             context.read<HistoryState>().updateItem(id);
