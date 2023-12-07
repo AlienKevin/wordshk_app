@@ -130,27 +130,14 @@ impl Api {
 
     pub fn variant_search(&self, capacity: u32, query: String, script: Script) -> Vec<VariantSearchResult> {
         let mut ranks = search::variant_search(&self.variants_map, &query, script);
-        let mut results = vec![];
-        let mut i = 0;
-        while ranks.len() > 0 && i < capacity {
-            let search::VariantSearchRank {
-                id, variant_index, ..
-            } = ranks.pop().unwrap();
-            let variant = &search::pick_variants(self.variants_map.get(&id).unwrap(), script).0[variant_index];
-            results.push(VariantSearchResult {
-                id: id as u32,
-                variant: variant.word.clone(),
-            });
-            i += 1;
-        }
-        results
+        variant_ranks_to_results(&mut ranks, &self.variants_map, &self.dict, script, capacity)
     }
 
     pub fn combined_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
         match &mut search::combined_search(&self.variants_map, &self.pr_indices.read(), &self.english_index, &self.dict, &query, script, romanization) {
             CombinedSearchRank::Variant(variant_ranks) =>
                 CombinedSearchResults {
-                    variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
+                    variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, &self.dict, script, capacity),
                     pr_results: vec![],
                     english_results: vec![]
                 },
@@ -162,7 +149,7 @@ impl Api {
                 },
             CombinedSearchRank::All(variant_ranks, pr_ranks, english_ranks) =>
                 CombinedSearchResults {
-                    variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
+                    variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, &self.dict, script, capacity),
                     pr_results: pr_ranks_to_results(pr_ranks, & self.variants_map, &self.dict, script, capacity),
                     english_results: english_ranks_to_results(english_ranks, & self.dict, &self.variants_map, script, capacity)
                 }
@@ -282,7 +269,7 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
     pr_search_results
 }
 
-fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<VariantSearchResult> {
+fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearchRank>, variants_map: &VariantsMap, dict: &RichDict, script: Script, capacity: u32) -> Vec<VariantSearchResult> {
     let mut variant_search_results = vec![];
     let mut i = 0;
     while variant_ranks.len() > 0 && i < capacity {
@@ -290,9 +277,12 @@ fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearch
             id, variant_index, ..
         } = variant_ranks.pop().unwrap();
         let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
+        let defs = &dict.get(&id).unwrap().defs;
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
             variant: variant.word.clone(),
+            yues: defs.iter().map(|def| clause_to_string(&def.yue)).collect(),
+            engs: defs.iter().map(|def| clause_to_string(&def.eng.as_ref().unwrap())).collect(),
         });
         i += 1;
     }

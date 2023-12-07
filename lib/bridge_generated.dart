@@ -196,10 +196,14 @@ class SpotlightEntrySummary {
 class VariantSearchResult {
   final int id;
   final String variant;
+  final List<String> yues;
+  final List<String> engs;
 
   const VariantSearchResult({
     required this.id,
     required this.variant,
+    required this.yues,
+    required this.engs,
   });
 }
 
@@ -645,11 +649,13 @@ class WordshkApiImpl implements WordshkApi {
 
   VariantSearchResult _wire2api_variant_search_result(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return VariantSearchResult(
       id: _wire2api_u32(arr[0]),
       variant: _wire2api_String(arr[1]),
+      yues: _wire2api_StringList(arr[2]),
+      engs: _wire2api_StringList(arr[3]),
     );
   }
 }

@@ -40,6 +40,8 @@ pub struct PrSearchResult {
 pub struct VariantSearchResult {
     pub id: u32,
     pub variant: String,
+    pub yues: Vec<String>,
+    pub engs: Vec<String>,
 }
 
 pub struct EnglishSearchResult {
