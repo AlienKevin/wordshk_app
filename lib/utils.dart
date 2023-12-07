@@ -7,6 +7,7 @@ import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/models/speech_rate.dart';
+import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/language_state.dart';
 
 import 'models/font_size.dart';
@@ -127,4 +128,11 @@ String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
     case SpeechRate.normal:
       return s.speechRateNormal;
   }
+}
+
+bool isEngDef(BuildContext context) {
+  final entryLanguage = context.read<EntryLanguageState>().language;
+  final language = context.read<LanguageState>().language;
+  return entryLanguage == EntryLanguage.english ||
+      (entryLanguage == EntryLanguage.both && language == Language.en);
 }

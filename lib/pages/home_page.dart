@@ -432,7 +432,10 @@ class _HomePageState extends State<HomePage> {
                   TextSpan(
                       text: "\n${result.eng}",
                       style: textStyle.copyWith(
-                          fontWeight: FontWeight.normal, color: greyColor)),
+                          fontSize:
+                              Theme.of(context).textTheme.bodySmall!.fontSize,
+                          fontWeight: FontWeight.normal,
+                          color: greyColor)),
                 ],
               ),
           embedded: embedded);
@@ -477,25 +480,42 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> showPrSearchResults(
       int startIndex, TextStyle textStyle, Embedded embedded) {
+    defSpan(String text, {required bool bold}) => TextSpan(
+        text: text,
+        style: textStyle.copyWith(
+            fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+            color: greyColor));
     return prSearchResults
         .mapIndexed((index, result) => showSearchResult(
               startIndex + index,
               result.id,
-              (bool selected) => TextSpan(
-                children: [
-                  TextSpan(
-                      text: "${result.variant} ",
-                      style: textStyle.copyWith(
-                          color: selected
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : null)),
-                  TextSpan(
-                      text: context
-                          .read<RomanizationState>()
-                          .showPrs(result.pr.split(" ")),
-                      style: textStyle.copyWith(color: greyColor)),
-                ],
-              ),
+              (bool selected) {
+                final defs = (isEngDef(context) ? result.engs : result.yues);
+                return TextSpan(
+                  children: [
+                    TextSpan(
+                        text: "${result.variant} ",
+                        style: textStyle.copyWith(
+                            color: selected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : null)),
+                    TextSpan(
+                        text:
+                            "${context.read<RomanizationState>().showPrs(result.pr.split(" "))}\n",
+                        style: textStyle.copyWith(color: greyColor)),
+                    ...(defs.length == 1
+                        ? [defSpan(defs[0], bold: false)]
+                        : defs
+                            .mapIndexed((i, def) => [
+                                  defSpan("${i > 0 ? "  " : ""}${i + 1} ",
+                                      bold: true),
+                                  defSpan(def, bold: false)
+                                ])
+                            .expand((x) => x)),
+                  ],
+                );
+              },
               embedded: embedded,
             ))
         .toList();

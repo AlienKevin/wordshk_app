@@ -17,7 +17,7 @@ use wordshk_tools::english_index::{EnglishIndex, EnglishIndexData};
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::pr_index::PrIndices;
-use wordshk_tools::rich_dict::{RichDict, RichEntry};
+use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, Script, VariantsMap};
 use wordshk_tools::unicode::is_cjk;
@@ -124,25 +124,8 @@ impl Api {
     }
 
     pub fn pr_search(&self, capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
-        let mut results = vec![];
         let mut ranks = search::pr_search(&self.pr_indices.read(), &self.dict, &query, romanization);
-        let mut i = 0;
-        while ranks.len() > 0 && i < capacity {
-            let search::PrSearchRank {
-                id,
-                variant_index,
-                pr_index,
-                ..
-            } = ranks.pop().unwrap();
-            let variant = &search::pick_variants(self.variants_map.get(&id).unwrap(), script).0[variant_index];
-            results.push(PrSearchResult {
-                id: id as u32,
-                variant: variant.word.clone(),
-                pr: variant.prs.0[pr_index].to_string(),
-            });
-            i += 1;
-        }
-        results
+        pr_ranks_to_results(&mut ranks, &self.variants_map, &self.dict, script, capacity)
     }
 
     pub fn variant_search(&self, capacity: u32, query: String, script: Script) -> Vec<VariantSearchResult> {
@@ -174,13 +157,13 @@ impl Api {
             CombinedSearchRank::Pr(pr_ranks) =>
                 CombinedSearchResults {
                     variant_results: vec![],
-                    pr_results: pr_ranks_to_results(pr_ranks, &self.variants_map, script, capacity),
+                    pr_results: pr_ranks_to_results(pr_ranks, &self.variants_map,  &self.dict,script, capacity),
                     english_results: vec![]
                 },
             CombinedSearchRank::All(variant_ranks, pr_ranks, english_ranks) =>
                 CombinedSearchResults {
                     variant_results: variant_ranks_to_results(variant_ranks, &self.variants_map, script, capacity),
-                    pr_results: pr_ranks_to_results(pr_ranks, & self.variants_map, script, capacity),
+                    pr_results: pr_ranks_to_results(pr_ranks, & self.variants_map, &self.dict, script, capacity),
                     english_results: english_ranks_to_results(english_ranks, & self.dict, &self.variants_map, script, capacity)
                 }
         }
@@ -278,7 +261,7 @@ impl Api {
 }
 
 
-fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<PrSearchResult> {
+fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants_map: &VariantsMap, dict: &RichDict, script: Script, capacity: u32) -> Vec<PrSearchResult> {
     let mut pr_search_results = vec![];
     let mut i = 0;
     while pr_ranks.len() > 0 && i < capacity {
@@ -286,10 +269,13 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
             id, variant_index, pr_index, ..
         } = pr_ranks.pop().unwrap();
         let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
+        let defs = &dict.get(&id).unwrap().defs;
         pr_search_results.push(PrSearchResult {
             id: id as u32,
             variant: variant.word.clone(),
             pr: variant.prs.0[pr_index].to_string(),
+            yues: defs.iter().map(|def| clause_to_string(&def.yue)).collect(),
+            engs: defs.iter().map(|def| clause_to_string(&def.eng.as_ref().unwrap())).collect(),
         });
         i += 1;
     }

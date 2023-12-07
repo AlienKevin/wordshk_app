@@ -401,6 +401,8 @@ impl support::IntoDart for PrSearchResult {
             self.id.into_into_dart().into_dart(),
             self.variant.into_into_dart().into_dart(),
             self.pr.into_into_dart().into_dart(),
+            self.yues.into_into_dart().into_dart(),
+            self.engs.into_into_dart().into_dart(),
         ]
         .into_dart()
     }

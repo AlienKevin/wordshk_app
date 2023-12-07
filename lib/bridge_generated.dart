@@ -149,11 +149,15 @@ class PrSearchResult {
   final int id;
   final String variant;
   final String pr;
+  final List<String> yues;
+  final List<String> engs;
 
   const PrSearchResult({
     required this.id,
     required this.variant,
     required this.pr,
+    required this.yues,
+    required this.engs,
   });
 }
 
@@ -592,12 +596,14 @@ class WordshkApiImpl implements WordshkApi {
 
   PrSearchResult _wire2api_pr_search_result(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return PrSearchResult(
       id: _wire2api_u32(arr[0]),
       variant: _wire2api_String(arr[1]),
       pr: _wire2api_String(arr[2]),
+      yues: _wire2api_StringList(arr[3]),
+      engs: _wire2api_StringList(arr[4]),
     );
   }
 

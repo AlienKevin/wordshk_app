@@ -8,15 +8,11 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/bridge_generated.dart';
-import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../custom_page_route.dart';
 import '../ffi.dart';
-import '../models/language.dart';
 import '../states/entry_item_state.dart';
-import '../states/entry_language_state.dart';
-import '../states/language_state.dart';
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
@@ -93,15 +89,12 @@ class _EntryItemsState<T extends EntryItemState>
 
   Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
     final script = getScript(context);
-    final entryLanguage = context.read<EntryLanguageState>().language;
-    final language = context.read<LanguageState>().language;
-    final isEngDef = entryLanguage == EntryLanguage.english ||
-        (entryLanguage == EntryLanguage.both && language == Language.en);
+
     return api
         .getEntrySummaries(
           entryIds: Uint32List.fromList(ids),
           script: script,
-          isEngDef: isEngDef,
+          isEngDef: isEngDef(context),
         )
         .then((summaries) => LinkedHashMap.fromIterables(ids, summaries));
   }
