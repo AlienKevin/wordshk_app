@@ -518,7 +518,7 @@ class _HomePageState extends State<HomePage> {
       return showSearchResult(
         startIndex + index,
         result.id,
-        showFirstEntryInGroupInitially: true,
+        showFirstEntryInGroupInitially: false,
         (bool selected) => TextSpan(children: [
           TextSpan(
               text: "${result.variant}\n",
