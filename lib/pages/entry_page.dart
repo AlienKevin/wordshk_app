@@ -121,16 +121,19 @@ class _EntryPageState extends State<EntryPage> {
     } else if (isLoading) {
       return Container();
     } else {
+      final hideEntryActionButtons = widget.embedded == Embedded.topLevel ||
+          widget.embedded == Embedded.nestedInEmbedded;
       return Padding(
         padding: const EdgeInsets.only(left: 10),
         child: EntryWidget(
-          entryActionButtons: EntryActionButtons(
-              entryGroup: entryGroup!,
-              entryIndex: entryIndex!,
-              isLoading: isLoading,
-              hasError: hasError,
-              inAppBar: widget.embedded == Embedded.topLevel ||
-                  widget.embedded == Embedded.nestedInEmbedded),
+          entryActionButtons: hideEntryActionButtons
+              ? null
+              : EntryActionButtons(
+                  entryGroup: entryGroup!,
+                  entryIndex: entryIndex!,
+                  isLoading: isLoading,
+                  hasError: hasError,
+                  inAppBar: false),
           entryGroup: entryGroup!,
           initialEntryIndex: entryIndex!,
           initialDefIndex: widget.defIndex,
