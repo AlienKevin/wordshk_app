@@ -481,7 +481,10 @@ class _HomePageState extends State<HomePage> {
   List<Widget> showPrSearchResults(
       int startIndex, TextStyle textStyle, Embedded embedded) {
     defSpan(String text, {required bool bold}) => TextSpan(
-        text: text,
+        text: text
+            .replaceAll(RegExp(r'[;；].+'), "")
+            .replaceAll(RegExp(r'\(.+\)'), "")
+            .replaceAll(RegExp(r'（.+）'), ""),
         style: textStyle.copyWith(
             fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
             fontWeight: bold ? FontWeight.bold : FontWeight.normal,
