@@ -2,4 +2,4 @@ api_key.txt
 sqs_url.txt
 snapshots.jsonl
 venv
-output.txt
+scripts/output.txt

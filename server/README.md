@@ -9,42 +9,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Test Flask server locally:
+## Get full content of DynanoDB table
 ```bash
-flask run
+aws dynamodb scan --table-name wordshk | jq .
 ```
 
-Install and initialize Zappa:
+## Clears all items from DynanoDB table
 ```bash
-pip install zappa
-zappa init
+cd scripts
+python clear_table.py
 ```
-
-Deploy to AWS:
-```bash
-zappa deploy dev
-```
-
-Update:
-```bash
-zappa update dev
-```
-
-Dev server URL:
-```
-https://1cvycekk7e.execute-api.ap-east-1.amazonaws.com/dev
-```
-
-Inspect snapshots:
-```bash
-aws lambda invoke --function-name inspect_snapshots output.txt
-```
-
-Delete snapshots:
-```bash
-aws lambda invoke --function-name delete_snapshots output.txt
-```
-
-# Configurations for lambda functions
-1. Enable VPC access
-2. Add File System from EFS, set Local mount path to `/mnt/efs`
