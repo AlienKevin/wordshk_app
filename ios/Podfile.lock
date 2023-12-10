@@ -4,6 +4,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_core_spotlight (0.0.1):
     - Flutter
+  - flutter_fgbg (0.0.1):
+    - Flutter
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
   - flutter_native_splash (0.0.1):
@@ -109,6 +111,7 @@ DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - Flutter (from `Flutter`)
   - flutter_core_spotlight (from `.symlinks/plugins/flutter_core_spotlight/ios`)
+  - flutter_fgbg (from `.symlinks/plugins/flutter_fgbg/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
@@ -151,6 +154,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_core_spotlight:
     :path: ".symlinks/plugins/flutter_core_spotlight/ios"
+  flutter_fgbg:
+    :path: ".symlinks/plugins/flutter_fgbg/ios"
   flutter_keyboard_visibility:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_native_splash:
@@ -184,6 +189,7 @@ SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_core_spotlight: d79a87d3264b30a0e12f602246d81303f4122b8f
+  flutter_fgbg: 31c0d1140a131daea2d342121808f6aa0dcd879d
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   flutter_tts: 0f492aab6accf87059b72354fcb4ba934304771d

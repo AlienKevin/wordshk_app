@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io' show Platform;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -8,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
@@ -28,11 +35,16 @@ import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
 
+import 'aws_service.dart';
 import 'constants.dart';
 import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
 late final Future<Database> historyDatabase;
+
+late final StreamSubscription<FGBGType> subscription;
+
+final AwsService awsService = AwsService();
 
 late final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -60,6 +72,28 @@ main() async {
           .ensureInitialized(); // mandatory when awaiting on main
       final prefs = await SharedPreferences.getInstance();
       final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
+
+      // Set UserId if not set
+      if (prefs.getString("UserId") == null) {
+        var uuid = const Uuid();
+        var v4Crypto = uuid.v4(options: {'rng': UuidUtil.cryptoRNG});
+        await prefs.setString("UserId", v4Crypto);
+      }
+
+      // Initialize AWS service
+      await awsService.init();
+
+      subscription = FGBGEvents.stream.listen((event) {
+        if (event == FGBGType.foreground) {
+          Map<String, dynamic> message = {
+            // Use a fixed UserId for debugging
+            "UserId": kDebugMode ? "f16dfa0a-f7b2-4f13-bb33-676e09788819" : prefs.getString("UserId")!,
+            "Timestamp": DateTime.now().toUtc().toIso8601String(),
+            "Os": Platform.operatingSystem,
+          };
+          awsService.sendMessage(jsonEncode(message));
+        }
+      });
 
       runApp(
         MultiProvider(

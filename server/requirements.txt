@@ -1,3 +1,1 @@
-Flask
-gunicorn
 boto3

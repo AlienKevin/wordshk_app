@@ -57,6 +57,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.16"
+  aws_cognito_identity_api:
+    dependency: "direct main"
+    description:
+      name: aws_cognito_identity_api
+      sha256: "063975804a9f2e1586e8f70d9facbcd52d01c909f2ccf33ebfa059a014932d1c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  aws_sqs_api:
+    dependency: "direct main"
+    description:
+      name: aws_sqs_api
+      sha256: b42128e48417c9a09666bfc99eb328d8760ff368004d84b5b7b613415bbaa491
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -239,6 +255,14 @@ packages:
       url: "https://github.com/AlienKevin/flutter_core_spotlight.git"
     source: git
     version: "1.0.4"
+  flutter_fgbg:
+    dependency: "direct main"
+    description:
+      name: flutter_fgbg
+      sha256: "08c4d2fd229e3df26083d5aecc3dea9ff4f2d188f8cd57aaf2b3f047bd08a047"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   flutter_keyboard_visibility:
     dependency: "direct main"
     description:
@@ -427,10 +451,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "0.13.6"
   http_multi_server:
     dependency: transitive
     description:
@@ -855,6 +879,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  shared_aws_api:
+    dependency: transitive
+    description:
+      name: shared_aws_api
+      sha256: "24d036c3d125b9c5e516a97120b157359d2beb6f94ac9dd895ac0128839a979a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1149,7 +1181,7 @@ packages:
     source: hosted
     version: "3.0.7"
   uuid:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: uuid
       sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"

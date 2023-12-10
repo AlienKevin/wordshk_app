@@ -46,6 +46,10 @@ dependencies:
     git:
       url: https://github.com/AlienKevin/flutter_core_spotlight.git
       ref: 500ac5ebb5fc3b88e4e57d64c8c8c645f71980b5
+  aws_cognito_identity_api: ^2.0.0
+  aws_sqs_api: ^2.0.0
+  uuid: ^3.0.7
+  flutter_fgbg: ^0.3.0
 #  freezed_annotation: ^1.1.0
 
 dev_dependencies:
@@ -72,6 +76,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/jyutping_female/
+    - aws_secrets.json
   fonts:
     - family: ChironHeiHK
       fonts:

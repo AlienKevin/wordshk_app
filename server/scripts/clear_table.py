@@ -3,7 +3,7 @@ from botocore.exceptions import ClientError
 
 # Initialize a DynamoDB client
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('wordshk')
+table = dynamodb.Table('wordshk-dynamo')
 
 def clear_table(table, partition_key_name, sort_key_name):
     # Using expression attribute names to handle reserved keywords

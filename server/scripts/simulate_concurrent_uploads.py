@@ -7,16 +7,13 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-url = "https://1cvycekk7e.execute-api.ap-east-1.amazonaws.com/dev/upload/snapshot"
-
 headers = {
     'Content-Type': 'application/json'
 }
 
 sqs_client = boto3.client('sqs')
-with open('../sqs_url.txt', 'r') as file:
-    sqs_url = file.read().strip()
-
+with open('../../aws_secrets.json', 'r') as f:
+    sqs_url = json.load(f)['queueUrl']
 
 def make_request():
     payload = json.dumps({
