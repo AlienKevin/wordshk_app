@@ -1,6 +1,8 @@
 PODS:
   - audio_session (0.0.1):
     - Flutter
+  - device_info_plus (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_core_spotlight (0.0.1):
     - Flutter
@@ -109,6 +111,7 @@ PODS:
 
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_core_spotlight (from `.symlinks/plugins/flutter_core_spotlight/ios`)
   - flutter_fgbg (from `.symlinks/plugins/flutter_fgbg/ios`)
@@ -150,6 +153,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
   flutter_core_spotlight:
@@ -187,6 +192,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
+  device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_core_spotlight: d79a87d3264b30a0e12f602246d81303f4122b8f
   flutter_fgbg: 31c0d1140a131daea2d342121808f6aa0dcd879d

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Platform;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -37,6 +36,7 @@ import 'package:wordshk/states/spotlight_indexing_state.dart';
 
 import 'aws_service.dart';
 import 'constants.dart';
+import 'device_info.dart';
 import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
@@ -83,13 +83,13 @@ main() async {
       // Initialize AWS service
       await awsService.init();
 
-      subscription = FGBGEvents.stream.listen((event) {
+      subscription = FGBGEvents.stream.listen((event) async {
         if (event == FGBGType.foreground) {
           Map<String, dynamic> message = {
             // Use a fixed UserId for debugging
             "UserId": kDebugMode ? "f16dfa0a-f7b2-4f13-bb33-676e09788819" : prefs.getString("UserId")!,
             "Timestamp": DateTime.now().toUtc().toIso8601String(),
-            "Os": Platform.operatingSystem,
+            "DeviceInfo": await getDeviceInfo(),
           };
           awsService.sendMessage(jsonEncode(message));
         }

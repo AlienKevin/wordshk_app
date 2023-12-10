@@ -50,7 +50,9 @@ dependencies:
   aws_sqs_api: ^2.0.0
   uuid: ^3.0.7
   flutter_fgbg: ^0.3.0
-#  freezed_annotation: ^1.1.0
+  device_info_plus: ^9.1.1
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
@@ -66,8 +68,9 @@ dev_dependencies:
   ffigen: ^8.0.2
   sentry_flutter: ^7.9.0
   sentry_dart_plugin: ^1.0.0
-#  build_runner:
-#  freezed: ^1.1.0
+  build_runner: ^2.4.7
+  json_serializable:
+  freezed: ^2.4.5
 
 flutter:
   generate: true

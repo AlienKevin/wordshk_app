@@ -75,7 +75,11 @@ class AwsService {
         queueUrl: queueUrl,
         messageBody: messageBody,
       );
-      print('Message sent: ${response.messageId}');
+      if (response.messageId == null) {
+        print("aws_service.dart: AWS SQS failed to send message");
+        return false;
+      }
+      print('Message sent: $messageBody');
       return true;
     } catch (e) {
       print('Error sending message: $e');
