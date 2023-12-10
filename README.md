@@ -84,10 +84,11 @@ sudo gem uninstall ffi && sudo gem install ffi -- --enable-libffi-alloc
 1. Update the version of `flutter_rust_bridge` in `pubspec.yaml`
 2. Update the version of `ffigen` in `pubspec.yaml` if not updated automatically
 3. Update the version of `flutter_rust_bridge` in `rust/Cargo.toml` to the same version as (1)
-4. Run `dart pub global activate ffigen` to activate updated ffigen
-5. Run `./build_rust.sh` and fix any compiler error
-6. Run `flutter clean` to clean build files
-7. Restart flutter using `flutter run`
+4. Update the version of `flutter_rust_bridge_codegen` using `cargo install flutter_rust_bridge_codegen --version <version>` to the same version as (1)
+5. Run `dart pub global activate ffigen` to activate updated ffigen
+6. Run `./build_rust.sh` and fix any compiler error
+7. Run `flutter clean` to clean build files
+8. Restart flutter using `flutter run`
 
 # How Does the Build Script Work?
 

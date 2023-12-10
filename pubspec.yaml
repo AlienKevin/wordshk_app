@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_rust_bridge: ^1.80.1
+  flutter_rust_bridge: '>=1.82.1 <1.82.2'
   equatable: ^2.0.0
   flutter_native_splash: ^2.3.6
   just_audio: ^0.9.35
@@ -31,12 +31,12 @@ dependencies:
   keyboard_actions: ^4.2.0
   csv: ^5.0.2
   flutter_keyboard_visibility: ^5.4.1
-  google_mlkit_digital_ink_recognition: ^0.9.0
+  google_mlkit_digital_ink_recognition: ^0.10.0
   settings_ui: ^2.0.2
   cupertino_icons: ^1.0.5
   flutter_platform_widgets: ^6.0.2
   introduction_screen: ^3.1.11
-  permission_handler: ^10.4.3
+  permission_handler: ^11.1.0
   ffi: ^2.1.0
   path_provider: ^2.1.0
   sqflite: ^2.3.0
@@ -58,16 +58,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.1
+  flutter_lints: ^3.0.1
   test: ^1.17.10
   flutter_launcher_icons: ^0.13.1
   flutter_launcher_name:
     git:
       url: https://github.com/AlienKevin/flutter_launcher_name
       ref: "0.11.1"
-  ffigen: ^8.0.2
-  sentry_flutter: ^7.9.0
-  sentry_dart_plugin: ^1.0.0
+  ffigen: '>=8.0.0 <9.0.0'
+  sentry_flutter: ^7.13.2
+  sentry_dart_plugin: ^1.6.3
   build_runner: ^2.4.7
   json_serializable:
   freezed: ^2.4.5

@@ -228,6 +228,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_get_entry_summaries(port_, arg0, arg1, arg2),
       parseSuccessData: _wire2api_list_entry_summary,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kGetEntrySummariesConstMeta,
       argValues: [entryIds, script, isEngDef],
       hint: hint,
@@ -245,6 +246,7 @@ class WordshkApiImpl implements WordshkApi {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_update_pr_indices(port_, arg0),
       parseSuccessData: _wire2api_unit,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kUpdatePrIndicesConstMeta,
       argValues: [prIndices],
       hint: hint,
@@ -263,6 +265,7 @@ class WordshkApiImpl implements WordshkApi {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_generate_pr_indices(port_, arg0),
       parseSuccessData: _wire2api_uint_8_list,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kGeneratePrIndicesConstMeta,
       argValues: [romanization],
       hint: hint,
@@ -289,6 +292,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_pr_search(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api_list_pr_search_result,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kPrSearchConstMeta,
       argValues: [capacity, query, script, romanization],
       hint: hint,
@@ -313,6 +317,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_variant_search(port_, arg0, arg1, arg2),
       parseSuccessData: _wire2api_list_variant_search_result,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kVariantSearchConstMeta,
       argValues: [capacity, query, script],
       hint: hint,
@@ -339,6 +344,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_combined_search(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api_combined_search_results,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kCombinedSearchConstMeta,
       argValues: [capacity, query, script, romanization],
       hint: hint,
@@ -363,6 +369,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_english_search(port_, arg0, arg1, arg2),
       parseSuccessData: _wire2api_list_english_search_result,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kEnglishSearchConstMeta,
       argValues: [capacity, query, script],
       hint: hint,
@@ -389,6 +396,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_eg_search(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api___record__opt_String_list_eg_search_result,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kEgSearchConstMeta,
       argValues: [capacity, maxFirstIndexInEg, query, script],
       hint: hint,
@@ -406,6 +414,7 @@ class WordshkApiImpl implements WordshkApi {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_get_entry_json(port_, arg0),
       parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kGetEntryJsonConstMeta,
       argValues: [id],
       hint: hint,
@@ -424,6 +433,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_get_entry_group_json(port_, arg0),
       parseSuccessData: _wire2api_StringList,
+      parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kGetEntryGroupJsonConstMeta,
       argValues: [id],
       hint: hint,
@@ -443,6 +453,7 @@ class WordshkApiImpl implements WordshkApi {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_get_entry_id(port_, arg0, arg1),
       parseSuccessData: _wire2api_opt_box_autoadd_u32,
+      parseErrorData: null,
       constMeta: kGetEntryIdConstMeta,
       argValues: [query, script],
       hint: hint,
@@ -460,6 +471,7 @@ class WordshkApiImpl implements WordshkApi {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_get_jyutping(port_, arg0),
       parseSuccessData: _wire2api_StringList,
+      parseErrorData: null,
       constMeta: kGetJyutpingConstMeta,
       argValues: [query],
       hint: hint,
@@ -476,6 +488,7 @@ class WordshkApiImpl implements WordshkApi {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_get_splotlight_summaries(port_),
       parseSuccessData: _wire2api_list_spotlight_entry_summary,
+      parseErrorData: null,
       constMeta: kGetSplotlightSummariesConstMeta,
       argValues: [],
       hint: hint,
@@ -492,6 +505,10 @@ class WordshkApiImpl implements WordshkApi {
     _platform.dispose();
   }
 // Section: wire2api
+
+  FrbAnyhowException _wire2api_FrbAnyhowException(dynamic raw) {
+    return FrbAnyhowException(raw as String);
+  }
 
   String _wire2api_String(dynamic raw) {
     return raw as String;
