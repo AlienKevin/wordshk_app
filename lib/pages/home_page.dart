@@ -8,6 +8,7 @@ import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/main.dart';
 import 'package:wordshk/models/embedded.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
@@ -21,6 +22,7 @@ import '../custom_page_route.dart';
 import '../ffi.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
+import '../models/search_result_type.dart';
 import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
@@ -439,6 +441,7 @@ class _HomePageState extends State<HomePage> {
                           color: selected ? lightGreyColor : greyColor)),
                 ],
               ),
+          SearchResultType.english,
           embedded: embedded);
     }).toList();
   }
@@ -475,6 +478,7 @@ class _HomePageState extends State<HomePage> {
           .toList();
       return showSearchResult(startIndex + index, result.id,
           (bool selected) => TextSpan(children: egs(selected)),
+          SearchResultType.eg,
           maxLines: 1, defIndex: result.defIndex, embedded: embedded);
     }).toList();
   }
@@ -507,6 +511,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 );
               },
+              SearchResultType.pr,
               embedded: embedded,
             ))
         .toList();
@@ -531,6 +536,7 @@ class _HomePageState extends State<HomePage> {
               (isEngDef(context) ? result.engs : result.yues),
               textStyle.copyWith(color: selected ? lightGreyColor : greyColor)),
         ]),
+        SearchResultType.variant,
         embedded: embedded,
       );
     }).toList();
@@ -589,6 +595,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget showSearchResult(
       int index, int id, TextSpan Function(bool selected) resultText,
+      SearchResultType resultType,
       {int maxLines = 2,
       int? defIndex,
       bool showFirstEntryInGroupInitially = false,
@@ -619,6 +626,7 @@ class _HomePageState extends State<HomePage> {
               selectedSearchResultEntryPage = entryPage;
             });
             if (embedded != Embedded.embedded) {
+              analysisState.clickSearchResultType(resultType);
               Navigator.push(
                 context,
                 CustomPageRoute(builder: (context) => entryPage),

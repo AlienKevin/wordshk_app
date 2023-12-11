@@ -36,9 +36,7 @@ mixin _$DeviceInfo {
     required TResult Function(
             String release, int sdkInt, String manufacturer, String model)
         android,
-    required TResult Function(
-            String systemName, String version, String name, String model)
-        ios,
+    required TResult Function(String systemName, String version) ios,
     required TResult Function() other,
   }) =>
       throw _privateConstructorUsedError;
@@ -47,9 +45,7 @@ mixin _$DeviceInfo {
     TResult? Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult? Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult? Function(String systemName, String version)? ios,
     TResult? Function()? other,
   }) =>
       throw _privateConstructorUsedError;
@@ -58,9 +54,7 @@ mixin _$DeviceInfo {
     TResult Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult Function(String systemName, String version)? ios,
     TResult Function()? other,
     required TResult orElse(),
   }) =>
@@ -211,9 +205,7 @@ class _$AndroidInfoImpl implements AndroidInfo {
     required TResult Function(
             String release, int sdkInt, String manufacturer, String model)
         android,
-    required TResult Function(
-            String systemName, String version, String name, String model)
-        ios,
+    required TResult Function(String systemName, String version) ios,
     required TResult Function() other,
   }) {
     return android(release, sdkInt, manufacturer, model);
@@ -225,9 +217,7 @@ class _$AndroidInfoImpl implements AndroidInfo {
     TResult? Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult? Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult? Function(String systemName, String version)? ios,
     TResult? Function()? other,
   }) {
     return android?.call(release, sdkInt, manufacturer, model);
@@ -239,9 +229,7 @@ class _$AndroidInfoImpl implements AndroidInfo {
     TResult Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult Function(String systemName, String version)? ios,
     TResult Function()? other,
     required TResult orElse(),
   }) {
@@ -315,7 +303,7 @@ abstract class _$$IosInfoImplCopyWith<$Res> {
           _$IosInfoImpl value, $Res Function(_$IosInfoImpl) then) =
       __$$IosInfoImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String systemName, String version, String name, String model});
+  $Res call({String systemName, String version});
 }
 
 /// @nodoc
@@ -331,8 +319,6 @@ class __$$IosInfoImplCopyWithImpl<$Res>
   $Res call({
     Object? systemName = null,
     Object? version = null,
-    Object? name = null,
-    Object? model = null,
   }) {
     return _then(_$IosInfoImpl(
       null == systemName
@@ -343,14 +329,6 @@ class __$$IosInfoImplCopyWithImpl<$Res>
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
               as String,
-      null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      null == model
-          ? _value.model
-          : model // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -358,8 +336,7 @@ class __$$IosInfoImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$IosInfoImpl implements IosInfo {
-  const _$IosInfoImpl(this.systemName, this.version, this.name, this.model,
-      {final String? $type})
+  const _$IosInfoImpl(this.systemName, this.version, {final String? $type})
       : $type = $type ?? 'ios';
 
   factory _$IosInfoImpl.fromJson(Map<String, dynamic> json) =>
@@ -369,17 +346,13 @@ class _$IosInfoImpl implements IosInfo {
   final String systemName;
   @override
   final String version;
-  @override
-  final String name;
-  @override
-  final String model;
 
   @JsonKey(name: 'runtimeType')
   final String $type;
 
   @override
   String toString() {
-    return 'DeviceInfo.ios(systemName: $systemName, version: $version, name: $name, model: $model)';
+    return 'DeviceInfo.ios(systemName: $systemName, version: $version)';
   }
 
   @override
@@ -389,15 +362,12 @@ class _$IosInfoImpl implements IosInfo {
             other is _$IosInfoImpl &&
             (identical(other.systemName, systemName) ||
                 other.systemName == systemName) &&
-            (identical(other.version, version) || other.version == version) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.model, model) || other.model == model));
+            (identical(other.version, version) || other.version == version));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, systemName, version, name, model);
+  int get hashCode => Object.hash(runtimeType, systemName, version);
 
   @JsonKey(ignore: true)
   @override
@@ -411,12 +381,10 @@ class _$IosInfoImpl implements IosInfo {
     required TResult Function(
             String release, int sdkInt, String manufacturer, String model)
         android,
-    required TResult Function(
-            String systemName, String version, String name, String model)
-        ios,
+    required TResult Function(String systemName, String version) ios,
     required TResult Function() other,
   }) {
-    return ios(systemName, version, name, model);
+    return ios(systemName, version);
   }
 
   @override
@@ -425,12 +393,10 @@ class _$IosInfoImpl implements IosInfo {
     TResult? Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult? Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult? Function(String systemName, String version)? ios,
     TResult? Function()? other,
   }) {
-    return ios?.call(systemName, version, name, model);
+    return ios?.call(systemName, version);
   }
 
   @override
@@ -439,14 +405,12 @@ class _$IosInfoImpl implements IosInfo {
     TResult Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult Function(String systemName, String version)? ios,
     TResult Function()? other,
     required TResult orElse(),
   }) {
     if (ios != null) {
-      return ios(systemName, version, name, model);
+      return ios(systemName, version);
     }
     return orElse();
   }
@@ -494,15 +458,13 @@ class _$IosInfoImpl implements IosInfo {
 }
 
 abstract class IosInfo implements DeviceInfo {
-  const factory IosInfo(final String systemName, final String version,
-      final String name, final String model) = _$IosInfoImpl;
+  const factory IosInfo(final String systemName, final String version) =
+      _$IosInfoImpl;
 
   factory IosInfo.fromJson(Map<String, dynamic> json) = _$IosInfoImpl.fromJson;
 
   String get systemName;
   String get version;
-  String get name;
-  String get model;
   @JsonKey(ignore: true)
   _$$IosInfoImplCopyWith<_$IosInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -556,9 +518,7 @@ class _$OtherInfoImpl implements OtherInfo {
     required TResult Function(
             String release, int sdkInt, String manufacturer, String model)
         android,
-    required TResult Function(
-            String systemName, String version, String name, String model)
-        ios,
+    required TResult Function(String systemName, String version) ios,
     required TResult Function() other,
   }) {
     return other();
@@ -570,9 +530,7 @@ class _$OtherInfoImpl implements OtherInfo {
     TResult? Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult? Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult? Function(String systemName, String version)? ios,
     TResult? Function()? other,
   }) {
     return other?.call();
@@ -584,9 +542,7 @@ class _$OtherInfoImpl implements OtherInfo {
     TResult Function(
             String release, int sdkInt, String manufacturer, String model)?
         android,
-    TResult Function(
-            String systemName, String version, String name, String model)?
-        ios,
+    TResult Function(String systemName, String version)? ios,
     TResult Function()? other,
     required TResult orElse(),
   }) {

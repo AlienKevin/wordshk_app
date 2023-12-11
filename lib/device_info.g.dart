@@ -28,8 +28,6 @@ _$IosInfoImpl _$$IosInfoImplFromJson(Map<String, dynamic> json) =>
     _$IosInfoImpl(
       json['systemName'] as String,
       json['version'] as String,
-      json['name'] as String,
-      json['model'] as String,
       $type: json['runtimeType'] as String?,
     );
 
@@ -37,8 +35,6 @@ Map<String, dynamic> _$$IosInfoImplToJson(_$IosInfoImpl instance) =>
     <String, dynamic>{
       'systemName': instance.systemName,
       'version': instance.version,
-      'name': instance.name,
-      'model': instance.model,
       'runtimeType': instance.$type,
     };
 

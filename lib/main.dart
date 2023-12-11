@@ -18,6 +18,7 @@ import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
+import 'package:wordshk/states/analysis_state.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
@@ -42,12 +43,12 @@ import 'states/player_state.dart';
 late final Future<Database> bookmarkDatabase;
 late final Future<Database> historyDatabase;
 
-late final StreamSubscription<FGBGType> subscription;
-
 final AwsService awsService = AwsService();
 
-late final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
+
+final AnalysisState analysisState = AnalysisState();
 
 main() async {
   // Avoid errors caused by flutter upgrade.
@@ -83,22 +84,30 @@ main() async {
       // Initialize AWS service
       await awsService.init();
 
-      subscription = FGBGEvents.stream.listen((event) async {
-        if (event == FGBGType.foreground) {
+      FGBGEvents.stream.listen((event) async {
+        if (event == FGBGType.background) {
           Map<String, dynamic> message = {
             // Use a fixed UserId for debugging
-            "UserId": kDebugMode ? "f16dfa0a-f7b2-4f13-bb33-676e09788819" : prefs.getString("UserId")!,
+            "UserId": kDebugMode
+                ? "f16dfa0a-f7b2-4f13-bb33-676e09788819"
+                : prefs.getString("UserId")!,
             "Timestamp": DateTime.now().toUtc().toIso8601String(),
             "DeviceInfo": await getDeviceInfo(),
+            ...analysisState.toJson(),
           };
-          awsService.sendMessage(jsonEncode(message));
+          final ok = await awsService.sendMessage(jsonEncode(message));
+          if (ok) {
+            // Clear analysis state if successfully sent
+            analysisState.clear();
+          }
         }
       });
 
       runApp(
         MultiProvider(
           providers: [
-            ChangeNotifierProvider<SpotlightIndexingState>(create: (_) => SpotlightIndexingState(prefs)),
+            ChangeNotifierProvider<SpotlightIndexingState>(
+                create: (_) => SpotlightIndexingState(prefs)),
             ChangeNotifierProvider<SearchModeState>(
                 create: (_) => SearchModeState()),
             ChangeNotifierProvider<SearchQueryState>(
@@ -106,7 +115,11 @@ main() async {
             ChangeNotifierProvider<InputModeState>(
                 create: (_) => InputModeState()),
             ChangeNotifierProvider<LanguageState>(
-                create: (context) => LanguageState(prefs, Provider.of<SpotlightIndexingState>(context, listen: false)), lazy: false),
+                create: (context) => LanguageState(
+                    prefs,
+                    Provider.of<SpotlightIndexingState>(context,
+                        listen: false)),
+                lazy: false),
             ChangeNotifierProvider<EntryLanguageState>(
                 create: (_) => EntryLanguageState(prefs)),
             ChangeNotifierProvider<PronunciationMethodState>(
@@ -114,7 +127,11 @@ main() async {
             ChangeNotifierProvider<EntryEgFontSizeState>(
                 create: (_) => EntryEgFontSizeState(prefs)),
             ChangeNotifierProvider<RomanizationState>(
-                create: (context) => RomanizationState(prefs, Provider.of<SpotlightIndexingState>(context, listen: false)), lazy: false),
+                create: (context) => RomanizationState(
+                    prefs,
+                    Provider.of<SpotlightIndexingState>(context,
+                        listen: false)),
+                lazy: false),
             ChangeNotifierProvider<EntryEgJumpyPrsState>(
                 create: (_) => EntryEgJumpyPrsState(prefs)),
             ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
@@ -127,8 +144,7 @@ main() async {
                 lazy: false),
             ChangeNotifierProvider<HistoryState>(
                 create: (_) => HistoryState(
-                    tableName: "history",
-                    getDatabase: () => historyDatabase),
+                    tableName: "history", getDatabase: () => historyDatabase),
                 lazy: false),
             ChangeNotifierProvider<ExerciseIntroductionState>(
                 create: (_) => ExerciseIntroductionState(prefs))

@@ -12,7 +12,7 @@ sealed class DeviceInfo with _$DeviceInfo {
           String release, int sdkInt, String manufacturer, String model) =
       AndroidInfo;
   const factory DeviceInfo.ios(
-      String systemName, String version, String name, String model) = IosInfo;
+      String systemName, String version) = IosInfo;
   const factory DeviceInfo.other() = OtherInfo;
 
   factory DeviceInfo.fromJson(Map<String, dynamic> json) =>
@@ -33,11 +33,13 @@ Future<DeviceInfo> getDeviceInfo() async {
     var iosInfo = await DeviceInfoPlugin().iosInfo;
     var systemName = iosInfo.systemName;
     var version = iosInfo.systemVersion;
-    var name = iosInfo.name;
-    var model = iosInfo.model;
+    // name and model always return 'iPhone'
+    // See: https://stackoverflow.com/questions/71153895/how-to-get-device-model-name-in-flutter
+    // var name = iosInfo.name;
+    // var model = iosInfo.model;
     // iOS 13.1, iPhone 11 Pro Max iPhone
     // '$systemName $version, $name $model'
-    return DeviceInfo.ios(systemName, version, name, model);
+    return DeviceInfo.ios(systemName, version);
   } else {
     return const DeviceInfo.other();
   }
