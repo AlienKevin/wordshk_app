@@ -104,25 +104,32 @@ class PreferencesPage extends StatelessWidget {
                   ),
                 ],
               ),
-              ...((Platform.isIOS || Platform.isMacOS)
-                  ? [
-                      SettingsSection(
-                        title: Text(s.advanced),
-                        tiles: <SettingsTile>[
-                          SettingsTile.switchTile(
-                              description: Text(s.spotlightSearchDescription),
-                              initialValue:
-                                  context.watch<SpotlightIndexingState>().enabled,
-                              onToggle: (newEnabled) {
-                                context
-                                    .read<SpotlightIndexingState>()
-                                    .updateSpotlightIndexEnabled(newEnabled);
-                              },
-                              title: Text(s.spotlightSearch)),
-                        ],
-                      )
-                    ]
-                  : []),
+              SettingsSection(
+                title: Text(s.advanced),
+                tiles: [
+                  SettingsTile.switchTile(
+                      description: Text(s.sendAnalyticsDescription),
+                      initialValue: false,
+                      onToggle: (newEnabled) {
+                        print("Analytics: $newEnabled");
+                      },
+                      title: Text(s.sendAnalytics)),
+                  ...((Platform.isIOS || Platform.isMacOS)
+                    ? <SettingsTile>[
+                        SettingsTile.switchTile(
+                            description: Text(s.spotlightSearchDescription),
+                            initialValue:
+                                context.watch<SpotlightIndexingState>().enabled,
+                            onToggle: (newEnabled) {
+                              context
+                                  .read<SpotlightIndexingState>()
+                                  .updateSpotlightIndexEnabled(newEnabled);
+                            },
+                            title: Text(s.spotlightSearch)),
+                      ]
+                    : [])
+                ],
+              )
             ],
           ),
         ));

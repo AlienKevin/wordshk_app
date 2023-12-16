@@ -167,6 +167,8 @@
     "disabled": "關閉",
 
     "advanced": "高級",
+    "sendAnalytics": "分享使用狀況同診斷資訊",
+    "sendAnalyticsDescription": "為咗協助我哋改進軟體，你可以允許裝置向我哋發送關於裝置使用狀況同運行情形嘅資訊。",
     "spotlightSearch": "Spotlight 搜尋",
     "spotlightSearchDescription": "喺主畫面向下掃，之後喺搜尋欄位輸入\n\"解釋 詞語\"嚟搜尋詞語定義",
 
