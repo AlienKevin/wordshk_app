@@ -1,9 +1,11 @@
 {
     "introduction": "Introduction",
-    "welcome": "Welcome👏",
-    "introductionText": "Welcome to words.hk!\nBefore we start, please take a moment to select your learning preferences.",
+    "welcome": "Welcome to words.hk!",
+    "introductionText": "Before we start, please take a moment to select your learning preferences.",
     "introductionLanguage": "I feel most comfortable with...",
     "introductionRomanization": "I'm most familiar with...",
+    "agreeToShare": "Agree to share",
+    "doNotShare": "Do not share",
 
     "searchDictionary": "Search",
     "searchDictionaryNoResultsFound": "Sorry, no results found",

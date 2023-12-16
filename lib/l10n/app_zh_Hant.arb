@@ -1,9 +1,11 @@
 {
     "introduction": "介紹",
-    "welcome": "歡迎👏",
-    "introductionText": "歡迎來到粵典！\n在開始之前，請設定您的學習偏好。",
+    "welcome": "歡迎來到粵典！",
+    "introductionText": "在開始之前，請設定您的學習偏好。",
     "introductionLanguage": "我最熟悉的語言是...",
     "introductionRomanization": "我最熟悉的拼音系統是...",
+    "agreeToShare": "同意分享",
+    "doNotShare": "不分享",
 
     "searchDictionary": "查字典",
     "searchDictionaryNoResultsFound": "抱歉，詞典裡找不到相關資料",
