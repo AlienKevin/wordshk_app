@@ -50,6 +50,18 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 final AnalyticsState analyticsState = AnalyticsState();
+bool sentryEnabled = true;
+
+class CustomSentryEventProcessor implements EventProcessor {
+  @override
+  FutureOr<SentryEvent?> apply(SentryEvent event, {dynamic hint}) {
+    if (sentryEnabled) {
+      return event;
+    }
+    // Returning null will discard the event, effectively stopping reporting
+    return null;
+  }
+}
 
 main() async {
   // Avoid errors caused by flutter upgrade.
@@ -57,10 +69,11 @@ main() async {
   final prefs = await SharedPreferences.getInstance();
 
   await SentryFlutter.init((options) {
-    options.dsn = (kReleaseMode && (prefs.getBool("analyticsEnabled") ?? true)) ? sentryDsn : "";
+    options.dsn = sentryDsn;
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // We recommend adjusting this value in production.
     options.tracesSampleRate = 0;
+    options.addEventProcessor(CustomSentryEventProcessor());
   }, appRunner: () async {
     try {
       if (kDebugMode) {
