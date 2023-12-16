@@ -1,4 +1,6 @@
 enum PronunciationMethod {
   syllableRecordings,
-  tts,
+  tts;
+
+  toJson() => name;
 }

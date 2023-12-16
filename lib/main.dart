@@ -75,33 +75,14 @@ main() async {
       final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
 
       // Set UserId if not set
-      if (prefs.getString("UserId") == null) {
+      if (prefs.getString("userId") == null) {
         var uuid = const Uuid();
         var v4Crypto = uuid.v4(options: {'rng': UuidUtil.cryptoRNG});
-        await prefs.setString("UserId", v4Crypto);
+        await prefs.setString("userId", v4Crypto);
       }
 
       // Initialize AWS service
       await awsService.init();
-
-      FGBGEvents.stream.listen((event) async {
-        if (event == FGBGType.background) {
-          Map<String, dynamic> message = {
-            // Use a fixed UserId for debugging
-            "UserId": kDebugMode
-                ? "f16dfa0a-f7b2-4f13-bb33-676e09788819"
-                : prefs.getString("UserId")!,
-            "Timestamp": DateTime.now().toUtc().toIso8601String(),
-            "DeviceInfo": await getDeviceInfo(),
-            ...analysisState.toJson(),
-          };
-          final ok = await awsService.sendMessage(jsonEncode(message));
-          if (ok) {
-            // Clear analysis state if successfully sent
-            analysisState.clear();
-          }
-        }
-      });
 
       runApp(
         MultiProvider(
@@ -286,67 +267,113 @@ class _MyAppState extends State<MyApp> {
       dividerColor: darkGreyColor,
       dividerTheme: dividerTheme,
     );
-    return Portal(
-      child: MaterialApp(
-          scaffoldMessengerKey: scaffoldMessengerKey,
-          debugShowCheckedModeBanner: false,
-          locale: context.watch<LanguageState>().language?.toLocale,
-          title: 'words.hk',
-          localizationsDelegates: const [
-            ...AppLocalizations.localizationsDelegates,
-            MaterialLocalizationYueDelegate(),
-            CupertinoLocalizationYueDelegate(),
-          ],
-          localeListResolutionCallback: (
-            locales,
-            supportedLocales,
-          ) {
-            if (kDebugMode) {
-              print("Detected locales: $locales");
+    return FGBGNotifier(
+        onEvent: (event) async {
+          if (event == FGBGType.background) {
+            final language = context.read<LanguageState>().language;
+            final romanization = context.read<RomanizationState>().romanization.name;
+            final egJumpyPrs = context.read<EntryEgJumpyPrsState>().isJumpy;
+            final numBookmarks = context.read<BookmarkState>().items.length;
+            final numHistory = context.read<HistoryState>().items.length;
+            final entryEgPrMethod = context.read<PronunciationMethodState>().entryEgMethod;
+            final entryEgFontSize = context.read<EntryEgFontSizeState>().size;
+            final spotlightEnabled = context.read<SpotlightIndexingState>().enabled;
+
+            final prefs = await SharedPreferences.getInstance();
+            final lastSyncTime = prefs.getString("analysisSyncTime");
+            final timeNow = DateTime.now().toUtc();
+            final timeNowString = timeNow.toIso8601String();
+            if (kReleaseMode && lastSyncTime != null &&
+                timeNow.difference(DateTime.parse(lastSyncTime)).inHours < 12) {
+              return;
             }
-            for (final locale in locales ?? []) {
-              if (locale.languageCode == 'en') {
-                return context.read<LanguageState>().initLanguage(Language.en);
-              } else if (locale.languageCode == 'yue') {
-                return context.read<LanguageState>().initLanguage(Language.yue);
-              } else if (locale.languageCode == 'zh') {
-                if (locale.scriptCode == 'Hant') {
-                  return context
-                      .read<LanguageState>()
-                      .initLanguage(Language.zhHant);
-                } else {
-                  return context
-                      .read<LanguageState>()
-                      .initLanguage(Language.zhHans);
+            Map<String, dynamic> message = {
+              // Use a fixed UserId for debugging
+              "UserId": kDebugMode
+                  ? "f16dfa0a-f7b2-4f13-bb33-676e09788819"
+                  : prefs.getString("userId")!,
+              "Timestamp": timeNowString,
+              "deviceInfo": await getDeviceInfo(),
+              "language": language,
+              "romanization": romanization,
+              "egJumpyPrs": egJumpyPrs,
+              "numBookmarks": numBookmarks,
+              "numHistory": numHistory,
+              "entryEgPrMethod": entryEgPrMethod,
+              "entryEgFontSize": entryEgFontSize,
+              "spotlightEnabled": spotlightEnabled,
+              ...analysisState.toJson(),
+            };
+            final ok = await awsService.sendMessage(jsonEncode(message));
+            if (ok) {
+              // Clear analysis state if successfully sent
+              analysisState.clear();
+              prefs.setString("analysisSyncTime", timeNowString);
+            }
+          }
+        },
+        child: Portal(
+        child: MaterialApp(
+            scaffoldMessengerKey: scaffoldMessengerKey,
+            debugShowCheckedModeBanner: false,
+            locale: context.watch<LanguageState>().language?.toLocale,
+            title: 'words.hk',
+            localizationsDelegates: const [
+              ...AppLocalizations.localizationsDelegates,
+              MaterialLocalizationYueDelegate(),
+              CupertinoLocalizationYueDelegate(),
+            ],
+            localeListResolutionCallback: (
+              locales,
+              supportedLocales,
+            ) {
+              if (kDebugMode) {
+                print("Detected locales: $locales");
+              }
+              for (final locale in locales ?? []) {
+                if (locale.languageCode == 'en') {
+                  return context.read<LanguageState>().initLanguage(Language.en);
+                } else if (locale.languageCode == 'yue') {
+                  return context.read<LanguageState>().initLanguage(Language.yue);
+                } else if (locale.languageCode == 'zh') {
+                  if (locale.scriptCode == 'Hant') {
+                    return context
+                        .read<LanguageState>()
+                        .initLanguage(Language.zhHant);
+                  } else {
+                    return context
+                        .read<LanguageState>()
+                        .initLanguage(Language.zhHans);
+                  }
                 }
               }
-            }
-            // fallback to English
-            return Language.en.toLocale;
-          },
-          supportedLocales: const [
-            Locale.fromSubtags(
-                languageCode:
-                    'en'), // generic English (defaults to American English)
-            Locale.fromSubtags(
-                languageCode:
-                    'yue'), // generic Cantonese 'yue' (traditional script)
-            Locale.fromSubtags(
-                languageCode:
-                    'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
-            Locale.fromSubtags(
-                languageCode: 'zh',
-                scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
-            Locale.fromSubtags(
-                languageCode: 'zh',
-                scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
-          ],
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          // home: const HomePage(title: 'words.hk'),
-          home: widget.firstTimeUser
-              ? IntroductionPage(prefs: widget.prefs)
-              : const HomePage(title: "words.hk")),
+              // fallback to English
+              return Language.en.toLocale;
+            },
+            supportedLocales: const [
+              Locale.fromSubtags(
+                  languageCode:
+                      'en'), // generic English (defaults to American English)
+              Locale.fromSubtags(
+                  languageCode:
+                      'yue'), // generic Cantonese 'yue' (traditional script)
+              Locale.fromSubtags(
+                  languageCode:
+                      'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
+              Locale.fromSubtags(
+                  languageCode: 'zh',
+                  scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
+              Locale.fromSubtags(
+                  languageCode: 'zh',
+                  scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
+            ],
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            // home: const HomePage(title: 'words.hk'),
+            home: widget.firstTimeUser
+                ? IntroductionPage(prefs: widget.prefs)
+                : const HomePage(title: "words.hk")),
+      ),
     );
   }
 }

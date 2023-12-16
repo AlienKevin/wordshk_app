@@ -36,4 +36,6 @@ enum Language {
         return "廣東話";
     }
   }
+
+  toJson() => name;
 }

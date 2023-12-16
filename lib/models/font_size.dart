@@ -2,5 +2,7 @@ enum FontSize {
   small,
   medium,
   large,
-  veryLarge,
+  veryLarge;
+
+  toJson() => name;
 }
