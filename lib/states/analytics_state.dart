@@ -1,11 +1,11 @@
 import '../models/search_mode.dart';
 import '../models/search_result_type.dart';
 
-class AnalysisState {
+class AnalyticsState {
   List<SearchMode> searchModes = [];
   List<SearchResultType> searchResultTypesClicked = [];
 
-  AnalysisState();
+  AnalyticsState();
 
   void addSearchMode(SearchMode searchMode) {
     searchModes.add(searchMode);

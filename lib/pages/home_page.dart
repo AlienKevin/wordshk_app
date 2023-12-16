@@ -626,7 +626,7 @@ class _HomePageState extends State<HomePage> {
               selectedSearchResultEntryPage = entryPage;
             });
             if (embedded != Embedded.embedded) {
-              analysisState.clickSearchResultType(resultType);
+              analyticsState.clickSearchResultType(resultType);
               Navigator.push(
                 context,
                 CustomPageRoute(builder: (context) => entryPage),

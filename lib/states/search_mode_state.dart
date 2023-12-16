@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../main.dart' show analysisState;
+import '../main.dart' show analyticsState;
 import '../models/search_mode.dart';
 
 class SearchModeState with ChangeNotifier {
@@ -9,14 +9,14 @@ class SearchModeState with ChangeNotifier {
 
   void updateSearchModeAndCloseSelector(SearchMode newMode) {
     mode = newMode;
-    analysisState.addSearchMode(newMode);
+    analyticsState.addSearchMode(newMode);
     showSearchModeSelector = false;
     notifyListeners();
   }
 
   void updateSearchMode(SearchMode newMode) {
     mode = newMode;
-    analysisState.addSearchMode(newMode);
+    analyticsState.addSearchMode(newMode);
     notifyListeners();
   }
 

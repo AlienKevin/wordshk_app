@@ -18,7 +18,7 @@ import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
-import 'package:wordshk/states/analysis_state.dart';
+import 'package:wordshk/states/analytics_state.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
@@ -48,7 +48,7 @@ final AwsService awsService = AwsService();
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
-final AnalysisState analysisState = AnalysisState();
+final AnalyticsState analyticsState = AnalyticsState();
 
 main() async {
   // Avoid errors caused by flutter upgrade.
@@ -280,7 +280,7 @@ class _MyAppState extends State<MyApp> {
             final spotlightEnabled = context.read<SpotlightIndexingState>().enabled;
 
             final prefs = await SharedPreferences.getInstance();
-            final lastSyncTime = prefs.getString("analysisSyncTime");
+            final lastSyncTime = prefs.getString("analyticsSyncTime");
             final timeNow = DateTime.now().toUtc();
             final timeNowString = timeNow.toIso8601String();
             if (kReleaseMode && lastSyncTime != null &&
@@ -302,13 +302,13 @@ class _MyAppState extends State<MyApp> {
               "entryEgPrMethod": entryEgPrMethod,
               "entryEgFontSize": entryEgFontSize,
               "spotlightEnabled": spotlightEnabled,
-              ...analysisState.toJson(),
+              ...analyticsState.toJson(),
             };
             final ok = await awsService.sendMessage(jsonEncode(message));
             if (ok) {
-              // Clear analysis state if successfully sent
-              analysisState.clear();
-              prefs.setString("analysisSyncTime", timeNowString);
+              // Clear analytics state if successfully sent
+              analyticsState.clear();
+              prefs.setString("analyticsSyncTime", timeNowString);
             }
           }
         },
