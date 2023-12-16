@@ -18,6 +18,7 @@ import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
+import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/analytics_state.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
@@ -53,9 +54,10 @@ final AnalyticsState analyticsState = AnalyticsState();
 main() async {
   // Avoid errors caused by flutter upgrade.
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
 
   await SentryFlutter.init((options) {
-    options.dsn = sentryDsn;
+    options.dsn = (kReleaseMode && (prefs.getBool("analyticsEnabled") ?? true)) ? sentryDsn : "";
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // We recommend adjusting this value in production.
     options.tracesSampleRate = 0;
@@ -71,7 +73,6 @@ main() async {
 
       WidgetsFlutterBinding
           .ensureInitialized(); // mandatory when awaiting on main
-      final prefs = await SharedPreferences.getInstance();
       final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
 
       // Set UserId if not set
@@ -87,6 +88,7 @@ main() async {
       runApp(
         MultiProvider(
           providers: [
+            ChangeNotifierProvider<AnalyticsSettingsState>(create: (_) => AnalyticsSettingsState(prefs)),
             ChangeNotifierProvider<SpotlightIndexingState>(
                 create: (_) => SpotlightIndexingState(prefs)),
             ChangeNotifierProvider<SearchModeState>(
@@ -269,7 +271,7 @@ class _MyAppState extends State<MyApp> {
     );
     return FGBGNotifier(
         onEvent: (event) async {
-          if (event == FGBGType.background) {
+          if (event == FGBGType.background && context.read<AnalyticsSettingsState>().enabled) {
             final language = context.read<LanguageState>().language;
             final romanization = context.read<RomanizationState>().romanization.name;
             final egJumpyPrs = context.read<EntryEgJumpyPrsState>().isJumpy;

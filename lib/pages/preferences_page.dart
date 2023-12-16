@@ -10,6 +10,7 @@ import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
 import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
 import 'package:wordshk/pages/preferences/language_page.dart';
 import 'package:wordshk/pages/preferences/romanization_page.dart';
+import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
@@ -109,9 +110,9 @@ class PreferencesPage extends StatelessWidget {
                 tiles: [
                   SettingsTile.switchTile(
                       description: Text(s.sendAnalyticsDescription),
-                      initialValue: false,
+                      initialValue: context.watch<AnalyticsSettingsState>().enabled,
                       onToggle: (newEnabled) {
-                        print("Analytics: $newEnabled");
+                        context.read<AnalyticsSettingsState>().setEnabled(newEnabled);
                       },
                       title: Text(s.sendAnalytics)),
                   ...((Platform.isIOS || Platform.isMacOS)
