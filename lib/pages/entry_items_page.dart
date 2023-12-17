@@ -47,7 +47,7 @@ class EditMode extends Mode {
 
 class _EntryItemsState<T extends EntryItemState>
     extends State<EntryItemsPage<T>> {
-  final _entryItemSummaries = <int, EntrySummary>{};
+  final LinkedHashMap<int, EntrySummary> _entryItemSummaries = LinkedHashMap();
   late final RemoveItemCallback removeEntryItemListener;
   late final AddItemCallback addEntryItemListener;
   bool _isLoading = false;
@@ -392,8 +392,9 @@ class _EntryItemsState<T extends EntryItemState>
             _loadMore();
             return const Center(child: CircularProgressIndicator());
           }
-          final id = s.items[index];
-          final summary = _entryItemSummaries[id]!;
+          final summaryEntry = _entryItemSummaries.entries.elementAt(index);
+          final id = summaryEntry.key;
+          final summary = summaryEntry.value;
           final selected =
               embedded == Embedded.embedded && id == selectedEntryId;
           return ListTile(
