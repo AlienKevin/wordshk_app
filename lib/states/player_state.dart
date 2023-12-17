@@ -41,7 +41,7 @@ class PlayerState with ChangeNotifier {
             case AudioInterruptionType.unknown:
               // The interruption ended but we should not resume.
               // For now we don't resume and let the user manually replays.
-              await stopHelper();
+              await stop();
               break;
           }
         }
