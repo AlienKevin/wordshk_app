@@ -13,6 +13,7 @@ import 'package:wordshk/states/language_state.dart';
 
 import 'models/font_size.dart';
 import 'models/language.dart';
+import 'models/summary_def_language.dart';
 
 void openLink(String url) async {
   return FlutterWebBrowser.openWebPage(
@@ -131,11 +132,13 @@ String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
   }
 }
 
-bool isEngDef(BuildContext context) {
+SummaryDefLanguage getSummaryDefLanguage(BuildContext context) {
   final entryLanguage = context.read<EntryLanguageState>().language;
   final language = context.read<LanguageState>().language;
-  return entryLanguage == EntryLanguage.english ||
-      (entryLanguage == EntryLanguage.both && language == Language.en);
+  return (entryLanguage == EntryLanguage.english ||
+          (entryLanguage == EntryLanguage.both && language == Language.en))
+      ? SummaryDefLanguage.english
+      : SummaryDefLanguage.cantonese;
 }
 
 List<TextSpan> showDefSummary(

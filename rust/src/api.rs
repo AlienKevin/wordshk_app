@@ -75,17 +75,17 @@ lazy_static! {
 
 pub struct EntrySummary {
     pub variant: String,
-    pub defs: Vec<String>,
+    pub defs: Vec<(String, String)>,
 }
 
-pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script, is_eng_def: bool) -> Result<Vec<EntrySummary>> {
+pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<EntrySummary>> {
     let summaries = entry_ids.into_iter().map(|entry_id| {
         let entry = API.dict.get(&(entry_id as usize)).unwrap();
         let variant = match script {
             Script::Traditional => entry.variants.to_words().first().unwrap().to_string(),
             Script::Simplified => entry.variants_simp.first().unwrap().to_string(),
         };
-        let defs = get_entry_defs(entry.id, &API.dict, is_eng_def, script);
+        let defs = get_entry_defs(entry.id, &API.dict, script);
         EntrySummary { variant, defs }
     }).collect();
     Ok(summaries)

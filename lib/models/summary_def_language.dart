@@ -1,0 +1,4 @@
+enum SummaryDefLanguage {
+  cantonese,
+  english,
+}

@@ -23,6 +23,7 @@ import '../ffi.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../models/search_result_type.dart';
+import '../models/summary_def_language.dart';
 import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
@@ -480,10 +481,14 @@ class _HomePageState extends State<HomePage> {
               ])
           .expand((x) => x)
           .toList();
-      return showSearchResult(startIndex + index, result.id,
+      return showSearchResult(
+          startIndex + index,
+          result.id,
           (bool selected) => TextSpan(children: egs(selected)),
           SearchResultType.eg,
-          maxLines: 1, defIndex: result.defIndex, embedded: embedded);
+          maxLines: 1,
+          defIndex: result.defIndex,
+          embedded: embedded);
     }).toList();
   }
 
@@ -509,7 +514,10 @@ class _HomePageState extends State<HomePage> {
                             color: selected ? lightGreyColor : greyColor)),
                     ...showDefSummary(
                         context,
-                        (isEngDef(context) ? result.engs : result.yues),
+                        switch (getSummaryDefLanguage(context)) {
+                          SummaryDefLanguage.english => result.engs,
+                          SummaryDefLanguage.cantonese => result.yues
+                        },
                         textStyle.copyWith(
                             color: selected ? lightGreyColor : greyColor)),
                   ],
@@ -537,7 +545,10 @@ class _HomePageState extends State<HomePage> {
                       : null)),
           ...showDefSummary(
               context,
-              (isEngDef(context) ? result.engs : result.yues),
+              switch (getSummaryDefLanguage(context)) {
+                SummaryDefLanguage.english => result.engs,
+                SummaryDefLanguage.cantonese => result.yues
+              },
               textStyle.copyWith(color: selected ? lightGreyColor : greyColor)),
         ]),
         SearchResultType.variant,
@@ -597,9 +608,8 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-  Widget showSearchResult(
-      int index, int id, TextSpan Function(bool selected) resultText,
-      SearchResultType resultType,
+  Widget showSearchResult(int index, int id,
+      TextSpan Function(bool selected) resultText, SearchResultType resultType,
       {int maxLines = 2,
       int? defIndex,
       bool showFirstEntryInGroupInitially = false,
@@ -614,7 +624,8 @@ class _HomePageState extends State<HomePage> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             backgroundColor: selected ? Theme.of(context).primaryColor : null,
-            shape: const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
+            shape:
+                const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           onPressed: () {
             context.read<HistoryState>().updateItem(id);

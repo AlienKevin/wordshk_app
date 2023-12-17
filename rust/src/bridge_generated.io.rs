@@ -7,9 +7,8 @@ pub extern "C" fn wire_get_entry_summaries(
     port_: i64,
     entry_ids: *mut wire_uint_32_list,
     script: i32,
-    is_eng_def: bool,
 ) {
-    wire_get_entry_summaries_impl(port_, entry_ids, script, is_eng_def)
+    wire_get_entry_summaries_impl(port_, entry_ids, script)
 }
 
 #[no_mangle]

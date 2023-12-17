@@ -31,7 +31,6 @@ fn wire_get_entry_summaries_impl(
     port_: MessagePort,
     entry_ids: impl Wire2Api<Vec<u32>> + UnwindSafe,
     script: impl Wire2Api<Script> + UnwindSafe,
-    is_eng_def: impl Wire2Api<bool> + UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<EntrySummary>, _>(
         WrapInfo {
@@ -42,8 +41,7 @@ fn wire_get_entry_summaries_impl(
         move || {
             let api_entry_ids = entry_ids.wire2api();
             let api_script = script.wire2api();
-            let api_is_eng_def = is_eng_def.wire2api();
-            move |task_callback| get_entry_summaries(api_entry_ids, api_script, api_is_eng_def)
+            move |task_callback| get_entry_summaries(api_entry_ids, api_script)
         },
     )
 }
@@ -284,11 +282,6 @@ where
     }
 }
 
-impl Wire2Api<bool> for bool {
-    fn wire2api(self) -> bool {
-        self
-    }
-}
 impl Wire2Api<i32> for i32 {
     fn wire2api(self) -> i32 {
         self

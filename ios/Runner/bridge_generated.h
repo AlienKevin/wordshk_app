@@ -31,10 +31,7 @@ uintptr_t new_dart_opaque(Dart_Handle handle);
 
 intptr_t init_frb_dart_api_dl(void *obj);
 
-void wire_get_entry_summaries(int64_t port_,
-                              struct wire_uint_32_list *entry_ids,
-                              int32_t script,
-                              bool is_eng_def);
+void wire_get_entry_summaries(int64_t port_, struct wire_uint_32_list *entry_ids, int32_t script);
 
 void wire_update_pr_indices(int64_t port_, struct wire_uint_8_list *pr_indices);
 
