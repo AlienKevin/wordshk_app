@@ -52,8 +52,8 @@ class _EntryItemsState<T extends EntryItemState>
   bool _isLoading = false;
   bool _hasMore = true;
   Mode _mode = ViewMode();
-  // The EntryPage corresponding to the select item (used in wide screens)
-  EntryPage? selectedEntryPage;
+  // The EntryId corresponding to the select item (used in wide screens)
+  int? selectedEntryId;
 
   @override
   void initState() {
@@ -62,6 +62,9 @@ class _EntryItemsState<T extends EntryItemState>
     removeEntryItemListener = (id) {
       setState(() {
         _entryItemSummaries.remove(id);
+        if (selectedEntryId == id) {
+          selectedEntryId = null;
+        }
       });
     };
     context.read<T>().registerRemoveItemListener(removeEntryItemListener);
@@ -176,19 +179,30 @@ class _EntryItemsState<T extends EntryItemState>
                     final embedded = constraints.maxWidth > wideScreenThreshold
                         ? Embedded.embedded
                         : Embedded.topLevel;
+                    // Select the first item by default
+                    if (selectedEntryId == null && s.items.isNotEmpty) {
+                      selectedEntryId = s.items.first;
+                    }
                     return embedded == Embedded.embedded
                         ? Row(
                             children: [
                               Expanded(child: itemsList(s, embedded)),
                               Expanded(
                                   flex: 2,
-                                  child: selectedEntryPage != null
+                                  child: selectedEntryId != null
                                       ? Navigator(
-                                          key: selectedEntryPage!.key,
+                                          key: ValueKey(selectedEntryId!),
                                           onGenerateRoute: (settings) =>
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      selectedEntryPage!))
+                                                      EntryPage(
+                                                        key: ValueKey(
+                                                            selectedEntryId!),
+                                                        id: selectedEntryId!,
+                                                        showFirstEntryInGroupInitially:
+                                                            false,
+                                                        embedded: embedded,
+                                                      )))
                                       : Container()),
                             ],
                           )
@@ -280,11 +294,6 @@ class _EntryItemsState<T extends EntryItemState>
                                       Navigator.pop(context);
                                       for (final id in selectedEntryItems) {
                                         context.read<T>().removeItem(id);
-                                        if (id == selectedEntryPage?.id) {
-                                          setState(() {
-                                            selectedEntryPage = null;
-                                          });
-                                        }
                                       }
                                       setState(() {
                                         _mode = EditMode(
@@ -323,8 +332,8 @@ class _EntryItemsState<T extends EntryItemState>
           }
           final id = s.items[index];
           final summary = _entryItemSummaries[id]!;
-          final selected = embedded == Embedded.embedded &&
-              ValueKey(id) == selectedEntryPage?.key!;
+          final selected =
+              embedded == Embedded.embedded && id == selectedEntryId;
           return ListTile(
             selected: selected,
             selectedTileColor: Theme.of(context).primaryColor,
@@ -372,19 +381,19 @@ class _EntryItemsState<T extends EntryItemState>
                 textScaleFactor: MediaQuery.of(context).textScaleFactor),
             onTap: switch (_mode) {
               ViewMode() => () {
-                  final entryPage = EntryPage(
-                    key: ValueKey(id),
-                    id: id,
-                    showFirstEntryInGroupInitially: false,
-                    embedded: embedded,
-                  );
                   setState(() {
-                    selectedEntryPage = entryPage;
+                    selectedEntryId = id;
                   });
                   if (embedded != Embedded.embedded) {
                     Navigator.push(
                       context,
-                      CustomPageRoute(builder: (context) => entryPage),
+                      CustomPageRoute(
+                          builder: (context) => EntryPage(
+                                key: ValueKey(selectedEntryId!),
+                                id: selectedEntryId!,
+                                showFirstEntryInGroupInitially: false,
+                                embedded: embedded,
+                              )),
                     );
                   }
                 },
