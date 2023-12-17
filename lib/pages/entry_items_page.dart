@@ -11,6 +11,7 @@ import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../constants.dart';
+import '../custom_page_route.dart';
 import '../ffi.dart';
 import '../models/embedded.dart';
 import '../states/entry_item_state.dart';
@@ -380,6 +381,12 @@ class _EntryItemsState<T extends EntryItemState>
                   setState(() {
                     selectedEntryPage = entryPage;
                   });
+                  if (embedded != Embedded.embedded) {
+                    Navigator.push(
+                      context,
+                      CustomPageRoute(builder: (context) => entryPage),
+                    );
+                  }
                 },
               EditMode(selectedEntryItems: var selectedEntryItems) => () {
                   // Toggles entryItem selected state
