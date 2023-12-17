@@ -383,6 +383,10 @@ class _HomePageState extends State<HomePage> {
             ? Row(
                 children: [
                   Expanded(child: resultList),
+                  const VerticalDivider(
+                    width: 1,
+                    thickness: 1,
+                  ),
                   Expanded(
                       flex: 2,
                       child: selectedSearchResultEntryPage != null

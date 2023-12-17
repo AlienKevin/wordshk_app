@@ -187,6 +187,10 @@ class _EntryItemsState<T extends EntryItemState>
                         ? Row(
                             children: [
                               Expanded(child: itemsList(s, embedded)),
+                              const VerticalDivider(
+                                width: 1,
+                                thickness: 1,
+                              ),
                               Expanded(
                                   flex: 2,
                                   child: selectedEntryId != null
