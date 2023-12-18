@@ -66,7 +66,6 @@ class CustomSentryEventProcessor implements EventProcessor {
 main() async {
   // Avoid errors caused by flutter upgrade.
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
 
   await SentryFlutter.init((options) {
     options.dsn = sentryDsn;
@@ -74,87 +73,90 @@ main() async {
     // We recommend adjusting this value in production.
     options.tracesSampleRate = 0;
     options.addEventProcessor(CustomSentryEventProcessor());
-  }, appRunner: () async {
-    try {
-      if (kDebugMode) {
-        print("Opening database...");
-      }
-      bookmarkDatabase = EntryItemState.createDatabase(
-          tableName: "bookmarks", databaseName: "bookmarkedEntries");
-      historyDatabase = EntryItemState.createDatabase(
-          tableName: "history", databaseName: "historyEntries");
+  }, appRunner: runMyApp);
+}
 
-      WidgetsFlutterBinding
-          .ensureInitialized(); // mandatory when awaiting on main
-      final bool firstTimeUser = prefs.getBool("firstTimeUser") ?? true;
-
-      // Set UserId if not set
-      if (prefs.getString("userId") == null) {
-        var uuid = const Uuid();
-        var v4Crypto = uuid.v4(options: {'rng': UuidUtil.cryptoRNG});
-        await prefs.setString("userId", v4Crypto);
-      }
-
-      // Initialize AWS service
-      await awsService.init();
-
-      runApp(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider<AnalyticsSettingsState>(create: (_) => AnalyticsSettingsState(prefs)),
-            ChangeNotifierProvider<SpotlightIndexingState>(
-                create: (_) => SpotlightIndexingState(prefs)),
-            ChangeNotifierProvider<SearchModeState>(
-                create: (_) => SearchModeState()),
-            ChangeNotifierProvider<SearchQueryState>(
-                create: (_) => SearchQueryState()),
-            ChangeNotifierProvider<InputModeState>(
-                create: (_) => InputModeState()),
-            ChangeNotifierProvider<LanguageState>(
-                create: (context) => LanguageState(
-                    prefs,
-                    Provider.of<SpotlightIndexingState>(context,
-                        listen: false)),
-                lazy: false),
-            ChangeNotifierProvider<EntryLanguageState>(
-                create: (_) => EntryLanguageState(prefs)),
-            ChangeNotifierProvider<PronunciationMethodState>(
-                create: (_) => PronunciationMethodState(prefs)),
-            ChangeNotifierProvider<EntryEgFontSizeState>(
-                create: (_) => EntryEgFontSizeState(prefs)),
-            ChangeNotifierProvider<RomanizationState>(
-                create: (context) => RomanizationState(
-                    prefs,
-                    Provider.of<SpotlightIndexingState>(context,
-                        listen: false)),
-                lazy: false),
-            ChangeNotifierProvider<EntryEgJumpyPrsState>(
-                create: (_) => EntryEgJumpyPrsState(prefs)),
-            ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
-            ChangeNotifierProvider<SpeechRateState>(
-                create: (_) => SpeechRateState(prefs)),
-            ChangeNotifierProvider<BookmarkState>(
-                create: (_) => BookmarkState(
-                    tableName: "bookmarks",
-                    getDatabase: () => bookmarkDatabase),
-                lazy: false),
-            ChangeNotifierProvider<HistoryState>(
-                create: (_) => HistoryState(
-                    tableName: "history", getDatabase: () => historyDatabase),
-                lazy: false),
-            ChangeNotifierProvider<ExerciseIntroductionState>(
-                create: (_) => ExerciseIntroductionState(prefs))
-          ],
-          child: MyApp(firstTimeUser: firstTimeUser, prefs: prefs),
-        ),
-      );
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
+runMyApp({bool? firstTimeUser}) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    if (kDebugMode) {
+      print("Opening database...");
     }
-  });
+    bookmarkDatabase = EntryItemState.createDatabase(
+        tableName: "bookmarks", databaseName: "bookmarkedEntries");
+    historyDatabase = EntryItemState.createDatabase(
+        tableName: "history", databaseName: "historyEntries");
+
+    WidgetsFlutterBinding
+        .ensureInitialized(); // mandatory when awaiting on main
+    final bool firstTimeUser_ = firstTimeUser ?? (prefs.getBool("firstTimeUser") ?? true);
+
+    // Set UserId if not set
+    if (prefs.getString("userId") == null) {
+      var uuid = const Uuid();
+      var v4Crypto = uuid.v4(options: {'rng': UuidUtil.cryptoRNG});
+      await prefs.setString("userId", v4Crypto);
+    }
+
+    // Initialize AWS service
+    await awsService.init();
+
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AnalyticsSettingsState>(create: (_) => AnalyticsSettingsState(prefs)),
+          ChangeNotifierProvider<SpotlightIndexingState>(
+              create: (_) => SpotlightIndexingState(prefs)),
+          ChangeNotifierProvider<SearchModeState>(
+              create: (_) => SearchModeState()),
+          ChangeNotifierProvider<SearchQueryState>(
+              create: (_) => SearchQueryState()),
+          ChangeNotifierProvider<InputModeState>(
+              create: (_) => InputModeState()),
+          ChangeNotifierProvider<LanguageState>(
+              create: (context) => LanguageState(
+                  prefs,
+                  Provider.of<SpotlightIndexingState>(context,
+                      listen: false)),
+              lazy: false),
+          ChangeNotifierProvider<EntryLanguageState>(
+              create: (_) => EntryLanguageState(prefs)),
+          ChangeNotifierProvider<PronunciationMethodState>(
+              create: (_) => PronunciationMethodState(prefs)),
+          ChangeNotifierProvider<EntryEgFontSizeState>(
+              create: (_) => EntryEgFontSizeState(prefs)),
+          ChangeNotifierProvider<RomanizationState>(
+              create: (context) => RomanizationState(
+                  prefs,
+                  Provider.of<SpotlightIndexingState>(context,
+                      listen: false)),
+              lazy: false),
+          ChangeNotifierProvider<EntryEgJumpyPrsState>(
+              create: (_) => EntryEgJumpyPrsState(prefs)),
+          ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
+          ChangeNotifierProvider<SpeechRateState>(
+              create: (_) => SpeechRateState(prefs)),
+          ChangeNotifierProvider<BookmarkState>(
+              create: (_) => BookmarkState(
+                  tableName: "bookmarks",
+                  getDatabase: () => bookmarkDatabase),
+              lazy: false),
+          ChangeNotifierProvider<HistoryState>(
+              create: (_) => HistoryState(
+                  tableName: "history", getDatabase: () => historyDatabase),
+              lazy: false),
+          ChangeNotifierProvider<ExerciseIntroductionState>(
+              create: (_) => ExerciseIntroductionState(prefs))
+        ],
+        child: MyApp(firstTimeUser: firstTimeUser_, prefs: prefs),
+      ),
+    );
+  } catch (exception, stackTrace) {
+    await Sentry.captureException(
+      exception,
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 class MyApp extends StatefulWidget {

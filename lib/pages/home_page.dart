@@ -135,6 +135,7 @@ class _HomePageState extends State<HomePage> {
     return KeyboardVisibilityProvider(
         child: Scaffold(
             appBar: SearchBar(
+              key: const Key("homePageSearchBar"),
               onChanged: (query) {
                 if (query.isEmpty) {
                   setState(() {

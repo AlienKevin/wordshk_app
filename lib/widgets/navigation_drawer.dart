@@ -18,8 +18,9 @@ class NavigationDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextButton drawerButton(String label, IconData icon, gotoPage) =>
+    TextButton drawerButton(String label, IconData icon, gotoPage, [Key? key]) =>
         TextButton.icon(
+          key: key,
           icon: Padding(
               padding: const EdgeInsets.only(left: 10),
               child:
@@ -91,7 +92,8 @@ class NavigationDrawer extends StatelessWidget {
                 drawerButton(
                     AppLocalizations.of(context)!.dictionary,
                     PlatformIcons(context).search,
-                    (_) => const HomePage(title: 'words.hk')),
+                    (_) => const HomePage(title: 'words.hk'),
+                    const Key("drawerDictionaryButton")),
                 const Divider(),
                 drawerButton(
                     AppLocalizations.of(context)!.bookmarks,
@@ -132,7 +134,8 @@ class NavigationDrawer extends StatelessWidget {
                     isMaterial(context)
                         ? Icons.info_outline
                         : CupertinoIcons.info,
-                    (_) => const AboutPage()),
+                    (_) => const AboutPage(),
+                    const Key("drawerAboutButton")),
               ],
             ),
           )),
