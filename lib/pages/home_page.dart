@@ -244,17 +244,23 @@ class _HomePageState extends State<HomePage> {
                           ? [const Text("Error loading jyutping data.")]
                           : [])));
 
+  void _clearSearchResults() {
+    setState(() {
+      variantSearchResults.clear();
+      prSearchResults.clear();
+      englishSearchResults.clear();
+      egSearchResults.clear();
+      egSearchQueryNormalized = null;
+      finishedSearch = false;
+    });
+  }
+
   void doSearch(String query, BuildContext context) {
+    if (!context.mounted) return;
+
     setState(() => selectedSearchResultEntryPage = null);
     if (query.isEmpty) {
-      setState(() {
-        variantSearchResults.clear();
-        prSearchResults.clear();
-        englishSearchResults.clear();
-        egSearchResults.clear();
-        egSearchQueryNormalized = null;
-        finishedSearch = false;
-      });
+      _clearSearchResults();
     } else {
       final searchStartTime = DateTime.now().millisecondsSinceEpoch;
       setState(() {
@@ -273,6 +279,7 @@ class _HomePageState extends State<HomePage> {
                   script: script,
                   romanization: romanization)
               .then((results) {
+            if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               setState(() {
                 prSearchResults = results.unique((result) => result.variant);
@@ -286,6 +293,7 @@ class _HomePageState extends State<HomePage> {
           api
               .variantSearch(capacity: 10, query: query, script: script)
               .then((results) {
+            if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               setState(() {
                 variantSearchResults =
@@ -303,6 +311,7 @@ class _HomePageState extends State<HomePage> {
               script: script,
               romanization: romanization);
           combinedResults.then((results) {
+            if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               final isCombinedResultsEmpty = results.prResults.isEmpty &&
                   results.variantResults.isEmpty &&
@@ -315,6 +324,7 @@ class _HomePageState extends State<HomePage> {
                         query: query,
                         script: script)
                     .then((result) {
+                  if (!context.mounted) return;
                   if (searchStartTime >= lastSearchStartTime) {
                     final (queryNormalized, results) = result;
                     // print("Query: $query");
@@ -351,6 +361,7 @@ class _HomePageState extends State<HomePage> {
           api
               .englishSearch(capacity: 10, query: query, script: script)
               .then((results) {
+            if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               setState(() {
                 englishSearchResults = results;
