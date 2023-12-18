@@ -101,12 +101,12 @@ class _EntryItemsState<T extends EntryItemState>
   Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
     final script = getScript(context);
 
-    return api
+    return api().then((api) => api
         .getEntrySummaries(
           entryIds: Uint32List.fromList(ids),
           script: script,
         )
-        .then((summaries) => LinkedHashMap.fromIterables(ids, summaries));
+        .then((summaries) => LinkedHashMap.fromIterables(ids, summaries)));
   }
 
   Future<LinkedHashMap<int, EntrySummary>> _fetchMoreEntryItems(int amount) {

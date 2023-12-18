@@ -39,17 +39,17 @@ class RomanizationState with ChangeNotifier {
     final prIndicesFile = await _prIndicesFile;
     if (prIndicesFile.existsSync()) {
       try {
-        api.updatePrIndices(prIndices: await prIndicesFile.readAsBytes());
+        (await api()).updatePrIndices(prIndices: await prIndicesFile.readAsBytes());
       } catch (err) {
         if (kDebugMode) {
           print(err);
         }
         prIndicesFile.writeAsBytes(
-            await api.generatePrIndices(romanization: romanization));
+            await (await api()).generatePrIndices(romanization: romanization));
       }
     } else {
       prIndicesFile.writeAsBytes(
-          await api.generatePrIndices(romanization: romanization));
+          await (await api()).generatePrIndices(romanization: romanization));
     }
   }
 
@@ -65,7 +65,7 @@ class RomanizationState with ChangeNotifier {
 
     final prIndicesFile = await _prIndicesFile;
     prIndicesFile
-        .writeAsBytes(await api.generatePrIndices(romanization: romanization));
+        .writeAsBytes(await (await api()).generatePrIndices(romanization: romanization));
   }
 
   String showPrs(List<String> jyutpings) {

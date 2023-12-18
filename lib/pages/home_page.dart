@@ -199,10 +199,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget showResultsNotFound() => FutureBuilder<List<String>>(
-      future: api.getJyutping(
-          query: context
-              .watch<SearchQueryState>()
-              .query), // a previously-obtained Future<String> or null
+      future: (() {
+        final query = context.watch<SearchQueryState>().query;
+        return api().then((api) {
+          return api.getJyutping(query: query);
+        });
+      })(), // a previously-obtained Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) =>
           Padding(
               padding:
@@ -272,13 +274,13 @@ class _HomePageState extends State<HomePage> {
       final romanization = context.read<RomanizationState>().romanization;
       switch (searchMode) {
         case SearchMode.pr:
-          api
-              .prSearch(
-                  capacity: 10,
-                  query: query,
-                  script: script,
-                  romanization: romanization)
-              .then((results) {
+          api().then((api) {
+            return api.prSearch(
+                capacity: 10,
+                query: query,
+                script: script,
+                romanization: romanization);
+          }).then((results) {
             if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               setState(() {
@@ -290,26 +292,26 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case SearchMode.variant:
-          api
-              .variantSearch(capacity: 10, query: query, script: script)
-              .then((results) {
-            if (!context.mounted) return;
-            if (searchStartTime >= lastSearchStartTime) {
-              setState(() {
-                variantSearchResults =
-                    results.unique((result) => result.variant);
-                isSearchResultsEmpty = variantSearchResults.isEmpty;
-                finishedSearch = true;
-              });
-            }
-          });
+          api().then((api) => api
+                  .variantSearch(capacity: 10, query: query, script: script)
+                  .then((results) {
+                if (!context.mounted) return;
+                if (searchStartTime >= lastSearchStartTime) {
+                  setState(() {
+                    variantSearchResults =
+                        results.unique((result) => result.variant);
+                    isSearchResultsEmpty = variantSearchResults.isEmpty;
+                    finishedSearch = true;
+                  });
+                }
+              }));
           break;
         case SearchMode.combined:
-          final combinedResults = api.combinedSearch(
+          final combinedResults = api().then((api) => api.combinedSearch(
               capacity: 10,
               query: query,
               script: script,
-              romanization: romanization);
+              romanization: romanization));
           combinedResults.then((results) {
             if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
@@ -317,12 +319,12 @@ class _HomePageState extends State<HomePage> {
                   results.variantResults.isEmpty &&
                   results.englishResults.isEmpty;
               if (isCombinedResultsEmpty) {
-                api
-                    .egSearch(
+                api()
+                    .then((api) => api.egSearch(
                         capacity: 10,
                         maxFirstIndexInEg: 10,
                         query: query,
-                        script: script)
+                        script: script))
                     .then((result) {
                   if (!context.mounted) return;
                   if (searchStartTime >= lastSearchStartTime) {
@@ -358,8 +360,9 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case SearchMode.english:
-          api
-              .englishSearch(capacity: 10, query: query, script: script)
+          api()
+              .then((api) =>
+                  api.englishSearch(capacity: 10, query: query, script: script))
               .then((results) {
             if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {

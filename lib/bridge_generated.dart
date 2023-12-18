@@ -11,6 +11,10 @@ import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class WordshkApi {
+  Future<void> initApi({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kInitApiConstMeta;
+
   Future<List<EntrySummary>> getEntrySummaries(
       {required Uint32List entryIds, required Script script, dynamic hint});
 
@@ -68,6 +72,10 @@ abstract class WordshkApi {
 
   FlutterRustBridgeTaskConstMeta get kEgSearchConstMeta;
 
+  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kGetSplotlightSummariesConstMeta;
+
   Future<String> getEntryJson({required int id, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetEntryJsonConstMeta;
@@ -84,10 +92,6 @@ abstract class WordshkApi {
   Future<List<String>> getJyutping({required String query, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetJyutpingConstMeta;
-
-  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint});
-
-  FlutterRustBridgeTaskConstMeta get kGetSplotlightSummariesConstMeta;
 }
 
 class CombinedSearchResults {
@@ -213,6 +217,23 @@ class WordshkApiImpl implements WordshkApi {
   factory WordshkApiImpl.wasm(FutureOr<WasmModule> module) =>
       WordshkApiImpl(module as ExternalLibrary);
   WordshkApiImpl.raw(this._platform);
+  Future<void> initApi({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_init_api(port_),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kInitApiConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kInitApiConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "init_api",
+        argNames: [],
+      );
+
   Future<List<EntrySummary>> getEntrySummaries(
       {required Uint32List entryIds, required Script script, dynamic hint}) {
     var arg0 = _platform.api2wire_uint_32_list(entryIds);
@@ -258,7 +279,7 @@ class WordshkApiImpl implements WordshkApi {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_generate_pr_indices(port_, arg0),
       parseSuccessData: _wire2api_uint_8_list,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kGeneratePrIndicesConstMeta,
       argValues: [romanization],
       hint: hint,
@@ -285,7 +306,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_pr_search(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api_list_pr_search_result,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kPrSearchConstMeta,
       argValues: [capacity, query, script, romanization],
       hint: hint,
@@ -310,7 +331,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_variant_search(port_, arg0, arg1, arg2),
       parseSuccessData: _wire2api_list_variant_search_result,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kVariantSearchConstMeta,
       argValues: [capacity, query, script],
       hint: hint,
@@ -337,7 +358,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_combined_search(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api_combined_search_results,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kCombinedSearchConstMeta,
       argValues: [capacity, query, script, romanization],
       hint: hint,
@@ -362,7 +383,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_english_search(port_, arg0, arg1, arg2),
       parseSuccessData: _wire2api_list_english_search_result,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kEnglishSearchConstMeta,
       argValues: [capacity, query, script],
       hint: hint,
@@ -389,7 +410,7 @@ class WordshkApiImpl implements WordshkApi {
       callFfi: (port_) =>
           _platform.inner.wire_eg_search(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api___record__opt_String_list_eg_search_result,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kEgSearchConstMeta,
       argValues: [capacity, maxFirstIndexInEg, query, script],
       hint: hint,
@@ -402,12 +423,29 @@ class WordshkApiImpl implements WordshkApi {
         argNames: ["capacity", "maxFirstIndexInEg", "query", "script"],
       );
 
+  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_get_splotlight_summaries(port_),
+      parseSuccessData: _wire2api_list_spotlight_entry_summary,
+      parseErrorData: null,
+      constMeta: kGetSplotlightSummariesConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kGetSplotlightSummariesConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "get_splotlight_summaries",
+        argNames: [],
+      );
+
   Future<String> getEntryJson({required int id, dynamic hint}) {
-    var arg0 = api2wire_u32(id);
+    var arg0 = api2wire_usize(id);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_get_entry_json(port_, arg0),
       parseSuccessData: _wire2api_String,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kGetEntryJsonConstMeta,
       argValues: [id],
       hint: hint,
@@ -421,12 +459,12 @@ class WordshkApiImpl implements WordshkApi {
       );
 
   Future<List<String>> getEntryGroupJson({required int id, dynamic hint}) {
-    var arg0 = api2wire_u32(id);
+    var arg0 = api2wire_usize(id);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) =>
           _platform.inner.wire_get_entry_group_json(port_, arg0),
       parseSuccessData: _wire2api_StringList,
-      parseErrorData: _wire2api_FrbAnyhowException,
+      parseErrorData: null,
       constMeta: kGetEntryGroupJsonConstMeta,
       argValues: [id],
       hint: hint,
@@ -475,23 +513,6 @@ class WordshkApiImpl implements WordshkApi {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "get_jyutping",
         argNames: ["query"],
-      );
-
-  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint}) {
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_get_splotlight_summaries(port_),
-      parseSuccessData: _wire2api_list_spotlight_entry_summary,
-      parseErrorData: null,
-      constMeta: kGetSplotlightSummariesConstMeta,
-      argValues: [],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kGetSplotlightSummariesConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "get_splotlight_summaries",
-        argNames: [],
       );
 
   void dispose() {
@@ -714,6 +735,10 @@ int api2wire_u8(int raw) {
   return raw;
 }
 
+@protected
+int api2wire_usize(int raw) {
+  return raw;
+}
 // Section: finalizer
 
 class WordshkApiPlatform extends FlutterRustBridgeBase<WordshkApiWire> {
@@ -739,6 +764,7 @@ class WordshkApiPlatform extends FlutterRustBridgeBase<WordshkApiWire> {
     ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
     return ans;
   }
+
 // Section: finalizer
 
 // Section: api_fill_to_wire
@@ -839,6 +865,20 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
           'init_frb_dart_api_dl');
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
+
+  void wire_init_api(
+    int port_,
+  ) {
+    return _wire_init_api(
+      port_,
+    );
+  }
+
+  late final _wire_init_apiPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_init_api');
+  late final _wire_init_api =
+      _wire_init_apiPtr.asFunction<void Function(int)>();
 
   void wire_get_entry_summaries(
     int port_,
@@ -1017,6 +1057,20 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
   late final _wire_eg_search = _wire_eg_searchPtr.asFunction<
       void Function(int, int, int, ffi.Pointer<wire_uint_8_list>, int)>();
 
+  void wire_get_splotlight_summaries(
+    int port_,
+  ) {
+    return _wire_get_splotlight_summaries(
+      port_,
+    );
+  }
+
+  late final _wire_get_splotlight_summariesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_get_splotlight_summaries');
+  late final _wire_get_splotlight_summaries =
+      _wire_get_splotlight_summariesPtr.asFunction<void Function(int)>();
+
   void wire_get_entry_json(
     int port_,
     int id,
@@ -1028,7 +1082,7 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
   }
 
   late final _wire_get_entry_jsonPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Uint32)>>(
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
           'wire_get_entry_json');
   late final _wire_get_entry_json =
       _wire_get_entry_jsonPtr.asFunction<void Function(int, int)>();
@@ -1044,7 +1098,7 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
   }
 
   late final _wire_get_entry_group_jsonPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Uint32)>>(
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
           'wire_get_entry_group_json');
   late final _wire_get_entry_group_json =
       _wire_get_entry_group_jsonPtr.asFunction<void Function(int, int)>();
@@ -1084,20 +1138,6 @@ class WordshkApiWire implements FlutterRustBridgeWireBase {
               ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_get_jyutping');
   late final _wire_get_jyutping = _wire_get_jyutpingPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
-
-  void wire_get_splotlight_summaries(
-    int port_,
-  ) {
-    return _wire_get_splotlight_summaries(
-      port_,
-    );
-  }
-
-  late final _wire_get_splotlight_summariesPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'wire_get_splotlight_summaries');
-  late final _wire_get_splotlight_summaries =
-      _wire_get_splotlight_summariesPtr.asFunction<void Function(int)>();
 
   ffi.Pointer<wire_uint_32_list> new_uint_32_list_0(
     int len,

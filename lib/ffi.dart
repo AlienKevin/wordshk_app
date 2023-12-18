@@ -12,7 +12,13 @@ import 'models/language.dart';
 const base = 'wordshk_api';
 final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
 late final dylib = loadLibForFlutter(path);
-late final api = WordshkApiImpl(dylib);
+late final wordshkApi = WordshkApiImpl(dylib);
+final apiInit = wordshkApi.initApi();
+
+Future<WordshkApiImpl> api() async {
+  await apiInit;
+  return wordshkApi;
+}
 
 Future<void> indexSpotlightSearch(
     Language language, Romanization romanization) async {
@@ -20,7 +26,7 @@ Future<void> indexSpotlightSearch(
   await deleteSpotlightSearchIndex();
 
   // Indexing a searchable item
-  final summaries = await api.getSplotlightSummaries();
+  final summaries = await (await api()).getSplotlightSummaries();
   // Run the indexing in a separate isolate
   // to prevent janking the UI
   BackgroundIsolateBinaryMessenger.ensureInitialized(
@@ -111,7 +117,7 @@ Future<void> indexSpotlightSearch(
 
 Future<void> deleteSpotlightSearchIndex() async {
   // Indexing a searchable item
-  final summaries = await api.getSplotlightSummaries();
+  final summaries = await (await api()).getSplotlightSummaries();
   // Run the deletion in a separate isolate
   // to prevent janking the UI
   BackgroundIsolateBinaryMessenger.ensureInitialized(

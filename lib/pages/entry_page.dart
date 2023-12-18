@@ -46,7 +46,7 @@ class _EntryPageState extends State<EntryPage> {
     super.initState();
     () async {
       try {
-        final json = await api.getEntryGroupJson(id: widget.id);
+        final json = await (await api()).getEntryGroupJson(id: widget.id);
         setState(() {
           entryGroup = json
               .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
@@ -140,32 +140,34 @@ class _EntryPageState extends State<EntryPage> {
           updateEntryIndex: updateEntryIndex,
           onTapLink: (entryVariant) {
             log("Tapped on link $entryVariant");
-            api
-                .getEntryId(query: entryVariant, script: getScript(context))
-                .then((id) {
-              context.read<PlayerState>().refreshPlayerState();
-              if (id == null) {
-                Navigator.push(
-                  context,
-                  CustomPageRoute(
-                      builder: (context) =>
-                          EntryNotPublishedPage(entryVariant: entryVariant)),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  CustomPageRoute(
-                      builder: (context) => EntryPage(
-                            id: id,
-                            showFirstEntryInGroupInitially: true,
-                            embedded: widget.embedded == Embedded.embedded ||
-                                    widget.embedded == Embedded.nestedInEmbedded
-                                ? Embedded.nestedInEmbedded
-                                : Embedded.topLevel,
-                          )),
-                );
-              }
-            });
+            api().then((api) => api
+                    .getEntryId(query: entryVariant, script: getScript(context))
+                    .then((id) {
+                  context.read<PlayerState>().refreshPlayerState();
+                  if (id == null) {
+                    Navigator.push(
+                      context,
+                      CustomPageRoute(
+                          builder: (context) => EntryNotPublishedPage(
+                              entryVariant: entryVariant)),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      CustomPageRoute(
+                          builder: (context) => EntryPage(
+                                id: id,
+                                showFirstEntryInGroupInitially: true,
+                                embedded:
+                                    widget.embedded == Embedded.embedded ||
+                                            widget.embedded ==
+                                                Embedded.nestedInEmbedded
+                                        ? Embedded.nestedInEmbedded
+                                        : Embedded.topLevel,
+                              )),
+                    );
+                  }
+                }));
           },
         ),
       );

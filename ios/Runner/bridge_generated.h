@@ -31,6 +31,8 @@ uintptr_t new_dart_opaque(Dart_Handle handle);
 
 intptr_t init_frb_dart_api_dl(void *obj);
 
+void wire_init_api(int64_t port_);
+
 void wire_get_entry_summaries(int64_t port_, struct wire_uint_32_list *entry_ids, int32_t script);
 
 void wire_update_pr_indices(int64_t port_, struct wire_uint_8_list *pr_indices);
@@ -65,15 +67,15 @@ void wire_eg_search(int64_t port_,
                     struct wire_uint_8_list *query,
                     int32_t script);
 
-void wire_get_entry_json(int64_t port_, uint32_t id);
+void wire_get_splotlight_summaries(int64_t port_);
 
-void wire_get_entry_group_json(int64_t port_, uint32_t id);
+void wire_get_entry_json(int64_t port_, uintptr_t id);
+
+void wire_get_entry_group_json(int64_t port_, uintptr_t id);
 
 void wire_get_entry_id(int64_t port_, struct wire_uint_8_list *query, int32_t script);
 
 void wire_get_jyutping(int64_t port_, struct wire_uint_8_list *query);
-
-void wire_get_splotlight_summaries(int64_t port_);
 
 struct wire_uint_32_list *new_uint_32_list_0(int32_t len);
 
@@ -83,6 +85,7 @@ void free_WireSyncReturn(WireSyncReturn ptr);
 
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
+    dummy_var ^= ((int64_t) (void*) wire_init_api);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_summaries);
     dummy_var ^= ((int64_t) (void*) wire_update_pr_indices);
     dummy_var ^= ((int64_t) (void*) wire_generate_pr_indices);
@@ -91,11 +94,11 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) wire_combined_search);
     dummy_var ^= ((int64_t) (void*) wire_english_search);
     dummy_var ^= ((int64_t) (void*) wire_eg_search);
+    dummy_var ^= ((int64_t) (void*) wire_get_splotlight_summaries);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_json);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_group_json);
     dummy_var ^= ((int64_t) (void*) wire_get_entry_id);
     dummy_var ^= ((int64_t) (void*) wire_get_jyutping);
-    dummy_var ^= ((int64_t) (void*) wire_get_splotlight_summaries);
     dummy_var ^= ((int64_t) (void*) new_uint_32_list_0);
     dummy_var ^= ((int64_t) (void*) new_uint_8_list_0);
     dummy_var ^= ((int64_t) (void*) free_WireSyncReturn);

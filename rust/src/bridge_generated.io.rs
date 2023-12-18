@@ -3,6 +3,11 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
+pub extern "C" fn wire_init_api(port_: i64) {
+    wire_init_api_impl(port_)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_get_entry_summaries(
     port_: i64,
     entry_ids: *mut wire_uint_32_list,
@@ -75,12 +80,17 @@ pub extern "C" fn wire_eg_search(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_entry_json(port_: i64, id: u32) {
+pub extern "C" fn wire_get_splotlight_summaries(port_: i64) {
+    wire_get_splotlight_summaries_impl(port_)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_get_entry_json(port_: i64, id: usize) {
     wire_get_entry_json_impl(port_, id)
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_entry_group_json(port_: i64, id: u32) {
+pub extern "C" fn wire_get_entry_group_json(port_: i64, id: usize) {
     wire_get_entry_group_json_impl(port_, id)
 }
 
@@ -92,11 +102,6 @@ pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_uint_8_list, sc
 #[no_mangle]
 pub extern "C" fn wire_get_jyutping(port_: i64, query: *mut wire_uint_8_list) {
     wire_get_jyutping_impl(port_, query)
-}
-
-#[no_mangle]
-pub extern "C" fn wire_get_splotlight_summaries(port_: i64) {
-    wire_get_splotlight_summaries_impl(port_)
 }
 
 // Section: allocate functions
@@ -146,6 +151,7 @@ impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
         }
     }
 }
+
 // Section: wire structs
 
 #[repr(C)]

@@ -27,6 +27,16 @@ use crate::api::*;
 
 // Section: wire functions
 
+fn wire_init_api_impl(port_: MessagePort) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+        WrapInfo {
+            debug_name: "init_api",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || move |task_callback| Result::<_, ()>::Ok(init_api()),
+    )
+}
 fn wire_get_entry_summaries_impl(
     port_: MessagePort,
     entry_ids: impl Wire2Api<Vec<u32>> + UnwindSafe,
@@ -73,7 +83,7 @@ fn wire_generate_pr_indices_impl(
         },
         move || {
             let api_romanization = romanization.wire2api();
-            move |task_callback| generate_pr_indices(api_romanization)
+            move |task_callback| Result::<_, ()>::Ok(generate_pr_indices(api_romanization))
         },
     )
 }
@@ -95,7 +105,14 @@ fn wire_pr_search_impl(
             let api_query = query.wire2api();
             let api_script = script.wire2api();
             let api_romanization = romanization.wire2api();
-            move |task_callback| pr_search(api_capacity, api_query, api_script, api_romanization)
+            move |task_callback| {
+                Result::<_, ()>::Ok(pr_search(
+                    api_capacity,
+                    api_query,
+                    api_script,
+                    api_romanization,
+                ))
+            }
         },
     )
 }
@@ -115,7 +132,9 @@ fn wire_variant_search_impl(
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
             let api_script = script.wire2api();
-            move |task_callback| variant_search(api_capacity, api_query, api_script)
+            move |task_callback| {
+                Result::<_, ()>::Ok(variant_search(api_capacity, api_query, api_script))
+            }
         },
     )
 }
@@ -138,7 +157,12 @@ fn wire_combined_search_impl(
             let api_script = script.wire2api();
             let api_romanization = romanization.wire2api();
             move |task_callback| {
-                combined_search(api_capacity, api_query, api_script, api_romanization)
+                Result::<_, ()>::Ok(combined_search(
+                    api_capacity,
+                    api_query,
+                    api_script,
+                    api_romanization,
+                ))
             }
         },
     )
@@ -159,7 +183,9 @@ fn wire_english_search_impl(
             let api_capacity = capacity.wire2api();
             let api_query = query.wire2api();
             let api_script = script.wire2api();
-            move |task_callback| english_search(api_capacity, api_query, api_script)
+            move |task_callback| {
+                Result::<_, ()>::Ok(english_search(api_capacity, api_query, api_script))
+            }
         },
     )
 }
@@ -182,17 +208,27 @@ fn wire_eg_search_impl(
             let api_query = query.wire2api();
             let api_script = script.wire2api();
             move |task_callback| {
-                eg_search(
+                Result::<_, ()>::Ok(eg_search(
                     api_capacity,
                     api_max_first_index_in_eg,
                     api_query,
                     api_script,
-                )
+                ))
             }
         },
     )
 }
-fn wire_get_entry_json_impl(port_: MessagePort, id: impl Wire2Api<u32> + UnwindSafe) {
+fn wire_get_splotlight_summaries_impl(port_: MessagePort) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<SpotlightEntrySummary>, _>(
+        WrapInfo {
+            debug_name: "get_splotlight_summaries",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || move |task_callback| Result::<_, ()>::Ok(get_splotlight_summaries()),
+    )
+}
+fn wire_get_entry_json_impl(port_: MessagePort, id: impl Wire2Api<usize> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
         WrapInfo {
             debug_name: "get_entry_json",
@@ -201,11 +237,11 @@ fn wire_get_entry_json_impl(port_: MessagePort, id: impl Wire2Api<u32> + UnwindS
         },
         move || {
             let api_id = id.wire2api();
-            move |task_callback| get_entry_json(api_id)
+            move |task_callback| Result::<_, ()>::Ok(get_entry_json(api_id))
         },
     )
 }
-fn wire_get_entry_group_json_impl(port_: MessagePort, id: impl Wire2Api<u32> + UnwindSafe) {
+fn wire_get_entry_group_json_impl(port_: MessagePort, id: impl Wire2Api<usize> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<String>, _>(
         WrapInfo {
             debug_name: "get_entry_group_json",
@@ -214,7 +250,7 @@ fn wire_get_entry_group_json_impl(port_: MessagePort, id: impl Wire2Api<u32> + U
         },
         move || {
             let api_id = id.wire2api();
-            move |task_callback| get_entry_group_json(api_id)
+            move |task_callback| Result::<_, ()>::Ok(get_entry_group_json(api_id))
         },
     )
 }
@@ -247,16 +283,6 @@ fn wire_get_jyutping_impl(port_: MessagePort, query: impl Wire2Api<String> + Unw
             let api_query = query.wire2api();
             move |task_callback| Result::<_, ()>::Ok(get_jyutping(api_query))
         },
-    )
-}
-fn wire_get_splotlight_summaries_impl(port_: MessagePort) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<SpotlightEntrySummary>, _>(
-        WrapInfo {
-            debug_name: "get_splotlight_summaries",
-            port: Some(port_),
-            mode: FfiCallMode::Normal,
-        },
-        move || move |task_callback| Result::<_, ()>::Ok(get_splotlight_summaries()),
     )
 }
 // Section: wrapper structs
@@ -316,6 +342,11 @@ impl Wire2Api<u8> for u8 {
     }
 }
 
+impl Wire2Api<usize> for usize {
+    fn wire2api(self) -> usize {
+        self
+    }
+}
 // Section: impl IntoDart
 
 impl support::IntoDart for CombinedSearchResults {
