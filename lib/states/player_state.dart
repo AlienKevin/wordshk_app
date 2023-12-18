@@ -14,17 +14,17 @@ import '../models/player.dart';
 import '../models/speech_rate.dart';
 
 class PlayerState with ChangeNotifier {
-  late final FlutterTts ttsPlayer;
-  late final AudioPlayer syllablesPlayer;
-  late final AudioSession session;
+  Completer<FlutterTts> ttsPlayer = Completer();
+  Completer<AudioPlayer> syllablesPlayer = Completer();
+  Completer<AudioSession> session = Completer();
   Player? currentPlayer;
   bool playerStoppedDueToSwitch = false;
 
   PlayerState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      session = await AudioSession.instance;
-      await session.configure(const AudioSessionConfiguration.speech());
-      session.interruptionEventStream.listen((event) async {
+      final sessionValue = await AudioSession.instance;
+      await sessionValue.configure(const AudioSessionConfiguration.speech());
+      sessionValue.interruptionEventStream.listen((event) async {
         if (event.begin) {
           switch (event.type) {
             case AudioInterruptionType.duck:
@@ -46,17 +46,18 @@ class PlayerState with ChangeNotifier {
           }
         }
       });
+      session.complete(sessionValue);
 
-      syllablesPlayer = AudioPlayer();
+      syllablesPlayer.complete(AudioPlayer());
 
-      ttsPlayer = FlutterTts();
-      await ttsPlayer.setSharedInstance(true);
-      await ttsPlayer.setLanguage("zh-HK");
-      await ttsPlayer.setSpeechRate(0.5);
-      await ttsPlayer.setVolume(Platform.isIOS ? 0.3 : 1.0);
-      await ttsPlayer.setPitch(1.0);
-      await ttsPlayer.isLanguageAvailable("zh-HK");
-      ttsPlayer.setCompletionHandler(() {
+      final ttsPlayerValue = FlutterTts();
+      await ttsPlayerValue.setSharedInstance(true);
+      await ttsPlayerValue.setLanguage("zh-HK");
+      await ttsPlayerValue.setSpeechRate(0.5);
+      await ttsPlayerValue.setVolume(Platform.isIOS ? 0.3 : 1.0);
+      await ttsPlayerValue.setPitch(1.0);
+      await ttsPlayerValue.isLanguageAvailable("zh-HK");
+      ttsPlayerValue.setCompletionHandler(() {
         if (!playerStoppedDueToSwitch) {
           currentPlayer = null;
           notifyListeners();
@@ -64,6 +65,7 @@ class PlayerState with ChangeNotifier {
           playerStoppedDueToSwitch = false;
         }
       });
+      ttsPlayer.complete(ttsPlayerValue);
     });
   }
 
@@ -102,20 +104,21 @@ class PlayerState with ChangeNotifier {
   Future<void> syllablesPlay(
       SyllablesPlayer player, SpeechRateState speechRateState) async {
     try {
-      await syllablesPlayer.setAudioSource(ConcatenatingAudioSource(
-          children: player.prs
-              .mapIndexed((index, syllables) => [
-                    ...syllables.map((syllable) => AudioSource.uri(Uri.parse(
-                        "asset:///assets/jyutping_female/$syllable.mp3"))),
-                    ...(index == player.prs.length - 1
-                        ? <AudioSource>[]
-                        : [
-                            AudioSource.uri(
-                                Uri.parse("asset:///assets/silence_800ms.mp3"))
-                          ])
-                  ])
-              .expand((syllable) => syllable)
-              .toList()));
+      await (await syllablesPlayer.future)
+          .setAudioSource(ConcatenatingAudioSource(
+              children: player.prs
+                  .mapIndexed((index, syllables) => [
+                        ...syllables.map((syllable) => AudioSource.uri(Uri.parse(
+                            "asset:///assets/jyutping_female/$syllable.mp3"))),
+                        ...(index == player.prs.length - 1
+                            ? <AudioSource>[]
+                            : [
+                                AudioSource.uri(Uri.parse(
+                                    "asset:///assets/silence_800ms.mp3"))
+                              ])
+                      ])
+                  .expand((syllable) => syllable)
+                  .toList()));
     } on PlayerException catch (e) {
       if (kDebugMode) {
         print(
@@ -152,11 +155,13 @@ class PlayerState with ChangeNotifier {
             ? 1.2
             : 1.5;
     final volume = Platform.isIOS ? 0.1 : 1.0;
-    await syllablesPlayer.setSpeed(speed);
-    await syllablesPlayer.setVolume(volume);
-    await syllablesPlayer.seek(Duration.zero, index: 0);
 
-    syllablesPlayer.playerStateStream.listen((state) {
+    final player_ = await syllablesPlayer.future;
+    await player_.setSpeed(speed);
+    await player_.setVolume(volume);
+    await player_.seek(Duration.zero, index: 0);
+
+    player_.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
         if (!playerStoppedDueToSwitch) {
           currentPlayer = null;
@@ -166,7 +171,7 @@ class PlayerState with ChangeNotifier {
         }
       }
     });
-    await syllablesPlayer.play();
+    await player_.play();
   }
 
   Future<void> ttsPlay(
@@ -180,9 +185,10 @@ class PlayerState with ChangeNotifier {
         : rate == SpeechRate.slow
             ? 0.3
             : 0.5;
-    await ttsPlayer.setSpeechRate(speed);
-    if (await session.setActive(true)) {
-      await ttsPlayer.speak(player.text);
+    final player_ = await ttsPlayer.future;
+    await player_.setSpeechRate(speed);
+    if (await (await session.future).setActive(true)) {
+      await player_.speak(player.text);
     } else {
       // The request was denied and the app should not play audio
       // e.g. a phone call is in progress.
@@ -203,10 +209,10 @@ class PlayerState with ChangeNotifier {
   stopHelper() async {
     switch (currentPlayer!) {
       case TtsPlayer():
-        await ttsPlayer.stop();
+        await (await ttsPlayer.future).stop();
         break;
       case SyllablesPlayer():
-        await syllablesPlayer.stop();
+        await (await syllablesPlayer.future).stop();
         break;
     }
   }
