@@ -13,7 +13,9 @@ any questions or concerns, please contact us at kevinli020508@gmail.com
 ## What personal information do we process?
 Your device information, region, and other anonymous metadata may be collected by the app stores and
 Sentry to analyze crashes and improve user experience. These metadata also helps us track the user base
-and growth of our application.
+and growth of our application. Additionally, we may collect your usage information to improve the app.
+You can opt-out of all data collection by disabling analytics in the settings page, with the exception
+of the data collected by the app stores because that is outside of our control.
 
 ## What we do not engage in?
 1. We do not process sensitive personal information.
