@@ -76,7 +76,7 @@ main() async {
   }, appRunner: runMyApp);
 }
 
-runMyApp({bool? firstTimeUser}) async {
+runMyApp({bool? firstTimeUser, Language? language}) async {
   try {
     final prefs = await SharedPreferences.getInstance();
     if (kDebugMode) {
@@ -90,6 +90,10 @@ runMyApp({bool? firstTimeUser}) async {
     WidgetsFlutterBinding
         .ensureInitialized(); // mandatory when awaiting on main
     final bool firstTimeUser_ = firstTimeUser ?? (prefs.getBool("firstTimeUser") ?? true);
+
+    if (language != null) {
+      prefs.setInt("language", language.index);
+    }
 
     // Set UserId if not set
     if (prefs.getString("userId") == null) {

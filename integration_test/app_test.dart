@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:integration_test/integration_test.dart';
 import 'package:wordshk/main.dart' as app_main;
+import 'package:wordshk/models/language.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,7 @@ void main() {
   group('take-screenshots', () {
     testWidgets('home-page',
             (tester) async {
-      await app_main.runMyApp(firstTimeUser: false);
+      await app_main.runMyApp(firstTimeUser: false, language: Language.values.byName(const String.fromEnvironment("language")));
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 3));
 
