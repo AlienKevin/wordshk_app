@@ -38,13 +38,13 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 1));
 
       final searchBar = find.byKey(const Key("homePageSearchBar"));
-      await tester.enterText(searchBar, "jyut");
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.enterText(searchBar, "jyut man");
+      await tester.pumpAndSettle(const Duration(seconds: 5));
 
       await takeScreenshot('home-search');
 
-      // Locate the 粵 entry
-      final entryButton = find.textContaining("short for Guangdong", findRichText: true);
+      // Locate the 粵文 entry
+      final entryButton = find.textContaining("jyut6 man4", findRichText: true);
       await tester.tap(entryButton);
       await tester.pumpAndSettle(const Duration(seconds: 1));
 
