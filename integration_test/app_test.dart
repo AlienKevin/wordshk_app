@@ -14,9 +14,14 @@ void main() {
   group('take-screenshots', () {
     testWidgets('home-page',
             (tester) async {
-      await app_main.runMyApp(firstTimeUser: false, language: Language.values.byName(const String.fromEnvironment("language")));
+      final language = Language.values.byName(const String.fromEnvironment("language"));
+      await app_main.runMyApp(firstTimeUser: false, language: language);
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 3));
+
+      final double screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      print("screenWidth: $screenWidth");
+      final isWideScreen = screenWidth > 600;
 
       // Clear the clipboard
       // await Clipboard.setData(const ClipboardData(text: ''));
@@ -39,13 +44,33 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 1));
 
       final searchBar = find.byKey(const Key("homePageSearchBar"));
-      await tester.enterText(searchBar, "jyut man");
+      await tester.enterText(searchBar, switch (language) {
+        Language.en => "thanks",
+        Language.zhHans => "唔该",
+        Language.zhHant => "唔該",
+        _ => throw "Unsupported language: $language",
+      });
       await tester.pumpAndSettle(const Duration(seconds: 5));
 
       await takeScreenshot('home-search');
 
-      // Locate the 粵文 entry
-      final entryButton = find.textContaining("jyut6 man4", findRichText: true);
+      // Locate the 唔該 entry
+
+      if (isWideScreen) {
+        print("Hidding keyboard on wide screen");
+        // Hide the on-screen keyboard
+        binding.focusManager.primaryFocus?.unfocus();
+
+        // Wait until keyboard is hidden
+        await tester.pumpAndSettle(const Duration(seconds: 3));
+      }
+
+      final entryButton = find.textContaining(switch (language) {
+        Language.en => "m4 goi1",
+        Language.zhHans => "向对方表示感激",
+        Language.zhHant => "向對方表示感激",
+        _ => throw "Unsupported language: $language",
+      }, findRichText: true);
       await tester.tap(entryButton);
       await tester.pumpAndSettle(const Duration(seconds: 1));
 
