@@ -93,6 +93,7 @@
     "labelClassical": "classical",
     "labelNsfw": "nsfw",
     "labelFolkEtymology": "folk etymology",
+    "labelMalaysia": "Malaysia",
 
     "entryNotPublished": "Entry Not Published",
     "entryNotPublishedText": "The entry \"{entryVariant}\" is not yet published. Our editors are hard at work improving this entry.",

@@ -543,6 +543,7 @@ enum Label {
   classical,
   nsfw,
   folkEtymology,
+  malaysia,
 }
 
 Label? stringToLabel(String str) {
@@ -591,6 +592,8 @@ Label? stringToLabel(String str) {
       return Label.nsfw;
     case "民間傳説":
       return Label.folkEtymology;
+    case "馬來西亞":
+      return Label.malaysia;
     case "gpt":
       return null;
     default:
@@ -644,5 +647,7 @@ translateLabel(Label label, AppLocalizations context) {
       return context.labelNsfw;
     case Label.folkEtymology:
       return context.labelFolkEtymology;
+    case Label.malaysia:
+      return context.labelMalaysia;
   }
 }
