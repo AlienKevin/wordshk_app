@@ -10,6 +10,7 @@ import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
 import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
 import 'package:wordshk/pages/preferences/language_page.dart';
 import 'package:wordshk/pages/preferences/romanization_page.dart';
+import 'package:wordshk/pages/preferences/script_page.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'package:wordshk/utils.dart';
@@ -30,6 +31,7 @@ class PreferencesPage extends StatelessWidget {
     final s = AppLocalizations.of(context)!;
 
     final language = context.watch<LanguageState>().language!;
+    final script = context.watch<LanguageState>().getScript();
     final entryLanguage = context.watch<EntryLanguageState>().language;
     final romanization = context.watch<RomanizationState>().romanization;
     final entryHeaderSpeechRate =
@@ -53,6 +55,17 @@ class PreferencesPage extends StatelessWidget {
                           CustomPageRoute(
                               builder: (context) =>
                                   const LanguagePreferencesPage()));
+                    },
+                  ),
+                  SettingsTile.navigation(
+                    title: Text(s.cantoneseScript),
+                    value: Text(getScriptName(script, s)),
+                    onPressed: (context) {
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) =>
+                              const ScriptPreferencesPage()));
                     },
                   ),
                   SettingsTile.navigation(

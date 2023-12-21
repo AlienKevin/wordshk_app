@@ -151,6 +151,10 @@
     "entryLanguageEnglish": "English",
     "entryLanguageBoth": "Bilingual",
 
+    "cantoneseScript": "Cantonese Script",
+    "scriptSimplified": "Simplified",
+    "scriptTraditional": "Traditional",
+
     "entryHeaderSpeechRate": "Header Speech Rate",
 
     "entryEgPronunciationMethod": "Example Pronunciation Method",

@@ -8,6 +8,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/bridge_generated.dart';
+import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../constants.dart';
@@ -99,7 +100,7 @@ class _EntryItemsState<T extends EntryItemState>
   }
 
   Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
-    final script = getScript(context);
+    final script = context.read<LanguageState>().getScript();
 
     return api().then((api) => api
         .getEntrySummaries(

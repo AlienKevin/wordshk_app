@@ -116,10 +116,14 @@ String getPronunciationMethodShortName(
   }
 }
 
-Script getScript(BuildContext context) =>
-    context.read<LanguageState>().language == Language.zhHans
-        ? Script.Simplified
-        : Script.Traditional;
+String getScriptName(Script script, AppLocalizations s) {
+  switch (script) {
+    case Script.Simplified:
+      return s.scriptSimplified;
+    case Script.Traditional:
+      return s.scriptTraditional;
+  }
+}
 
 String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
   switch (rate) {

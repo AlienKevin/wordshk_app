@@ -142,6 +142,10 @@
     "entryLanguageEnglish": "英文",
     "entryLanguageBoth": "雙語",
 
+    "cantoneseScript": "廣東話字體",
+    "scriptSimplified": "簡體",
+    "scriptTraditional": "繁體",
+
     "entryHeaderSpeechRate": "標題發音速度",
 
     "entryEgPronunciationMethod": "注音例句發音方式",

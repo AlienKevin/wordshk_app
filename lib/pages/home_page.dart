@@ -24,6 +24,7 @@ import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../models/search_result_type.dart';
 import '../models/summary_def_language.dart';
+import '../states/language_state.dart';
 import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
@@ -271,7 +272,7 @@ class _HomePageState extends State<HomePage> {
         lastSearchStartTime = searchStartTime;
       });
       final searchMode = context.read<SearchModeState>().mode;
-      final script = getScript(context);
+      final script = context.read<LanguageState>().getScript();
       final romanization = context.read<RomanizationState>().romanization;
       switch (searchMode) {
         case SearchMode.pr:

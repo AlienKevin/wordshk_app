@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/utils.dart';
+import 'package:wordshk/states/language_state.dart';
 
 import '../../models/entry.dart';
 import '../../states/player_state.dart';
@@ -99,7 +99,7 @@ class _EntryWidgetState extends State<EntryWidget>
                 children: widget.entryGroup
                     .mapIndexed((index, entry) => EntryTab(
                           entry: entry,
-                          script: getScript(context),
+                          script: context.watch<LanguageState>().getScript(),
                           variantTextStyle:
                               Theme.of(context).textTheme.headlineSmall!,
                           prTextStyle: Theme.of(context).textTheme.bodySmall!,

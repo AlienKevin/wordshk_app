@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/custom_page_route.dart';
+import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../ffi.dart';
 import '../models/embedded.dart';
 import '../models/entry.dart';
 import '../states/player_state.dart';
-import '../utils.dart';
 import '../widgets/entry/entry.dart';
 import '../widgets/entry/entry_action_buttons.dart';
 import 'entry_not_published_page.dart';
@@ -141,7 +141,7 @@ class _EntryPageState extends State<EntryPage> {
           onTapLink: (entryVariant) {
             log("Tapped on link $entryVariant");
             api().then((api) => api
-                    .getEntryId(query: entryVariant, script: getScript(context))
+                    .getEntryId(query: entryVariant, script: context.read<LanguageState>().getScript())
                     .then((id) {
                   context.read<PlayerState>().refreshPlayerState();
                   if (id == null) {
