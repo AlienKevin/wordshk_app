@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/bridge_generated.dart';
 import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
@@ -14,6 +13,7 @@ import 'package:wordshk/states/language_state.dart';
 import 'models/font_size.dart';
 import 'models/language.dart';
 import 'models/summary_def_language.dart';
+import 'src/rust/api/api.dart';
 
 void openLink(String url) async {
   return FlutterWebBrowser.openWebPage(
@@ -50,16 +50,16 @@ switchKeyboardType(FocusNode focusNode) {
 
 String getRomanizationName(Romanization romanization, AppLocalizations s) {
   return switch (romanization) {
-    Romanization.Jyutping => s.romanizationJyutping,
-    Romanization.Yale => s.romanizationYale,
+    Romanization.jyutping => s.romanizationJyutping,
+    Romanization.yale => s.romanizationYale,
   };
 }
 
 String getRomanizationDescription(
     Romanization romanization, AppLocalizations s) {
   return switch (romanization) {
-    Romanization.Jyutping => s.romanizationJyutpingDescription,
-    Romanization.Yale => s.romanizationYaleDescription,
+    Romanization.jyutping => s.romanizationJyutpingDescription,
+    Romanization.yale => s.romanizationYaleDescription,
   };
 }
 
@@ -118,9 +118,9 @@ String getPronunciationMethodShortName(
 
 String getScriptName(Script script, AppLocalizations s) {
   switch (script) {
-    case Script.Simplified:
+    case Script.simplified:
       return s.scriptSimplified;
-    case Script.Traditional:
+    case Script.traditional:
       return s.scriptTraditional;
   }
 }

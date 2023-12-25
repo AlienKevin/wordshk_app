@@ -7,13 +7,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
-import 'package:wordshk/bridge_generated.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../constants.dart';
 import '../custom_page_route.dart';
-import '../ffi.dart';
 import '../models/embedded.dart';
 import '../models/summary_def_language.dart';
 import '../states/entry_item_state.dart';
@@ -102,12 +101,10 @@ class _EntryItemsState<T extends EntryItemState>
   Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
     final script = context.read<LanguageState>().getScript();
 
-    return api().then((api) => api
-        .getEntrySummaries(
-          entryIds: Uint32List.fromList(ids),
-          script: script,
-        )
-        .then((summaries) => LinkedHashMap.fromIterables(ids, summaries)));
+    return getEntrySummaries(
+      entryIds: Uint32List.fromList(ids),
+      script: script,
+    ).then((summaries) => LinkedHashMap.fromIterables(ids, summaries));
   }
 
   Future<LinkedHashMap<int, EntrySummary>> _fetchMoreEntryItems(int amount) {

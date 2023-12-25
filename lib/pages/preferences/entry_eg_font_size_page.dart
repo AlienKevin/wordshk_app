@@ -24,7 +24,10 @@ class EntryEgFontSizePreferencesPage extends StatelessWidget {
     }
 
     sizeRadioListTile(FontSize value) => PreferencesRadioListTile<FontSize>(
-        title: getFontSizeName(value, s), value: value, groupValue: size, onChanged: onSizeChange);
+        title: getFontSizeName(value, s),
+        value: value,
+        groupValue: size,
+        onChanged: onSizeChange);
 
     return Scaffold(
         appBar: AppBar(title: Text(s.annotatedExample)),

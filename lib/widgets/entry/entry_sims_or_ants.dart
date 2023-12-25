@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:wordshk/src/rust/api/api.dart' show Script;
 import 'package:wordshk/widgets/scalable_text_span.dart';
 
-import '../../bridge_generated.dart';
 import '../../models/entry.dart';
 
 class EntrySimsOrAnts extends StatelessWidget {
@@ -37,7 +37,7 @@ class EntrySimsOrAnts extends StatelessWidget {
                       style: lineTextStyle.copyWith(
                           fontWeight: FontWeight.w600)))),
           const WidgetSpan(child: SizedBox(width: 10)),
-          ...(script == Script.Traditional
+          ...(script == Script.traditional
                   ? simsOrAnts
                   : simsOrAnts
                       .asMap()

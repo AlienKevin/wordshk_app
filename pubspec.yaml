@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_rust_bridge: '>=1.82.1 <1.82.2'
+  flutter_rust_bridge: 2.0.0-dev.4
   equatable: ^2.0.0
   flutter_native_splash: ^2.3.6
   just_audio: ^0.9.35
@@ -53,6 +53,8 @@ dependencies:
   device_info_plus: ^9.1.1
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
+  rust_builder:
+    path: rust_builder
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +67,7 @@ dev_dependencies:
     git:
       url: https://github.com/AlienKevin/flutter_launcher_name
       ref: "0.11.1"
-  ffigen: '>=8.0.0 <9.0.0'
+  ffigen: ">=8.0.0 <10.0.0"
   sentry_flutter: ^7.13.2
   sentry_dart_plugin: ^1.6.3
   build_runner: ^2.4.7

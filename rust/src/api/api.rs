@@ -24,7 +24,7 @@ use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
 pub use wordshk_tools::search::Script;
 use wordshk_tools::unicode::is_cjk;
 
-use crate::utils::*;
+use crate::api::utils::*;
 
 // use oslog::{OsLogger};
 // use log::{LevelFilter, info};
@@ -125,9 +125,9 @@ impl WordshkApi {
         // }
         // info!("Calling Api::new()...");
 
-        let dict_json = include_bytes!("../data/dict.json");
-        let english_index_json = include_bytes!("../data/english_index.json");
-        let word_list = include_str!("../data/word_list.tsv");
+        let dict_json = include_bytes!("../../data/dict.json");
+        let english_index_json = include_bytes!("../../data/english_index.json");
+        let word_list = include_str!("../../data/word_list.tsv");
 
         let mut dict_decompressor = GzDecoder::new(&dict_json[..]);
         let mut dict_str = String::new();

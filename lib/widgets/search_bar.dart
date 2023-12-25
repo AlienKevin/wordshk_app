@@ -12,12 +12,12 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/src/rust/api/api.dart' show Romanization;
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/search_mode_button.dart';
 import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
 
-import '../bridge_generated.dart' show Romanization;
 import '../constants.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
@@ -186,7 +186,8 @@ class IsSearching extends State<SearchBar> {
     final newQuery = startWithDiacritic + query.substring(extentOffset);
     controller.value = TextEditingValue(
         text: newQuery,
-        selection: TextSelection.collapsed(offset: baseOffset + startWithDiacritic.length - start.length));
+        selection: TextSelection.collapsed(
+            offset: baseOffset + startWithDiacritic.length - start.length));
     context.read<SearchQueryState>().updateSearchQuery(newQuery);
     if (widget.onChanged != null) {
       widget.onChanged!(newQuery);
@@ -351,7 +352,7 @@ class IsSearching extends State<SearchBar> {
           displayDoneButton: false,
           toolbarButtons: switch (
               context.watch<RomanizationState>().romanization) {
-            Romanization.Jyutping => [
+            Romanization.jyutping => [
                 (_) => digitButton(1),
                 (_) => digitButton(2),
                 (_) => digitButton(3),
@@ -361,7 +362,7 @@ class IsSearching extends State<SearchBar> {
                 (_) => const Spacer(),
                 (_) => inkInputModeButton(),
               ],
-            Romanization.Yale => [
+            Romanization.yale => [
                 (_) => diacriticButton("̄"),
                 (_) => diacriticButton("́"),
                 (_) => diacriticButton("̀"),
@@ -392,8 +393,8 @@ class IsSearching extends State<SearchBar> {
         getRomanizationName(romanization, AppLocalizations.of(context)!);
     late final String searchRomanizationExample;
     searchRomanizationExample = switch (romanization) {
-      Romanization.Jyutping => "hou2 coi2",
-      Romanization.Yale => "hou choi",
+      Romanization.jyutping => "hou2 coi2",
+      Romanization.yale => "hou choi",
     };
 
     searchModeRadioListTile(

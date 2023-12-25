@@ -89,7 +89,8 @@ class EntryRubyLine extends StatelessWidget {
                             : SyllablePronunciationButton(
                                 prs: line
                                     .toPrs()
-                                    .split(RegExp(r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
+                                    .split(RegExp(
+                                        r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
                                     .where((segment) => segment.isNotEmpty)
                                     .map((segment) =>
                                         segment.split(RegExp(r"\s+")))

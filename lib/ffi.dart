@@ -1,24 +1,10 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
-import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 
-import 'bridge_generated.dart';
 import 'models/language.dart';
-
-const base = 'wordshk_api';
-final path = Platform.isWindows ? '$base.dll' : 'lib$base.so';
-late final dylib = loadLibForFlutter(path);
-late final wordshkApi = WordshkApiImpl(dylib);
-final apiInit = wordshkApi.initApi();
-
-Future<WordshkApiImpl> api() async {
-  await apiInit;
-  return wordshkApi;
-}
 
 Future<void> indexSpotlightSearch(
     Language language, Romanization romanization) async {
@@ -26,7 +12,7 @@ Future<void> indexSpotlightSearch(
   await deleteSpotlightSearchIndex();
 
   // Indexing a searchable item
-  final summaries = await (await api()).getSplotlightSummaries();
+  final summaries = await getSplotlightSummaries();
   // Run the indexing in a separate isolate
   // to prevent janking the UI
   BackgroundIsolateBinaryMessenger.ensureInitialized(
@@ -48,8 +34,8 @@ Future<void> indexSpotlightSearch(
   final items = await compute(
       (_) => summaries.expand((summary) {
             final prs = switch (romanization) {
-              Romanization.Jyutping => summary.jyutpings,
-              Romanization.Yale => summary.yales,
+              Romanization.jyutping => summary.jyutpings,
+              Romanization.yale => summary.yales,
             };
             return summary.variants
                 .mapIndexed((i, variant) => switch (language) {
@@ -117,7 +103,7 @@ Future<void> indexSpotlightSearch(
 
 Future<void> deleteSpotlightSearchIndex() async {
   // Indexing a searchable item
-  final summaries = await (await api()).getSplotlightSummaries();
+  final summaries = await getSplotlightSummaries();
   // Run the deletion in a separate isolate
   // to prevent janking the UI
   BackgroundIsolateBinaryMessenger.ensureInitialized(

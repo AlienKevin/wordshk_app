@@ -155,15 +155,20 @@ class DigitalInkViewState extends State<DigitalInkView> {
         child: SafeArea(
           child: Column(
             children: [
-            TextScaleFactorClamper(maxScaleFactor: 1.2, child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: SizedBox(
-                  height: candidatesFont.fontSize! * 1.2 * MediaQuery.of(context).textScaleFactor + 2,
-                  child: Wrap(
+              TextScaleFactorClamper(
+                  maxScaleFactor: 1.2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: SizedBox(
+                      height: candidatesFont.fontSize! *
+                              1.2 *
+                              MediaQuery.of(context).textScaleFactor +
+                          2,
+                      child: Wrap(
                           children: _recognizedCharacters
                               .map((character) => Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 6),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6),
                                     child: OutlinedButton(
                                       onPressed: () {
                                         widget.typeCharacter(character);
@@ -176,12 +181,13 @@ class DigitalInkViewState extends State<DigitalInkView> {
                                             candidatesFont.fontSize! * 1.2),
                                         padding: EdgeInsets.zero,
                                       ),
-                                      child: Text(character, style: candidatesFont),
+                                      child: Text(character,
+                                          style: candidatesFont),
                                     ),
                                   ))
                               .toList()),
-                ),
-              )),
+                    ),
+                  )),
               Row(children: [
                 const SizedBox(width: 15),
                 IconButton(

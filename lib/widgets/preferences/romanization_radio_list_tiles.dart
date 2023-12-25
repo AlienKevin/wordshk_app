@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/utils.dart';
 
-import '../../bridge_generated.dart';
 import '../../states/romanization_state.dart';
 import '../../widgets/preferences/radio_list_tile.dart';
 
@@ -17,14 +17,11 @@ class RomanizationRadioListTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
-    final romanization =
-        context.watch<RomanizationState>().romanization;
+    final romanization = context.watch<RomanizationState>().romanization;
 
     onRomanizationChange(Romanization? newRomanization) {
       if (newRomanization != null) {
-        context
-            .read<RomanizationState>()
-            .updateRomanization(newRomanization);
+        context.read<RomanizationState>().updateRomanization(newRomanization);
         if (syncEntryRomanization) {
           context.read<RomanizationState>().updateRomanization(newRomanization);
         }
@@ -40,8 +37,8 @@ class RomanizationRadioListTiles extends StatelessWidget {
             onChanged: onRomanizationChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      romanizationRadioListTile(Romanization.Jyutping),
-      romanizationRadioListTile(Romanization.Yale),
+      romanizationRadioListTile(Romanization.jyutping),
+      romanizationRadioListTile(Romanization.yale),
     ]);
   }
 }

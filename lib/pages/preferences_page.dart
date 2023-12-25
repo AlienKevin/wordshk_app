@@ -65,7 +65,7 @@ class PreferencesPage extends StatelessWidget {
                           context,
                           CustomPageRoute(
                               builder: (context) =>
-                              const ScriptPreferencesPage()));
+                                  const ScriptPreferencesPage()));
                     },
                   ),
                   SettingsTile.navigation(
@@ -123,25 +123,29 @@ class PreferencesPage extends StatelessWidget {
                 tiles: [
                   SettingsTile.switchTile(
                       description: Text(s.sendAnalyticsDescription),
-                      initialValue: context.watch<AnalyticsSettingsState>().enabled,
+                      initialValue:
+                          context.watch<AnalyticsSettingsState>().enabled,
                       onToggle: (newEnabled) {
-                        context.read<AnalyticsSettingsState>().setEnabled(newEnabled);
+                        context
+                            .read<AnalyticsSettingsState>()
+                            .setEnabled(newEnabled);
                       },
                       title: Text(s.sendAnalytics)),
                   ...((Platform.isIOS || Platform.isMacOS)
-                    ? <SettingsTile>[
-                        SettingsTile.switchTile(
-                            description: Text(s.spotlightSearchDescription),
-                            initialValue:
-                                context.watch<SpotlightIndexingState>().enabled,
-                            onToggle: (newEnabled) {
-                              context
-                                  .read<SpotlightIndexingState>()
-                                  .updateSpotlightIndexEnabled(newEnabled);
-                            },
-                            title: Text(s.spotlightSearch)),
-                      ]
-                    : [])
+                      ? <SettingsTile>[
+                          SettingsTile.switchTile(
+                              description: Text(s.spotlightSearchDescription),
+                              initialValue: context
+                                  .watch<SpotlightIndexingState>()
+                                  .enabled,
+                              onToggle: (newEnabled) {
+                                context
+                                    .read<SpotlightIndexingState>()
+                                    .updateSpotlightIndexEnabled(newEnabled);
+                              },
+                              title: Text(s.spotlightSearch)),
+                        ]
+                      : [])
                 ],
               )
             ],

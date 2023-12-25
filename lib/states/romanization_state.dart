@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
-
-import '../../bridge_generated.dart' show Romanization;
-import '../ffi.dart';
 
 class RomanizationState with ChangeNotifier {
   late Romanization romanization;
@@ -17,11 +15,11 @@ class RomanizationState with ChangeNotifier {
     // Reset invalid romanization index to the jyutping default
     if (romanizationIndex != null &&
         romanizationIndex >= Romanization.values.length) {
-      prefs.setInt("romanization", Romanization.Jyutping.index);
-      romanization = Romanization.Jyutping;
+      prefs.setInt("romanization", Romanization.jyutping.index);
+      romanization = Romanization.jyutping;
     } else {
       romanization = romanizationIndex == null
-          ? Romanization.Jyutping
+          ? Romanization.jyutping
           : Romanization.values[romanizationIndex];
     }
 
@@ -39,22 +37,21 @@ class RomanizationState with ChangeNotifier {
     final prIndicesFile = await _prIndicesFile;
     if (prIndicesFile.existsSync()) {
       try {
-        (await api()).updatePrIndices(prIndices: await prIndicesFile.readAsBytes());
+        updatePrIndices(prIndices: await prIndicesFile.readAsBytes());
       } catch (err) {
         if (kDebugMode) {
           print(err);
         }
-        prIndicesFile.writeAsBytes(
-            await (await api()).generatePrIndices(romanization: romanization));
+        prIndicesFile
+            .writeAsBytes(await generatePrIndices(romanization: romanization));
       }
     } else {
-      prIndicesFile.writeAsBytes(
-          await (await api()).generatePrIndices(romanization: romanization));
+      prIndicesFile
+          .writeAsBytes(await generatePrIndices(romanization: romanization));
     }
   }
 
-  void updateRomanization(
-      Romanization newRomanization) async {
+  void updateRomanization(Romanization newRomanization) async {
     romanization = newRomanization;
     spotlightIndexingState.updateSpotlightIndexRomanization(romanization);
 
@@ -65,13 +62,13 @@ class RomanizationState with ChangeNotifier {
 
     final prIndicesFile = await _prIndicesFile;
     prIndicesFile
-        .writeAsBytes(await (await api()).generatePrIndices(romanization: romanization));
+        .writeAsBytes(await generatePrIndices(romanization: romanization));
   }
 
   String showPrs(List<String> jyutpings) {
     return switch (romanization) {
-      Romanization.Jyutping => jyutpings.join(" "),
-      Romanization.Yale => jyutpings.map((jyutping) {
+      Romanization.jyutping => jyutpings.join(" "),
+      Romanization.yale => jyutpings.map((jyutping) {
           return jyutpingToYale[jyutping] ?? jyutping;
         }).join(" ")
     };

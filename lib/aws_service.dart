@@ -27,7 +27,8 @@ class AwsService {
     // Get credentials
     late final AwsClientCredentials credentials;
     try {
-      final getIdResponse = await cognitoIdentity.getId(identityPoolId: identityPoolId);
+      final getIdResponse =
+          await cognitoIdentity.getId(identityPoolId: identityPoolId);
       if (getIdResponse.identityId == null) {
         print("aws_service.dart: AWS Cognito getId failed to fetch identityId");
         return null;

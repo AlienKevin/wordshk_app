@@ -1,11 +1,11 @@
 [package]
-name = "wordshk_api"
+name = "rust_lib"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 wordshk_tools = { git = "https://github.com/AlienKevin/wordshk-tools.git", rev = "1f56e85627db95c779bb2f8e290ad543529e828d" }
-flutter_rust_bridge = "=1.82.1"
+flutter_rust_bridge = { version = "2.0.0-dev.4" }
 anyhow = { version = "1.0.75", features = ["backtrace"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -20,5 +20,4 @@ rmp-serde = "1.1.2"
 once_cell = "1.19.0"
 
 [lib]
-name = "wordshk_api"
 crate-type = ["cdylib", "staticlib"]

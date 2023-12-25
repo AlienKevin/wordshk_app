@@ -13,7 +13,8 @@ import '../widgets/syllable_pronunciation_button.dart';
 class ToneExerciseIntroductionPage extends StatelessWidget {
   final bool openedInExercise;
 
-  const ToneExerciseIntroductionPage({Key? key, required this.openedInExercise}) : super(key: key);
+  const ToneExerciseIntroductionPage({Key? key, required this.openedInExercise})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
               context,
               CustomPageRoute(builder: (context) => const ToneExercisePage()),
             );
-            context.read<ExerciseIntroductionState>()
+            context
+                .read<ExerciseIntroductionState>()
                 .setToneExerciseIntroduced();
           }
         },
@@ -45,7 +47,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
         showBackButton: true,
         back: const Icon(Icons.arrow_back),
         next: const Icon(Icons.arrow_forward),
-        done: Text(openedInExercise ? s.backToExercise : s.startExercise, style: const TextStyle(fontWeight: FontWeight.w600)),
+        done: Text(openedInExercise ? s.backToExercise : s.startExercise,
+            style: const TextStyle(fontWeight: FontWeight.w600)),
         pages: [
           PageViewModel(
             titleWidget: ConstrainedContent(
@@ -188,7 +191,7 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                         size: const Size(270, 330),
                         painter: Tone4ContourPainter(
                             strokeColor:
-                            Theme.of(context).textTheme.bodyMedium!.color!),
+                                Theme.of(context).textTheme.bodyMedium!.color!),
                       ),
                     ),
                     const Positioned(
@@ -407,7 +410,11 @@ class Tone4ContourPainter extends CustomPainter {
               12, // Adjusted y-coordinate to place the number above the line
         );
         textPainter.text = TextSpan(
-          text: tone == 2 ? "2      5                  " : tone == 6 ? "4      6" : tone.toString(),
+          text: tone == 2
+              ? "2      5                  "
+              : tone == 6
+                  ? "4      6"
+                  : tone.toString(),
           style: TextStyle(color: strokeColor, fontSize: 20),
         );
         textPainter.layout();

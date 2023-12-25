@@ -8,18 +8,17 @@ import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/main.dart';
 import 'package:wordshk/models/embedded.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/widgets/digital_ink_view.dart';
 import 'package:wordshk/widgets/search_bar.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
-import '../bridge_generated.dart';
 import '../constants.dart';
 import '../custom_page_route.dart';
-import '../ffi.dart';
+import '../main.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../models/search_result_type.dart';
@@ -203,9 +202,7 @@ class _HomePageState extends State<HomePage> {
   Widget showResultsNotFound() => FutureBuilder<List<String>>(
       future: (() {
         final query = context.watch<SearchQueryState>().query;
-        return api().then((api) {
-          return api.getJyutping(query: query);
-        });
+        return getJyutping(query: query);
       })(), // a previously-obtained Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) =>
           Padding(
@@ -276,13 +273,12 @@ class _HomePageState extends State<HomePage> {
       final romanization = context.read<RomanizationState>().romanization;
       switch (searchMode) {
         case SearchMode.pr:
-          api().then((api) {
-            return api.prSearch(
-                capacity: 10,
-                query: query,
-                script: script,
-                romanization: romanization);
-          }).then((results) {
+          prSearch(
+                  capacity: 10,
+                  query: query,
+                  script: script,
+                  romanization: romanization)
+              .then((results) {
             if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               setState(() {
@@ -294,39 +290,37 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case SearchMode.variant:
-          api().then((api) => api
-                  .variantSearch(capacity: 10, query: query, script: script)
-                  .then((results) {
-                if (!context.mounted) return;
-                if (searchStartTime >= lastSearchStartTime) {
-                  setState(() {
-                    variantSearchResults =
-                        results.unique((result) => result.variant);
-                    isSearchResultsEmpty = variantSearchResults.isEmpty;
-                    finishedSearch = true;
-                  });
-                }
-              }));
+          variantSearch(capacity: 10, query: query, script: script)
+              .then((results) {
+            if (!context.mounted) return;
+            if (searchStartTime >= lastSearchStartTime) {
+              setState(() {
+                variantSearchResults =
+                    results.unique((result) => result.variant);
+                isSearchResultsEmpty = variantSearchResults.isEmpty;
+                finishedSearch = true;
+              });
+            }
+          });
           break;
         case SearchMode.combined:
-          final combinedResults = api().then((api) => api.combinedSearch(
-              capacity: 10,
-              query: query,
-              script: script,
-              romanization: romanization));
-          combinedResults.then((results) {
+          combinedSearch(
+                  capacity: 10,
+                  query: query,
+                  script: script,
+                  romanization: romanization)
+              .then((results) {
             if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               final isCombinedResultsEmpty = results.prResults.isEmpty &&
                   results.variantResults.isEmpty &&
                   results.englishResults.isEmpty;
               if (isCombinedResultsEmpty) {
-                api()
-                    .then((api) => api.egSearch(
+                egSearch(
                         capacity: 10,
                         maxFirstIndexInEg: 10,
                         query: query,
-                        script: script))
+                        script: script)
                     .then((result) {
                   if (!context.mounted) return;
                   if (searchStartTime >= lastSearchStartTime) {
@@ -362,9 +356,7 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case SearchMode.english:
-          api()
-              .then((api) =>
-                  api.englishSearch(capacity: 10, query: query, script: script))
+          englishSearch(capacity: 10, query: query, script: script)
               .then((results) {
             if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {

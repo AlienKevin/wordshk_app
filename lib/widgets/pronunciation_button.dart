@@ -25,7 +25,9 @@ class PronunciationButton extends StatefulWidget {
 
 class PronunciationButtonState extends State<PronunciationButton> {
   void triggerPlay() {
-    context.read<PlayerState>().play(widget.player, context.read<SpeechRateState>());
+    context
+        .read<PlayerState>()
+        .play(widget.player, context.read<SpeechRateState>());
   }
 
   @override
@@ -36,7 +38,8 @@ class PronunciationButtonState extends State<PronunciationButton> {
             width: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
             child: ElevatedButton(
               onPressed: triggerPlay,
-              child: Icon(context.watch<PlayerState>().currentPlayer == widget.player
+              child: Icon(
+                  context.watch<PlayerState>().currentPlayer == widget.player
                       ? isMaterial(context)
                           ? Icons.stop_circle
                           : CupertinoIcons.stop_circle_fill
@@ -49,11 +52,12 @@ class PronunciationButtonState extends State<PronunciationButton> {
             visualDensity: VisualDensity.compact,
             tooltip: "Pronunciation",
             alignment: widget.alignment,
-            icon: Icon(context.watch<PlayerState>().currentPlayer == widget.player
-                ? isMaterial(context)
-                    ? Icons.stop_circle
-                    : CupertinoIcons.stop_circle_fill
-                : PlatformIcons(context).volumeUp),
+            icon:
+                Icon(context.watch<PlayerState>().currentPlayer == widget.player
+                    ? isMaterial(context)
+                        ? Icons.stop_circle
+                        : CupertinoIcons.stop_circle_fill
+                    : PlatformIcons(context).volumeUp),
             color: Theme.of(context).colorScheme.secondary,
             padding: EdgeInsets.zero,
             onPressed: triggerPlay);

@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:wordshk/src/rust/api/api.dart' show Script;
 
-import '../../bridge_generated.dart' show Script;
 import '../../models/entry.dart';
 import '../expandable.dart';
 import 'entry_variant.dart';
@@ -30,7 +30,7 @@ class EntryVariants extends StatelessWidget {
   @override
   Widget build(BuildContext context) => variants.length <= 1
       ? EntryVariant(
-          variant: script == Script.Simplified ? variantsSimp[0] : variants[0],
+          variant: script == Script.simplified ? variantsSimp[0] : variants[0],
           variantTextStyle: variantTextStyle,
           prTextStyle: prTextStyle,
         )
@@ -40,7 +40,7 @@ class EntryVariants extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     EntryVariant(
-                      variant: script == Script.Simplified
+                      variant: script == Script.simplified
                           ? variantsSimp[0]
                           : variants[0],
                       variantTextStyle: variantTextStyle,
@@ -65,7 +65,7 @@ class EntryVariants extends StatelessWidget {
                             .asMap()
                             .entries
                             .map((variant) => EntryVariant(
-                                  variant: script == Script.Simplified
+                                  variant: script == Script.simplified
                                       ? variantsSimp[variant.key]
                                       : variant.value,
                                   variantTextStyle: variantTextStyle,

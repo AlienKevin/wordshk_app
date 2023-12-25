@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/utils.dart';
 
-import '../../bridge_generated.dart';
 import '../../states/language_state.dart';
 import '../../widgets/preferences/radio_list_tile.dart';
 
@@ -22,11 +22,14 @@ class ScriptRadioListTiles extends StatelessWidget {
     }
 
     scriptRadioListTile(Script value) => PreferencesRadioListTile<Script>(
-        title: getScriptName(value, s), value: value, groupValue: script, onChanged: onScriptChange);
+        title: getScriptName(value, s),
+        value: value,
+        groupValue: script,
+        onChanged: onScriptChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      scriptRadioListTile(Script.Traditional),
-      scriptRadioListTile(Script.Simplified),
+      scriptRadioListTile(Script.traditional),
+      scriptRadioListTile(Script.simplified),
     ]);
   }
 }

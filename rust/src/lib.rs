@@ -1,3 +1,2 @@
-mod api;
-mod bridge_generated;
-mod utils;
+pub mod api;
+mod frb_generated;

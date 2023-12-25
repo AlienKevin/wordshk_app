@@ -13,6 +13,5 @@ class TtsPlayer extends Player {
 class SyllablesPlayer extends Player {
   final List<List<String>> prs;
 
-
   SyllablesPlayer({required this.prs, required super.atHeader});
 }

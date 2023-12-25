@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wordshk/src/rust/api/api.dart' show Script;
 
-import '../../bridge_generated.dart' show Script;
 import '../../constants.dart';
 import '../../models/entry.dart';
 import '../../models/entry_language.dart';
@@ -47,7 +47,7 @@ class EntryEg extends StatelessWidget {
             eg.zho == null
                 ? const SizedBox.shrink()
                 : EntryRichLine(
-                    line: script == Script.Simplified ? eg.zhoSimp! : eg.zho!,
+                    line: script == Script.simplified ? eg.zhoSimp! : eg.zho!,
                     lineTextStyle: lineTextStyle,
                     linkColor: linkColor,
                     rubyFontSize: rubyFontSize,
@@ -56,7 +56,7 @@ class EntryEg extends StatelessWidget {
             eg.yue == null
                 ? const SizedBox.shrink()
                 : EntryRichLine(
-                    line: script == Script.Simplified ? eg.yueSimp! : eg.yue!,
+                    line: script == Script.simplified ? eg.yueSimp! : eg.yue!,
                     lineTextStyle: lineTextStyle,
                     linkColor: linkColor,
                     rubyFontSize: rubyFontSize,

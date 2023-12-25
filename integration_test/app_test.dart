@@ -12,14 +12,15 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('take-screenshots', () {
-    testWidgets('home-page',
-            (tester) async {
-      final language = Language.values.byName(const String.fromEnvironment("language"));
+    testWidgets('home-page', (tester) async {
+      final language =
+          Language.values.byName(const String.fromEnvironment("language"));
       await app_main.runMyApp(firstTimeUser: false, language: language);
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 3));
 
-      final double screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      final double screenWidth =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
       print("screenWidth: $screenWidth");
       final isWideScreen = screenWidth > 600;
 
@@ -44,12 +45,14 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 1));
 
       final searchBar = find.byKey(const Key("homePageSearchBar"));
-      await tester.enterText(searchBar, switch (language) {
-        Language.en => "thanks",
-        Language.zhHans => "唔该",
-        Language.zhHant => "唔該",
-        _ => throw "Unsupported language: $language",
-      });
+      await tester.enterText(
+          searchBar,
+          switch (language) {
+            Language.en => "thanks",
+            Language.zhHans => "唔该",
+            Language.zhHant => "唔該",
+            _ => throw "Unsupported language: $language",
+          });
       await tester.pumpAndSettle(const Duration(seconds: 5));
 
       await takeScreenshot('home-search');
@@ -65,12 +68,14 @@ void main() {
         await tester.pumpAndSettle(const Duration(seconds: 3));
       }
 
-      final entryButton = find.textContaining(switch (language) {
-        Language.en => "m4 goi1",
-        Language.zhHans => "向对方表示感激",
-        Language.zhHant => "向對方表示感激",
-        _ => throw "Unsupported language: $language",
-      }, findRichText: true);
+      final entryButton = find.textContaining(
+          switch (language) {
+            Language.en => "m4 goi1",
+            Language.zhHans => "向对方表示感激",
+            Language.zhHant => "向對方表示感激",
+            _ => throw "Unsupported language: $language",
+          },
+          findRichText: true);
       await tester.tap(entryButton);
       await tester.pumpAndSettle(const Duration(seconds: 1));
 

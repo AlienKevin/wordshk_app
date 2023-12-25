@@ -125,10 +125,11 @@ class AboutPage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                    const QualityControlPage()),
+                                        const QualityControlPage()),
                               );
                             },
-                                icon: PlatformIcons(context).checkMarkCircledOutline),
+                                icon: PlatformIcons(context)
+                                    .checkMarkCircledOutline),
                           ])),
                   const SizedBox(height: 40),
                   sectionWithImage(

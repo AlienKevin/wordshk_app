@@ -6,7 +6,7 @@ use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{Script, VariantsMap};
 
-use crate::api::{EnglishSearchResult, PrSearchResult, VariantSearchResult};
+use crate::api::api::{EnglishSearchResult, PrSearchResult, VariantSearchResult};
 
 pub(crate) fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants_map: &VariantsMap, dict: &RichDict, script: Script, capacity: u32) -> Vec<PrSearchResult> {
     let mut pr_search_results = vec![];

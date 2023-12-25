@@ -9,9 +9,9 @@ import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
-import '../ffi.dart';
 import '../models/embedded.dart';
 import '../models/entry.dart';
+import '../src/rust/api/api.dart';
 import '../states/player_state.dart';
 import '../widgets/entry/entry.dart';
 import '../widgets/entry/entry_action_buttons.dart';
@@ -46,7 +46,7 @@ class _EntryPageState extends State<EntryPage> {
     super.initState();
     () async {
       try {
-        final json = await (await api()).getEntryGroupJson(id: widget.id);
+        final json = await getEntryGroupJson(id: widget.id);
         setState(() {
           entryGroup = json
               .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
@@ -140,34 +140,33 @@ class _EntryPageState extends State<EntryPage> {
           updateEntryIndex: updateEntryIndex,
           onTapLink: (entryVariant) {
             log("Tapped on link $entryVariant");
-            api().then((api) => api
-                    .getEntryId(query: entryVariant, script: context.read<LanguageState>().getScript())
-                    .then((id) {
-                  context.read<PlayerState>().refreshPlayerState();
-                  if (id == null) {
-                    Navigator.push(
-                      context,
-                      CustomPageRoute(
-                          builder: (context) => EntryNotPublishedPage(
-                              entryVariant: entryVariant)),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      CustomPageRoute(
-                          builder: (context) => EntryPage(
-                                id: id,
-                                showFirstEntryInGroupInitially: true,
-                                embedded:
-                                    widget.embedded == Embedded.embedded ||
-                                            widget.embedded ==
-                                                Embedded.nestedInEmbedded
-                                        ? Embedded.nestedInEmbedded
-                                        : Embedded.topLevel,
-                              )),
-                    );
-                  }
-                }));
+            getEntryId(
+                    query: entryVariant,
+                    script: context.read<LanguageState>().getScript())
+                .then((id) {
+              context.read<PlayerState>().refreshPlayerState();
+              if (id == null) {
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                      builder: (context) =>
+                          EntryNotPublishedPage(entryVariant: entryVariant)),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                      builder: (context) => EntryPage(
+                            id: id,
+                            showFirstEntryInGroupInitially: true,
+                            embedded: widget.embedded == Embedded.embedded ||
+                                    widget.embedded == Embedded.nestedInEmbedded
+                                ? Embedded.nestedInEmbedded
+                                : Embedded.topLevel,
+                          )),
+                );
+              }
+            });
           },
         ),
       );

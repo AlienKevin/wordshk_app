@@ -38,24 +38,26 @@ class EntryItemState with ChangeNotifier {
 
   List<int> get items => _items;
 
-  static Future<Database> createDatabase({required String tableName, required String databaseName}) async {
+  static Future<Database> createDatabase(
+      {required String tableName, required String databaseName}) async {
     final databasesPath = await getApplicationDocumentsDirectory();
 
     String databasePath = join(databasesPath.path, '$databaseName.db');
     Database database = await openDatabase(databasePath, version: 1,
         onCreate: (Database db, int version) async {
-          if (kDebugMode) {
-            print("Create database");
-          }
-          await db.execute(
-              'CREATE TABLE $tableName (id INTEGER PRIMARY KEY, time INTEGER)');
-        });
+      if (kDebugMode) {
+        print("Create database");
+      }
+      await db.execute(
+          'CREATE TABLE $tableName (id INTEGER PRIMARY KEY, time INTEGER)');
+    });
     return database;
   }
 
   Future<void> _loadItems() async {
     final db = await getDatabase();
-    List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(await db.query(tableName));
+    List<Map<String, dynamic>> results =
+        List<Map<String, dynamic>>.from(await db.query(tableName));
     // sort by ordering more recent items first
     results.sort((a, b) => b['time'] - a['time']);
     _items = results.map((e) => e['id'] as int).toList();

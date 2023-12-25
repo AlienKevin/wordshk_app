@@ -18,7 +18,8 @@ class NavigationDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextButton drawerButton(String label, IconData icon, gotoPage, [Key? key]) =>
+    TextButton drawerButton(String label, IconData icon, gotoPage,
+            [Key? key]) =>
         TextButton.icon(
           key: key,
           icon: Padding(
@@ -49,11 +50,11 @@ class NavigationDrawer extends StatelessWidget {
       child: SizedBox(
           width: 250,
           child: Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
+            // Add a ListView to the drawer. This ensures the user can scroll
+            // through the options in the drawer if there isn't enough vertical
+            // space to fit everything.
             child: ListView(
-      // Important: Remove any padding from the ListView.
+              // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
               children: [
                 SizedBox(
@@ -100,7 +101,8 @@ class NavigationDrawer extends StatelessWidget {
                     PlatformIcons(context).bookmarkOutline,
                     (_) => EntryItemsPage<BookmarkState>(
                           title: AppLocalizations.of(context)!.bookmarks,
-                          emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+                          emptyMessage:
+                              AppLocalizations.of(context)!.noBookmarks,
                           deletionConfirmationMessage:
                               AppLocalizations.of(context)!
                                   .bookmarkDeleteConfirmation,
@@ -111,13 +113,13 @@ class NavigationDrawer extends StatelessWidget {
                     isMaterial(context)
                         ? Icons.access_time_rounded
                         : CupertinoIcons.time,
-                        (_) => EntryItemsPage<HistoryState>(
-                      title: AppLocalizations.of(context)!.history,
-                      emptyMessage: AppLocalizations.of(context)!.noHistory,
-                      deletionConfirmationMessage:
-                      AppLocalizations.of(context)!
-                          .historyDeleteConfirmation,
-                    )),
+                    (_) => EntryItemsPage<HistoryState>(
+                          title: AppLocalizations.of(context)!.history,
+                          emptyMessage: AppLocalizations.of(context)!.noHistory,
+                          deletionConfirmationMessage:
+                              AppLocalizations.of(context)!
+                                  .historyDeleteConfirmation,
+                        )),
                 const Divider(),
                 drawerButton(AppLocalizations.of(context)!.exercise,
                     PlatformIcons(context).volumeUp, (_) => ExercisePage()),

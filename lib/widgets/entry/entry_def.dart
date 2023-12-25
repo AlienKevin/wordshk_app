@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/models/entry_language.dart';
+import 'package:wordshk/src/rust/api/api.dart' show Script;
 
-import '../../bridge_generated.dart' show Script;
 import '../../models/entry.dart';
 import 'entry_clause.dart';
 import 'entry_egs.dart';
@@ -39,7 +39,7 @@ class EntryDef extends StatelessWidget {
                 ? [
                     EntryClause(
                         clause:
-                            script == Script.Simplified ? def.yueSimp : def.yue,
+                            script == Script.simplified ? def.yueSimp : def.yue,
                         tag: "(${AppLocalizations.of(context)!.cantonese}) ",
                         lineTextStyle: lineTextStyle,
                         onTapLink: onTapLink,

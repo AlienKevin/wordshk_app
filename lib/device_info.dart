@@ -11,8 +11,7 @@ sealed class DeviceInfo with _$DeviceInfo {
   const factory DeviceInfo.android(
           String release, int sdkInt, String manufacturer, String model) =
       AndroidInfo;
-  const factory DeviceInfo.ios(
-      String systemName, String version) = IosInfo;
+  const factory DeviceInfo.ios(String systemName, String version) = IosInfo;
   const factory DeviceInfo.other() = OtherInfo;
 
   factory DeviceInfo.fromJson(Map<String, dynamic> json) =>

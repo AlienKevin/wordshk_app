@@ -19,7 +19,10 @@ class LanguageRadioListTiles extends StatelessWidget {
     }
 
     languageRadioListTile(Language value) => PreferencesRadioListTile<Language>(
-        title: value.toString(), value: value, groupValue: language, onChanged: onLanguageChange);
+        title: value.toString(),
+        value: value,
+        groupValue: language,
+        onChanged: onLanguageChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       languageRadioListTile(Language.yue),

@@ -81,7 +81,8 @@ List<Widget> showRubySegment(
               Positioned.fill(
                   bottom: 0,
                   child: Transform(
-                      transform: Matrix4.translationValues(0, -rubyYPos * 1.15 * 2, 0),
+                      transform:
+                          Matrix4.translationValues(0, -rubyYPos * 1.15 * 2, 0),
                       child: Container(
                         color: Theme.of(context).dividerColor.withOpacity(0.5),
                         height: rubyYPos,
@@ -102,7 +103,8 @@ List<Widget> showRubySegment(
                                         : tone == 4
                                             ? 1.0
                                             : 1.2) *
-                        -rubyYPos * 1.15;
+                        -rubyYPos *
+                        1.15;
                     final double angle = (tone == 1 || tone == 3 || tone == 6)
                         ? 0
                         : tone == 2

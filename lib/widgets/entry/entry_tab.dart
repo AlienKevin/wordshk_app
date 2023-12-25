@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:wordshk/src/rust/api/api.dart' show Script;
 
-import '../../bridge_generated.dart' show Script;
 import '../../constants.dart';
 import '../../models/entry.dart';
 import '../../states/entry_language_state.dart';
@@ -107,16 +107,14 @@ class _EntryTabState extends State<EntryTab> {
                         labels: widget.entry.labels,
                         lineTextStyle: widget.lineTextStyle),
                     EntrySimsOrAnts(
-                        label:
-                            "[${AppLocalizations.of(context)!.synonym}]",
+                        label: "[${AppLocalizations.of(context)!.synonym}]",
                         simsOrAnts: widget.entry.sims,
                         simsOrAntsSimp: widget.entry.simsSimp,
                         script: widget.script,
                         lineTextStyle: widget.lineTextStyle,
                         onTapLink: widget.onTapLink),
                     EntrySimsOrAnts(
-                        label:
-                            "[${AppLocalizations.of(context)!.antonym}]",
+                        label: "[${AppLocalizations.of(context)!.antonym}]",
                         simsOrAnts: widget.entry.ants,
                         simsOrAntsSimp: widget.entry.antsSimp,
                         script: widget.script,

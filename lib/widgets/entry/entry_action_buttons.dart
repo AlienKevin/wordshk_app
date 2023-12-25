@@ -34,7 +34,8 @@ class EntryActionButtons extends StatelessWidget {
           maintainSize: inAppBar,
           maintainAnimation: true,
           maintainState: true,
-          visible: !(isLoading || hasError || entryGroup![entryIndex!].published),
+          visible:
+              !(isLoading || hasError || entryGroup![entryIndex!].published),
           child: Container(
             color: inAppBar ? null : Theme.of(context).primaryColor,
             child: IconButton(

@@ -53,7 +53,7 @@ bool tone4MatchesTone6(Tone4 tone4, Tone6 tone6) {
     (Tone4.highLevel, Tone6.t1) ||
     (Tone4.rising, Tone6.t2 || Tone6.t5) ||
     (Tone4.midLevel, Tone6.t3) ||
-    (Tone4.low, Tone6.t4 || Tone6.t6)=>
+    (Tone4.low, Tone6.t4 || Tone6.t6) =>
       true,
     _ => false,
   };
@@ -99,7 +99,8 @@ class ToneExercisePageState extends State<ToneExercisePage> {
   final GlobalKey<PronunciationButtonState> pronunciationButtonKey =
       GlobalKey<PronunciationButtonState>();
   // item 2 is the default selected tone: mid level tone
-  final ScrollController _scrollController = FixedExtentScrollController(initialItem: 2);
+  final ScrollController _scrollController =
+      FixedExtentScrollController(initialItem: 2);
 
   @override
   void initState() {
@@ -120,16 +121,19 @@ class ToneExercisePageState extends State<ToneExercisePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.toneExercise),
-        actions: [IconButton(
-            onPressed: () {
-              // Go to the intro page
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ToneExerciseIntroductionPage(openedInExercise: true)),
-              );
-            },
-            icon: Icon(PlatformIcons(context).info))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                // Go to the intro page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ToneExerciseIntroductionPage(
+                          openedInExercise: true)),
+                );
+              },
+              icon: Icon(PlatformIcons(context).info))
+        ],
       ),
       body: Center(
         child: Wrap(
@@ -161,9 +165,10 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                     2 => Tone4.midLevel,
                     3 => Tone4.low,
                     _ => await (() async {
-                      await Sentry.captureMessage("Tone exercise selected tone index $index outside the range from 0 to 3");
-                      return state.selectedTone;
-                    })(),
+                        await Sentry.captureMessage(
+                            "Tone exercise selected tone index $index outside the range from 0 to 3");
+                        return state.selectedTone;
+                      })(),
                   };
                   print(tone);
                   setState(() {
@@ -179,7 +184,8 @@ class ToneExercisePageState extends State<ToneExercisePage> {
               ),
             ),
             SizedBox(
-                height: Theme.of(context).textTheme.displayMedium!.fontSize! / 2,
+                height:
+                    Theme.of(context).textTheme.displayMedium!.fontSize! / 2,
                 child: Center(
                     child: Text(switch (state) {
                   CheckedState(isCorrect: true) => "✅",
@@ -188,8 +194,7 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                 }))),
             ElevatedButton(
               onPressed: switch (state) {
-                ThinkingState(selectedTone: final selectedTone) =>
-                  () async {
+                ThinkingState(selectedTone: final selectedTone) => () async {
                     final tone6 = getExpectedTone6();
                     if (tone6 == null) {
                       // This shouldn't happen
@@ -240,10 +245,9 @@ class ToneExercisePageState extends State<ToneExercisePage> {
               style: ElevatedButton.styleFrom(elevation: 10),
               child: switch (state) {
                 ThinkingState() => Text(AppLocalizations.of(context)!.check),
-                CheckedState(isCorrect: final isCorrect) =>
-                    Text(isCorrect ?
-                      AppLocalizations.of(context)!.next
-                      : AppLocalizations.of(context)!.tryAgain),
+                CheckedState(isCorrect: final isCorrect) => Text(isCorrect
+                    ? AppLocalizations.of(context)!.next
+                    : AppLocalizations.of(context)!.tryAgain),
               },
             ),
           ],
@@ -284,9 +288,7 @@ class ToneLinePainter extends CustomPainter {
   final double strokeWidth;
 
   ToneLinePainter(
-      {required this.tone,
-      required this.strokeWidth,
-      required this.syllable});
+      {required this.tone, required this.strokeWidth, required this.syllable});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -316,8 +318,12 @@ class ToneLinePainter extends CustomPainter {
     path.lineTo(endPoint.dx, endPoint.dy);
     canvas.drawTextOnPath(
         (tone == Tone4.rising) ? "  $syllable" : "   $syllable", path,
-        textAlignment: tone == Tone4.low ? TextAlignment.bottom : TextAlignment.up,
-        textStyle: TextStyle(fontSize: 22, height: tone == Tone4.low ? 2.5 : 1.4, letterSpacing: -1));
+        textAlignment:
+            tone == Tone4.low ? TextAlignment.bottom : TextAlignment.up,
+        textStyle: TextStyle(
+            fontSize: 22,
+            height: tone == Tone4.low ? 2.5 : 1.4,
+            letterSpacing: -1));
     canvas.drawLine(startPoint, endPoint, paint);
   }
 

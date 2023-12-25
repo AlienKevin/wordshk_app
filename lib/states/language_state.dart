@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
 
-import '../bridge_generated.dart';
 import '../models/language.dart';
 
 class LanguageState with ChangeNotifier {
@@ -59,5 +59,5 @@ class LanguageState with ChangeNotifier {
 
   Script getScript() =>
       _script ??
-      (language == Language.zhHans ? Script.Simplified : Script.Traditional);
+      (language == Language.zhHans ? Script.simplified : Script.traditional);
 }

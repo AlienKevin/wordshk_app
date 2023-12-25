@@ -18,6 +18,8 @@ import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
+import 'package:wordshk/src/rust/api/api.dart';
+import 'package:wordshk/src/rust/frb_generated.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/analytics_state.dart';
 import 'package:wordshk/states/bookmark_state.dart';
@@ -64,6 +66,8 @@ class CustomSentryEventProcessor implements EventProcessor {
 }
 
 main() async {
+  await RustLib.init();
+
   // Avoid errors caused by flutter upgrade.
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -78,6 +82,9 @@ main() async {
 
 runMyApp({bool? firstTimeUser, Language? language}) async {
   try {
+    // Asynchronously initialize api
+    initApi();
+
     final prefs = await SharedPreferences.getInstance();
     if (kDebugMode) {
       print("Opening database...");

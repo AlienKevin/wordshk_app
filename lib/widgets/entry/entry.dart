@@ -56,41 +56,40 @@ class _EntryWidgetState extends State<EntryWidget>
           Row(children: [
             Expanded(
                 child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: TabBar(
-                    controller: _tabController,
-                    onTap: (newIndex) {
-                      if (newIndex != entryIndex) {
-                        context.read<PlayerState>().stop();
-                        setState(() {
-                          entryIndex = newIndex;
-                        });
-                        widget.updateEntryIndex(newIndex);
-                      }
-                    },
-                    isScrollable: true,
-                    // Required
-                    labelColor: lineTextStyle.color,
-                    unselectedLabelColor: lineTextStyle.color,
-                    // Other tabs color
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 30),
-                    // Space between tabs
-                    indicator: UnderlineTabIndicator(
-                      borderSide:
-                          BorderSide(color: lineTextStyle.color!, width: 2),
-                      // Indicator height
-                      insets: const EdgeInsets.symmetric(
-                          horizontal: 30), // Indicator width
-                    ),
-                    tabs: widget.entryGroup
-                        .asMap()
-                        .entries
-                        .map((entry) => Tab(
-                            text:
-                                "${entry.key + 1} ${entry.value.poses.map((pos) => translatePos(pos, localizationContext)).join("/")}"))
-                        .toList(),
-                  ),
-                )),
+              alignment: Alignment.centerLeft,
+              child: TabBar(
+                controller: _tabController,
+                onTap: (newIndex) {
+                  if (newIndex != entryIndex) {
+                    context.read<PlayerState>().stop();
+                    setState(() {
+                      entryIndex = newIndex;
+                    });
+                    widget.updateEntryIndex(newIndex);
+                  }
+                },
+                isScrollable: true,
+                // Required
+                labelColor: lineTextStyle.color,
+                unselectedLabelColor: lineTextStyle.color,
+                // Other tabs color
+                labelPadding: const EdgeInsets.symmetric(horizontal: 30),
+                // Space between tabs
+                indicator: UnderlineTabIndicator(
+                  borderSide: BorderSide(color: lineTextStyle.color!, width: 2),
+                  // Indicator height
+                  insets: const EdgeInsets.symmetric(
+                      horizontal: 30), // Indicator width
+                ),
+                tabs: widget.entryGroup
+                    .asMap()
+                    .entries
+                    .map((entry) => Tab(
+                        text:
+                            "${entry.key + 1} ${entry.value.poses.map((pos) => translatePos(pos, localizationContext)).join("/")}"))
+                    .toList(),
+              ),
+            )),
             widget.entryActionButtons ?? Container(),
           ]),
           Expanded(

@@ -15,9 +15,8 @@ class TtsPronunciationButton extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) =>
-      PronunciationButton(
-          player: TtsPlayer(text: text, atHeader: atHeader),
-          alignment: alignment,
-        );
+  Widget build(BuildContext context) => PronunciationButton(
+        player: TtsPlayer(text: text, atHeader: atHeader),
+        alignment: alignment,
+      );
 }
