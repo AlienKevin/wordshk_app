@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::env;
 use std::io::prelude::*;
 use std::io::Read;
 use std::sync::Mutex;
@@ -9,6 +10,7 @@ use flate2::read::GzDecoder;
 use flate2::write::GzEncoder;
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 use rmp_serde::Serializer;
 use serde::Serialize;
 use wordshk_tools::dict::clause_to_string;
@@ -21,8 +23,6 @@ use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
 pub use wordshk_tools::search::Script;
 use wordshk_tools::unicode::is_cjk;
-
-use once_cell::sync::Lazy;
 
 use crate::utils::*;
 
@@ -107,7 +107,7 @@ lazy_static! {
 }
 
 static API: Lazy<WordshkApi> =
-    Lazy::new(|| WordshkApi::new());
+    Lazy::new(|| { env::set_var("RUST_BACKTRACE", "1"); WordshkApi::new() });
 
 pub fn init_api() -> () {
     let _ = &*API;
