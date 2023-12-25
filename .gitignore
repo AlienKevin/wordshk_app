@@ -1,5 +1,4 @@
 # words.hk project specific
-ios/Runner/lib*.a
 Runner.app.dSYM.zip
 Runner.ipa
 untranslated_fields.txt

@@ -31,14 +31,6 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Source: https://stackoverflow.com/a/69515060/6798201
-  script_phase = {
-    :name => 'Compile Rust',
-    :script => %q{cargo lipo --release && cp target/universal/debug/libwordshk_api.a ../ios/Runner},
-    :execution_position => :before_compile,
-    :shell_path => '/bin/sh'
- }
-
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
