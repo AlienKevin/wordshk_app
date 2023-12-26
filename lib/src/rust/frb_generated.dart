@@ -79,9 +79,7 @@ abstract class RustLibApi extends BaseApi {
       dynamic hint});
 
   Future<void> generatePrIndices(
-      {required Romanization romanization,
-      required String prIndicesPath,
-      dynamic hint});
+      {required Romanization romanization, dynamic hint});
 
   Future<List<String>> getEntryGroupJson({required int id, dynamic hint});
 
@@ -107,11 +105,6 @@ abstract class RustLibApi extends BaseApi {
       required String query,
       required Script script,
       required Romanization romanization,
-      dynamic hint});
-
-  Future<void> updatePrIndices(
-      {required Romanization romanization,
-      required String prIndicesPath,
       dynamic hint});
 
   Future<List<VariantSearchResult>> variantSearch(
@@ -244,21 +237,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<void> generatePrIndices(
-      {required Romanization romanization,
-      required String prIndicesPath,
-      dynamic hint}) {
+      {required Romanization romanization, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         var arg0 = cst_encode_romanization(romanization);
-        var arg1 = cst_encode_String(prIndicesPath);
-        return wire.wire_generate_pr_indices(port_, arg0, arg1);
+        return wire.wire_generate_pr_indices(port_, arg0);
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_unit,
         decodeErrorData: dco_decode_AnyhowException,
       ),
       constMeta: kGeneratePrIndicesConstMeta,
-      argValues: [romanization, prIndicesPath],
+      argValues: [romanization],
       apiImpl: this,
       hint: hint,
     ));
@@ -266,7 +256,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kGeneratePrIndicesConstMeta => const TaskConstMeta(
         debugName: "generate_pr_indices",
-        argNames: ["romanization", "prIndicesPath"],
+        argNames: ["romanization"],
       );
 
   @override
@@ -466,33 +456,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kPrSearchConstMeta => const TaskConstMeta(
         debugName: "pr_search",
         argNames: ["capacity", "query", "script", "romanization"],
-      );
-
-  @override
-  Future<void> updatePrIndices(
-      {required Romanization romanization,
-      required String prIndicesPath,
-      dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_romanization(romanization);
-        var arg1 = cst_encode_String(prIndicesPath);
-        return wire.wire_update_pr_indices(port_, arg0, arg1);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kUpdatePrIndicesConstMeta,
-      argValues: [romanization, prIndicesPath],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kUpdatePrIndicesConstMeta => const TaskConstMeta(
-        debugName: "update_pr_indices",
-        argNames: ["romanization", "prIndicesPath"],
       );
 
   @override

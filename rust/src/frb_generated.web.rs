@@ -3,12 +3,10 @@
 
 // Section: imports
 
-use super::*;
-use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-use flutter_rust_bridge::for_generated::transform_result_dco;
 use flutter_rust_bridge::for_generated::wasm_bindgen;
 use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
-use flutter_rust_bridge::{Handler, IntoIntoDart};
+
+use super::*;
 
 // Section: dart2rust
 
@@ -423,9 +421,8 @@ pub fn wire_english_search(
 pub fn wire_generate_pr_indices(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     romanization: i32,
-    pr_indices_path: String,
 ) {
-    wire_generate_pr_indices_impl(port_, romanization, pr_indices_path)
+    wire_generate_pr_indices_impl(port_, romanization)
 }
 
 #[wasm_bindgen]
@@ -484,15 +481,6 @@ pub fn wire_pr_search(
     romanization: i32,
 ) {
     wire_pr_search_impl(port_, capacity, query, script, romanization)
-}
-
-#[wasm_bindgen]
-pub fn wire_update_pr_indices(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    romanization: i32,
-    pr_indices_path: String,
-) {
-    wire_update_pr_indices_impl(port_, romanization, pr_indices_path)
 }
 
 #[wasm_bindgen]

@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
@@ -25,27 +22,7 @@ class RomanizationState with ChangeNotifier {
 
     spotlightIndexingState.initSpotlightIndexRomanization(romanization);
 
-    initPrIndices();
-  }
-
-  Future<File> get _prIndicesFile async {
-    final directory = await getApplicationCacheDirectory();
-    final oldFile = File('${directory.path}/prIndices.msgpack');
-    if (await oldFile.exists()) {
-      // Delete the file
-      oldFile.delete();
-    }
-    return File('${directory.path}/prIndices.rkyv');
-  }
-
-  void initPrIndices() async {
-    final prIndicesFile = await _prIndicesFile;
-    if (prIndicesFile.existsSync()) {
-        await updatePrIndices(
-            romanization: romanization, prIndicesPath: prIndicesFile.path);
-    } else {
-      await generatePrIndices(romanization: romanization, prIndicesPath: prIndicesFile.path);
-    }
+    generatePrIndices(romanization: romanization);
   }
 
   void updateRomanization(Romanization newRomanization) async {
@@ -56,9 +33,7 @@ class RomanizationState with ChangeNotifier {
     SharedPreferences.getInstance().then((prefs) async {
       prefs.setInt("romanization", newRomanization.index);
     });
-
-    final prIndicesFile = await _prIndicesFile;
-    await generatePrIndices(romanization: romanization, prIndicesPath: prIndicesFile.path);
+    await generatePrIndices(romanization: romanization);
   }
 
   String showPrs(List<String> jyutpings) {

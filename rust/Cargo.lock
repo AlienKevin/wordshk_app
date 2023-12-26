@@ -1999,7 +1999,7 @@ dependencies = [
 [[package]]
 name = "wordshk_tools"
 version = "3.16.0-beta.10"
-source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=6407726e3efdae962aa10df967be4c83d3d868b0#6407726e3efdae962aa10df967be4c83d3d868b0"
+source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=26ff64069ce7b658fe95f55f1de67fb55ebf0ea3#26ff64069ce7b658fe95f55f1de67fb55ebf0ea3"
 dependencies = [
  "csv",
  "deunicode",

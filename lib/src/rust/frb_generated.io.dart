@@ -691,23 +691,18 @@ class RustLibWire implements BaseWire {
   void wire_generate_pr_indices(
     int port_,
     int romanization,
-    ffi.Pointer<wire_cst_list_prim_u_8> pr_indices_path,
   ) {
     return _wire_generate_pr_indices(
       port_,
       romanization,
-      pr_indices_path,
     );
   }
 
-  late final _wire_generate_pr_indicesPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(
-                  ffi.Int64, ffi.Int32, ffi.Pointer<wire_cst_list_prim_u_8>)>>(
-      'wire_generate_pr_indices');
+  late final _wire_generate_pr_indicesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Int32)>>(
+          'wire_generate_pr_indices');
   late final _wire_generate_pr_indices =
-      _wire_generate_pr_indicesPtr.asFunction<
-          void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>)>();
+      _wire_generate_pr_indicesPtr.asFunction<void Function(int, int)>();
 
   void wire_get_entry_group_json(
     int port_,
@@ -857,25 +852,6 @@ class RustLibWire implements BaseWire {
               ffi.Int32)>>('wire_pr_search');
   late final _wire_pr_search = _wire_pr_searchPtr.asFunction<
       void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>, int, int)>();
-
-  void wire_update_pr_indices(
-    int port_,
-    int romanization,
-    ffi.Pointer<wire_cst_list_prim_u_8> pr_indices_path,
-  ) {
-    return _wire_update_pr_indices(
-      port_,
-      romanization,
-      pr_indices_path,
-    );
-  }
-
-  late final _wire_update_pr_indicesPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64, ffi.Int32,
-              ffi.Pointer<wire_cst_list_prim_u_8>)>>('wire_update_pr_indices');
-  late final _wire_update_pr_indices = _wire_update_pr_indicesPtr.asFunction<
-      void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>)>();
 
   void wire_variant_search(
     int port_,

@@ -537,9 +537,8 @@ class RustLibWire extends BaseWire {
           NativePortType port_, int capacity, String query, int script) =>
       wasmModule.wire_english_search(port_, capacity, query, script);
 
-  void wire_generate_pr_indices(
-          NativePortType port_, int romanization, String pr_indices_path) =>
-      wasmModule.wire_generate_pr_indices(port_, romanization, pr_indices_path);
+  void wire_generate_pr_indices(NativePortType port_, int romanization) =>
+      wasmModule.wire_generate_pr_indices(port_, romanization);
 
   void wire_get_entry_group_json(NativePortType port_, int id) =>
       wasmModule.wire_get_entry_group_json(port_, id);
@@ -567,10 +566,6 @@ class RustLibWire extends BaseWire {
   void wire_pr_search(NativePortType port_, int capacity, String query,
           int script, int romanization) =>
       wasmModule.wire_pr_search(port_, capacity, query, script, romanization);
-
-  void wire_update_pr_indices(
-          NativePortType port_, int romanization, String pr_indices_path) =>
-      wasmModule.wire_update_pr_indices(port_, romanization, pr_indices_path);
 
   void wire_variant_search(
           NativePortType port_, int capacity, String query, int script) =>
@@ -604,7 +599,7 @@ class RustLibWasmModule implements WasmModule {
       NativePortType port_, int capacity, String query, int script);
 
   external void wire_generate_pr_indices(
-      NativePortType port_, int romanization, String pr_indices_path);
+      NativePortType port_, int romanization);
 
   external void wire_get_entry_group_json(NativePortType port_, int id);
 
@@ -625,9 +620,6 @@ class RustLibWasmModule implements WasmModule {
 
   external void wire_pr_search(NativePortType port_, int capacity, String query,
       int script, int romanization);
-
-  external void wire_update_pr_indices(
-      NativePortType port_, int romanization, String pr_indices_path);
 
   external void wire_variant_search(
       NativePortType port_, int capacity, String query, int script);
