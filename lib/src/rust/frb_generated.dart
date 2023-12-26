@@ -65,6 +65,8 @@ abstract class RustLibApi extends BaseApi {
       required Romanization romanization,
       dynamic hint});
 
+  Stream<String> createLogStream({dynamic hint});
+
   Future<(String?, List<EgSearchResult>)> egSearch(
       {required int capacity,
       required int maxFirstIndexInEg,
@@ -150,6 +152,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCombinedSearchConstMeta => const TaskConstMeta(
         debugName: "combined_search",
         argNames: ["capacity", "query", "script", "romanization"],
+      );
+
+  @override
+  Stream<String> createLogStream({dynamic hint}) {
+    return handler.executeStream(StreamTask(
+      callFfi: (port_) {
+        return wire.wire_create_log_stream(port_);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_String,
+        decodeErrorData: null,
+      ),
+      constMeta: kCreateLogStreamConstMeta,
+      argValues: [],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCreateLogStreamConstMeta => const TaskConstMeta(
+        debugName: "create_log_stream",
+        argNames: [],
       );
 
   @override

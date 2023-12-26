@@ -397,6 +397,11 @@ pub fn wire_combined_search(
 }
 
 #[wasm_bindgen]
+pub fn wire_create_log_stream(port_: flutter_rust_bridge::for_generated::MessagePort) {
+    wire_create_log_stream_impl(port_)
+}
+
+#[wasm_bindgen]
 pub fn wire_eg_search(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     capacity: u32,

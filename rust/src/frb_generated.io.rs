@@ -377,6 +377,11 @@ pub extern "C" fn wire_combined_search(
 }
 
 #[no_mangle]
+pub extern "C" fn wire_create_log_stream(port_: i64) {
+    wire_create_log_stream_impl(port_)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_eg_search(
     port_: i64,
     capacity: u32,

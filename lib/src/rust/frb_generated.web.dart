@@ -3,13 +3,11 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
+import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
-
-import 'api/api.dart';
 import 'frb_generated.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -539,6 +537,9 @@ class RustLibWire extends BaseWire {
       wasmModule.wire_combined_search(
           port_, capacity, query, script, romanization);
 
+  void wire_create_log_stream(NativePortType port_) =>
+      wasmModule.wire_create_log_stream(port_);
+
   void wire_eg_search(NativePortType port_, int capacity,
           int max_first_index_in_eg, String query, int script) =>
       wasmModule.wire_eg_search(
@@ -601,6 +602,8 @@ class RustLibWasmModule implements WasmModule {
 
   external void wire_combined_search(NativePortType port_, int capacity,
       String query, int script, int romanization);
+
+  external void wire_create_log_stream(NativePortType port_);
 
   external void wire_eg_search(NativePortType port_, int capacity,
       int max_first_index_in_eg, String query, int script);

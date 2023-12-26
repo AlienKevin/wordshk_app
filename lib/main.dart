@@ -67,6 +67,9 @@ class CustomSentryEventProcessor implements EventProcessor {
 
 main() async {
   await RustLib.init();
+  createLogStream().listen((msg) {
+    print('[rust]: $msg');
+  });
 
   // Avoid errors caused by flutter upgrade.
   WidgetsFlutterBinding.ensureInitialized();

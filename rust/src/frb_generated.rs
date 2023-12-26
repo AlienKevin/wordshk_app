@@ -68,6 +68,24 @@ fn wire_combined_search_impl(
         },
     )
 }
+fn wire_create_log_stream_impl(port_: flutter_rust_bridge::for_generated::MessagePort) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_log_stream",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Stream,
+        },
+        move || {
+            move |context| {
+                transform_result_dco((move || {
+                    Result::<_, ()>::Ok(crate::api::api::create_log_stream(StreamSink::new(
+                        context.rust2dart_context().stream_sink::<_, String>(),
+                    )))
+                })())
+            }
+        },
+    )
+}
 fn wire_eg_search_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     capacity: impl CstDecode<u32> + core::panic::UnwindSafe,

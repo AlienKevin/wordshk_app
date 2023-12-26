@@ -10,14 +10,14 @@ anyhow = { version = "1.0.75", features = ["backtrace"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 parking_lot = "0.12.1"
-lazy_static = "1.4.0"
 flate2 = "1.0"
-#oslog = { version = "0.1.0" }
-#log = "0.4.14"
 openssl = { version = "*", features = ["vendored"] }
 csv = "1.3.0"
 rmp-serde = "1.1.2"
 once_cell = "1.19.0"
+simplelog = "0.12.1"
+lazy_static = "1.4.0"
+log = "0.4.20"
 
 [lib]
 crate-type = ["cdylib", "staticlib"]

@@ -3,6 +3,7 @@ use std::env;
 use std::io::prelude::*;
 use std::io::Read;
 use std::sync::Mutex;
+use std::time::Instant;
 
 use anyhow::Result;
 use flate2::Compression;
@@ -11,6 +12,7 @@ use flate2::write::GzEncoder;
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
+use parking_lot::RwLock;
 use rmp_serde::Serializer;
 use serde::Serialize;
 use wordshk_tools::dict::clause_to_string;
@@ -25,10 +27,7 @@ pub use wordshk_tools::search::Script;
 use wordshk_tools::unicode::is_cjk;
 
 use crate::api::utils::*;
-
-// use oslog::{OsLogger};
-// use log::{LevelFilter, info};
-// use log::info;
+use crate::frb_generated::StreamSink;
 
 pub struct CombinedSearchResults {
     pub variant_results: Vec<VariantSearchResult>,
@@ -102,8 +101,21 @@ pub struct WordshkApi {
     word_list: HashMap<String, Vec<String>>,
 }
 
-lazy_static! {
-    static ref IS_LOG_INITIALIZED: Mutex<bool> = Mutex::new(false);
+lazy_static! { static ref log_stream_sink: RwLock<Option<StreamSink<String>>> = RwLock::new(None); }
+
+pub fn create_log_stream(s: StreamSink<String>) {
+    *log_stream_sink.write() = Some(s);
+}
+
+macro_rules! log {
+    ($t:expr, $msg:expr $(, $args:expr)*) => {{
+        let message = format!($msg $(, $args)*);
+        let elapsed_time = $t.elapsed().as_micros();
+        let log_message = format!("{} ({}µs)", message, elapsed_time);
+        log_stream_sink.write().as_ref().unwrap().add(log_message);
+        // Update time
+        $t = Instant::now();
+    }};
 }
 
 static API: Lazy<WordshkApi> =
@@ -115,38 +127,38 @@ pub fn init_api() -> () {
 
 impl WordshkApi {
     fn new() -> WordshkApi {
-        // if !(*IS_LOG_INITIALIZED.lock()) {
-        //     OsLogger::new("hk.words")
-        //         .level_filter(LevelFilter::Debug)
-        //         .category_level_filter("Settings", LevelFilter::Trace)
-        //         .init()
-        //         .unwrap();
-        //     *IS_LOG_INITIALIZED.lock() = true;
-        // }
-        // info!("Calling Api::new()...");
+        let mut t = Instant::now();
 
         let dict_json = include_bytes!("../../data/dict.json");
+        log!(t, "loaded dict_json");
         let english_index_json = include_bytes!("../../data/english_index.json");
+        log!(t, "Loaded english_index_json");
         let word_list = include_str!("../../data/word_list.tsv");
+        log!(t, "Loaded word_list");
+
 
         let mut dict_decompressor = GzDecoder::new(&dict_json[..]);
         let mut dict_str = String::new();
         dict_decompressor.read_to_string(&mut dict_str).unwrap();
+        log!(t, "Decompressed dict_json");
         let dict: RichDict = serde_json::from_str(&dict_str).unwrap();
+        log!(t, "Parsed dict_json");
 
         let variants_map = search::rich_dict_to_variants_map(&dict);
-        // info!("Loaded dict");
+        log!(t, "Constructed variants_map");
 
         let mut english_index_decompressor = GzDecoder::new(&english_index_json[..]);
         let mut english_index_str = String::new();
         english_index_decompressor.read_to_string(&mut english_index_str).unwrap();
+        log!(t, "Decompressed english_index");
         let english_index: EnglishIndex = serde_json::from_str(&english_index_str).unwrap();
-        // info!("Loaded english index");
+        log!(t, "Parsed english_index");
 
         let mut rdr = csv::ReaderBuilder::new()
             .has_headers(false)
             .delimiter(b'\t')
             .from_reader(word_list.as_bytes());
+        log!(t, "Read word_list");
         let mut word_list = HashMap::new();
         for result in rdr.records() {
             let record = result.unwrap();
@@ -160,7 +172,7 @@ impl WordshkApi {
             // push traditional variant
             word_list.entry(trad).or_insert(vec![]).push(pr);
         }
-        // info!("Loaded word list");
+        log!(t, "Loaded word_list");
 
         WordshkApi {
             dict,

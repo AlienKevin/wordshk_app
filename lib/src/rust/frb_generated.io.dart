@@ -3,14 +3,12 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
+import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
-
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
-
-import 'api/api.dart';
 import 'frb_generated.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -636,6 +634,20 @@ class RustLibWire implements BaseWire {
               ffi.Int32)>>('wire_combined_search');
   late final _wire_combined_search = _wire_combined_searchPtr.asFunction<
       void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>, int, int)>();
+
+  void wire_create_log_stream(
+    int port_,
+  ) {
+    return _wire_create_log_stream(
+      port_,
+    );
+  }
+
+  late final _wire_create_log_streamPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_create_log_stream');
+  late final _wire_create_log_stream =
+      _wire_create_log_streamPtr.asFunction<void Function(int)>();
 
   void wire_eg_search(
     int port_,

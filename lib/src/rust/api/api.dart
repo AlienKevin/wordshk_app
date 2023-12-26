@@ -7,6 +7,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 import '../frb_generated.dart';
 
+Stream<String> createLogStream({dynamic hint}) =>
+    RustLib.instance.api.createLogStream(hint: hint);
+
 Future<void> initApi({dynamic hint}) =>
     RustLib.instance.api.initApi(hint: hint);
 
