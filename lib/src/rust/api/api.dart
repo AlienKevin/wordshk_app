@@ -17,43 +17,6 @@ Future<void> initApi(
     RustLib.instance.api.initApi(
         dictData: dictData, englishIndexData: englishIndexData, hint: hint);
 
-Future<List<EntrySummary>> getEntrySummaries(
-        {required Uint32List entryIds, required Script script, dynamic hint}) =>
-    RustLib.instance.api
-        .getEntrySummaries(entryIds: entryIds, script: script, hint: hint);
-
-Future<void> updatePrIndices({required String prIndicesPath, dynamic hint}) =>
-    RustLib.instance.api
-        .updatePrIndices(prIndicesPath: prIndicesPath, hint: hint);
-
-Future<void> generatePrIndices(
-        {required Romanization romanization,
-        required String prIndicesPath,
-        dynamic hint}) =>
-    RustLib.instance.api.generatePrIndices(
-        romanization: romanization, prIndicesPath: prIndicesPath, hint: hint);
-
-Future<List<PrSearchResult>> prSearch(
-        {required int capacity,
-        required String query,
-        required Script script,
-        required Romanization romanization,
-        dynamic hint}) =>
-    RustLib.instance.api.prSearch(
-        capacity: capacity,
-        query: query,
-        script: script,
-        romanization: romanization,
-        hint: hint);
-
-Future<List<VariantSearchResult>> variantSearch(
-        {required int capacity,
-        required String query,
-        required Script script,
-        dynamic hint}) =>
-    RustLib.instance.api.variantSearch(
-        capacity: capacity, query: query, script: script, hint: hint);
-
 Future<CombinedSearchResults> combinedSearch(
         {required int capacity,
         required String query,
@@ -66,14 +29,6 @@ Future<CombinedSearchResults> combinedSearch(
         script: script,
         romanization: romanization,
         hint: hint);
-
-Future<List<EnglishSearchResult>> englishSearch(
-        {required int capacity,
-        required String query,
-        required Script script,
-        dynamic hint}) =>
-    RustLib.instance.api.englishSearch(
-        capacity: capacity, query: query, script: script, hint: hint);
 
 Future<(String?, List<EgSearchResult>)> egSearch(
         {required int capacity,
@@ -88,11 +43,20 @@ Future<(String?, List<EgSearchResult>)> egSearch(
         script: script,
         hint: hint);
 
-Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint}) =>
-    RustLib.instance.api.getSplotlightSummaries(hint: hint);
+Future<List<EnglishSearchResult>> englishSearch(
+        {required int capacity,
+        required String query,
+        required Script script,
+        dynamic hint}) =>
+    RustLib.instance.api.englishSearch(
+        capacity: capacity, query: query, script: script, hint: hint);
 
-Future<String> getEntryJson({required int id, dynamic hint}) =>
-    RustLib.instance.api.getEntryJson(id: id, hint: hint);
+Future<void> generatePrIndices(
+        {required Romanization romanization,
+        required String prIndicesPath,
+        dynamic hint}) =>
+    RustLib.instance.api.generatePrIndices(
+        romanization: romanization, prIndicesPath: prIndicesPath, hint: hint);
 
 Future<List<String>> getEntryGroupJson({required int id, dynamic hint}) =>
     RustLib.instance.api.getEntryGroupJson(id: id, hint: hint);
@@ -101,8 +65,44 @@ Future<int?> getEntryId(
         {required String query, required Script script, dynamic hint}) =>
     RustLib.instance.api.getEntryId(query: query, script: script, hint: hint);
 
+Future<String> getEntryJson({required int id, dynamic hint}) =>
+    RustLib.instance.api.getEntryJson(id: id, hint: hint);
+
+Future<List<EntrySummary>> getEntrySummaries(
+        {required Uint32List entryIds, required Script script, dynamic hint}) =>
+    RustLib.instance.api
+        .getEntrySummaries(entryIds: entryIds, script: script, hint: hint);
+
 Future<List<String>> getJyutping({required String query, dynamic hint}) =>
     RustLib.instance.api.getJyutping(query: query, hint: hint);
+
+Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint}) =>
+    RustLib.instance.api.getSplotlightSummaries(hint: hint);
+
+Future<List<PrSearchResult>> prSearch(
+        {required int capacity,
+        required String query,
+        required Script script,
+        required Romanization romanization,
+        dynamic hint}) =>
+    RustLib.instance.api.prSearch(
+        capacity: capacity,
+        query: query,
+        script: script,
+        romanization: romanization,
+        hint: hint);
+
+Future<void> updatePrIndices({required String prIndicesPath, dynamic hint}) =>
+    RustLib.instance.api
+        .updatePrIndices(prIndicesPath: prIndicesPath, hint: hint);
+
+Future<List<VariantSearchResult>> variantSearch(
+        {required int capacity,
+        required String query,
+        required Script script,
+        dynamic hint}) =>
+    RustLib.instance.api.variantSearch(
+        capacity: capacity, query: query, script: script, hint: hint);
 
 class CombinedSearchResults {
   final List<VariantSearchResult> variantResults;

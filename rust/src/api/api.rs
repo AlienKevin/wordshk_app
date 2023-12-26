@@ -3,7 +3,7 @@ use std::collections::BinaryHeap;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::sync::Mutex;
 use std::time::Instant;
 
@@ -96,7 +96,7 @@ pub struct EntrySummary {
 pub struct WordshkApi {
     dict_data: Vec<u8>,
     english_index_data: Vec<u8>,
-    pr_indices_data: Option<(Mmap, usize)>,
+    pr_indices_data: Option<Vec<u8>>,
     variants_map: VariantsMap,
     word_list: HashMap<String, Vec<String>>,
 }
@@ -174,8 +174,8 @@ fn english_index(english_index_data: &Vec<u8>) -> &ArchivedEnglishIndex {
     unsafe { rkyv::archived_root::<EnglishIndex>(english_index_data) }
 }
 
-fn pr_indices(pr_indices_data: &Option<(Mmap, usize)>) -> Option<&ArchivedPrIndices> {
-    pr_indices_data.as_ref().map(|(pr_indices_data, len)| unsafe { rkyv::archived_root::<PrIndices>(&pr_indices_data[..*len]) })
+fn pr_indices(pr_indices_data: &Option<Vec<u8>>) -> Option<&ArchivedPrIndices> {
+    pr_indices_data.as_ref().map(|pr_indices_data| unsafe { rkyv::archived_root::<PrIndices>(&pr_indices_data) })
 }
 
 pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<EntrySummary>> {
@@ -194,20 +194,9 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<En
 
 pub fn update_pr_indices(pr_indices_path: String) -> Result<()> {
     log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] pr_indices_path: {}", pr_indices_path));
-    let file = File::open(pr_indices_path)?;
-    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] Successfully opened file"));
-    let file_size = file.metadata()?.len() as usize;
-    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] File size {}", file_size));
-    let page_size = MmapOptions::page_size();
-    let page_count = (file_size + page_size - 1) / page_size;
-    let aligned_file_size = page_count * page_size;
-    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] Aligned file size {}", aligned_file_size));
-    API.lock().unwrap().pr_indices_data = Some((unsafe {
-        MmapOptions::new(aligned_file_size)?
-            .with_file(&file, 0)
-            .map()?
-    }, file_size));
-    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] Successfully mapped file"));
+    let mut buffer = Vec::new();
+    File::read_to_end(&mut File::open(pr_indices_path)?, &mut buffer)?;
+    API.lock().unwrap().pr_indices_data = Some(buffer);
     Ok(())
 }
 
@@ -221,16 +210,8 @@ pub fn generate_pr_indices(romanization: Romanization, pr_indices_path: String) 
         .write(true)
         .create(true).open(pr_indices_path)?;
     file.write_all(&pr_indices_data)?;
-    log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] Wrote generated pr_indices to file"));
-    let data_size = pr_indices_data.len();
-    let page_size = MmapOptions::page_size();
-    let page_count = (data_size + page_size - 1) / page_size;
-    let aligned_data_size = page_count * page_size;
-    API.lock().unwrap().pr_indices_data = Some((unsafe {
-        MmapOptions::new(aligned_data_size)?
-            .with_file(&file, 0)
-            .map()?
-    }, data_size));
+
+    API.lock().unwrap().pr_indices_data = Some(pr_indices_data.to_vec());
     log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] Mapped file to pr_indices_data"));
     Ok(())
 }
