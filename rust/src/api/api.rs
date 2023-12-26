@@ -197,28 +197,21 @@ pub fn generate_pr_indices(romanization: Romanization) -> Result<()> {
 }
 
 pub fn pr_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
-    log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] Start"));
     let api = API.lock().unwrap();
     // Wait for pr_indices to be updated
     match &api.pr_indices {
         None => vec![],
         Some(pr_indices) => {
-            log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] pr_indices found"));
             let mut ranks = search::pr_search(pr_indices, dict(&api.dict_data), &query, romanization);
-            log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] search found {} ranks", ranks.len()));
             let results = pr_ranks_to_results(&mut ranks, &api.variants_map, dict(&api.dict_data), script, capacity);
-            log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] search found {} results", results.len()));
             results
         }
     }
 }
 
 pub fn variant_search(capacity: u32, query: String, script: Script) -> Vec<VariantSearchResult> {
-    log_stream_sink.write().as_ref().unwrap().add("[variant_search] started".to_string());
     let api = API.lock().unwrap();
-    log_stream_sink.write().as_ref().unwrap().add("[variant_search] api locked".to_string());
     let mut ranks = search::variant_search(&api.variants_map, &query, script);
-    log_stream_sink.write().as_ref().unwrap().add(format!("[variant_search] found {} ranks", ranks.len()));
     variant_ranks_to_results(&mut ranks, &api.variants_map, dict(&api.dict_data), script, capacity)
 }
 
@@ -345,7 +338,6 @@ pub fn get_jyutping(query: String) -> Vec<String> {
 }
 
 fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearchRank>, variants_map: &VariantsMap, dict: &ArchivedRichDict, script: Script, capacity: u32) -> Vec<VariantSearchResult> {
-    log_stream_sink.write().as_ref().unwrap().add("[variant_ranks_to_results] started".to_string());
     let mut variant_search_results = vec![];
     let mut i = 0;
     while variant_ranks.len() > 0 && i < capacity {
@@ -389,13 +381,10 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
 }
 
 fn get_entry_defs(id: EntryId, dict: &ArchivedRichDict, script: Script) -> Vec<(String, String)> {
-    log_stream_sink.write().as_ref().unwrap().add("[get_entry_defs] started".to_string());
     let defs = &dict.get(&id).unwrap().defs;
-    log_stream_sink.write().as_ref().unwrap().add("[get_entry_defs] got defs".to_string());
     defs.iter().filter_map(|def|
         def.eng.as_ref().map(|def| {
             let result = clause_to_string(&def.deserialize(&mut rkyv::Infallible).unwrap());
-            log_stream_sink.write().as_ref().unwrap().add("[get_entry_defs] deserialized def eng".to_string());
             result
         }).map(|eng|
             (clause_to_string(&match script {
