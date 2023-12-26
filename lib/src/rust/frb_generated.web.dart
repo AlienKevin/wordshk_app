@@ -568,8 +568,9 @@ class RustLibWire extends BaseWire {
           int script, int romanization) =>
       wasmModule.wire_pr_search(port_, capacity, query, script, romanization);
 
-  void wire_update_pr_indices(NativePortType port_, String pr_indices_path) =>
-      wasmModule.wire_update_pr_indices(port_, pr_indices_path);
+  void wire_update_pr_indices(
+          NativePortType port_, int romanization, String pr_indices_path) =>
+      wasmModule.wire_update_pr_indices(port_, romanization, pr_indices_path);
 
   void wire_variant_search(
           NativePortType port_, int capacity, String query, int script) =>
@@ -626,7 +627,7 @@ class RustLibWasmModule implements WasmModule {
       int script, int romanization);
 
   external void wire_update_pr_indices(
-      NativePortType port_, String pr_indices_path);
+      NativePortType port_, int romanization, String pr_indices_path);
 
   external void wire_variant_search(
       NativePortType port_, int capacity, String query, int script);

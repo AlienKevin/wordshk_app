@@ -3,9 +3,10 @@
 
 // Section: imports
 
-use flutter_rust_bridge::Handler;
-
 use super::*;
+use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
+use flutter_rust_bridge::for_generated::transform_result_dco;
+use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: dart2rust
 
@@ -466,8 +467,12 @@ pub extern "C" fn wire_pr_search(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_update_pr_indices(port_: i64, pr_indices_path: *mut wire_cst_list_prim_u_8) {
-    wire_update_pr_indices_impl(port_, pr_indices_path)
+pub extern "C" fn wire_update_pr_indices(
+    port_: i64,
+    romanization: i32,
+    pr_indices_path: *mut wire_cst_list_prim_u_8,
+) {
+    wire_update_pr_indices_impl(port_, romanization, pr_indices_path)
 }
 
 #[no_mangle]

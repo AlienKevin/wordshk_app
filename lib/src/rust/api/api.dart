@@ -3,19 +3,8 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-
 import '../frb_generated.dart';
-
-Stream<String> createLogStream({dynamic hint}) =>
-    RustLib.instance.api.createLogStream(hint: hint);
-
-Future<void> initApi(
-        {required Uint8List dictData,
-        required Uint8List englishIndexData,
-        dynamic hint}) =>
-    RustLib.instance.api.initApi(
-        dictData: dictData, englishIndexData: englishIndexData, hint: hint);
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<CombinedSearchResults> combinedSearch(
         {required int capacity,
@@ -92,9 +81,12 @@ Future<List<PrSearchResult>> prSearch(
         romanization: romanization,
         hint: hint);
 
-Future<void> updatePrIndices({required String prIndicesPath, dynamic hint}) =>
-    RustLib.instance.api
-        .updatePrIndices(prIndicesPath: prIndicesPath, hint: hint);
+Future<void> updatePrIndices(
+        {required Romanization romanization,
+        required String prIndicesPath,
+        dynamic hint}) =>
+    RustLib.instance.api.updatePrIndices(
+        romanization: romanization, prIndicesPath: prIndicesPath, hint: hint);
 
 Future<List<VariantSearchResult>> variantSearch(
         {required int capacity,
@@ -103,6 +95,16 @@ Future<List<VariantSearchResult>> variantSearch(
         dynamic hint}) =>
     RustLib.instance.api.variantSearch(
         capacity: capacity, query: query, script: script, hint: hint);
+
+Stream<String> createLogStream({dynamic hint}) =>
+    RustLib.instance.api.createLogStream(hint: hint);
+
+Future<void> initApi(
+        {required Uint8List dictData,
+        required Uint8List englishIndexData,
+        dynamic hint}) =>
+    RustLib.instance.api.initApi(
+        dictData: dictData, englishIndexData: englishIndexData, hint: hint);
 
 class CombinedSearchResults {
   final List<VariantSearchResult> variantResults;

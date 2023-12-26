@@ -109,7 +109,10 @@ abstract class RustLibApi extends BaseApi {
       required Romanization romanization,
       dynamic hint});
 
-  Future<void> updatePrIndices({required String prIndicesPath, dynamic hint});
+  Future<void> updatePrIndices(
+      {required Romanization romanization,
+      required String prIndicesPath,
+      dynamic hint});
 
   Future<List<VariantSearchResult>> variantSearch(
       {required int capacity,
@@ -466,18 +469,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> updatePrIndices({required String prIndicesPath, dynamic hint}) {
+  Future<void> updatePrIndices(
+      {required Romanization romanization,
+      required String prIndicesPath,
+      dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        var arg0 = cst_encode_String(prIndicesPath);
-        return wire.wire_update_pr_indices(port_, arg0);
+        var arg0 = cst_encode_romanization(romanization);
+        var arg1 = cst_encode_String(prIndicesPath);
+        return wire.wire_update_pr_indices(port_, arg0, arg1);
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_unit,
         decodeErrorData: dco_decode_AnyhowException,
       ),
       constMeta: kUpdatePrIndicesConstMeta,
-      argValues: [prIndicesPath],
+      argValues: [romanization, prIndicesPath],
       apiImpl: this,
       hint: hint,
     ));
@@ -485,7 +492,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kUpdatePrIndicesConstMeta => const TaskConstMeta(
         debugName: "update_pr_indices",
-        argNames: ["prIndicesPath"],
+        argNames: ["romanization", "prIndicesPath"],
       );
 
   @override

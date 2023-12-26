@@ -860,20 +860,22 @@ class RustLibWire implements BaseWire {
 
   void wire_update_pr_indices(
     int port_,
+    int romanization,
     ffi.Pointer<wire_cst_list_prim_u_8> pr_indices_path,
   ) {
     return _wire_update_pr_indices(
       port_,
+      romanization,
       pr_indices_path,
     );
   }
 
   late final _wire_update_pr_indicesPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64,
+          ffi.Void Function(ffi.Int64, ffi.Int32,
               ffi.Pointer<wire_cst_list_prim_u_8>)>>('wire_update_pr_indices');
-  late final _wire_update_pr_indices = _wire_update_pr_indicesPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8>)>();
+  late final _wire_update_pr_indices = _wire_update_pr_indicesPtr.asFunction<
+      void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>)>();
 
   void wire_variant_search(
     int port_,

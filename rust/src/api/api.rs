@@ -12,7 +12,7 @@ use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
 use parking_lot::RwLock;
-use rkyv::Deserialize;
+use rkyv::{AlignedVec, Deserialize};
 use wordshk_tools::dict::{Clause, clause_to_string, EntryId};
 use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishIndexData};
 pub use wordshk_tools::jyutping::Romanization;
@@ -24,8 +24,6 @@ use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
 pub use wordshk_tools::search::Script;
 use wordshk_tools::unicode::is_cjk;
-
-use mmap_rs::{Mmap, MmapOptions};
 
 use crate::frb_generated::StreamSink;
 
@@ -94,9 +92,9 @@ pub struct EntrySummary {
 }
 
 pub struct WordshkApi {
-    dict_data: Vec<u8>,
-    english_index_data: Vec<u8>,
-    pr_indices_data: Option<Vec<u8>>,
+    dict_data: AlignedVec,
+    english_index_data: AlignedVec,
+    pr_indices_data: Option<AlignedVec>,
     variants_map: VariantsMap,
     word_list: HashMap<String, Vec<String>>,
 }
@@ -123,9 +121,15 @@ static API: Lazy<Mutex<WordshkApi>> = Lazy::new(|| Mutex::new(WordshkApi::new())
 pub fn init_api(dict_data: Vec<u8>, english_index_data: Vec<u8>) -> () {
     env::set_var("RUST_BACKTRACE", "1");
     let mut api = API.lock().unwrap();
-    api.variants_map = search::rich_dict_to_variants_map(&dict(&dict_data));
-    api.dict_data = dict_data;
-    api.english_index_data = english_index_data;
+    let mut aligned_dict_data = AlignedVec::with_capacity(dict_data.len());
+    aligned_dict_data.extend_from_slice(&dict_data);
+    api.variants_map = search::rich_dict_to_variants_map(&dict(&aligned_dict_data));
+    api.dict_data = aligned_dict_data;
+
+    let mut aligned_english_index_data = AlignedVec::with_capacity(english_index_data.len());
+    aligned_english_index_data.extend_from_slice(&english_index_data);
+    api.english_index_data = aligned_english_index_data;
+
     log_stream_sink.write().as_ref().unwrap().add("Initialized API".to_string());
 }
 
@@ -157,8 +161,8 @@ impl WordshkApi {
         log!(t, "Loaded word_list");
 
         WordshkApi {
-            dict_data: vec![],
-            english_index_data: vec![],
+            dict_data: AlignedVec::default(),
+            english_index_data: AlignedVec::default(),
             pr_indices_data: None,
             variants_map: BTreeMap::default(),
             word_list,
@@ -166,15 +170,15 @@ impl WordshkApi {
     }
 }
 
-fn dict(dict_data: &Vec<u8>) -> &ArchivedRichDict {
+fn dict(dict_data: &AlignedVec) -> &ArchivedRichDict {
     unsafe { rkyv::archived_root::<RichDict>(dict_data) }
 }
 
-fn english_index(english_index_data: &Vec<u8>) -> &ArchivedEnglishIndex {
+fn english_index(english_index_data: &AlignedVec) -> &ArchivedEnglishIndex {
     unsafe { rkyv::archived_root::<EnglishIndex>(english_index_data) }
 }
 
-fn pr_indices(pr_indices_data: &Option<Vec<u8>>) -> Option<&ArchivedPrIndices> {
+fn pr_indices(pr_indices_data: &Option<AlignedVec>) -> Option<&ArchivedPrIndices> {
     pr_indices_data.as_ref().map(|pr_indices_data| unsafe { rkyv::archived_root::<PrIndices>(&pr_indices_data) })
 }
 
@@ -192,26 +196,50 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<En
     Ok(summaries)
 }
 
-pub fn update_pr_indices(pr_indices_path: String) -> Result<()> {
+pub fn update_pr_indices(romanization: Romanization, pr_indices_path: String) -> Result<()> {
     log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] pr_indices_path: {}", pr_indices_path));
     let mut buffer = Vec::new();
-    File::read_to_end(&mut File::open(pr_indices_path)?, &mut buffer)?;
-    API.lock().unwrap().pr_indices_data = Some(buffer);
-    Ok(())
+    let mut file = File::open(&pr_indices_path)?;
+    File::read_to_end(&mut file, &mut buffer)?;
+    // Check file size to verify checksum
+    if buffer.len() < std::mem::size_of::<u64>() {
+        generate_pr_indices(romanization, pr_indices_path)
+    } else {
+        let expected_file_size_bytes = &buffer[buffer.len() - std::mem::size_of::<u64>()..];
+        let expected_file_size = u64::from_ne_bytes(expected_file_size_bytes.try_into()?);
+        let file_size = file.metadata()?.len();
+        if expected_file_size != file_size {
+            generate_pr_indices(romanization, pr_indices_path)
+        } else {
+            // Remove checksum from end of file
+            buffer.truncate(buffer.len() - std::mem::size_of::<u64>());
+            let mut aligned_buffer = AlignedVec::with_capacity(buffer.len());
+            aligned_buffer.extend_from_slice(&buffer);
+            API.lock().unwrap().pr_indices_data = Some(aligned_buffer);
+            Ok(())
+        }
+    }
 }
 
 pub fn generate_pr_indices(romanization: Romanization, pr_indices_path: String) -> Result<()> {
+    let mut api = API.lock().unwrap();
+
     log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] pr_indices_path: {}", pr_indices_path));
-    let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(&API.lock().unwrap().dict_data), romanization);
+    let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(&api.dict_data), romanization);
     log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] Generated pr_indices"));
-    let pr_indices_data = rkyv::to_bytes::<_, 1024>(&pr_indices)?;
+    let pr_indices_data_aligned = rkyv::to_bytes::<_, 1024>(&pr_indices)?;
+    let mut pr_indices_data = pr_indices_data_aligned.to_vec();
+    api.pr_indices_data = Some(pr_indices_data_aligned);
+
+    // Append file size to end of file as a rudimentary checksum
+    let expected_file_size = pr_indices_data.len() + std::mem::size_of::<u64>();
+    pr_indices_data.extend(&(expected_file_size as u64).to_ne_bytes());
+    assert_eq!(pr_indices_data.len(), expected_file_size);
     let mut file = OpenOptions::new()
-        .read(true)
         .write(true)
         .create(true).open(pr_indices_path)?;
     file.write_all(&pr_indices_data)?;
 
-    API.lock().unwrap().pr_indices_data = Some(pr_indices_data.to_vec());
     log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] Mapped file to pr_indices_data"));
     Ok(())
 }

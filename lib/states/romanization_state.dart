@@ -41,14 +41,8 @@ class RomanizationState with ChangeNotifier {
   void initPrIndices() async {
     final prIndicesFile = await _prIndicesFile;
     if (prIndicesFile.existsSync()) {
-      try {
-        await updatePrIndices(prIndicesPath: prIndicesFile.path);
-      } catch (err) {
-        if (kDebugMode) {
-          print(err);
-        }
-        await generatePrIndices(romanization: romanization, prIndicesPath: prIndicesFile.path);
-      }
+        await updatePrIndices(
+            romanization: romanization, prIndicesPath: prIndicesFile.path);
     } else {
       await generatePrIndices(romanization: romanization, prIndicesPath: prIndicesFile.path);
     }
