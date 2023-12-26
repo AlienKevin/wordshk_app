@@ -362,11 +362,6 @@ impl CstDecode<u8> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
         self.unchecked_into_f64() as _
     }
 }
-impl CstDecode<usize> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-    fn cst_decode(self) -> usize {
-        self.unchecked_into_f64() as _
-    }
-}
 
 #[wasm_bindgen]
 pub fn dart_fn_deliver_output(
@@ -431,10 +426,7 @@ pub fn wire_generate_pr_indices(
 }
 
 #[wasm_bindgen]
-pub fn wire_get_entry_group_json(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    id: usize,
-) {
+pub fn wire_get_entry_group_json(port_: flutter_rust_bridge::for_generated::MessagePort, id: u32) {
     wire_get_entry_group_json_impl(port_, id)
 }
 
@@ -448,7 +440,7 @@ pub fn wire_get_entry_id(
 }
 
 #[wasm_bindgen]
-pub fn wire_get_entry_json(port_: flutter_rust_bridge::for_generated::MessagePort, id: usize) {
+pub fn wire_get_entry_json(port_: flutter_rust_bridge::for_generated::MessagePort, id: u32) {
     wire_get_entry_json_impl(port_, id)
 }
 
@@ -472,8 +464,12 @@ pub fn wire_get_splotlight_summaries(port_: flutter_rust_bridge::for_generated::
 }
 
 #[wasm_bindgen]
-pub fn wire_init_api(port_: flutter_rust_bridge::for_generated::MessagePort) {
-    wire_init_api_impl(port_)
+pub fn wire_init_api(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    dict_data: Box<[u8]>,
+    english_index_data: Box<[u8]>,
+) {
+    wire_init_api_impl(port_, dict_data, english_index_data)
 }
 
 #[wasm_bindgen]

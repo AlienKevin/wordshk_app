@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
+
+import 'api/api.dart';
+import 'frb_generated.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -105,9 +107,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void dco_decode_unit(dynamic raw);
-
-  @protected
-  int dco_decode_usize(dynamic raw);
 
   @protected
   VariantSearchResult dco_decode_variant_search_result(dynamic raw);
@@ -211,9 +210,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer);
-
-  @protected
-  int sse_decode_usize(SseDeserializer deserializer);
 
   @protected
   VariantSearchResult sse_decode_variant_search_result(
@@ -367,7 +363,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<dynamic> cst_encode_spotlight_entry_summary(SpotlightEntrySummary raw) {
     return [
-      cst_encode_usize(raw.id),
+      cst_encode_u_32(raw.id),
       cst_encode_list_String(raw.variants),
       cst_encode_list_String(raw.variantsSimp),
       cst_encode_list_String(raw.jyutpings),
@@ -405,9 +401,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void cst_encode_unit(void raw);
-
-  @protected
-  int cst_encode_usize(int raw);
 
   @protected
   void sse_encode_AnyhowException(
@@ -512,9 +505,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_unit(void self, SseSerializer serializer);
 
   @protected
-  void sse_encode_usize(int self, SseSerializer serializer);
-
-  @protected
   void sse_encode_variant_search_result(
       VariantSearchResult self, SseSerializer serializer);
 
@@ -571,7 +561,9 @@ class RustLibWire extends BaseWire {
   void wire_get_splotlight_summaries(NativePortType port_) =>
       wasmModule.wire_get_splotlight_summaries(port_);
 
-  void wire_init_api(NativePortType port_) => wasmModule.wire_init_api(port_);
+  void wire_init_api(NativePortType port_, Uint8List dict_data,
+          Uint8List english_index_data) =>
+      wasmModule.wire_init_api(port_, dict_data, english_index_data);
 
   void wire_pr_search(NativePortType port_, int capacity, String query,
           int script, int romanization) =>
@@ -628,7 +620,8 @@ class RustLibWasmModule implements WasmModule {
 
   external void wire_get_splotlight_summaries(NativePortType port_);
 
-  external void wire_init_api(NativePortType port_);
+  external void wire_init_api(
+      NativePortType port_, Uint8List dict_data, Uint8List english_index_data);
 
   external void wire_pr_search(NativePortType port_, int capacity, String query,
       int script, int romanization);

@@ -408,7 +408,7 @@ pub extern "C" fn wire_generate_pr_indices(port_: i64, romanization: i32) {
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_entry_group_json(port_: i64, id: usize) {
+pub extern "C" fn wire_get_entry_group_json(port_: i64, id: u32) {
     wire_get_entry_group_json_impl(port_, id)
 }
 
@@ -418,7 +418,7 @@ pub extern "C" fn wire_get_entry_id(port_: i64, query: *mut wire_cst_list_prim_u
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_entry_json(port_: i64, id: usize) {
+pub extern "C" fn wire_get_entry_json(port_: i64, id: u32) {
     wire_get_entry_json_impl(port_, id)
 }
 
@@ -442,8 +442,12 @@ pub extern "C" fn wire_get_splotlight_summaries(port_: i64) {
 }
 
 #[no_mangle]
-pub extern "C" fn wire_init_api(port_: i64) {
-    wire_init_api_impl(port_)
+pub extern "C" fn wire_init_api(
+    port_: i64,
+    dict_data: *mut wire_cst_list_prim_u_8,
+    english_index_data: *mut wire_cst_list_prim_u_8,
+) {
+    wire_init_api_impl(port_, dict_data, english_index_data)
 }
 
 #[no_mangle]
@@ -713,7 +717,7 @@ pub struct wire_cst_record_string_string {
 #[repr(C)]
 #[derive(Clone)]
 pub struct wire_cst_spotlight_entry_summary {
-    id: usize,
+    id: u32,
     variants: *mut wire_cst_list_String,
     variants_simp: *mut wire_cst_list_String,
     jyutpings: *mut wire_cst_list_String,

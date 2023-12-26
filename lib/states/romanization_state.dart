@@ -30,7 +30,12 @@ class RomanizationState with ChangeNotifier {
 
   Future<File> get _prIndicesFile async {
     final directory = await getApplicationCacheDirectory();
-    return File('${directory.path}/prIndices.msgpack');
+    final oldFile = File('${directory.path}/prIndices.msgpack');
+    if (await oldFile.exists()) {
+      // Delete the file
+      oldFile.delete();
+    }
+    return File('${directory.path}/prIndices.rkyv');
   }
 
   void initPrIndices() async {

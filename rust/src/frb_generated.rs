@@ -167,7 +167,7 @@ fn wire_generate_pr_indices_impl(
 }
 fn wire_get_entry_group_json_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    id: impl CstDecode<usize> + core::panic::UnwindSafe,
+    id: impl CstDecode<u32> + core::panic::UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -209,7 +209,7 @@ fn wire_get_entry_id_impl(
 }
 fn wire_get_entry_json_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    id: impl CstDecode<usize> + core::panic::UnwindSafe,
+    id: impl CstDecode<u32> + core::panic::UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -285,7 +285,11 @@ fn wire_get_splotlight_summaries_impl(port_: flutter_rust_bridge::for_generated:
         },
     )
 }
-fn wire_init_api_impl(port_: flutter_rust_bridge::for_generated::MessagePort) {
+fn wire_init_api_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    dict_data: impl CstDecode<Vec<u8>> + core::panic::UnwindSafe,
+    english_index_data: impl CstDecode<Vec<u8>> + core::panic::UnwindSafe,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "init_api",
@@ -293,8 +297,15 @@ fn wire_init_api_impl(port_: flutter_rust_bridge::for_generated::MessagePort) {
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
+            let api_dict_data = dict_data.cst_decode();
+            let api_english_index_data = english_index_data.cst_decode();
             move |context| {
-                transform_result_dco((move || Result::<_, ()>::Ok(crate::api::api::init_api()))())
+                transform_result_dco((move || {
+                    Result::<_, ()>::Ok(crate::api::api::init_api(
+                        api_dict_data,
+                        api_english_index_data,
+                    ))
+                })())
             }
         },
     )
@@ -417,11 +428,6 @@ impl CstDecode<u32> for u32 {
 }
 impl CstDecode<u8> for u8 {
     fn cst_decode(self) -> u8 {
-        self
-    }
-}
-impl CstDecode<usize> for usize {
-    fn cst_decode(self) -> usize {
         self
     }
 }
@@ -695,7 +701,7 @@ impl SseDecode for crate::api::api::Script {
 
 impl SseDecode for crate::api::api::SpotlightEntrySummary {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_id = <usize>::sse_decode(deserializer);
+        let mut var_id = <u32>::sse_decode(deserializer);
         let mut var_variants = <Vec<String>>::sse_decode(deserializer);
         let mut var_variantsSimp = <Vec<String>>::sse_decode(deserializer);
         let mut var_jyutpings = <Vec<String>>::sse_decode(deserializer);
@@ -730,12 +736,6 @@ impl SseDecode for u8 {
 
 impl SseDecode for () {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {}
-}
-
-impl SseDecode for usize {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        deserializer.cursor.read_u64::<NativeEndian>().unwrap() as _
-    }
 }
 
 impl SseDecode for crate::api::api::VariantSearchResult {
@@ -1144,7 +1144,7 @@ impl SseEncode for crate::api::api::Script {
 
 impl SseEncode for crate::api::api::SpotlightEntrySummary {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <usize>::sse_encode(self.id, serializer);
+        <u32>::sse_encode(self.id, serializer);
         <Vec<String>>::sse_encode(self.variants, serializer);
         <Vec<String>>::sse_encode(self.variants_simp, serializer);
         <Vec<String>>::sse_encode(self.jyutpings, serializer);
@@ -1169,15 +1169,6 @@ impl SseEncode for u8 {
 
 impl SseEncode for () {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {}
-}
-
-impl SseEncode for usize {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        serializer
-            .cursor
-            .write_u64::<NativeEndian>(self as _)
-            .unwrap();
-    }
 }
 
 impl SseEncode for crate::api::api::VariantSearchResult {

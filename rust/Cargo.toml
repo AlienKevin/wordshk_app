@@ -4,20 +4,19 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-wordshk_tools = { git = "https://github.com/AlienKevin/wordshk-tools.git", rev = "1f56e85627db95c779bb2f8e290ad543529e828d" }
+wordshk_tools = { git = "https://github.com/AlienKevin/wordshk-tools.git", rev = "6407726e3efdae962aa10df967be4c83d3d868b0" }
 flutter_rust_bridge = { version = "2.0.0-dev.4" }
 anyhow = { version = "1.0.75", features = ["backtrace"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 parking_lot = "0.12.1"
-flate2 = "1.0"
 openssl = { version = "*", features = ["vendored"] }
 csv = "1.3.0"
-rmp-serde = "1.1.2"
 once_cell = "1.19.0"
 simplelog = "0.12.1"
 lazy_static = "1.4.0"
 log = "0.4.20"
+rkyv = { version = "0.7.43", features = [ "alloc" ] }
 
 [lib]
 crate-type = ["cdylib", "staticlib"]

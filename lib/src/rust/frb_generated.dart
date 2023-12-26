@@ -97,7 +97,10 @@ abstract class RustLibApi extends BaseApi {
 
   Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint});
 
-  Future<void> initApi({dynamic hint});
+  Future<void> initApi(
+      {required Uint8List dictData,
+      required Uint8List englishIndexData,
+      dynamic hint});
 
   Future<List<PrSearchResult>> prSearch(
       {required int capacity,
@@ -264,7 +267,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Future<List<String>> getEntryGroupJson({required int id, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        var arg0 = cst_encode_usize(id);
+        var arg0 = cst_encode_u_32(id);
         return wire.wire_get_entry_group_json(port_, arg0);
       },
       codec: DcoCodec(
@@ -312,7 +315,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Future<String> getEntryJson({required int id, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        var arg0 = cst_encode_usize(id);
+        var arg0 = cst_encode_u_32(id);
         return wire.wire_get_entry_json(port_, arg0);
       },
       codec: DcoCodec(
@@ -402,17 +405,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> initApi({dynamic hint}) {
+  Future<void> initApi(
+      {required Uint8List dictData,
+      required Uint8List englishIndexData,
+      dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        return wire.wire_init_api(port_);
+        var arg0 = cst_encode_list_prim_u_8(dictData);
+        var arg1 = cst_encode_list_prim_u_8(englishIndexData);
+        return wire.wire_init_api(port_, arg0, arg1);
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_unit,
         decodeErrorData: null,
       ),
       constMeta: kInitApiConstMeta,
-      argValues: [],
+      argValues: [dictData, englishIndexData],
       apiImpl: this,
       hint: hint,
     ));
@@ -420,7 +428,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kInitApiConstMeta => const TaskConstMeta(
         debugName: "init_api",
-        argNames: [],
+        argNames: ["dictData", "englishIndexData"],
       );
 
   @override
@@ -698,7 +706,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 8)
       throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
     return SpotlightEntrySummary(
-      id: dco_decode_usize(arr[0]),
+      id: dco_decode_u_32(arr[0]),
       variants: dco_decode_list_String(arr[1]),
       variantsSimp: dco_decode_list_String(arr[2]),
       jyutpings: dco_decode_list_String(arr[3]),
@@ -722,11 +730,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void dco_decode_unit(dynamic raw) {
     return;
-  }
-
-  @protected
-  int dco_decode_usize(dynamic raw) {
-    return dcoDecodeI64OrU64(raw);
   }
 
   @protected
@@ -975,7 +978,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   SpotlightEntrySummary sse_decode_spotlight_entry_summary(
       SseDeserializer deserializer) {
-    var var_id = sse_decode_usize(deserializer);
+    var var_id = sse_decode_u_32(deserializer);
     var var_variants = sse_decode_list_String(deserializer);
     var var_variantsSimp = sse_decode_list_String(deserializer);
     var var_jyutpings = sse_decode_list_String(deserializer);
@@ -1006,11 +1009,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer) {}
-
-  @protected
-  int sse_decode_usize(SseDeserializer deserializer) {
-    return deserializer.buffer.getUint64();
-  }
 
   @protected
   VariantSearchResult sse_decode_variant_search_result(
@@ -1055,11 +1053,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void cst_encode_unit(void raw) {
-    return raw;
-  }
-
-  @protected
-  int cst_encode_usize(int raw) {
     return raw;
   }
 
@@ -1254,7 +1247,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_spotlight_entry_summary(
       SpotlightEntrySummary self, SseSerializer serializer) {
-    sse_encode_usize(self.id, serializer);
+    sse_encode_u_32(self.id, serializer);
     sse_encode_list_String(self.variants, serializer);
     sse_encode_list_String(self.variantsSimp, serializer);
     sse_encode_list_String(self.jyutpings, serializer);
@@ -1276,11 +1269,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer) {}
-
-  @protected
-  void sse_encode_usize(int self, SseSerializer serializer) {
-    serializer.buffer.putUint64(self);
-  }
 
   @protected
   void sse_encode_variant_search_result(

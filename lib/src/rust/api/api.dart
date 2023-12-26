@@ -10,8 +10,12 @@ import '../frb_generated.dart';
 Stream<String> createLogStream({dynamic hint}) =>
     RustLib.instance.api.createLogStream(hint: hint);
 
-Future<void> initApi({dynamic hint}) =>
-    RustLib.instance.api.initApi(hint: hint);
+Future<void> initApi(
+        {required Uint8List dictData,
+        required Uint8List englishIndexData,
+        dynamic hint}) =>
+    RustLib.instance.api.initApi(
+        dictData: dictData, englishIndexData: englishIndexData, hint: hint);
 
 Future<List<EntrySummary>> getEntrySummaries(
         {required Uint32List entryIds, required Script script, dynamic hint}) =>
