@@ -1,6 +1,9 @@
 use std::collections::{BTreeMap, HashMap};
 use std::collections::BinaryHeap;
 use std::env;
+use std::fs::File;
+use std::fs::OpenOptions;
+use std::io::Write;
 use std::sync::Mutex;
 use std::time::Instant;
 
@@ -21,6 +24,8 @@ use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
 pub use wordshk_tools::search::Script;
 use wordshk_tools::unicode::is_cjk;
+
+use mmap_rs::{Mmap, MmapOptions};
 
 use crate::frb_generated::StreamSink;
 
@@ -91,7 +96,7 @@ pub struct EntrySummary {
 pub struct WordshkApi {
     dict_data: Vec<u8>,
     english_index_data: Vec<u8>,
-    pr_indices_data: Vec<u8>,
+    pr_indices_data: Option<(Mmap, usize)>,
     variants_map: VariantsMap,
     word_list: HashMap<String, Vec<String>>,
 }
@@ -154,7 +159,7 @@ impl WordshkApi {
         WordshkApi {
             dict_data: vec![],
             english_index_data: vec![],
-            pr_indices_data: vec![],
+            pr_indices_data: None,
             variants_map: BTreeMap::default(),
             word_list,
         }
@@ -169,8 +174,8 @@ fn english_index(english_index_data: &Vec<u8>) -> &ArchivedEnglishIndex {
     unsafe { rkyv::archived_root::<EnglishIndex>(english_index_data) }
 }
 
-fn pr_indices(pr_indices_data: &Vec<u8>) -> &ArchivedPrIndices {
-    unsafe { rkyv::archived_root::<PrIndices>(pr_indices_data) }
+fn pr_indices(pr_indices_data: &Option<(Mmap, usize)>) -> Option<&ArchivedPrIndices> {
+    pr_indices_data.as_ref().map(|(pr_indices_data, len)| unsafe { rkyv::archived_root::<PrIndices>(&pr_indices_data[..*len]) })
 }
 
 pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<EntrySummary>> {
@@ -187,26 +192,64 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<En
     Ok(summaries)
 }
 
-pub fn update_pr_indices(pr_indices: Vec<u8>) -> Result<()> {
-    API.lock().unwrap().pr_indices_data = pr_indices;
+pub fn update_pr_indices(pr_indices_path: String) -> Result<()> {
+    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] pr_indices_path: {}", pr_indices_path));
+    let file = File::open(pr_indices_path)?;
+    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] Successfully opened file"));
+    let file_size = file.metadata()?.len() as usize;
+    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] File size {}", file_size));
+    let page_size = MmapOptions::page_size();
+    let page_count = (file_size + page_size - 1) / page_size;
+    let aligned_file_size = page_count * page_size;
+    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] Aligned file size {}", aligned_file_size));
+    API.lock().unwrap().pr_indices_data = Some((unsafe {
+        MmapOptions::new(aligned_file_size)?
+            .with_file(&file, 0)
+            .map()?
+    }, file_size));
+    log_stream_sink.write().as_ref().unwrap().add(format!("[update_pr_indices] Successfully mapped file"));
     Ok(())
 }
 
-pub fn generate_pr_indices(romanization: Romanization) -> Vec<u8> {
+pub fn generate_pr_indices(romanization: Romanization, pr_indices_path: String) -> Result<()> {
+    log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] pr_indices_path: {}", pr_indices_path));
     let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(&API.lock().unwrap().dict_data), romanization);
-    let pr_indices_data = rkyv::to_bytes::<_, 1024>(&pr_indices).unwrap();
-    API.lock().unwrap().pr_indices_data = pr_indices_data.to_vec();
-    pr_indices_data.to_vec()
+    log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] Generated pr_indices"));
+    let pr_indices_data = rkyv::to_bytes::<_, 1024>(&pr_indices)?;
+    let mut file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true).open(pr_indices_path)?;
+    file.write_all(&pr_indices_data)?;
+    log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] Wrote generated pr_indices to file"));
+    let data_size = pr_indices_data.len();
+    let page_size = MmapOptions::page_size();
+    let page_count = (data_size + page_size - 1) / page_size;
+    let aligned_data_size = page_count * page_size;
+    API.lock().unwrap().pr_indices_data = Some((unsafe {
+        MmapOptions::new(aligned_data_size)?
+            .with_file(&file, 0)
+            .map()?
+    }, data_size));
+    log_stream_sink.write().as_ref().unwrap().add(format!("[generate_pr_indices] Mapped file to pr_indices_data"));
+    Ok(())
 }
 
 pub fn pr_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
+    log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] Start"));
     let api = API.lock().unwrap();
     // Wait for pr_indices to be updated
-    if api.pr_indices_data.is_empty() {
-        return vec![];
+    match pr_indices(&api.pr_indices_data) {
+        None => vec![],
+        Some(pr_indices) => {
+            log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] pr_indices found"));
+            let mut ranks = search::pr_search(pr_indices, dict(&api.dict_data), &query, romanization);
+            log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] search found {} ranks", ranks.len()));
+            let results = pr_ranks_to_results(&mut ranks, &api.variants_map, dict(&api.dict_data), script, capacity);
+            log_stream_sink.write().as_ref().unwrap().add(format!("[pr_search] search found {} results", results.len()));
+            results
+        }
     }
-    let mut ranks = search::pr_search(pr_indices(&api.pr_indices_data), dict(&api.dict_data), &query, romanization);
-    pr_ranks_to_results(&mut ranks, &api.variants_map, dict(&api.dict_data), script, capacity)
 }
 
 pub fn variant_search(capacity: u32, query: String, script: Script) -> Vec<VariantSearchResult> {
@@ -220,7 +263,7 @@ pub fn variant_search(capacity: u32, query: String, script: Script) -> Vec<Varia
 
 pub fn combined_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
     let api = API.lock().unwrap();
-    match &mut search::combined_search(&api.variants_map, if api.pr_indices_data.is_empty() { None } else { Some(pr_indices(&api.pr_indices_data)) }, english_index(&api.english_index_data), dict(&api.dict_data), &query, script, romanization) {
+    match &mut search::combined_search(&api.variants_map, pr_indices(&api.pr_indices_data), english_index(&api.english_index_data), dict(&api.dict_data), &query, script, romanization) {
         CombinedSearchRank::Variant(variant_ranks) =>
             CombinedSearchResults {
                 variant_results: variant_ranks_to_results(variant_ranks, &api.variants_map, dict(&api.dict_data), script, capacity),

@@ -17,6 +17,7 @@ simplelog = "0.12.1"
 lazy_static = "1.4.0"
 log = "0.4.20"
 rkyv = { version = "0.7.43", features = [ "alloc" ] }
+mmap-rs = "0.6.0"
 
 [lib]
 crate-type = ["cdylib", "staticlib"]

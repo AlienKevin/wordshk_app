@@ -148,6 +148,7 @@ fn wire_english_search_impl(
 fn wire_generate_pr_indices_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     romanization: impl CstDecode<crate::api::api::Romanization> + core::panic::UnwindSafe,
+    pr_indices_path: impl CstDecode<String> + core::panic::UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -157,9 +158,10 @@ fn wire_generate_pr_indices_impl(
         },
         move || {
             let api_romanization = romanization.cst_decode();
+            let api_pr_indices_path = pr_indices_path.cst_decode();
             move |context| {
                 transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::generate_pr_indices(api_romanization))
+                    crate::api::api::generate_pr_indices(api_romanization, api_pr_indices_path)
                 })())
             }
         },
@@ -343,7 +345,7 @@ fn wire_pr_search_impl(
 }
 fn wire_update_pr_indices_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    pr_indices: impl CstDecode<Vec<u8>> + core::panic::UnwindSafe,
+    pr_indices_path: impl CstDecode<String> + core::panic::UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -352,9 +354,11 @@ fn wire_update_pr_indices_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_pr_indices = pr_indices.cst_decode();
+            let api_pr_indices_path = pr_indices_path.cst_decode();
             move |context| {
-                transform_result_dco((move || crate::api::api::update_pr_indices(api_pr_indices))())
+                transform_result_dco((move || {
+                    crate::api::api::update_pr_indices(api_pr_indices_path)
+                })())
             }
         },
     )

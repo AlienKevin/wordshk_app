@@ -403,8 +403,12 @@ pub extern "C" fn wire_english_search(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_generate_pr_indices(port_: i64, romanization: i32) {
-    wire_generate_pr_indices_impl(port_, romanization)
+pub extern "C" fn wire_generate_pr_indices(
+    port_: i64,
+    romanization: i32,
+    pr_indices_path: *mut wire_cst_list_prim_u_8,
+) {
+    wire_generate_pr_indices_impl(port_, romanization, pr_indices_path)
 }
 
 #[no_mangle]
@@ -462,8 +466,8 @@ pub extern "C" fn wire_pr_search(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_update_pr_indices(port_: i64, pr_indices: *mut wire_cst_list_prim_u_8) {
-    wire_update_pr_indices_impl(port_, pr_indices)
+pub extern "C" fn wire_update_pr_indices(port_: i64, pr_indices_path: *mut wire_cst_list_prim_u_8) {
+    wire_update_pr_indices_impl(port_, pr_indices_path)
 }
 
 #[no_mangle]

@@ -80,8 +80,10 @@ abstract class RustLibApi extends BaseApi {
       required Script script,
       dynamic hint});
 
-  Future<Uint8List> generatePrIndices(
-      {required Romanization romanization, dynamic hint});
+  Future<void> generatePrIndices(
+      {required Romanization romanization,
+      required String prIndicesPath,
+      dynamic hint});
 
   Future<List<String>> getEntryGroupJson({required int id, dynamic hint});
 
@@ -109,7 +111,7 @@ abstract class RustLibApi extends BaseApi {
       required Romanization romanization,
       dynamic hint});
 
-  Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint});
+  Future<void> updatePrIndices({required String prIndicesPath, dynamic hint});
 
   Future<List<VariantSearchResult>> variantSearch(
       {required int capacity,
@@ -240,19 +242,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<Uint8List> generatePrIndices(
-      {required Romanization romanization, dynamic hint}) {
+  Future<void> generatePrIndices(
+      {required Romanization romanization,
+      required String prIndicesPath,
+      dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         var arg0 = cst_encode_romanization(romanization);
-        return wire.wire_generate_pr_indices(port_, arg0);
+        var arg1 = cst_encode_String(prIndicesPath);
+        return wire.wire_generate_pr_indices(port_, arg0, arg1);
       },
       codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_prim_u_8,
-        decodeErrorData: null,
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
       ),
       constMeta: kGeneratePrIndicesConstMeta,
-      argValues: [romanization],
+      argValues: [romanization, prIndicesPath],
       apiImpl: this,
       hint: hint,
     ));
@@ -260,7 +265,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kGeneratePrIndicesConstMeta => const TaskConstMeta(
         debugName: "generate_pr_indices",
-        argNames: ["romanization"],
+        argNames: ["romanization", "prIndicesPath"],
       );
 
   @override
@@ -463,10 +468,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint}) {
+  Future<void> updatePrIndices({required String prIndicesPath, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        var arg0 = cst_encode_list_prim_u_8(prIndices);
+        var arg0 = cst_encode_String(prIndicesPath);
         return wire.wire_update_pr_indices(port_, arg0);
       },
       codec: DcoCodec(
@@ -474,7 +479,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: dco_decode_AnyhowException,
       ),
       constMeta: kUpdatePrIndicesConstMeta,
-      argValues: [prIndices],
+      argValues: [prIndicesPath],
       apiImpl: this,
       hint: hint,
     ));
@@ -482,7 +487,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kUpdatePrIndicesConstMeta => const TaskConstMeta(
         debugName: "update_pr_indices",
-        argNames: ["prIndices"],
+        argNames: ["prIndicesPath"],
       );
 
   @override

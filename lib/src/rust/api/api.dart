@@ -22,13 +22,16 @@ Future<List<EntrySummary>> getEntrySummaries(
     RustLib.instance.api
         .getEntrySummaries(entryIds: entryIds, script: script, hint: hint);
 
-Future<void> updatePrIndices({required Uint8List prIndices, dynamic hint}) =>
-    RustLib.instance.api.updatePrIndices(prIndices: prIndices, hint: hint);
-
-Future<Uint8List> generatePrIndices(
-        {required Romanization romanization, dynamic hint}) =>
+Future<void> updatePrIndices({required String prIndicesPath, dynamic hint}) =>
     RustLib.instance.api
-        .generatePrIndices(romanization: romanization, hint: hint);
+        .updatePrIndices(prIndicesPath: prIndicesPath, hint: hint);
+
+Future<void> generatePrIndices(
+        {required Romanization romanization,
+        required String prIndicesPath,
+        dynamic hint}) =>
+    RustLib.instance.api.generatePrIndices(
+        romanization: romanization, prIndicesPath: prIndicesPath, hint: hint);
 
 Future<List<PrSearchResult>> prSearch(
         {required int capacity,

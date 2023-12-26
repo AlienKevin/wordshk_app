@@ -421,8 +421,9 @@ pub fn wire_english_search(
 pub fn wire_generate_pr_indices(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     romanization: i32,
+    pr_indices_path: String,
 ) {
-    wire_generate_pr_indices_impl(port_, romanization)
+    wire_generate_pr_indices_impl(port_, romanization, pr_indices_path)
 }
 
 #[wasm_bindgen]
@@ -486,9 +487,9 @@ pub fn wire_pr_search(
 #[wasm_bindgen]
 pub fn wire_update_pr_indices(
     port_: flutter_rust_bridge::for_generated::MessagePort,
-    pr_indices: Box<[u8]>,
+    pr_indices_path: String,
 ) {
-    wire_update_pr_indices_impl(port_, pr_indices)
+    wire_update_pr_indices_impl(port_, pr_indices_path)
 }
 
 #[wasm_bindgen]
