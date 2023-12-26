@@ -119,13 +119,22 @@ static API: Lazy<Mutex<WordshkApi>> = Lazy::new(|| Mutex::new(WordshkApi::new())
 pub fn init_api(dict_data: Vec<u8>, english_index_data: Vec<u8>) -> () {
     env::set_var("RUST_BACKTRACE", "1");
     let mut api = API.lock().unwrap();
+
+    let mut t = Instant::now();
     let mut aligned_dict_data = AlignedVec::with_capacity(dict_data.len());
     aligned_dict_data.extend_from_slice(&dict_data);
+    log!(t, "Copied dict_data to aligned_dict_data");
+
     api.variants_map = search::rich_dict_to_variants_map(&dict(&aligned_dict_data));
+    log!(t, "Constructed variants_map");
+
     api.dict_data = aligned_dict_data;
+    log!(t, "Initialized api.dict_data");
 
     let mut aligned_english_index_data = AlignedVec::with_capacity(english_index_data.len());
     aligned_english_index_data.extend_from_slice(&english_index_data);
+    log!(t, "Copied english_index_data to aligned_english_index_data");
+
     api.english_index_data = aligned_english_index_data;
 
     log_stream_sink.write().as_ref().unwrap().add("Initialized API".to_string());
