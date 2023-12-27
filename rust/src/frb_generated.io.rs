@@ -157,6 +157,15 @@ impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
         vec.into_iter().map(CstDecode::cst_decode).collect()
     }
 }
+impl CstDecode<crate::api::api::MatchedVariant> for wire_cst_matched_variant {
+    fn cst_decode(self) -> crate::api::api::MatchedVariant {
+        crate::api::api::MatchedVariant {
+            prefix: self.prefix.cst_decode(),
+            query: self.query.cst_decode(),
+            suffix: self.suffix.cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::PrSearchResult> for wire_cst_pr_search_result {
     fn cst_decode(self) -> crate::api::api::PrSearchResult {
         crate::api::api::PrSearchResult {
@@ -198,7 +207,7 @@ impl CstDecode<crate::api::api::VariantSearchResult> for wire_cst_variant_search
     fn cst_decode(self) -> crate::api::api::VariantSearchResult {
         crate::api::api::VariantSearchResult {
             id: self.id.cst_decode(),
-            variant: self.variant.cst_decode(),
+            matched_variant: self.matched_variant.cst_decode(),
             yues: self.yues.cst_decode(),
             engs: self.engs.cst_decode(),
         }
@@ -271,6 +280,20 @@ impl Default for wire_cst_entry_summary {
         Self::new_with_null_ptr()
     }
 }
+impl NewWithNullPtr for wire_cst_matched_variant {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            prefix: core::ptr::null_mut(),
+            query: core::ptr::null_mut(),
+            suffix: core::ptr::null_mut(),
+        }
+    }
+}
+impl Default for wire_cst_matched_variant {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
 impl NewWithNullPtr for wire_cst_pr_search_result {
     fn new_with_null_ptr() -> Self {
         Self {
@@ -336,7 +359,7 @@ impl NewWithNullPtr for wire_cst_variant_search_result {
     fn new_with_null_ptr() -> Self {
         Self {
             id: Default::default(),
-            variant: core::ptr::null_mut(),
+            matched_variant: Default::default(),
             yues: core::ptr::null_mut(),
             engs: core::ptr::null_mut(),
         }
@@ -690,6 +713,13 @@ pub struct wire_cst_list_variant_search_result {
 }
 #[repr(C)]
 #[derive(Clone)]
+pub struct wire_cst_matched_variant {
+    prefix: *mut wire_cst_list_prim_u_8,
+    query: *mut wire_cst_list_prim_u_8,
+    suffix: *mut wire_cst_list_prim_u_8,
+}
+#[repr(C)]
+#[derive(Clone)]
 pub struct wire_cst_pr_search_result {
     id: u32,
     variant: *mut wire_cst_list_prim_u_8,
@@ -725,7 +755,7 @@ pub struct wire_cst_spotlight_entry_summary {
 #[derive(Clone)]
 pub struct wire_cst_variant_search_result {
     id: u32,
-    variant: *mut wire_cst_list_prim_u_8,
+    matched_variant: wire_cst_matched_variant,
     yues: *mut wire_cst_list_String,
     engs: *mut wire_cst_list_String,
 }

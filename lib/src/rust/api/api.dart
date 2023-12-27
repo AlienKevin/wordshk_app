@@ -207,6 +207,30 @@ class EntrySummary {
           defs == other.defs;
 }
 
+class MatchedVariant {
+  final String prefix;
+  final String query;
+  final String suffix;
+
+  const MatchedVariant({
+    required this.prefix,
+    required this.query,
+    required this.suffix,
+  });
+
+  @override
+  int get hashCode => prefix.hashCode ^ query.hashCode ^ suffix.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MatchedVariant &&
+          runtimeType == other.runtimeType &&
+          prefix == other.prefix &&
+          query == other.query &&
+          suffix == other.suffix;
+}
+
 class PrSearchResult {
   final int id;
   final String variant;
@@ -301,20 +325,20 @@ class SpotlightEntrySummary {
 
 class VariantSearchResult {
   final int id;
-  final String variant;
+  final MatchedVariant matchedVariant;
   final List<String> yues;
   final List<String> engs;
 
   const VariantSearchResult({
     required this.id,
-    required this.variant,
+    required this.matchedVariant,
     required this.yues,
     required this.engs,
   });
 
   @override
   int get hashCode =>
-      id.hashCode ^ variant.hashCode ^ yues.hashCode ^ engs.hashCode;
+      id.hashCode ^ matchedVariant.hashCode ^ yues.hashCode ^ engs.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -322,7 +346,7 @@ class VariantSearchResult {
       other is VariantSearchResult &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          variant == other.variant &&
+          matchedVariant == other.matchedVariant &&
           yues == other.yues &&
           engs == other.engs;
 }

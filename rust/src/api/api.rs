@@ -20,7 +20,7 @@ use wordshk_tools::rich_dict::{RichDict, RichEntry, RichLine};
 use wordshk_tools::rich_dict::ArchivedRichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
-pub use wordshk_tools::search::Script;
+pub use wordshk_tools::search::{MatchedVariant, Script};
 use wordshk_tools::unicode::is_cjk;
 
 use crate::frb_generated::StreamSink;
@@ -51,9 +51,16 @@ pub struct PrSearchResult {
     pub engs: Vec<String>,
 }
 
+#[frb(mirror(MatchedVariant))]
+pub struct _MatchedVariant {
+    prefix: String,
+    query: String,
+    suffix: String,
+}
+
 pub struct VariantSearchResult {
     pub id: u32,
-    pub variant: String,
+    pub matched_variant: MatchedVariant,
     pub yues: Vec<String>,
     pub engs: Vec<String>,
 }
@@ -351,14 +358,13 @@ fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearch
     let mut i = 0;
     while variant_ranks.len() > 0 && i < capacity {
         let search::VariantSearchRank {
-            id, variant_index, ..
+            id, matched_variant, ..
         } = variant_ranks.pop().unwrap();
-        let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
         let defs = get_entry_defs(id, dict, script);
         let (yues, engs) = defs.into_iter().unzip();
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
-            variant: variant.word.clone(),
+            matched_variant: matched_variant.clone(),
             yues,
             engs,
         });

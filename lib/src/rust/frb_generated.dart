@@ -615,6 +615,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MatchedVariant dco_decode_matched_variant(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return MatchedVariant(
+      prefix: dco_decode_String(arr[0]),
+      query: dco_decode_String(arr[1]),
+      suffix: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
   String? dco_decode_opt_String(dynamic raw) {
     return raw == null ? null : dco_decode_String(raw);
   }
@@ -712,7 +724,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return VariantSearchResult(
       id: dco_decode_u_32(arr[0]),
-      variant: dco_decode_String(arr[1]),
+      matchedVariant: dco_decode_matched_variant(arr[1]),
       yues: dco_decode_list_String(arr[2]),
       engs: dco_decode_list_String(arr[3]),
     );
@@ -887,6 +899,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MatchedVariant sse_decode_matched_variant(SseDeserializer deserializer) {
+    var var_prefix = sse_decode_String(deserializer);
+    var var_query = sse_decode_String(deserializer);
+    var var_suffix = sse_decode_String(deserializer);
+    return MatchedVariant(
+        prefix: var_prefix, query: var_query, suffix: var_suffix);
+  }
+
+  @protected
   String? sse_decode_opt_String(SseDeserializer deserializer) {
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_String(deserializer));
@@ -987,11 +1008,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   VariantSearchResult sse_decode_variant_search_result(
       SseDeserializer deserializer) {
     var var_id = sse_decode_u_32(deserializer);
-    var var_variant = sse_decode_String(deserializer);
+    var var_matchedVariant = sse_decode_matched_variant(deserializer);
     var var_yues = sse_decode_list_String(deserializer);
     var var_engs = sse_decode_list_String(deserializer);
     return VariantSearchResult(
-        id: var_id, variant: var_variant, yues: var_yues, engs: var_engs);
+        id: var_id,
+        matchedVariant: var_matchedVariant,
+        yues: var_yues,
+        engs: var_engs);
   }
 
   @protected
@@ -1168,6 +1192,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_matched_variant(
+      MatchedVariant self, SseSerializer serializer) {
+    sse_encode_String(self.prefix, serializer);
+    sse_encode_String(self.query, serializer);
+    sse_encode_String(self.suffix, serializer);
+  }
+
+  @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer) {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
@@ -1247,7 +1279,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_variant_search_result(
       VariantSearchResult self, SseSerializer serializer) {
     sse_encode_u_32(self.id, serializer);
-    sse_encode_String(self.variant, serializer);
+    sse_encode_matched_variant(self.matchedVariant, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
   }

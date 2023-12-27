@@ -206,6 +206,26 @@ impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
             .collect()
     }
 }
+impl CstDecode<crate::api::api::MatchedVariant>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> crate::api::api::MatchedVariant {
+        let self_ = self
+            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap();
+        assert_eq!(
+            self_.length(),
+            3,
+            "Expected 3 elements, got {}",
+            self_.length()
+        );
+        crate::api::api::MatchedVariant {
+            prefix: self_.get(0).cst_decode(),
+            query: self_.get(1).cst_decode(),
+            suffix: self_.get(2).cst_decode(),
+        }
+    }
+}
 impl CstDecode<Option<String>> for Option<String> {
     fn cst_decode(self) -> Option<String> {
         self.map(CstDecode::cst_decode)
@@ -303,7 +323,7 @@ impl CstDecode<crate::api::api::VariantSearchResult>
         );
         crate::api::api::VariantSearchResult {
             id: self_.get(0).cst_decode(),
-            variant: self_.get(1).cst_decode(),
+            matched_variant: self_.get(1).cst_decode(),
             yues: self_.get(2).cst_decode(),
             engs: self_.get(3).cst_decode(),
         }

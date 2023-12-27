@@ -74,6 +74,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
 
   @protected
+  MatchedVariant dco_decode_matched_variant(dynamic raw);
+
+  @protected
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
@@ -172,6 +175,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
       SseDeserializer deserializer);
+
+  @protected
+  MatchedVariant sse_decode_matched_variant(SseDeserializer deserializer);
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
@@ -374,6 +380,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_matched_variant(
+      MatchedVariant apiObj, wire_cst_matched_variant wireObj) {
+    wireObj.prefix = cst_encode_String(apiObj.prefix);
+    wireObj.query = cst_encode_String(apiObj.query);
+    wireObj.suffix = cst_encode_String(apiObj.suffix);
+  }
+
+  @protected
   void cst_api_fill_to_wire_pr_search_result(
       PrSearchResult apiObj, wire_cst_pr_search_result wireObj) {
     wireObj.id = cst_encode_u_32(apiObj.id);
@@ -415,7 +429,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void cst_api_fill_to_wire_variant_search_result(
       VariantSearchResult apiObj, wire_cst_variant_search_result wireObj) {
     wireObj.id = cst_encode_u_32(apiObj.id);
-    wireObj.variant = cst_encode_String(apiObj.variant);
+    cst_api_fill_to_wire_matched_variant(
+        apiObj.matchedVariant, wireObj.matched_variant);
     wireObj.yues = cst_encode_list_String(apiObj.yues);
     wireObj.engs = cst_encode_list_String(apiObj.engs);
   }
@@ -502,6 +517,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_variant_search_result(
       List<VariantSearchResult> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_matched_variant(
+      MatchedVariant self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
@@ -1194,11 +1213,19 @@ final class wire_cst_list_spotlight_entry_summary extends ffi.Struct {
   external int len;
 }
 
+final class wire_cst_matched_variant extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8> prefix;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8> query;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8> suffix;
+}
+
 final class wire_cst_variant_search_result extends ffi.Struct {
   @ffi.Uint32()
   external int id;
 
-  external ffi.Pointer<wire_cst_list_prim_u_8> variant;
+  external wire_cst_matched_variant matched_variant;
 
   external ffi.Pointer<wire_cst_list_String> yues;
 

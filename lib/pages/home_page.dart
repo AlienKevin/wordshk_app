@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
         }
       }
       final exactMatchVariant = variantSearchResults
-          .firstWhereOrNull((result) => result.variant == query);
+          .firstWhereOrNull((result) => result.matchedVariant.prefix.isEmpty && result.matchedVariant.suffix.isEmpty);
       if (exactMatchVariant != null) {
         context.read<HistoryState>().updateItem(exactMatchVariant.id);
         Navigator.push(
@@ -296,7 +296,7 @@ class _HomePageState extends State<HomePage> {
             if (searchStartTime >= lastSearchStartTime) {
               setState(() {
                 variantSearchResults =
-                    results.unique((result) => result.variant);
+                    results.unique((result) => result.matchedVariant);
                 isSearchResultsEmpty = variantSearchResults.isEmpty;
                 finishedSearch = true;
               });
@@ -346,7 +346,7 @@ class _HomePageState extends State<HomePage> {
                 prSearchResults =
                     results.prResults.unique((result) => result.variant);
                 variantSearchResults =
-                    results.variantResults.unique((result) => result.variant);
+                    results.variantResults.unique((result) => result.matchedVariant);
                 englishSearchResults = results.englishResults;
                 if (!isCombinedResultsEmpty) {
                   finishedSearch = true;
@@ -546,11 +546,26 @@ class _HomePageState extends State<HomePage> {
         showFirstEntryInGroupInitially: false,
         (bool selected) => TextSpan(children: [
           TextSpan(
-              text: "${result.variant}\n",
+              text: result.matchedVariant.prefix,
               style: textStyle.copyWith(
                   color: selected
                       ? Theme.of(context).colorScheme.onPrimary
-                      : null)),
+                      : null,
+                  fontWeight: FontWeight.normal)),
+          TextSpan(
+              text: result.matchedVariant.query,
+              style: textStyle.copyWith(
+                  color: selected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                  fontWeight: FontWeight.w600)),
+          TextSpan(
+              text: "${result.matchedVariant.suffix}\n",
+              style: textStyle.copyWith(
+                  color: selected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                  fontWeight: FontWeight.normal)),
           ...showDefSummary(
               context,
               switch (getSummaryDefLanguage(context)) {

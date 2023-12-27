@@ -73,6 +73,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
 
   @protected
+  MatchedVariant dco_decode_matched_variant(dynamic raw);
+
+  @protected
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
@@ -171,6 +174,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
       SseDeserializer deserializer);
+
+  @protected
+  MatchedVariant sse_decode_matched_variant(SseDeserializer deserializer);
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
@@ -324,6 +330,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  List<dynamic> cst_encode_matched_variant(MatchedVariant raw) {
+    return [
+      cst_encode_String(raw.prefix),
+      cst_encode_String(raw.query),
+      cst_encode_String(raw.suffix)
+    ];
+  }
+
+  @protected
   String? cst_encode_opt_String(String? raw) {
     return raw == null ? null : cst_encode_String(raw);
   }
@@ -376,7 +391,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<dynamic> cst_encode_variant_search_result(VariantSearchResult raw) {
     return [
       cst_encode_u_32(raw.id),
-      cst_encode_String(raw.variant),
+      cst_encode_matched_variant(raw.matchedVariant),
       cst_encode_list_String(raw.yues),
       cst_encode_list_String(raw.engs)
     ];
@@ -464,6 +479,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_variant_search_result(
       List<VariantSearchResult> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_matched_variant(
+      MatchedVariant self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
