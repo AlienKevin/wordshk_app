@@ -113,8 +113,10 @@ class _HomePageState extends State<HomePage> {
           return;
         }
       }
-      final exactMatchVariant = variantSearchResults
-          .firstWhereOrNull((result) => result.matchedVariant.prefix.isEmpty && result.matchedVariant.suffix.isEmpty);
+      final exactMatchVariant = variantSearchResults.firstWhereOrNull(
+          (result) =>
+              result.matchedVariant.prefix.isEmpty &&
+              result.matchedVariant.suffix.isEmpty);
       if (exactMatchVariant != null) {
         context.read<HistoryState>().updateItem(exactMatchVariant.id);
         Navigator.push(
@@ -440,9 +442,13 @@ class _HomePageState extends State<HomePage> {
                               color: Theme.of(context).colorScheme.onPrimary)
                           : textStyle),
                   TextSpan(
-                      text: result.pr,
+                      text: context
+                          .read<RomanizationState>()
+                          .showPrs(result.pr.split(" ")),
                       style: textStyle.copyWith(
-                          color: selected ? lightGreyColor : greyColor)),
+                        color: selected ? lightGreyColor : greyColor,
+                        fontWeight: FontWeight.normal,
+                      )),
                   TextSpan(
                       text: "\n${result.eng}",
                       style: textStyle.copyWith(
@@ -546,23 +552,20 @@ class _HomePageState extends State<HomePage> {
           TextSpan(
               text: result.matchedVariant.prefix,
               style: textStyle.copyWith(
-                  color: selected
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : null,
+                  color:
+                      selected ? Theme.of(context).colorScheme.onPrimary : null,
                   fontWeight: FontWeight.normal)),
           TextSpan(
               text: result.matchedVariant.query,
               style: textStyle.copyWith(
-                  color: selected
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : null,
+                  color:
+                      selected ? Theme.of(context).colorScheme.onPrimary : null,
                   fontWeight: FontWeight.w600)),
           TextSpan(
               text: "${result.matchedVariant.suffix}\n",
               style: textStyle.copyWith(
-                  color: selected
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : null,
+                  color:
+                      selected ? Theme.of(context).colorScheme.onPrimary : null,
                   fontWeight: FontWeight.normal)),
           ...showDefSummary(
               context,
