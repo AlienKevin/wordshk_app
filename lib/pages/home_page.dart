@@ -379,7 +379,10 @@ class _HomePageState extends State<HomePage> {
             ? Embedded.embedded
             : Embedded.topLevel;
         final results = showSearchResultsHelper(
-            Theme.of(context).textTheme.bodyLarge!,
+            Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.normal),
             context.watch<SearchModeState>().mode,
             embedded);
         final resultList = ListView.separated(
@@ -447,14 +450,12 @@ class _HomePageState extends State<HomePage> {
                           .showPrs(result.pr.split(" ")),
                       style: textStyle.copyWith(
                         color: selected ? lightGreyColor : greyColor,
-                        fontWeight: FontWeight.normal,
                       )),
                   TextSpan(
                       text: "\n${result.eng}",
                       style: textStyle.copyWith(
                           fontSize:
                               Theme.of(context).textTheme.bodySmall!.fontSize,
-                          fontWeight: FontWeight.normal,
                           color: selected ? lightGreyColor : greyColor)),
                 ],
               ),
@@ -552,9 +553,9 @@ class _HomePageState extends State<HomePage> {
           TextSpan(
               text: result.matchedVariant.prefix,
               style: textStyle.copyWith(
-                  color:
-                      selected ? Theme.of(context).colorScheme.onPrimary : null,
-                  fontWeight: FontWeight.normal)),
+                  color: selected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null)),
           TextSpan(
               text: result.matchedVariant.query,
               style: textStyle.copyWith(
@@ -564,9 +565,9 @@ class _HomePageState extends State<HomePage> {
           TextSpan(
               text: "${result.matchedVariant.suffix}\n",
               style: textStyle.copyWith(
-                  color:
-                      selected ? Theme.of(context).colorScheme.onPrimary : null,
-                  fontWeight: FontWeight.normal)),
+                  color: selected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null)),
           ...showDefSummary(
               context,
               switch (getSummaryDefLanguage(context)) {
