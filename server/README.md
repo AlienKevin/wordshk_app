@@ -11,7 +11,8 @@ pip install -r requirements.txt
 
 ## Get full content of DynanoDB table
 ```bash
-aws dynamodb scan --table-name wordshk-dynamo | jq .
+cd scripts
+python scan_table.py
 ```
 
 ## Clears all items from DynanoDB table
