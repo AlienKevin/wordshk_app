@@ -295,8 +295,7 @@ class _HomePageState extends State<HomePage> {
             if (!context.mounted) return;
             if (searchStartTime >= lastSearchStartTime) {
               setState(() {
-                variantSearchResults =
-                    results.unique((result) => result.matchedVariant);
+                variantSearchResults = results;
                 isSearchResultsEmpty = variantSearchResults.isEmpty;
                 finishedSearch = true;
               });
@@ -345,8 +344,7 @@ class _HomePageState extends State<HomePage> {
                 egSearchQueryNormalized = null;
                 prSearchResults =
                     results.prResults.unique((result) => result.variant);
-                variantSearchResults =
-                    results.variantResults.unique((result) => result.matchedVariant);
+                variantSearchResults = results.variantResults;
                 englishSearchResults = results.englishResults;
                 if (!isCombinedResultsEmpty) {
                   finishedSearch = true;
