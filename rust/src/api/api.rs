@@ -11,11 +11,11 @@ use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
 use parking_lot::RwLock;
 use rkyv::{AlignedVec, Deserialize};
-use wordshk_tools::dict::{Clause, clause_to_string, EntryId};
-use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishIndexData};
+use wordshk_tools::dict::{clause_to_string, EntryId};
+use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishSearchRank};
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
-use wordshk_tools::pr_index::{ArchivedPrIndices, PrIndices};
+use wordshk_tools::pr_index::PrIndices;
 use wordshk_tools::rich_dict::{RichDict, RichEntry, RichLine};
 use wordshk_tools::rich_dict::ArchivedRichDict;
 use wordshk_tools::search;
@@ -76,7 +76,7 @@ pub struct EnglishSearchResult {
     pub def_index: u32,
     pub variant: String,
     pub pr: String,
-    pub eng: String,
+    pub matched_eng: Vec<MatchedSegment>,
 }
 
 pub struct EgSearchResult {
@@ -256,32 +256,15 @@ pub fn combined_search(capacity: u32, query: String, script: Script, romanizatio
             CombinedSearchResults {
                 variant_results: variant_ranks_to_results(variant_ranks, &api.variants_map, dict(&api.dict_data), script, capacity),
                 pr_results: pr_ranks_to_results(pr_ranks, &api.variants_map, dict(&api.dict_data), script, capacity),
-                english_results: english_ranks_to_results(english_ranks, dict(&api.dict_data), &api.variants_map, script, capacity)
+                english_results: english_ranks_to_results(english_ranks, &api.variants_map, script, capacity)
             }
     }
 }
 
 pub fn english_search(capacity: u32, query: String, script: Script) -> Vec<EnglishSearchResult> {
     let api = API.lock().unwrap();
-    let entries = search::english_search(english_index(&api.english_index_data), &query);
-    entries[..std::cmp::min(capacity as usize, entries.len())]
-        .iter()
-        .map(|entry| {
-            let variant = &search::pick_variants(api.variants_map.get(&entry.entry_id).unwrap(), script).0[0];
-            EnglishSearchResult {
-                id: entry.entry_id as u32,
-                def_index: entry.def_index as u32,
-                variant: variant.word.clone(),
-                pr: variant.prs.0[0].to_string(),
-                eng: clause_to_string(
-                    &dict(&api.dict_data).get(&entry.entry_id).unwrap().defs[entry.def_index]
-                        .eng
-                        .as_ref()
-                        .unwrap().deserialize(&mut rkyv::Infallible).unwrap(),
-                ),
-            }
-        })
-        .collect()
+    let english_ranks = search::english_search(english_index(&api.english_index_data), dict(&api.dict_data), &query);
+    english_ranks_to_results(&english_ranks, &api.variants_map, script, capacity)
 }
 
 pub fn eg_search(capacity: u32, max_first_index_in_eg: u32, query: String, script: Script) -> (Option<String>, Vec<EgSearchResult>) {
@@ -416,21 +399,17 @@ fn get_entry_defs(id: EntryId, dict: &ArchivedRichDict, script: Script) -> Vec<(
         )).collect()
 }
 
-fn english_ranks_to_results(english_ranks: &Vec<EnglishIndexData>, dict: &ArchivedRichDict, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<EnglishSearchResult> {
+fn english_ranks_to_results(english_ranks: &Vec<EnglishSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<EnglishSearchResult> {
     english_ranks[..std::cmp::min(capacity as usize, english_ranks.len())]
         .iter()
         .map(|entry| {
             let variant = &search::pick_variants(&variants_map.get(&entry.entry_id).unwrap(), script).0[0];
-            let eng: Clause = dict.get(&entry.entry_id).unwrap().defs[entry.def_index]
-                .eng
-                .as_ref()
-                .unwrap().deserialize(&mut rkyv::Infallible).unwrap();
             EnglishSearchResult {
                 id: entry.entry_id as u32,
                 def_index: entry.def_index as u32,
                 variant: variant.word.clone(),
                 pr: variant.prs.0[0].to_string(),
-                eng: clause_to_string(&eng),
+                matched_eng: entry.matched_eng.clone(),
             }
         })
         .collect()

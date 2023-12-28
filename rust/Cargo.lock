@@ -1249,6 +1249,7 @@ dependencies = [
  "once_cell",
  "openssl",
  "parking_lot",
+ "regex",
  "rkyv",
  "serde",
  "serde_json",
@@ -2005,7 +2006,7 @@ dependencies = [
 [[package]]
 name = "wordshk_tools"
 version = "3.16.0-beta.10"
-source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=3332b5960c1c436a78806c873823ceefc3c26f98#3332b5960c1c436a78806c873823ceefc3c26f98"
+source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=dce4d20d4043c6a4af1216462504de416463ce4d#dce4d20d4043c6a4af1216462504de416463ce4d"
 dependencies = [
  "csv",
  "deunicode",

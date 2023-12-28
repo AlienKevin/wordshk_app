@@ -544,7 +544,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       defIndex: dco_decode_u_32(arr[1]),
       variant: dco_decode_String(arr[2]),
       pr: dco_decode_String(arr[3]),
-      eng: dco_decode_String(arr[4]),
+      matchedEng: dco_decode_list_matched_segment(arr[4]),
     );
   }
 
@@ -806,13 +806,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_defIndex = sse_decode_u_32(deserializer);
     var var_variant = sse_decode_String(deserializer);
     var var_pr = sse_decode_String(deserializer);
-    var var_eng = sse_decode_String(deserializer);
+    var var_matchedEng = sse_decode_list_matched_segment(deserializer);
     return EnglishSearchResult(
         id: var_id,
         defIndex: var_defIndex,
         variant: var_variant,
         pr: var_pr,
-        eng: var_eng);
+        matchedEng: var_matchedEng);
   }
 
   @protected
@@ -1145,7 +1145,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_u_32(self.defIndex, serializer);
     sse_encode_String(self.variant, serializer);
     sse_encode_String(self.pr, serializer);
-    sse_encode_String(self.eng, serializer);
+    sse_encode_list_matched_segment(self.matchedEng, serializer);
   }
 
   @protected

@@ -397,7 +397,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj.def_index = cst_encode_u_32(apiObj.defIndex);
     wireObj.variant = cst_encode_String(apiObj.variant);
     wireObj.pr = cst_encode_String(apiObj.pr);
-    wireObj.eng = cst_encode_String(apiObj.eng);
+    wireObj.matched_eng = cst_encode_list_matched_segment(apiObj.matchedEng);
   }
 
   @protected
@@ -1181,6 +1181,20 @@ final class wire_cst_list_eg_search_result extends ffi.Struct {
   external int len;
 }
 
+final class wire_cst_matched_segment extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8> segment;
+
+  @ffi.Bool()
+  external bool matched;
+}
+
+final class wire_cst_list_matched_segment extends ffi.Struct {
+  external ffi.Pointer<wire_cst_matched_segment> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
 final class wire_cst_english_search_result extends ffi.Struct {
   @ffi.Uint32()
   external int id;
@@ -1192,7 +1206,7 @@ final class wire_cst_english_search_result extends ffi.Struct {
 
   external ffi.Pointer<wire_cst_list_prim_u_8> pr;
 
-  external ffi.Pointer<wire_cst_list_prim_u_8> eng;
+  external ffi.Pointer<wire_cst_list_matched_segment> matched_eng;
 }
 
 final class wire_cst_list_english_search_result extends ffi.Struct {
@@ -1223,20 +1237,6 @@ final class wire_cst_entry_summary extends ffi.Struct {
 
 final class wire_cst_list_entry_summary extends ffi.Struct {
   external ffi.Pointer<wire_cst_entry_summary> ptr;
-
-  @ffi.Int32()
-  external int len;
-}
-
-final class wire_cst_matched_segment extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8> segment;
-
-  @ffi.Bool()
-  external bool matched;
-}
-
-final class wire_cst_list_matched_segment extends ffi.Struct {
-  external ffi.Pointer<wire_cst_matched_segment> ptr;
 
   @ffi.Int32()
   external int len;

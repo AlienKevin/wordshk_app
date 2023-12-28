@@ -156,14 +156,14 @@ class EnglishSearchResult {
   final int defIndex;
   final String variant;
   final String pr;
-  final String eng;
+  final List<MatchedSegment> matchedEng;
 
   const EnglishSearchResult({
     required this.id,
     required this.defIndex,
     required this.variant,
     required this.pr,
-    required this.eng,
+    required this.matchedEng,
   });
 
   @override
@@ -172,7 +172,7 @@ class EnglishSearchResult {
       defIndex.hashCode ^
       variant.hashCode ^
       pr.hashCode ^
-      eng.hashCode;
+      matchedEng.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -183,7 +183,7 @@ class EnglishSearchResult {
           defIndex == other.defIndex &&
           variant == other.variant &&
           pr == other.pr &&
-          eng == other.eng;
+          matchedEng == other.matchedEng;
 }
 
 class EntrySummary {

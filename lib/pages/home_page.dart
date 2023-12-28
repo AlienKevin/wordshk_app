@@ -450,12 +450,15 @@ class _HomePageState extends State<HomePage> {
                       style: textStyle.copyWith(
                         color: selected ? lightGreyColor : greyColor,
                       )),
-                  TextSpan(
-                      text: "\n${result.eng}",
+                  const TextSpan(text: "\n"),
+                  ...result.matchedEng.map((segment) => TextSpan(
+                      text: segment.segment,
                       style: textStyle.copyWith(
-                          fontSize:
-                              Theme.of(context).textTheme.bodySmall!.fontSize,
-                          color: selected ? lightGreyColor : greyColor)),
+                        fontSize:
+                            Theme.of(context).textTheme.bodySmall!.fontSize,
+                        color: selected ? lightGreyColor : greyColor,
+                        fontWeight: segment.matched ? FontWeight.w600 : null,
+                      )))
                 ],
               ),
           SearchResultType.english,

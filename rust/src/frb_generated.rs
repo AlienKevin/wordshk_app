@@ -496,13 +496,13 @@ impl SseDecode for crate::api::api::EnglishSearchResult {
         let mut var_defIndex = <u32>::sse_decode(deserializer);
         let mut var_variant = <String>::sse_decode(deserializer);
         let mut var_pr = <String>::sse_decode(deserializer);
-        let mut var_eng = <String>::sse_decode(deserializer);
+        let mut var_matchedEng = <Vec<crate::api::api::MatchedSegment>>::sse_decode(deserializer);
         return crate::api::api::EnglishSearchResult {
             id: var_id,
             def_index: var_defIndex,
             variant: var_variant,
             pr: var_pr,
-            eng: var_eng,
+            matched_eng: var_matchedEng,
         };
     }
 }
@@ -856,7 +856,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::EnglishSearchResult {
             self.def_index.into_into_dart().into_dart(),
             self.variant.into_into_dart().into_dart(),
             self.pr.into_into_dart().into_dart(),
-            self.eng.into_into_dart().into_dart(),
+            self.matched_eng.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1063,7 +1063,7 @@ impl SseEncode for crate::api::api::EnglishSearchResult {
         <u32>::sse_encode(self.def_index, serializer);
         <String>::sse_encode(self.variant, serializer);
         <String>::sse_encode(self.pr, serializer);
-        <String>::sse_encode(self.eng, serializer);
+        <Vec<crate::api::api::MatchedSegment>>::sse_encode(self.matched_eng, serializer);
     }
 }
 
