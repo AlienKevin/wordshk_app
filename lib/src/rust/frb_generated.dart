@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
+import 'api/api.dart';
+import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
 
 /// Main entrypoint of the Rust API
 class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
@@ -498,6 +500,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  bool dco_decode_bool(dynamic raw) {
+    return raw as bool;
+  }
+
+  @protected
   int dco_decode_box_autoadd_u_32(dynamic raw) {
     return raw as int;
   }
@@ -580,6 +587,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<MatchedSegment> dco_decode_list_matched_segment(dynamic raw) {
+    return (raw as List<dynamic>).map(dco_decode_matched_segment).toList();
+  }
+
+  @protected
   List<PrSearchResult> dco_decode_list_pr_search_result(dynamic raw) {
     return (raw as List<dynamic>).map(dco_decode_pr_search_result).toList();
   }
@@ -615,6 +627,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MatchedSegment dco_decode_matched_segment(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return MatchedSegment(
+      segment: dco_decode_String(arr[0]),
+      matched: dco_decode_bool(arr[1]),
+    );
+  }
+
+  @protected
   MatchedVariant dco_decode_matched_variant(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 3)
@@ -644,7 +667,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return PrSearchResult(
       id: dco_decode_u_32(arr[0]),
       variant: dco_decode_String(arr[1]),
-      pr: dco_decode_String(arr[2]),
+      matchedPr: dco_decode_list_matched_segment(arr[2]),
       yues: dco_decode_list_String(arr[3]),
       engs: dco_decode_list_String(arr[4]),
     );
@@ -740,6 +763,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   String sse_decode_String(SseDeserializer deserializer) {
     var inner = sse_decode_list_prim_u_8(deserializer);
     return utf8.decoder.convert(inner);
+  }
+
+  @protected
+  bool sse_decode_bool(SseDeserializer deserializer) {
+    return deserializer.buffer.getUint8() != 0;
   }
 
   @protected
@@ -843,6 +871,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<MatchedSegment> sse_decode_list_matched_segment(
+      SseDeserializer deserializer) {
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <MatchedSegment>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_matched_segment(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   List<PrSearchResult> sse_decode_list_pr_search_result(
       SseDeserializer deserializer) {
     var len_ = sse_decode_i_32(deserializer);
@@ -899,6 +938,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MatchedSegment sse_decode_matched_segment(SseDeserializer deserializer) {
+    var var_segment = sse_decode_String(deserializer);
+    var var_matched = sse_decode_bool(deserializer);
+    return MatchedSegment(segment: var_segment, matched: var_matched);
+  }
+
+  @protected
   MatchedVariant sse_decode_matched_variant(SseDeserializer deserializer) {
     var var_prefix = sse_decode_String(deserializer);
     var var_query = sse_decode_String(deserializer);
@@ -929,13 +975,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   PrSearchResult sse_decode_pr_search_result(SseDeserializer deserializer) {
     var var_id = sse_decode_u_32(deserializer);
     var var_variant = sse_decode_String(deserializer);
-    var var_pr = sse_decode_String(deserializer);
+    var var_matchedPr = sse_decode_list_matched_segment(deserializer);
     var var_yues = sse_decode_list_String(deserializer);
     var var_engs = sse_decode_list_String(deserializer);
     return PrSearchResult(
         id: var_id,
         variant: var_variant,
-        pr: var_pr,
+        matchedPr: var_matchedPr,
         yues: var_yues,
         engs: var_engs);
   }
@@ -1019,8 +1065,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  bool sse_decode_bool(SseDeserializer deserializer) {
-    return deserializer.buffer.getUint8() != 0;
+  bool cst_encode_bool(bool raw) {
+    return raw;
   }
 
   @protected
@@ -1063,6 +1109,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_String(String self, SseSerializer serializer) {
     sse_encode_list_prim_u_8(utf8.encoder.convert(self), serializer);
+  }
+
+  @protected
+  void sse_encode_bool(bool self, SseSerializer serializer) {
+    serializer.buffer.putUint8(self ? 1 : 0);
   }
 
   @protected
@@ -1144,6 +1195,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_matched_segment(
+      List<MatchedSegment> self, SseSerializer serializer) {
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_matched_segment(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_pr_search_result(
       List<PrSearchResult> self, SseSerializer serializer) {
     sse_encode_i_32(self.length, serializer);
@@ -1192,6 +1252,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_matched_segment(
+      MatchedSegment self, SseSerializer serializer) {
+    sse_encode_String(self.segment, serializer);
+    sse_encode_bool(self.matched, serializer);
+  }
+
+  @protected
   void sse_encode_matched_variant(
       MatchedVariant self, SseSerializer serializer) {
     sse_encode_String(self.prefix, serializer);
@@ -1220,7 +1287,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       PrSearchResult self, SseSerializer serializer) {
     sse_encode_u_32(self.id, serializer);
     sse_encode_String(self.variant, serializer);
-    sse_encode_String(self.pr, serializer);
+    sse_encode_list_matched_segment(self.matchedPr, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
   }
@@ -1282,10 +1349,5 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_matched_variant(self.matchedVariant, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
-  }
-
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer) {
-    serializer.buffer.putUint8(self ? 1 : 0);
   }
 }

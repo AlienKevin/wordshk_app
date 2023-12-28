@@ -373,6 +373,9 @@ fn wire_variant_search_impl(
 // Section: wrapper_structs
 
 #[derive(Clone)]
+pub struct mirror_MatchedSegment(crate::api::api::MatchedSegment);
+
+#[derive(Clone)]
 pub struct mirror_MatchedVariant(crate::api::api::MatchedVariant);
 
 #[derive(Clone)]
@@ -385,14 +388,26 @@ pub struct mirror_Script(crate::api::api::Script);
 
 #[allow(clippy::unnecessary_literal_unwrap)]
 const _: fn() = || {
-    let MatchedVariant = None::<crate::api::api::MatchedVariant>.unwrap();
-    let _: String = MatchedVariant.prefix;
-    let _: String = MatchedVariant.query;
-    let _: String = MatchedVariant.suffix;
+    {
+        let MatchedSegment = None::<crate::api::api::MatchedSegment>.unwrap();
+        let _: String = MatchedSegment.segment;
+        let _: bool = MatchedSegment.matched;
+    }
+    {
+        let MatchedVariant = None::<crate::api::api::MatchedVariant>.unwrap();
+        let _: String = MatchedVariant.prefix;
+        let _: String = MatchedVariant.query;
+        let _: String = MatchedVariant.suffix;
+    }
 };
 
 // Section: dart2rust
 
+impl CstDecode<bool> for bool {
+    fn cst_decode(self) -> bool {
+        self
+    }
+}
 impl CstDecode<i32> for i32 {
     fn cst_decode(self) -> i32 {
         self
@@ -436,6 +451,12 @@ impl SseDecode for String {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <Vec<u8>>::sse_decode(deserializer);
         return String::from_utf8(inner).unwrap();
+    }
+}
+
+impl SseDecode for bool {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_u8().unwrap() != 0
     }
 }
 
@@ -549,6 +570,17 @@ impl SseDecode for Vec<crate::api::api::EntrySummary> {
     }
 }
 
+impl SseDecode for Vec<crate::api::api::MatchedSegment> {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::api::MatchedSegment>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::api::PrSearchResult> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut len_ = <i32>::sse_decode(deserializer);
@@ -619,6 +651,17 @@ impl SseDecode for Vec<crate::api::api::VariantSearchResult> {
     }
 }
 
+impl SseDecode for crate::api::api::MatchedSegment {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_segment = <String>::sse_decode(deserializer);
+        let mut var_matched = <bool>::sse_decode(deserializer);
+        return crate::api::api::MatchedSegment {
+            segment: var_segment,
+            matched: var_matched,
+        };
+    }
+}
+
 impl SseDecode for crate::api::api::MatchedVariant {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_prefix = <String>::sse_decode(deserializer);
@@ -656,13 +699,13 @@ impl SseDecode for crate::api::api::PrSearchResult {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <u32>::sse_decode(deserializer);
         let mut var_variant = <String>::sse_decode(deserializer);
-        let mut var_pr = <String>::sse_decode(deserializer);
+        let mut var_matchedPr = <Vec<crate::api::api::MatchedSegment>>::sse_decode(deserializer);
         let mut var_yues = <Vec<String>>::sse_decode(deserializer);
         let mut var_engs = <Vec<String>>::sse_decode(deserializer);
         return crate::api::api::PrSearchResult {
             id: var_id,
             variant: var_variant,
-            pr: var_pr,
+            matched_pr: var_matchedPr,
             yues: var_yues,
             engs: var_engs,
         };
@@ -761,12 +804,6 @@ impl SseDecode for crate::api::api::VariantSearchResult {
     }
 }
 
-impl SseDecode for bool {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        deserializer.cursor.read_u8().unwrap() != 0
-    }
-}
-
 // Section: rust2dart
 
 impl flutter_rust_bridge::IntoDart for crate::api::api::CombinedSearchResults {
@@ -852,6 +889,21 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::api::EntrySummary>
         self
     }
 }
+impl flutter_rust_bridge::IntoDart for mirror_MatchedSegment {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        vec![
+            self.0.segment.into_into_dart().into_dart(),
+            self.0.matched.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for mirror_MatchedSegment {}
+impl flutter_rust_bridge::IntoIntoDart<mirror_MatchedSegment> for crate::api::api::MatchedSegment {
+    fn into_into_dart(self) -> mirror_MatchedSegment {
+        mirror_MatchedSegment(self)
+    }
+}
 impl flutter_rust_bridge::IntoDart for mirror_MatchedVariant {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         vec![
@@ -873,7 +925,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::PrSearchResult {
         vec![
             self.id.into_into_dart().into_dart(),
             self.variant.into_into_dart().into_dart(),
-            self.pr.into_into_dart().into_dart(),
+            self.matched_pr.into_into_dart().into_dart(),
             self.yues.into_into_dart().into_dart(),
             self.engs.into_into_dart().into_dart(),
         ]
@@ -982,6 +1034,12 @@ impl SseEncode for String {
     }
 }
 
+impl SseEncode for bool {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer.cursor.write_u8(self as _).unwrap();
+    }
+}
+
 impl SseEncode for crate::api::api::CombinedSearchResults {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<crate::api::api::VariantSearchResult>>::sse_encode(self.variant_results, serializer);
@@ -1058,6 +1116,15 @@ impl SseEncode for Vec<crate::api::api::EntrySummary> {
     }
 }
 
+impl SseEncode for Vec<crate::api::api::MatchedSegment> {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::api::MatchedSegment>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::api::PrSearchResult> {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(self.len() as _, serializer);
@@ -1112,6 +1179,13 @@ impl SseEncode for Vec<crate::api::api::VariantSearchResult> {
     }
 }
 
+impl SseEncode for crate::api::api::MatchedSegment {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.segment, serializer);
+        <bool>::sse_encode(self.matched, serializer);
+    }
+}
+
 impl SseEncode for crate::api::api::MatchedVariant {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.prefix, serializer);
@@ -1142,7 +1216,7 @@ impl SseEncode for crate::api::api::PrSearchResult {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.id, serializer);
         <String>::sse_encode(self.variant, serializer);
-        <String>::sse_encode(self.pr, serializer);
+        <Vec<crate::api::api::MatchedSegment>>::sse_encode(self.matched_pr, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
     }
@@ -1209,12 +1283,6 @@ impl SseEncode for crate::api::api::VariantSearchResult {
         <crate::api::api::MatchedVariant>::sse_encode(self.matched_variant, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
-    }
-}
-
-impl SseEncode for bool {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        serializer.cursor.write_u8(self as _).unwrap();
     }
 }
 

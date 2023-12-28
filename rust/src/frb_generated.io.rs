@@ -101,6 +101,15 @@ impl CstDecode<Vec<crate::api::api::EntrySummary>> for *mut wire_cst_list_entry_
         vec.into_iter().map(CstDecode::cst_decode).collect()
     }
 }
+impl CstDecode<Vec<crate::api::api::MatchedSegment>> for *mut wire_cst_list_matched_segment {
+    fn cst_decode(self) -> Vec<crate::api::api::MatchedSegment> {
+        let vec = unsafe {
+            let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
+            flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
+        };
+        vec.into_iter().map(CstDecode::cst_decode).collect()
+    }
+}
 impl CstDecode<Vec<crate::api::api::PrSearchResult>> for *mut wire_cst_list_pr_search_result {
     fn cst_decode(self) -> Vec<crate::api::api::PrSearchResult> {
         let vec = unsafe {
@@ -157,6 +166,14 @@ impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
         vec.into_iter().map(CstDecode::cst_decode).collect()
     }
 }
+impl CstDecode<crate::api::api::MatchedSegment> for wire_cst_matched_segment {
+    fn cst_decode(self) -> crate::api::api::MatchedSegment {
+        crate::api::api::MatchedSegment {
+            segment: self.segment.cst_decode(),
+            matched: self.matched.cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::MatchedVariant> for wire_cst_matched_variant {
     fn cst_decode(self) -> crate::api::api::MatchedVariant {
         crate::api::api::MatchedVariant {
@@ -171,7 +188,7 @@ impl CstDecode<crate::api::api::PrSearchResult> for wire_cst_pr_search_result {
         crate::api::api::PrSearchResult {
             id: self.id.cst_decode(),
             variant: self.variant.cst_decode(),
-            pr: self.pr.cst_decode(),
+            matched_pr: self.matched_pr.cst_decode(),
             yues: self.yues.cst_decode(),
             engs: self.engs.cst_decode(),
         }
@@ -280,6 +297,19 @@ impl Default for wire_cst_entry_summary {
         Self::new_with_null_ptr()
     }
 }
+impl NewWithNullPtr for wire_cst_matched_segment {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            segment: core::ptr::null_mut(),
+            matched: Default::default(),
+        }
+    }
+}
+impl Default for wire_cst_matched_segment {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
 impl NewWithNullPtr for wire_cst_matched_variant {
     fn new_with_null_ptr() -> Self {
         Self {
@@ -299,7 +329,7 @@ impl NewWithNullPtr for wire_cst_pr_search_result {
         Self {
             id: Default::default(),
             variant: core::ptr::null_mut(),
-            pr: core::ptr::null_mut(),
+            matched_pr: core::ptr::null_mut(),
             yues: core::ptr::null_mut(),
             engs: core::ptr::null_mut(),
         }
@@ -550,6 +580,18 @@ pub extern "C" fn cst_new_list_entry_summary(len: i32) -> *mut wire_cst_list_ent
 }
 
 #[no_mangle]
+pub extern "C" fn cst_new_list_matched_segment(len: i32) -> *mut wire_cst_list_matched_segment {
+    let wrap = wire_cst_list_matched_segment {
+        ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
+            <wire_cst_matched_segment>::new_with_null_ptr(),
+            len,
+        ),
+        len,
+    };
+    flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
+}
+
+#[no_mangle]
 pub extern "C" fn cst_new_list_pr_search_result(len: i32) -> *mut wire_cst_list_pr_search_result {
     let wrap = wire_cst_list_pr_search_result {
         ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
@@ -677,6 +719,12 @@ pub struct wire_cst_list_entry_summary {
 }
 #[repr(C)]
 #[derive(Clone)]
+pub struct wire_cst_list_matched_segment {
+    ptr: *mut wire_cst_matched_segment,
+    len: i32,
+}
+#[repr(C)]
+#[derive(Clone)]
 pub struct wire_cst_list_pr_search_result {
     ptr: *mut wire_cst_pr_search_result,
     len: i32,
@@ -713,6 +761,12 @@ pub struct wire_cst_list_variant_search_result {
 }
 #[repr(C)]
 #[derive(Clone)]
+pub struct wire_cst_matched_segment {
+    segment: *mut wire_cst_list_prim_u_8,
+    matched: bool,
+}
+#[repr(C)]
+#[derive(Clone)]
 pub struct wire_cst_matched_variant {
     prefix: *mut wire_cst_list_prim_u_8,
     query: *mut wire_cst_list_prim_u_8,
@@ -723,7 +777,7 @@ pub struct wire_cst_matched_variant {
 pub struct wire_cst_pr_search_result {
     id: u32,
     variant: *mut wire_cst_list_prim_u_8,
-    pr: *mut wire_cst_list_prim_u_8,
+    matched_pr: *mut wire_cst_list_matched_segment,
     yues: *mut wire_cst_list_String,
     engs: *mut wire_cst_list_String,
 }

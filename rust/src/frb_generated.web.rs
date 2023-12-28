@@ -152,6 +152,17 @@ impl CstDecode<Vec<crate::api::api::EntrySummary>>
             .collect()
     }
 }
+impl CstDecode<Vec<crate::api::api::MatchedSegment>>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> Vec<crate::api::api::MatchedSegment> {
+        self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap()
+            .iter()
+            .map(CstDecode::cst_decode)
+            .collect()
+    }
+}
 impl CstDecode<Vec<crate::api::api::PrSearchResult>>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
@@ -206,6 +217,25 @@ impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
             .collect()
     }
 }
+impl CstDecode<crate::api::api::MatchedSegment>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> crate::api::api::MatchedSegment {
+        let self_ = self
+            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap();
+        assert_eq!(
+            self_.length(),
+            2,
+            "Expected 2 elements, got {}",
+            self_.length()
+        );
+        crate::api::api::MatchedSegment {
+            segment: self_.get(0).cst_decode(),
+            matched: self_.get(1).cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::MatchedVariant>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
@@ -247,7 +277,7 @@ impl CstDecode<crate::api::api::PrSearchResult>
         crate::api::api::PrSearchResult {
             id: self_.get(0).cst_decode(),
             variant: self_.get(1).cst_decode(),
-            pr: self_.get(2).cst_decode(),
+            matched_pr: self_.get(2).cst_decode(),
             yues: self_.get(3).cst_decode(),
             engs: self_.get(4).cst_decode(),
         }
@@ -337,6 +367,11 @@ impl CstDecode<anyhow::Error> for flutter_rust_bridge::for_generated::wasm_bindg
 impl CstDecode<String> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
     fn cst_decode(self) -> String {
         self.as_string().expect("non-UTF-8 string, or not a string")
+    }
+}
+impl CstDecode<bool> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
+    fn cst_decode(self) -> bool {
+        self.is_truthy()
     }
 }
 impl CstDecode<i32> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {

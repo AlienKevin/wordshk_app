@@ -207,6 +207,27 @@ class EntrySummary {
           defs == other.defs;
 }
 
+class MatchedSegment {
+  final String segment;
+  final bool matched;
+
+  const MatchedSegment({
+    required this.segment,
+    required this.matched,
+  });
+
+  @override
+  int get hashCode => segment.hashCode ^ matched.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MatchedSegment &&
+          runtimeType == other.runtimeType &&
+          segment == other.segment &&
+          matched == other.matched;
+}
+
 class MatchedVariant {
   final String prefix;
   final String query;
@@ -234,14 +255,14 @@ class MatchedVariant {
 class PrSearchResult {
   final int id;
   final String variant;
-  final String pr;
+  final List<MatchedSegment> matchedPr;
   final List<String> yues;
   final List<String> engs;
 
   const PrSearchResult({
     required this.id,
     required this.variant,
-    required this.pr,
+    required this.matchedPr,
     required this.yues,
     required this.engs,
   });
@@ -250,7 +271,7 @@ class PrSearchResult {
   int get hashCode =>
       id.hashCode ^
       variant.hashCode ^
-      pr.hashCode ^
+      matchedPr.hashCode ^
       yues.hashCode ^
       engs.hashCode;
 
@@ -261,7 +282,7 @@ class PrSearchResult {
           runtimeType == other.runtimeType &&
           id == other.id &&
           variant == other.variant &&
-          pr == other.pr &&
+          matchedPr == other.matchedPr &&
           yues == other.yues &&
           engs == other.engs;
 }

@@ -520,9 +520,26 @@ class _HomePageState extends State<HomePage> {
                             color: selected
                                 ? Theme.of(context).colorScheme.onPrimary
                                 : null)),
+                    ...result.matchedPr
+                        .map((segment) => segment.segment.characters.map((c) =>
+                            MatchedSegment(
+                                segment: c, matched: segment.matched)))
+                        .expand((x) => x)
+                        .map((segment) => TextSpan(
+                            text: segment.segment,
+                            style: textStyle.copyWith(
+                              color: selected ? lightGreyColor : greyColor,
+                              // Workaround for accent marks not displayed
+                              // in correct position when font weights don't match
+                              fontWeight: (segment.matched ||
+                                      segment.segment == "\u{0301}" ||
+                                      segment.segment == "\u{0300}" ||
+                                      segment.segment == "\u{0304}")
+                                  ? FontWeight.w600
+                                  : null,
+                            ))),
                     TextSpan(
-                        text:
-                            "${context.read<RomanizationState>().showPrs(result.pr.split(" "))}\n",
+                        text: "\n",
                         style: textStyle.copyWith(
                             color: selected ? lightGreyColor : greyColor)),
                     ...showDefSummary(

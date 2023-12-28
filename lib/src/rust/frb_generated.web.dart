@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
+
+import 'api/api.dart';
+import 'frb_generated.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -22,6 +24,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   String dco_decode_String(dynamic raw);
+
+  @protected
+  bool dco_decode_bool(dynamic raw);
 
   @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
@@ -54,6 +59,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<EntrySummary> dco_decode_list_entry_summary(dynamic raw);
 
   @protected
+  List<MatchedSegment> dco_decode_list_matched_segment(dynamic raw);
+
+  @protected
   List<PrSearchResult> dco_decode_list_pr_search_result(dynamic raw);
 
   @protected
@@ -71,6 +79,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
+
+  @protected
+  MatchedSegment dco_decode_matched_segment(dynamic raw);
 
   @protected
   MatchedVariant dco_decode_matched_variant(dynamic raw);
@@ -119,6 +130,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
@@ -154,6 +168,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  List<MatchedSegment> sse_decode_list_matched_segment(
+      SseDeserializer deserializer);
+
+  @protected
   List<PrSearchResult> sse_decode_list_pr_search_result(
       SseDeserializer deserializer);
 
@@ -174,6 +192,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
       SseDeserializer deserializer);
+
+  @protected
+  MatchedSegment sse_decode_matched_segment(SseDeserializer deserializer);
 
   @protected
   MatchedVariant sse_decode_matched_variant(SseDeserializer deserializer);
@@ -218,9 +239,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   VariantSearchResult sse_decode_variant_search_result(
       SseDeserializer deserializer);
-
-  @protected
-  bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
   String cst_encode_AnyhowException(AnyhowException raw) {
@@ -297,6 +315,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  List<dynamic> cst_encode_list_matched_segment(List<MatchedSegment> raw) {
+    return raw.map(cst_encode_matched_segment).toList();
+  }
+
+  @protected
   List<dynamic> cst_encode_list_pr_search_result(List<PrSearchResult> raw) {
     return raw.map(cst_encode_pr_search_result).toList();
   }
@@ -330,6 +353,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  List<dynamic> cst_encode_matched_segment(MatchedSegment raw) {
+    return [cst_encode_String(raw.segment), cst_encode_bool(raw.matched)];
+  }
+
+  @protected
   List<dynamic> cst_encode_matched_variant(MatchedVariant raw) {
     return [
       cst_encode_String(raw.prefix),
@@ -353,7 +381,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     return [
       cst_encode_u_32(raw.id),
       cst_encode_String(raw.variant),
-      cst_encode_String(raw.pr),
+      cst_encode_list_matched_segment(raw.matchedPr),
       cst_encode_list_String(raw.yues),
       cst_encode_list_String(raw.engs)
     ];
@@ -398,6 +426,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  bool cst_encode_bool(bool raw);
+
+  @protected
   int cst_encode_i_32(int raw);
 
   @protected
@@ -421,6 +452,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
@@ -459,6 +493,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<EntrySummary> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_matched_segment(
+      List<MatchedSegment> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_pr_search_result(
       List<PrSearchResult> self, SseSerializer serializer);
 
@@ -479,6 +517,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_variant_search_result(
       List<VariantSearchResult> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_matched_segment(
+      MatchedSegment self, SseSerializer serializer);
 
   @protected
   void sse_encode_matched_variant(
@@ -524,9 +566,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_variant_search_result(
       VariantSearchResult self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer);
 }
 
 // Section: wire_class

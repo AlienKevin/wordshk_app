@@ -20,7 +20,7 @@ use wordshk_tools::rich_dict::{RichDict, RichEntry, RichLine};
 use wordshk_tools::rich_dict::ArchivedRichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
-pub use wordshk_tools::search::{MatchedVariant, Script};
+pub use wordshk_tools::search::{MatchedSegment, MatchedVariant, Script};
 use wordshk_tools::unicode::is_cjk;
 
 use crate::frb_generated::StreamSink;
@@ -43,10 +43,16 @@ pub enum _Romanization {
     Yale,
 }
 
+#[frb(mirror(MatchedSegment))]
+pub struct _MatchedSegment {
+    segment: String,
+    matched: bool,
+}
+
 pub struct PrSearchResult {
     pub id: u32,
     pub variant: String,
-    pub pr: String,
+    pub matched_pr: Vec<MatchedSegment>,
     pub yues: Vec<String>,
     pub engs: Vec<String>,
 }
@@ -378,7 +384,7 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
     let mut i = 0;
     while pr_ranks.len() > 0 && i < capacity {
         let search::PrSearchRank {
-            id, variant_index, pr_index, ..
+            id, variant_index, matched_pr,  ..
         } = pr_ranks.pop().unwrap();
         let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
         let defs = get_entry_defs(id, dict, script);
@@ -386,7 +392,7 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
         pr_search_results.push(PrSearchResult {
             id: id as u32,
             variant: variant.word.clone(),
-            pr: variant.prs.0[pr_index].to_string(),
+            matched_pr,
             yues,
             engs,
         });
