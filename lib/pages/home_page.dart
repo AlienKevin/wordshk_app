@@ -448,6 +448,10 @@ class _HomePageState extends State<HomePage> {
                           .read<RomanizationState>()
                           .showPrs(result.pr.split(" ")),
                       style: textStyle.copyWith(
+                        fontSize: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .fontSize,
                         color: selected ? lightGreyColor : greyColor,
                       )),
                   const TextSpan(text: "\n"),
@@ -533,6 +537,10 @@ class _HomePageState extends State<HomePage> {
                               color: selected ? lightGreyColor : greyColor,
                               // Workaround for accent marks not displayed
                               // in correct position when font weights don't match
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .fontSize,
                               fontWeight: (segment.matched ||
                                       segment.segment == "\u{0301}" ||
                                       segment.segment == "\u{0300}" ||
