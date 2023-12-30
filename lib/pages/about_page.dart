@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -9,8 +10,67 @@ import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
 import 'dictionary_license_page.dart';
 
-class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+class AboutPage extends StatefulWidget {
+  const AboutPage({super.key});
+
+  @override
+  AboutPageState createState() => AboutPageState();
+}
+
+class AboutPageState extends State<AboutPage> {
+  late TapGestureRecognizer qualityControlTapRecognizer;
+  late TapGestureRecognizer licenseTapRecognizer;
+  late TapGestureRecognizer privacyNoticeLinkTapRecognizer;
+  late TapGestureRecognizer appLinkTapRecognizer;
+  late TapGestureRecognizer wordshkLinkTapRecognizer;
+  late TapGestureRecognizer joinWordshkEmailTapRecognizer;
+  late TapGestureRecognizer wordshkFacebookLinkTapRecognizer;
+  late List<TapGestureRecognizer> specialCreditsLinkTapRecognizerList;
+
+  @override
+  void initState() {
+    super.initState();
+    qualityControlTapRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        print("quality control tapped");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const QualityControlPage()),
+        );
+      };
+
+    licenseTapRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const DictionaryLicensePage()),
+        );
+      };
+
+    privacyNoticeLinkTapRecognizer = TapGestureRecognizer()
+      ..onTap = () => openLink(
+          "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md");
+    appLinkTapRecognizer = TapGestureRecognizer()
+      ..onTap = () => openLink("https://github.com/AlienKevin/wordshk_app");
+    wordshkLinkTapRecognizer = TapGestureRecognizer()
+      ..onTap = () => openLink("https://words.hk/zidin/");
+    joinWordshkEmailTapRecognizer = TapGestureRecognizer()
+      ..onTap = () => openLink("mailto:join@words.hk");
+    wordshkFacebookLinkTapRecognizer = TapGestureRecognizer()
+      ..onTap = () => openLink("https://www.facebook.com/www.words.hk");
+
+    specialCreditsLinkTapRecognizerList = [
+      "https://github.com/fcbond/hkcancor",
+      "http://www.linguistics.hku.hk/",
+      "https://www.facebook.com/o.indicum",
+      "https://twitter.com/cancheng",
+      "https://chiron-fonts.github.io/",
+      "https://repository.eduhk.hk/en/persons/chaak-ming%E5%8A%89%E6%93%87%E6%98%8E-lau"
+    ]
+        .map((link) => TapGestureRecognizer()..onTap = () => openLink(link))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,35 +90,31 @@ class AboutPage extends StatelessWidget {
           Text.rich(paragraph),
         ]);
 
-    linkedTextSpanWithOnTap(String text, void Function() onTap,
+    linkedTextSpanWithOnTap(String text, TapGestureRecognizer recognizer,
         {IconData? icon}) {
       final color = Theme.of(context).colorScheme.secondary;
-      return WidgetSpan(
-          child: GestureDetector(
-              onTap: onTap,
-              child: Text.rich(TextSpan(
-                  children: [
-                    icon == null
-                        ? const TextSpan()
-                        : WidgetSpan(child: Icon(icon, color: color)),
-                    TextSpan(text: text),
-                  ],
-                  style: TextStyle(
-                      color: color,
-                      fontSize:
-                          Theme.of(context).textTheme.bodyMedium!.fontSize)))));
+      return TextSpan(children: [
+        icon == null
+            ? const TextSpan()
+            : WidgetSpan(
+                child: GestureDetector(
+                    onTap: recognizer.onTap,
+                    child: Icon(icon, color: color))),
+        TextSpan(text: text, recognizer: recognizer),
+      ], style: TextStyle(color: color));
     }
 
-    linkedTextSpan(String text, String link, {IconData? icon}) {
-      return linkedTextSpanWithOnTap(text, () => openLink(link), icon: icon);
-    }
-
-    internalLinkedTextSpan(String text, void Function() onTap,
+    linkedTextSpan(String text, TapGestureRecognizer recognizer,
         {IconData? icon}) {
-      return linkedTextSpanWithOnTap(text, onTap, icon: icon);
+      return linkedTextSpanWithOnTap(text, recognizer, icon: icon);
     }
 
-    bulletTextSpan(String text, String link) => [
+    internalLinkedTextSpan(String text, TapGestureRecognizer recognizer,
+        {IconData? icon}) {
+      return linkedTextSpanWithOnTap(text, recognizer, icon: icon);
+    }
+
+    bulletTextSpan(String text, TapGestureRecognizer recognizer) => [
           const TextSpan(text: "   "),
           WidgetSpan(
               baseline: TextBaseline.alphabetic,
@@ -69,20 +125,12 @@ class AboutPage extends StatelessWidget {
           const TextSpan(text: "  "),
           linkedTextSpan(
             text,
-            link,
+            recognizer,
           )
         ];
 
     final specialCreditsTextList =
         AppLocalizations.of(context)!.aboutWordshkSpecialCreditsText.split(":");
-    final specialCreditsLinkList = [
-      "http://compling.hss.ntu.edu.sg/hkcancor/",
-      "http://www.linguistics.hku.hk/",
-      "https://www.facebook.com/o.indicum",
-      "https://twitter.com/cancheng",
-      "https://chiron-fonts.github.io/",
-      "https://repository.eduhk.hk/en/persons/chaak-ming%E5%8A%89%E6%93%87%E6%98%8E-lau"
-    ];
 
     return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.aboutWordshk)),
@@ -111,14 +159,8 @@ class AboutPage extends StatelessWidget {
                       children: [
                         internalLinkedTextSpan(
                             AppLocalizations.of(context)!
-                                .aboutWordshkCheckOutQualityControl, () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const QualityControlPage()),
-                          );
-                        },
+                                .aboutWordshkCheckOutQualityControl,
+                            qualityControlTapRecognizer,
                             icon:
                                 PlatformIcons(context).checkMarkCircledOutline),
                       ])),
@@ -140,14 +182,8 @@ class AboutPage extends StatelessWidget {
                       children: [
                         internalLinkedTextSpan(
                             AppLocalizations.of(context)!
-                                .aboutWordshkCheckOutLicense, () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const DictionaryLicensePage()),
-                          );
-                        },
+                                .aboutWordshkCheckOutLicense,
+                            licenseTapRecognizer,
                             icon: isMaterial(context)
                                 ? Icons.article_outlined
                                 : CupertinoIcons.doc_text),
@@ -163,14 +199,14 @@ class AboutPage extends StatelessWidget {
                                   .aboutWordshkPlatformsText1),
                           linkedTextSpan(
                             "GitHub",
-                            "https://github.com/AlienKevin/wordshk_app",
+                            appLinkTapRecognizer,
                           ),
                           TextSpan(
                               text: AppLocalizations.of(context)!
                                   .aboutWordshkPlatformsText2),
                           linkedTextSpan(
                             "words.hk",
-                            "https://words.hk/zidin/",
+                            wordshkLinkTapRecognizer,
                           ),
                           TextSpan(
                               text: AppLocalizations.of(context)!
@@ -184,7 +220,7 @@ class AboutPage extends StatelessWidget {
                         linkedTextSpan(
                             AppLocalizations.of(context)!
                                 .aboutWordshkCheckOutPrivacyNotice,
-                            "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md",
+                            privacyNoticeLinkTapRecognizer,
                             icon: isMaterial(context)
                                 ? Icons.lock_outlined
                                 : CupertinoIcons.lock),
@@ -203,13 +239,13 @@ class AboutPage extends StatelessWidget {
                                   ? Icons.email_outlined
                                   : CupertinoIcons.mail,
                               AppLocalizations.of(context)!.email,
-                              "mailto:join@words.hk",
+                              joinWordshkEmailTapRecognizer,
                             ),
                             const TextSpan(text: "  "),
                             linkedTextSpan(
                               icon: Icons.facebook_outlined,
                               AppLocalizations.of(context)!.facebook,
-                              "https://www.facebook.com/www.words.hk",
+                              wordshkFacebookLinkTapRecognizer,
                             )
                           ])),
                   const SizedBox(height: 40),
@@ -223,7 +259,7 @@ class AboutPage extends StatelessWidget {
                                 i < specialCreditsTextList.length;
                                 i += 1) ...[
                               ...bulletTextSpan(specialCreditsTextList[i],
-                                  specialCreditsLinkList[i]),
+                                  specialCreditsLinkTapRecognizerList[i]),
                               TextSpan(
                                   text: i == specialCreditsTextList.length - 1
                                       ? ""
@@ -237,5 +273,20 @@ class AboutPage extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  @override
+  void dispose() {
+    qualityControlTapRecognizer.dispose();
+    licenseTapRecognizer.dispose();
+    privacyNoticeLinkTapRecognizer.dispose();
+    appLinkTapRecognizer.dispose();
+    wordshkLinkTapRecognizer.dispose();
+    joinWordshkEmailTapRecognizer.dispose();
+    wordshkFacebookLinkTapRecognizer.dispose();
+    for (var recognizer in specialCreditsLinkTapRecognizerList) {
+      recognizer.dispose();
+    }
+    super.dispose();
   }
 }
