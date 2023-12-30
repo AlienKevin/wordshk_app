@@ -184,7 +184,8 @@
     "enabled": "Enabled",
     "disabled": "Disabled",
 
-    "advanced": "Advanced",
+    "privacy": "Privacy",
+    "privacyPolicy": "Privacy Policy",
     "sendAnalytics": "Share Usage & Diagnostic Information",
     "sendAnalyticsDescription": "To help us improve the app, you can let your device send us information about how you use it and how it’s working.",
     "spotlightSearch": "Spotlight Search",

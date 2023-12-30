@@ -171,7 +171,8 @@
     "enabled": "开启",
     "disabled": "关闭",
 
-    "advanced": "高级",
+    "privacy": "隐私",
+    "privacyPolicy": "隐私政策",
     "sendAnalytics": "分享使用情况和诊断信息",
     "sendAnalyticsDescription": "为了协助我们改进软件，你可以允许设备向我们发送关于设备使用情况及运行情况的信息。",
     "spotlightSearch": "Spotlight 搜索",

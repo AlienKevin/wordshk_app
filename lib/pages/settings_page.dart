@@ -120,19 +120,7 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
               SettingsSection(
-                title: Text(s.advanced),
-                tiles: [
-                  SettingsTile.switchTile(
-                      description: Text(s.sendAnalyticsDescription),
-                      initialValue:
-                          context.watch<AnalyticsSettingsState>().enabled,
-                      onToggle: (newEnabled) {
-                        context
-                            .read<AnalyticsSettingsState>()
-                            .setEnabled(newEnabled);
-                      },
-                      title: Text(s.sendAnalytics)),
-                  ...((Platform.isIOS || Platform.isMacOS)
+                  tiles: ((Platform.isIOS || Platform.isMacOS)
                       ? <SettingsTile>[
                           SettingsTile.switchTile(
                               description: Text(s.spotlightSearchDescription),
@@ -146,7 +134,25 @@ class SettingsPage extends StatelessWidget {
                               },
                               title: Text(s.spotlightSearch)),
                         ]
-                      : [])
+                      : [])),
+              SettingsSection(
+                title: Text(s.privacy),
+                tiles: [
+                  SettingsTile.navigation(
+                    onPressed: (context) {
+                      openLink("https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md#privacy-policy");
+                    },
+                    title: Text(s.privacyPolicy),
+                  ),
+                  SettingsTile.switchTile(
+                      initialValue:
+                          context.watch<AnalyticsSettingsState>().enabled,
+                      onToggle: (newEnabled) {
+                        context
+                            .read<AnalyticsSettingsState>()
+                            .setEnabled(newEnabled);
+                      },
+                      title: Text(s.sendAnalytics)),
                 ],
               ),
               SettingsSection(
@@ -156,10 +162,10 @@ class SettingsPage extends StatelessWidget {
                       Navigator.push(
                           context,
                           CustomPageRoute(
-                              builder: (context) =>
-                              const AboutPage()));
+                              builder: (context) => const AboutPage()));
                     },
-                      title: Text(s.aboutWordshk),),
+                    title: Text(s.aboutWordshk),
+                  ),
                 ],
               )
             ],
