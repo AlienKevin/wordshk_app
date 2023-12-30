@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:wordshk/pages/entry_items_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
-import 'package:wordshk/pages/preferences_page.dart';
+import 'package:wordshk/pages/settings_page.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/history_state.dart';
 
@@ -124,11 +124,11 @@ class NavigationDrawer extends StatelessWidget {
                     PlatformIcons(context).volumeUp, (_) => ExercisePage()),
                 const Divider(),
                 drawerButton(
-                    AppLocalizations.of(context)!.preferences,
+                    AppLocalizations.of(context)!.settings,
                     isMaterial(context)
                         ? Icons.settings_outlined
                         : CupertinoIcons.settings,
-                    (_) => const PreferencesPage()),
+                    (_) => const SettingsPage()),
               ],
             ),
           )),

@@ -24,8 +24,8 @@ import '../states/speech_rate_state.dart';
 import '../widgets/navigation_drawer.dart';
 import '../widgets/preferences/settings_list.dart';
 
-class PreferencesPage extends StatelessWidget {
-  const PreferencesPage({Key? key}) : super(key: key);
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class PreferencesPage extends StatelessWidget {
         context.watch<SpeechRateState>().entryHeaderRate;
 
     return Scaffold(
-        appBar: AppBar(title: Text(s.preferences)),
+        appBar: AppBar(title: Text(s.settings)),
         drawer: const NavigationDrawer(),
         body: ConstrainedContent(
           child: MySettingsList(
