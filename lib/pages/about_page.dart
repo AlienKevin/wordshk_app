@@ -7,7 +7,6 @@ import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../utils.dart';
-import '../widgets/navigation_drawer.dart';
 import 'dictionary_license_page.dart';
 
 class AboutPage extends StatefulWidget {
@@ -134,7 +133,6 @@ class AboutPageState extends State<AboutPage> {
 
     return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.aboutWordshk)),
-        drawer: const NavigationDrawer(),
         body: ConstrainedContent(
           child: SingleChildScrollView(
             child: Padding(

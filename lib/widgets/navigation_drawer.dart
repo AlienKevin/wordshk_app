@@ -10,7 +10,6 @@ import 'package:wordshk/states/history_state.dart';
 
 import '../constants.dart';
 import '../custom_page_route.dart';
-import '../pages/about_page.dart';
 import '../pages/home_page.dart';
 
 class NavigationDrawer extends StatelessWidget {
@@ -130,14 +129,6 @@ class NavigationDrawer extends StatelessWidget {
                         ? Icons.settings_outlined
                         : CupertinoIcons.settings,
                     (_) => const PreferencesPage()),
-                const Divider(),
-                drawerButton(
-                    AppLocalizations.of(context)!.aboutWordshk,
-                    isMaterial(context)
-                        ? Icons.info_outline
-                        : CupertinoIcons.info,
-                    (_) => const AboutPage(),
-                    const Key("drawerAboutButton")),
               ],
             ),
           )),

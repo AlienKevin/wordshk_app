@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/custom_page_route.dart';
+import 'package:wordshk/pages/about_page.dart';
 import 'package:wordshk/pages/preferences/entry_eg_page.dart';
 import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
 import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
@@ -146,6 +147,19 @@ class PreferencesPage extends StatelessWidget {
                               title: Text(s.spotlightSearch)),
                         ]
                       : [])
+                ],
+              ),
+              SettingsSection(
+                tiles: [
+                  SettingsTile.navigation(
+                    onPressed: (context) {
+                      Navigator.push(
+                          context,
+                          CustomPageRoute(
+                              builder: (context) =>
+                              const AboutPage()));
+                    },
+                      title: Text(s.aboutWordshk),),
                 ],
               )
             ],
