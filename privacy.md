@@ -1,8 +1,8 @@
-# Privacy Notice
+# Privacy Policy
 
-Updated December 18, 2023
+Updated December 30, 2023
 
-This privacy notice for words.hk ("we", "us", or "our"), describes how and why we might collect, store,
+This privacy policy for words.hk ("we", "us", or "our"), describes how and why we might collect, store,
 use, and/or share ("process") your information when you use our mobile application (words.hk).
 
 ## Questions or concerns?
