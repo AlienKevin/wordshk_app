@@ -27,9 +27,7 @@ class AboutPage extends StatelessWidget {
     section(String title, TextSpan paragraph) =>
         Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text(title, style: Theme.of(context).textTheme.titleLarge!),
-          RichText(
-              textScaleFactor: MediaQuery.of(context).textScaleFactor,
-              text: paragraph),
+          Text.rich(paragraph),
         ]);
 
     linkedTextSpanWithOnTap(String text, void Function() onTap,
@@ -38,22 +36,17 @@ class AboutPage extends StatelessWidget {
       return WidgetSpan(
           child: GestureDetector(
               onTap: onTap,
-              child: Builder(builder: (context) {
-                return RichText(
-                    text: TextSpan(
-                        children: [
-                      icon == null
-                          ? const TextSpan()
-                          : WidgetSpan(child: Icon(icon, color: color)),
-                      TextSpan(text: text),
-                    ],
-                        style: TextStyle(
-                            color: color,
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .fontSize)));
-              })));
+              child: Text.rich(TextSpan(
+                  children: [
+                    icon == null
+                        ? const TextSpan()
+                        : WidgetSpan(child: Icon(icon, color: color)),
+                    TextSpan(text: text),
+                  ],
+                  style: TextStyle(
+                      color: color,
+                      fontSize:
+                          Theme.of(context).textTheme.bodyMedium!.fontSize)))));
     }
 
     linkedTextSpan(String text, String link, {IconData? icon}) {
@@ -113,24 +106,22 @@ class AboutPage extends StatelessWidget {
                     "assets/images/cantonese_map.png",
                   ),
                   const SizedBox(height: 10),
-                  RichText(
-                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                      text: TextSpan(
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          children: [
-                            internalLinkedTextSpan(
-                                AppLocalizations.of(context)!
-                                    .aboutWordshkCheckOutQualityControl, () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const QualityControlPage()),
-                              );
-                            },
-                                icon: PlatformIcons(context)
-                                    .checkMarkCircledOutline),
-                          ])),
+                  Text.rich(TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                        internalLinkedTextSpan(
+                            AppLocalizations.of(context)!
+                                .aboutWordshkCheckOutQualityControl, () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const QualityControlPage()),
+                          );
+                        },
+                            icon:
+                                PlatformIcons(context).checkMarkCircledOutline),
+                      ])),
                   const SizedBox(height: 40),
                   sectionWithImage(
                     AppLocalizations.of(context)!.aboutWordshkPurposeTitle,
@@ -144,25 +135,23 @@ class AboutPage extends StatelessWidget {
                     "assets/images/wordshk_open_data.jpeg",
                   ),
                   const SizedBox(height: 10),
-                  RichText(
-                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                      text: TextSpan(
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          children: [
-                            internalLinkedTextSpan(
-                                AppLocalizations.of(context)!
-                                    .aboutWordshkCheckOutLicense, () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const DictionaryLicensePage()),
-                              );
-                            },
-                                icon: isMaterial(context)
-                                    ? Icons.article_outlined
-                                    : CupertinoIcons.doc_text),
-                          ])),
+                  Text.rich(TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                        internalLinkedTextSpan(
+                            AppLocalizations.of(context)!
+                                .aboutWordshkCheckOutLicense, () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const DictionaryLicensePage()),
+                          );
+                        },
+                            icon: isMaterial(context)
+                                ? Icons.article_outlined
+                                : CupertinoIcons.doc_text),
+                      ])),
                   const SizedBox(height: 40),
                   section(
                     AppLocalizations.of(context)!.aboutWordshkPlatformsTitle,
@@ -189,19 +178,17 @@ class AboutPage extends StatelessWidget {
                         ]),
                   ),
                   const SizedBox(height: 10),
-                  RichText(
-                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                      text: TextSpan(
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          children: [
-                            linkedTextSpan(
-                                AppLocalizations.of(context)!
-                                    .aboutWordshkCheckOutPrivacyNotice,
-                                "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md",
-                                icon: isMaterial(context)
-                                    ? Icons.lock_outlined
-                                    : CupertinoIcons.lock),
-                          ])),
+                  Text.rich(TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                        linkedTextSpan(
+                            AppLocalizations.of(context)!
+                                .aboutWordshkCheckOutPrivacyNotice,
+                            "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md",
+                            icon: isMaterial(context)
+                                ? Icons.lock_outlined
+                                : CupertinoIcons.lock),
+                      ])),
                   const SizedBox(height: 40),
                   section(
                       AppLocalizations.of(context)!.aboutWordshkWantToHelpTitle,

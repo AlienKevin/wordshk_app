@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:wordshk/src/rust/api/api.dart' show Script;
-import 'package:wordshk/widgets/scalable_text_span.dart';
 
 import '../../models/entry.dart';
 
@@ -26,16 +25,11 @@ class EntrySimsOrAnts extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Visibility(
       visible: simsOrAnts.isNotEmpty,
-      child: Builder(builder: (context) {
-        return RichText(
-            text: TextSpan(style: lineTextStyle, children: [
+      child: Text.rich(TextSpan(style: lineTextStyle, children: [
           WidgetSpan(
-              child: RichText(
-                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                  text: TextSpan(
-                      text: label,
-                      style: lineTextStyle.copyWith(
-                          fontWeight: FontWeight.w600)))),
+              child: Text.rich(TextSpan(
+                  text: label,
+                  style: lineTextStyle.copyWith(fontWeight: FontWeight.w600)))),
           const WidgetSpan(child: SizedBox(width: 10)),
           ...(script == Script.traditional
                   ? simsOrAnts
@@ -51,16 +45,16 @@ class EntrySimsOrAnts extends StatelessWidget {
             final seg = sim.value;
             return TextSpan(children: [
               seg.type == SegmentType.link
-                  ? ScalableTextSpan(context,
+                  ? TextSpan(
                       text: seg.segment,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.secondary),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => onTapLink(seg.segment))
-                  : ScalableTextSpan(context, text: seg.segment),
+                  : TextSpan(text: seg.segment),
               TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
             ]);
           })
-        ]));
-      }));
+        ]))
+      );
 }

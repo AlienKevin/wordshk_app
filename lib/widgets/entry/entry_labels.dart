@@ -16,12 +16,9 @@ class EntryLabels extends StatelessWidget {
   Widget build(BuildContext context) => Visibility(
         visible: labels.isNotEmpty,
         child: Builder(builder: (context) {
-          return RichText(
-              text: TextSpan(children: [
+          return Text.rich(TextSpan(children: [
             WidgetSpan(
-                child: RichText(
-                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                    text: TextSpan(
+                child: Text.rich(TextSpan(
                         text: "[${AppLocalizations.of(context)!.label}]",
                         style: lineTextStyle.copyWith(
                             fontWeight: FontWeight.w600)))),

@@ -147,6 +147,6 @@ class _EntryTabState extends State<EntryTab> {
           : Divider(height: widget.lineTextStyle.fontSize!),
       itemCount: itemCount,
     );
-    return tab;
+    return SelectionArea(child: tab);
   }
 }

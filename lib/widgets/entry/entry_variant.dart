@@ -22,30 +22,28 @@ class EntryVariant extends StatelessWidget {
     final prs = variant.prs.split(", ");
 
     return Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-      SelectableText.rich(
-        TextSpan(text: variant.word),
-        style: variantTextStyle,
+      Text.rich(
+        TextSpan(
+          text: variant.word,
+          style: variantTextStyle,
+        ),
       ),
       const SizedBox(width: 10),
-      ...prs
-          .takeWhile((pr) => !pr.contains("!"))
-          .map((pr) => SelectableText.rich(
-                TextSpan(
-                    text: context
-                        .read<RomanizationState>()
-                        .showPrs(pr.split(" ")),
-                    style: prTextStyle,
-                    children: [
-                      WidgetSpan(
-                        child: SyllablePronunciationButton(
-                          prs: [pr.split(" ")],
-                          alignment: Alignment.center,
-                          atHeader: true,
-                        ),
-                        alignment: PlaceholderAlignment.middle,
-                      )
-                    ]),
-              ))
+      ...prs.takeWhile((pr) => !pr.contains("!")).map((pr) => Text.rich(
+            TextSpan(
+                text: context.read<RomanizationState>().showPrs(pr.split(" ")),
+                style: prTextStyle,
+                children: [
+                  WidgetSpan(
+                    child: SyllablePronunciationButton(
+                      prs: [pr.split(" ")],
+                      alignment: Alignment.center,
+                      atHeader: true,
+                    ),
+                    alignment: PlaceholderAlignment.middle,
+                  )
+                ]),
+          ))
     ]);
   }
 }

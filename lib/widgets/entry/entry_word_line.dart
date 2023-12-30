@@ -22,14 +22,11 @@ class EntryWordLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
-        return RichText(
-          textScaleFactor: MediaQuery.of(context).textScaleFactor,
-          text: TextSpan(
+        return Text.rich(TextSpan(
             children: [
               ...line.segments
                   .map((segment) =>
-                      showWordSegment(segment, linkColor, fontSize, onTapLink))
-                  .toList(),
+                      showWordSegment(segment, linkColor, fontSize, onTapLink)),
               WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
                   child: TtsPronunciationButton(

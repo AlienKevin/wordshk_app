@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
-import 'package:wordshk/widgets/scalable_text_span.dart';
 
 import '../../models/entry.dart';
 import '../../states/romanization_state.dart';
@@ -25,24 +24,21 @@ List<Widget> showRubySegment(
   late final List<int?> prsTones;
   switch (segment.type) {
     case RubySegmentType.punc:
-      text = Builder(builder: (context) {
-        return RichText(
-            text: ScalableTextSpan(context,
+      text = Text.rich(
+            TextSpan(
                 text: segment.segment as String,
                 style: TextStyle(
-                    fontSize: rubySize, height: 1, color: textColor)));
-      });
+                    fontSize: rubySize, height: 1, color: textColor))
+      );
       prs = "";
       prsTones = [6]; // empty pr defaults to 6 tones (this is arbitrary)
       break;
     case RubySegmentType.word:
-      text = Builder(builder: (context) {
-        return RichText(
-            text: ScalableTextSpan(context,
-                children: showWord(segment.segment.word as EntryWord),
+      text = Text.rich(
+            TextSpan(children: showWord(segment.segment.word as EntryWord),
                 style: TextStyle(
-                    fontSize: rubySize, height: 1, color: textColor)));
-      });
+                    fontSize: rubySize, height: 1, color: textColor))
+      );
       prs = context.read<RomanizationState>().showPrs(segment.segment.prs);
       prsTones = segment.segment.prsTones;
       break;
@@ -117,14 +113,13 @@ List<Widget> showRubySegment(
                                 alignment: Alignment.center,
                                 transform: Matrix4.translationValues(0, yPos, 0)
                                   ..rotateZ(angle),
-                                child: Builder(builder: (context) {
-                                  return RichText(
-                                      text: ScalableTextSpan(context,
+                                child: Text.rich(
+                                      TextSpan(
                                           text: pr,
                                           style: TextStyle(
                                               fontSize: rubySize * 0.5,
-                                              color: textColor)));
-                                }))));
+                                              color: textColor))
+                                ))));
                   }).toList())
             ]
           // normal non-jumpy version
@@ -135,8 +130,7 @@ List<Widget> showRubySegment(
                       child: Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.translationValues(0, -rubySize, 0),
-                          child: RichText(
-                              text: ScalableTextSpan(context,
+                          child: Text.rich(TextSpan(
                                   text: prs,
                                   style: TextStyle(
                                       fontSize: rubySize * 0.5,

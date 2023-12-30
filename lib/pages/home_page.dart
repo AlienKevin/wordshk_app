@@ -217,10 +217,7 @@ class _HomePageState extends State<HomePage> {
                           ? [
                               Text(AppLocalizations.of(context)!
                                   .searchDictionaryOnlyPronunciationFound),
-                              RichText(
-                                  textScaleFactor:
-                                      MediaQuery.of(context).textScaleFactor,
-                                  text: TextSpan(
+                              Text.rich(TextSpan(
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium,
@@ -702,13 +699,12 @@ class _HomePageState extends State<HomePage> {
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            child: RichText(
-              text: resultText(selected),
+            child: Text.rich(
+              resultText(selected),
               textAlign: TextAlign.start,
               maxLines: maxLines,
               overflow: TextOverflow.ellipsis,
-              textScaleFactor: MediaQuery.of(context).textScaleFactor,
-            ),
+              ),
           ),
         ),
       ],

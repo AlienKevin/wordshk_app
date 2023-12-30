@@ -427,8 +427,8 @@ class _EntryItemsState<T extends EntryItemState>
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            subtitle: RichText(
-                text: TextSpan(
+            subtitle: Text.rich(
+                TextSpan(
                     children: showDefSummary(
                         context,
                         getSummaryDef(summary.defs, summaryDefLanguage),
@@ -438,8 +438,7 @@ class _EntryItemsState<T extends EntryItemState>
                                 : null))),
                 textAlign: TextAlign.start,
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textScaleFactor: MediaQuery.of(context).textScaleFactor),
+                overflow: TextOverflow.ellipsis,),
             onTap: switch (_mode) {
               ViewMode() => () {
                   setState(() {

@@ -26,7 +26,7 @@ class EntryLine extends StatelessWidget {
       return const SizedBox(height: 10);
     } else {
       return Builder(builder: (context) {
-        return SelectableText.rich(
+        return Text.rich(
           TextSpan(
             children: [
               TextSpan(
@@ -48,8 +48,8 @@ class EntryLine extends StatelessWidget {
                     ]
                   : []
             ],
+            style: lineTextStyle,
           ),
-          style: lineTextStyle,
         );
       });
     }
