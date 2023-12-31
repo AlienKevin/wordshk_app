@@ -428,17 +428,18 @@ class _EntryItemsState<T extends EntryItemState>
               overflow: TextOverflow.ellipsis,
             ),
             subtitle: Text.rich(
-                TextSpan(
-                    children: showDefSummary(
-                        context,
-                        getSummaryDef(summary.defs, summaryDefLanguage),
-                        Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: selected
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : null))),
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,),
+              TextSpan(
+                  children: showDefSummary(
+                      context,
+                      getSummaryDef(summary.defs, summaryDefLanguage),
+                      Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: selected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : null))),
+              textAlign: TextAlign.start,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             onTap: switch (_mode) {
               ViewMode() => () {
                   setState(() {

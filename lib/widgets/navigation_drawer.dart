@@ -2,22 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:wordshk/pages/entry_items_page.dart';
-import 'package:wordshk/pages/exercise_page.dart';
-import 'package:wordshk/pages/settings_page.dart';
-import 'package:wordshk/states/bookmark_state.dart';
-import 'package:wordshk/states/history_state.dart';
+import 'package:go_router/go_router.dart';
 
 import '../constants.dart';
-import '../custom_page_route.dart';
-import '../pages/home_page.dart';
 
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    TextButton drawerButton(String label, IconData icon, gotoPage,
+    TextButton drawerButton(String label, IconData icon, String gotoRoute,
             [Key? key]) =>
         TextButton.icon(
           key: key,
@@ -36,10 +30,7 @@ class NavigationDrawer extends StatelessWidget {
               )),
           onPressed: () {
             Navigator.of(context).pop();
-            Navigator.push(
-              context,
-              CustomPageRoute(builder: gotoPage),
-            );
+            context.go(gotoRoute);
           },
         );
 
@@ -92,43 +83,28 @@ class NavigationDrawer extends StatelessWidget {
                 drawerButton(
                     AppLocalizations.of(context)!.dictionary,
                     PlatformIcons(context).search,
-                    (_) => const HomePage(title: 'words.hk'),
+                    "/",
                     const Key("drawerDictionaryButton")),
                 const Divider(),
-                drawerButton(
-                    AppLocalizations.of(context)!.bookmarks,
-                    PlatformIcons(context).bookmarkOutline,
-                    (_) => EntryItemsPage<BookmarkState>(
-                          title: AppLocalizations.of(context)!.bookmarks,
-                          emptyMessage:
-                              AppLocalizations.of(context)!.noBookmarks,
-                          deletionConfirmationMessage:
-                              AppLocalizations.of(context)!
-                                  .bookmarkDeleteConfirmation,
-                        )),
+                drawerButton(AppLocalizations.of(context)!.bookmarks,
+                    PlatformIcons(context).bookmarkOutline, "/bookmarks"),
                 const Divider(),
                 drawerButton(
                     AppLocalizations.of(context)!.history,
                     isMaterial(context)
                         ? Icons.access_time_rounded
                         : CupertinoIcons.time,
-                    (_) => EntryItemsPage<HistoryState>(
-                          title: AppLocalizations.of(context)!.history,
-                          emptyMessage: AppLocalizations.of(context)!.noHistory,
-                          deletionConfirmationMessage:
-                              AppLocalizations.of(context)!
-                                  .historyDeleteConfirmation,
-                        )),
+                    "/history"),
                 const Divider(),
                 drawerButton(AppLocalizations.of(context)!.exercise,
-                    PlatformIcons(context).volumeUp, (_) => ExercisePage()),
+                    PlatformIcons(context).volumeUp, "/exercise"),
                 const Divider(),
                 drawerButton(
                     AppLocalizations.of(context)!.settings,
                     isMaterial(context)
                         ? Icons.settings_outlined
                         : CupertinoIcons.settings,
-                    (_) => const SettingsPage()),
+                    "/settings"),
               ],
             ),
           )),

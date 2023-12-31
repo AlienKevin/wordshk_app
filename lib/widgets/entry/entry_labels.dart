@@ -19,9 +19,9 @@ class EntryLabels extends StatelessWidget {
           return Text.rich(TextSpan(children: [
             WidgetSpan(
                 child: Text.rich(TextSpan(
-                        text: "[${AppLocalizations.of(context)!.label}]",
-                        style: lineTextStyle.copyWith(
-                            fontWeight: FontWeight.w600)))),
+                    text: "[${AppLocalizations.of(context)!.label}]",
+                    style:
+                        lineTextStyle.copyWith(fontWeight: FontWeight.w600)))),
             ...labels
                 .map((label) => [
                       const WidgetSpan(child: SizedBox(width: 10)),

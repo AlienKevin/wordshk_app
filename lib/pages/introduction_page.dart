@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/widgets/preferences/title.dart';
 
 import '../constants.dart';
-import '../custom_page_route.dart';
 import '../widgets/preferences/language_radio_list_tiles.dart';
 import '../widgets/preferences/radio_list_tile.dart';
 import '../widgets/preferences/romanization_radio_list_tiles.dart';
@@ -39,11 +38,7 @@ class IntroductionPage extends StatelessWidget {
           child: IntroductionScreen(
               safeAreaList: const [false, false, true, true],
               onDone: () {
-                Navigator.push(
-                  context,
-                  CustomPageRoute(
-                      builder: (context) => const HomePage(title: "words.hk")),
-                );
+                context.go('/');
                 prefs.setBool("firstTimeUser", false);
               },
               globalBackgroundColor: Theme.of(context).cardColor,

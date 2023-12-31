@@ -24,21 +24,16 @@ List<Widget> showRubySegment(
   late final List<int?> prsTones;
   switch (segment.type) {
     case RubySegmentType.punc:
-      text = Text.rich(
-            TextSpan(
-                text: segment.segment as String,
-                style: TextStyle(
-                    fontSize: rubySize, height: 1, color: textColor))
-      );
+      text = Text.rich(TextSpan(
+          text: segment.segment as String,
+          style: TextStyle(fontSize: rubySize, height: 1, color: textColor)));
       prs = "";
       prsTones = [6]; // empty pr defaults to 6 tones (this is arbitrary)
       break;
     case RubySegmentType.word:
-      text = Text.rich(
-            TextSpan(children: showWord(segment.segment.word as EntryWord),
-                style: TextStyle(
-                    fontSize: rubySize, height: 1, color: textColor))
-      );
+      text = Text.rich(TextSpan(
+          children: showWord(segment.segment.word as EntryWord),
+          style: TextStyle(fontSize: rubySize, height: 1, color: textColor)));
       prs = context.read<RomanizationState>().showPrs(segment.segment.prs);
       prsTones = segment.segment.prsTones;
       break;
@@ -113,13 +108,11 @@ List<Widget> showRubySegment(
                                 alignment: Alignment.center,
                                 transform: Matrix4.translationValues(0, yPos, 0)
                                   ..rotateZ(angle),
-                                child: Text.rich(
-                                      TextSpan(
-                                          text: pr,
-                                          style: TextStyle(
-                                              fontSize: rubySize * 0.5,
-                                              color: textColor))
-                                ))));
+                                child: Text.rich(TextSpan(
+                                    text: pr,
+                                    style: TextStyle(
+                                        fontSize: rubySize * 0.5,
+                                        color: textColor))))));
                   }).toList())
             ]
           // normal non-jumpy version
@@ -131,10 +124,10 @@ List<Widget> showRubySegment(
                           alignment: Alignment.center,
                           transform: Matrix4.translationValues(0, -rubySize, 0),
                           child: Text.rich(TextSpan(
-                                  text: prs,
-                                  style: TextStyle(
-                                      fontSize: rubySize * 0.5,
-                                      color: textColor))))))
+                              text: prs,
+                              style: TextStyle(
+                                  fontSize: rubySize * 0.5,
+                                  color: textColor))))))
             ]),
       text
     ])

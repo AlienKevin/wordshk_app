@@ -2,16 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:wordshk/custom_page_route.dart';
-import 'package:wordshk/pages/about_page.dart';
-import 'package:wordshk/pages/preferences/entry_eg_page.dart';
-import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
-import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
-import 'package:wordshk/pages/preferences/language_page.dart';
-import 'package:wordshk/pages/preferences/romanization_page.dart';
-import 'package:wordshk/pages/preferences/script_page.dart';
 import 'package:wordshk/pages/share_feedback_page.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
@@ -51,35 +44,18 @@ class SettingsPage extends StatelessWidget {
                   SettingsTile.navigation(
                     title: Text(s.language),
                     value: Text(language.toString()),
-                    onPressed: (context) {
-                      Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) =>
-                                  const LanguagePreferencesPage()));
-                    },
+                    onPressed: (context) => context.push('/settings/language'),
                   ),
                   SettingsTile.navigation(
                     title: Text(s.cantoneseScript),
                     value: Text(getScriptName(script, s)),
-                    onPressed: (context) {
-                      Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) =>
-                                  const ScriptPreferencesPage()));
-                    },
+                    onPressed: (context) => context.push('/settings/script'),
                   ),
                   SettingsTile.navigation(
                     title: Text(s.romanization),
                     value: Text(getRomanizationName(romanization, s)),
-                    onPressed: (context) {
-                      Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) =>
-                                  const RomanizationPreferencesPage()));
-                    },
+                    onPressed: (context) =>
+                        context.push('/settings/romanization'),
                   ),
                 ],
               ),
@@ -90,33 +66,19 @@ class SettingsPage extends StatelessWidget {
                     title: Text(s.entryExplanationsLanguage),
                     value: Text(getEntryLanguageName(entryLanguage, s)),
                     onPressed: (context) {
-                      Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) =>
-                                  const EntryExplanationLanguagePreferencesPage()));
+                      context.push('/settings/entry/definition/language');
                     },
                   ),
                   SettingsTile.navigation(
                     title: Text(s.entryHeaderSpeechRate),
                     value: Text(getSpeechRateName(entryHeaderSpeechRate, s)),
-                    onPressed: (context) {
-                      Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) =>
-                                  const EntryHeaderSpeechRatePreferencesPage()));
-                    },
+                    onPressed: (context) =>
+                        context.push('/settings/entry/header/speech-rate'),
                   ),
                   SettingsTile.navigation(
                     title: Text(s.dictionaryExample),
-                    onPressed: (context) {
-                      Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) =>
-                                  const EntryEgPreferencesPage()));
-                    },
+                    onPressed: (context) =>
+                        context.push('/settings/entry/example'),
                   ),
                 ],
               ),
@@ -172,10 +134,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   SettingsTile.navigation(
                     onPressed: (context) {
-                      Navigator.push(
-                          context,
-                          CustomPageRoute(
-                              builder: (context) => const AboutPage()));
+                      context.push('/about');
                     },
                     title: Text(s.aboutWordshk),
                   ),

@@ -8,11 +8,10 @@ ExpandableTheme applyExpandableTheme(Widget child) => ExpandableTheme(
 
 Widget expandButton(String text, IconData icon, TextStyle lineTextStyle) =>
     ExpandableButton(child: Builder(builder: (context) {
-      return Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(text: text, style: lineTextStyle),
-              WidgetSpan(child: Icon(icon, color: lineTextStyle.color!))
-            ],
-          ));
+      return Text.rich(TextSpan(
+        children: [
+          TextSpan(text: text, style: lineTextStyle),
+          WidgetSpan(child: Icon(icon, color: lineTextStyle.color!))
+        ],
+      ));
     }));

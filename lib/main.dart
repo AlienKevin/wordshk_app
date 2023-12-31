@@ -9,6 +9,7 @@ import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,8 +17,22 @@ import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 import 'package:wordshk/models/language.dart';
+import 'package:wordshk/pages/about_page.dart';
+import 'package:wordshk/pages/dictionary_license_page.dart';
+import 'package:wordshk/pages/entry_items_page.dart';
+import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
+import 'package:wordshk/pages/preferences/entry_eg_font_size_page.dart';
+import 'package:wordshk/pages/preferences/entry_eg_page.dart';
+import 'package:wordshk/pages/preferences/entry_eg_pronunciation_method_page.dart';
+import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
+import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
+import 'package:wordshk/pages/preferences/language_page.dart';
+import 'package:wordshk/pages/preferences/romanization_page.dart';
+import 'package:wordshk/pages/preferences/script_page.dart';
+import 'package:wordshk/pages/quality_control_page.dart';
+import 'package:wordshk/pages/settings_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/src/rust/frb_generated.dart';
@@ -77,18 +92,20 @@ main() async {
 
   await SentryFlutter.init((options) {
     options.dsn = sentryDsn;
-    // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-    // We recommend adjusting this value in production.
-    options.tracesSampleRate = 0;
+    options.tracesSampleRate = kDebugMode ? 1.0 : 0.1;
     options.addEventProcessor(CustomSentryEventProcessor());
   }, appRunner: runMyApp);
 }
 
 runMyApp({bool? firstTimeUser, Language? language}) async {
   try {
-    final Uint8List dictData = (await rootBundle.load('assets/dict.rkyv')).buffer.asUint8List();
+    final Uint8List dictData =
+        (await rootBundle.load('assets/dict.rkyv')).buffer.asUint8List();
     print("dictData: ${dictData.length}");
-    final Uint8List englishIndexData = (await rootBundle.load('assets/english_index.rkyv')).buffer.asUint8List();
+    final Uint8List englishIndexData =
+        (await rootBundle.load('assets/english_index.rkyv'))
+            .buffer
+            .asUint8List();
     print("englishIndexData: ${englishIndexData.length}");
     await initApi(dictData: dictData, englishIndexData: englishIndexData);
 
@@ -103,7 +120,8 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
 
     WidgetsFlutterBinding
         .ensureInitialized(); // mandatory when awaiting on main
-    final bool firstTimeUser_ = firstTimeUser ?? (prefs.getBool("firstTimeUser") ?? true);
+    final bool firstTimeUser_ =
+        firstTimeUser ?? (prefs.getBool("firstTimeUser") ?? true);
 
     if (language != null) {
       prefs.setInt("language", language.index);
@@ -122,7 +140,8 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
     runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider<AnalyticsSettingsState>(create: (_) => AnalyticsSettingsState(prefs)),
+          ChangeNotifierProvider<AnalyticsSettingsState>(
+              create: (_) => AnalyticsSettingsState(prefs)),
           ChangeNotifierProvider<SpotlightIndexingState>(
               create: (_) => SpotlightIndexingState(prefs)),
           ChangeNotifierProvider<SearchModeState>(
@@ -132,10 +151,8 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
           ChangeNotifierProvider<InputModeState>(
               create: (_) => InputModeState()),
           ChangeNotifierProvider<LanguageState>(
-              create: (context) => LanguageState(
-                  prefs,
-                  Provider.of<SpotlightIndexingState>(context,
-                      listen: false)),
+              create: (context) => LanguageState(prefs,
+                  Provider.of<SpotlightIndexingState>(context, listen: false)),
               lazy: false),
           ChangeNotifierProvider<EntryLanguageState>(
               create: (_) => EntryLanguageState(prefs)),
@@ -144,10 +161,8 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
           ChangeNotifierProvider<EntryEgFontSizeState>(
               create: (_) => EntryEgFontSizeState(prefs)),
           ChangeNotifierProvider<RomanizationState>(
-              create: (context) => RomanizationState(
-                  prefs,
-                  Provider.of<SpotlightIndexingState>(context,
-                      listen: false)),
+              create: (context) => RomanizationState(prefs,
+                  Provider.of<SpotlightIndexingState>(context, listen: false)),
               lazy: false),
           ChangeNotifierProvider<EntryEgJumpyPrsState>(
               create: (_) => EntryEgJumpyPrsState(prefs)),
@@ -156,8 +171,7 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
               create: (_) => SpeechRateState(prefs)),
           ChangeNotifierProvider<BookmarkState>(
               create: (_) => BookmarkState(
-                  tableName: "bookmarks",
-                  getDatabase: () => bookmarkDatabase),
+                  tableName: "bookmarks", getDatabase: () => bookmarkDatabase),
               lazy: false),
           ChangeNotifierProvider<HistoryState>(
               create: (_) => HistoryState(
@@ -302,112 +316,202 @@ class _MyAppState extends State<MyApp> {
       dividerColor: darkGreyColor,
       dividerTheme: dividerTheme,
     );
-    return FGBGNotifier(
-        onEvent: (event) async {
-          if (event == FGBGType.background && context.read<AnalyticsSettingsState>().enabled) {
-            final language = context.read<LanguageState>().language;
-            final romanization = context.read<RomanizationState>().romanization.name;
-            final egJumpyPrs = context.read<EntryEgJumpyPrsState>().isJumpy;
-            final numBookmarks = context.read<BookmarkState>().items.length;
-            final numHistory = context.read<HistoryState>().items.length;
-            final entryEgPrMethod = context.read<PronunciationMethodState>().entryEgMethod;
-            final entryEgFontSize = context.read<EntryEgFontSizeState>().size;
-            final spotlightEnabled = context.read<SpotlightIndexingState>().enabled;
 
-            final prefs = await SharedPreferences.getInstance();
-            final lastSyncTime = prefs.getString("analyticsSyncTime");
-            final timeNow = DateTime.now().toUtc();
-            final timeNowString = timeNow.toIso8601String();
-            if (kReleaseMode && lastSyncTime != null &&
-                timeNow.difference(DateTime.parse(lastSyncTime)).inHours < 12) {
-              return;
-            }
-            Map<String, dynamic> message = {
-              // Use a fixed UserId for debugging
-              "UserId": kDebugMode
-                  ? "f16dfa0a-f7b2-4f13-bb33-676e09788819"
-                  : prefs.getString("userId")!,
-              "Timestamp": timeNowString,
-              "deviceInfo": await getDeviceInfo(),
-              "language": language,
-              "romanization": romanization,
-              "egJumpyPrs": egJumpyPrs,
-              "numBookmarks": numBookmarks,
-              "numHistory": numHistory,
-              "entryEgPrMethod": entryEgPrMethod,
-              "entryEgFontSize": entryEgFontSize,
-              "spotlightEnabled": spotlightEnabled,
-              ...analyticsState.toJson(),
-            };
-            final ok = await awsService.sendMessage(jsonEncode(message));
-            if (ok) {
-              // Clear analytics state if successfully sent
-              analyticsState.clear();
-              prefs.setString("analyticsSyncTime", timeNowString);
-            }
+    final router = GoRouter(
+      initialLocation: widget.firstTimeUser ? '/introduction' : '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const HomePage(title: 'words.hk'),
+        ),
+        GoRoute(
+          path: '/introduction',
+          builder: (context, state) => IntroductionPage(prefs: widget.prefs),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const SettingsPage(),
+        ),
+        GoRoute(
+          path: '/settings/language',
+          builder: (context, state) => const LanguagePreferencesPage(),
+        ),
+        GoRoute(
+            path: '/settings/script',
+            builder: (context, state) => const ScriptPreferencesPage()),
+        GoRoute(
+            path: '/settings/romanization',
+            builder: (context, state) => const RomanizationPreferencesPage()),
+        GoRoute(
+          path: '/settings/entry/definition/language',
+          builder: (context, state) =>
+              const EntryExplanationLanguagePreferencesPage(),
+        ),
+        GoRoute(
+          path: '/settings/entry/header/speech-rate',
+          builder: (context, state) =>
+              const EntryHeaderSpeechRatePreferencesPage(),
+        ),
+        GoRoute(
+          path: '/settings/entry/example',
+          builder: (context, state) => const EntryEgPreferencesPage(),
+        ),
+        GoRoute(
+          path: '/settings/entry/example/font-size',
+          builder: (context, state) => const EntryEgFontSizePreferencesPage(),
+        ),
+        GoRoute(
+          path: '/settings/entry/example/pronunciation',
+          builder: (context, state) =>
+              const EntryEgPronunciationMethodPreferencesPage(),
+        ),
+        GoRoute(
+          path: '/exercise',
+          builder: (context, state) => const ExercisePage(),
+        ),
+        GoRoute(
+          path: '/bookmarks',
+          builder: (context, state) => EntryItemsPage<BookmarkState>(
+            title: AppLocalizations.of(context)!.bookmarks,
+            emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+            deletionConfirmationMessage:
+                AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+          ),
+        ),
+        GoRoute(
+          path: '/history',
+          builder: (context, state) => EntryItemsPage<HistoryState>(
+            title: AppLocalizations.of(context)!.history,
+            emptyMessage: AppLocalizations.of(context)!.noHistory,
+            deletionConfirmationMessage:
+                AppLocalizations.of(context)!.historyDeleteConfirmation,
+          ),
+        ),
+        GoRoute(
+          path: '/about',
+          builder: (context, state) => const AboutPage(),
+        ),
+        GoRoute(
+          path: '/quality-control',
+          builder: (context, state) => const QualityControlPage(),
+        ),
+        GoRoute(
+          path: '/license',
+          builder: (context, state) => const DictionaryLicensePage(),
+        )
+      ],
+      observers: [SentryNavigatorObserver()],
+    );
+
+    return FGBGNotifier(
+      onEvent: (event) async {
+        if (event == FGBGType.background &&
+            context.read<AnalyticsSettingsState>().enabled) {
+          final language = context.read<LanguageState>().language;
+          final romanization =
+              context.read<RomanizationState>().romanization.name;
+          final egJumpyPrs = context.read<EntryEgJumpyPrsState>().isJumpy;
+          final numBookmarks = context.read<BookmarkState>().items.length;
+          final numHistory = context.read<HistoryState>().items.length;
+          final entryEgPrMethod =
+              context.read<PronunciationMethodState>().entryEgMethod;
+          final entryEgFontSize = context.read<EntryEgFontSizeState>().size;
+          final spotlightEnabled =
+              context.read<SpotlightIndexingState>().enabled;
+
+          final prefs = await SharedPreferences.getInstance();
+          final lastSyncTime = prefs.getString("analyticsSyncTime");
+          final timeNow = DateTime.now().toUtc();
+          final timeNowString = timeNow.toIso8601String();
+          if (kReleaseMode &&
+              lastSyncTime != null &&
+              timeNow.difference(DateTime.parse(lastSyncTime)).inHours < 12) {
+            return;
           }
-        },
-        child: Portal(
-        child: MaterialApp(
-            scaffoldMessengerKey: scaffoldMessengerKey,
-            debugShowCheckedModeBanner: false,
-            locale: context.watch<LanguageState>().language?.toLocale,
-            title: 'words.hk',
-            localizationsDelegates: const [
-              ...AppLocalizations.localizationsDelegates,
-              MaterialLocalizationYueDelegate(),
-              CupertinoLocalizationYueDelegate(),
-            ],
-            localeListResolutionCallback: (
-              locales,
-              supportedLocales,
-            ) {
-              if (kDebugMode) {
-                print("Detected locales: $locales");
-              }
-              for (final locale in locales ?? []) {
-                if (locale.languageCode == 'en') {
-                  return context.read<LanguageState>().initLanguage(Language.en);
-                } else if (locale.languageCode == 'yue') {
-                  return context.read<LanguageState>().initLanguage(Language.yue);
-                } else if (locale.languageCode == 'zh') {
-                  if (locale.scriptCode == 'Hant') {
-                    return context
-                        .read<LanguageState>()
-                        .initLanguage(Language.zhHant);
-                  } else {
-                    return context
-                        .read<LanguageState>()
-                        .initLanguage(Language.zhHans);
-                  }
+          Map<String, dynamic> message = {
+            // Use a fixed UserId for debugging
+            "UserId": kDebugMode
+                ? "f16dfa0a-f7b2-4f13-bb33-676e09788819"
+                : prefs.getString("userId")!,
+            "Timestamp": timeNowString,
+            "deviceInfo": await getDeviceInfo(),
+            "language": language,
+            "romanization": romanization,
+            "egJumpyPrs": egJumpyPrs,
+            "numBookmarks": numBookmarks,
+            "numHistory": numHistory,
+            "entryEgPrMethod": entryEgPrMethod,
+            "entryEgFontSize": entryEgFontSize,
+            "spotlightEnabled": spotlightEnabled,
+            ...analyticsState.toJson(),
+          };
+          final ok = await awsService.sendMessage(jsonEncode(message));
+          if (ok) {
+            // Clear analytics state if successfully sent
+            analyticsState.clear();
+            prefs.setString("analyticsSyncTime", timeNowString);
+          }
+        }
+      },
+      child: Portal(
+        child: MaterialApp.router(
+          scaffoldMessengerKey: scaffoldMessengerKey,
+          debugShowCheckedModeBanner: false,
+          locale: context.watch<LanguageState>().language?.toLocale,
+          title: 'words.hk',
+          localizationsDelegates: const [
+            ...AppLocalizations.localizationsDelegates,
+            MaterialLocalizationYueDelegate(),
+            CupertinoLocalizationYueDelegate(),
+          ],
+          localeListResolutionCallback: (
+            locales,
+            supportedLocales,
+          ) {
+            if (kDebugMode) {
+              print("Detected locales: $locales");
+            }
+            for (final locale in locales ?? []) {
+              if (locale.languageCode == 'en') {
+                return context.read<LanguageState>().initLanguage(Language.en);
+              } else if (locale.languageCode == 'yue') {
+                return context.read<LanguageState>().initLanguage(Language.yue);
+              } else if (locale.languageCode == 'zh') {
+                if (locale.scriptCode == 'Hant') {
+                  return context
+                      .read<LanguageState>()
+                      .initLanguage(Language.zhHant);
+                } else {
+                  return context
+                      .read<LanguageState>()
+                      .initLanguage(Language.zhHans);
                 }
               }
-              // fallback to English
-              return Language.en.toLocale;
-            },
-            supportedLocales: const [
-              Locale.fromSubtags(
-                  languageCode:
-                      'en'), // generic English (defaults to American English)
-              Locale.fromSubtags(
-                  languageCode:
-                      'yue'), // generic Cantonese 'yue' (traditional script)
-              Locale.fromSubtags(
-                  languageCode:
-                      'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
-              Locale.fromSubtags(
-                  languageCode: 'zh',
-                  scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
-              Locale.fromSubtags(
-                  languageCode: 'zh',
-                  scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
-            ],
-            theme: lightTheme,
-            darkTheme: darkTheme,
-            // home: const HomePage(title: 'words.hk'),
-            home: widget.firstTimeUser
-                ? IntroductionPage(prefs: widget.prefs)
-                : const HomePage(title: "words.hk")),
+            }
+            // fallback to English
+            return Language.en.toLocale;
+          },
+          supportedLocales: const [
+            Locale.fromSubtags(
+                languageCode:
+                    'en'), // generic English (defaults to American English)
+            Locale.fromSubtags(
+                languageCode:
+                    'yue'), // generic Cantonese 'yue' (traditional script)
+            Locale.fromSubtags(
+                languageCode:
+                    'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
+            Locale.fromSubtags(
+                languageCode: 'zh',
+                scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
+            Locale.fromSubtags(
+                languageCode: 'zh',
+                scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
+          ],
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          routerConfig: router,
+        ),
       ),
     );
   }

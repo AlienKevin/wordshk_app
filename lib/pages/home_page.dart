@@ -218,23 +218,20 @@ class _HomePageState extends State<HomePage> {
                               Text(AppLocalizations.of(context)!
                                   .searchDictionaryOnlyPronunciationFound),
                               Text.rich(TextSpan(
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                      children: snapshot.data!
-                                          .map((pr) => [
-                                                TextSpan(text: pr),
-                                                WidgetSpan(
-                                                    child:
-                                                        SyllablePronunciationButton(
-                                                  prs: [pr.split(" ")],
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  atHeader: true,
-                                                ))
-                                              ])
-                                          .expand((i) => i)
-                                          .toList()))
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  children: snapshot.data!
+                                      .map((pr) => [
+                                            TextSpan(text: pr),
+                                            WidgetSpan(
+                                                child:
+                                                    SyllablePronunciationButton(
+                                              prs: [pr.split(" ")],
+                                              alignment: Alignment.bottomCenter,
+                                              atHeader: true,
+                                            ))
+                                          ])
+                                      .expand((i) => i)
+                                      .toList()))
                             ]
                           : [
                               Text(AppLocalizations.of(context)!
@@ -445,10 +442,8 @@ class _HomePageState extends State<HomePage> {
                           .read<RomanizationState>()
                           .showPrs(result.pr.split(" ")),
                       style: textStyle.copyWith(
-                        fontSize: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .fontSize,
+                        fontSize:
+                            Theme.of(context).textTheme.bodyMedium!.fontSize,
                         color: selected ? lightGreyColor : greyColor,
                       )),
                   const TextSpan(text: "\n"),
@@ -704,7 +699,7 @@ class _HomePageState extends State<HomePage> {
               textAlign: TextAlign.start,
               maxLines: maxLines,
               overflow: TextOverflow.ellipsis,
-              ),
+            ),
           ),
         ),
       ],

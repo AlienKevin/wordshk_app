@@ -3,11 +3,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:wordshk/pages/quality_control_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../utils.dart';
-import 'dictionary_license_page.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -31,20 +30,12 @@ class AboutPageState extends State<AboutPage> {
     super.initState();
     qualityControlTapRecognizer = TapGestureRecognizer()
       ..onTap = () {
-        print("quality control tapped");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const QualityControlPage()),
-        );
+        context.push("/quality-control");
       };
 
     licenseTapRecognizer = TapGestureRecognizer()
       ..onTap = () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const DictionaryLicensePage()),
-        );
+        context.push("/license");
       };
 
     privacyNoticeLinkTapRecognizer = TapGestureRecognizer()
@@ -97,8 +88,7 @@ class AboutPageState extends State<AboutPage> {
             ? const TextSpan()
             : WidgetSpan(
                 child: GestureDetector(
-                    onTap: recognizer.onTap,
-                    child: Icon(icon, color: color))),
+                    onTap: recognizer.onTap, child: Icon(icon, color: color))),
         TextSpan(text: text, recognizer: recognizer),
       ], style: TextStyle(color: color));
     }

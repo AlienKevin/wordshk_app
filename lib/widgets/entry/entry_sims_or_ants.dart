@@ -26,35 +26,34 @@ class EntrySimsOrAnts extends StatelessWidget {
   Widget build(BuildContext context) => Visibility(
       visible: simsOrAnts.isNotEmpty,
       child: Text.rich(TextSpan(style: lineTextStyle, children: [
-          WidgetSpan(
-              child: Text.rich(TextSpan(
-                  text: label,
-                  style: lineTextStyle.copyWith(fontWeight: FontWeight.w600)))),
-          const WidgetSpan(child: SizedBox(width: 10)),
-          ...(script == Script.traditional
-                  ? simsOrAnts
-                  : simsOrAnts
-                      .asMap()
-                      .entries
-                      .map((simOrAnt) => Segment(
-                          simOrAnt.value.type, simsOrAntsSimp[simOrAnt.key]))
-                      .toList())
-              .asMap()
-              .entries
-              .map((sim) {
-            final seg = sim.value;
-            return TextSpan(children: [
-              seg.type == SegmentType.link
-                  ? TextSpan(
-                      text: seg.segment,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => onTapLink(seg.segment))
-                  : TextSpan(text: seg.segment),
-              TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
-            ]);
-          })
-        ]))
-      );
+        WidgetSpan(
+            child: Text.rich(TextSpan(
+                text: label,
+                style: lineTextStyle.copyWith(fontWeight: FontWeight.w600)))),
+        const WidgetSpan(child: SizedBox(width: 10)),
+        ...(script == Script.traditional
+                ? simsOrAnts
+                : simsOrAnts
+                    .asMap()
+                    .entries
+                    .map((simOrAnt) => Segment(
+                        simOrAnt.value.type, simsOrAntsSimp[simOrAnt.key]))
+                    .toList())
+            .asMap()
+            .entries
+            .map((sim) {
+          final seg = sim.value;
+          return TextSpan(children: [
+            seg.type == SegmentType.link
+                ? TextSpan(
+                    text: seg.segment,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => onTapLink(seg.segment))
+                : TextSpan(text: seg.segment),
+            TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
+          ]);
+        })
+      ])));
 }
