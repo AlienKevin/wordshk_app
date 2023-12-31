@@ -196,6 +196,18 @@
     "dictionaryLicenseText": "ALREADY INCLUDED IN CODE",
     "dictionaryLicenseEnglishVersion": "Legally Binding English License",
 
+    "shareFeedback": "Share Feedback or Report a Bug",
+    "feedback": "Feedback",
+    "shareFeedbackHintText": "Share feedback or report a bug",
+    "pleaseEnterSomeText": "Please enter some text",
+    "optionalEmailAddressHintText": "(optional) your@email.com",
+    "pleaseEnterAValidEmailAddress": "Please enter a valid email address",
+    "discardDraft": "Discard Draft",
+    "discard": "Discard",
+    "submit": "Submit",
+    "feedbackSubmitted": "Feedback submitted successfully",
+    "feedbackFailedToSend": "Feedback failed to send. Please try again later.",
+
     "aboutWordshkIntroductionTitle": "Introduction",
     "aboutWordshkIntroductionText": "We use crowd-sourcing methods to sustainably develop a comprehensive Cantonese dictionary that will be useful for both beginners and advanced users. We aim to provide complete explanations and illustrative example sentences.",
     "aboutWordshkTenetsTitle": "Tenets",

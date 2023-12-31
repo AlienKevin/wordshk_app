@@ -12,6 +12,7 @@ import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
 import 'package:wordshk/pages/preferences/language_page.dart';
 import 'package:wordshk/pages/preferences/romanization_page.dart';
 import 'package:wordshk/pages/preferences/script_page.dart';
+import 'package:wordshk/pages/share_feedback_page.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'package:wordshk/utils.dart';
@@ -140,7 +141,8 @@ class SettingsPage extends StatelessWidget {
                 tiles: [
                   SettingsTile.navigation(
                     onPressed: (context) {
-                      openLink("https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md#privacy-policy");
+                      openLink(
+                          "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md#privacy-policy");
                     },
                     title: Text(s.privacyPolicy),
                   ),
@@ -157,6 +159,17 @@ class SettingsPage extends StatelessWidget {
               ),
               SettingsSection(
                 tiles: [
+                  SettingsTile.navigation(
+                    onPressed: (context) {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        useSafeArea: true,
+                        builder: (context) => const ShareFeedbackPage(),
+                      );
+                    },
+                    title: Text(s.shareFeedback),
+                  ),
                   SettingsTile.navigation(
                     onPressed: (context) {
                       Navigator.push(
