@@ -86,16 +86,6 @@ class NavigationDrawer extends StatelessWidget {
                     "/",
                     const Key("drawerDictionaryButton")),
                 const Divider(),
-                drawerButton(AppLocalizations.of(context)!.bookmarks,
-                    PlatformIcons(context).bookmarkOutline, "/bookmarks"),
-                const Divider(),
-                drawerButton(
-                    AppLocalizations.of(context)!.history,
-                    isMaterial(context)
-                        ? Icons.access_time_rounded
-                        : CupertinoIcons.time,
-                    "/history"),
-                const Divider(),
                 drawerButton(AppLocalizations.of(context)!.exercise,
                     PlatformIcons(context).volumeUp, "/exercise"),
                 const Divider(),

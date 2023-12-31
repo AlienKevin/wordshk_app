@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
@@ -16,16 +17,13 @@ import '../models/embedded.dart';
 import '../models/summary_def_language.dart';
 import '../states/entry_item_state.dart';
 import '../utils.dart';
-import '../widgets/navigation_drawer.dart';
 import 'entry_page.dart';
 
 class EntryItemsPage<T extends EntryItemState> extends StatefulWidget {
-  final String title;
   final String emptyMessage;
   final String deletionConfirmationMessage;
   const EntryItemsPage(
       {Key? key,
-      required this.title,
       required this.emptyMessage,
       required this.deletionConfirmationMessage})
       : super(key: key);
@@ -141,34 +139,31 @@ class _EntryItemsState<T extends EntryItemState>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: _entryItemSummaries.isEmpty
-            ? []
-            : [
-                TextButton(
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(
-                      Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                  child: Text(switch (_mode) {
-                    ViewMode() => AppLocalizations.of(context)!.edit,
-                    EditMode() => AppLocalizations.of(context)!.done,
-                  }),
-                  onPressed: () {
-                    setState(() {
-                      _mode = switch (_mode) {
-                        ViewMode() =>
-                          EditMode(selectedEntryItems: HashSet<int>()),
-                        EditMode() => ViewMode(),
-                      };
-                    });
-                  },
+      floatingActionButton: KeyboardVisibilityBuilder(
+        builder: (context, isKeyboardVisible) => Visibility(
+            visible: _entryItemSummaries.isNotEmpty && !isKeyboardVisible,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 ),
-              ],
+              ),
+              child: Text(
+                switch (_mode) {
+                  ViewMode() => AppLocalizations.of(context)!.edit,
+                  EditMode() => AppLocalizations.of(context)!.done,
+                },
+              ),
+              onPressed: () {
+                setState(() {
+                  _mode = switch (_mode) {
+                    ViewMode() => EditMode(selectedEntryItems: HashSet<int>()),
+                    EditMode() => ViewMode(),
+                  };
+                });
+              },
+            )),
       ),
-      drawer: const NavigationDrawer(),
       body: Consumer<T>(
           builder: (BuildContext context, EntryItemState s, Widget? child) => s
                   .items.isEmpty

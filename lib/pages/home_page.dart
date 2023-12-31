@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -24,12 +23,14 @@ import '../models/input_mode.dart';
 import '../models/search_mode.dart';
 import '../models/search_result_type.dart';
 import '../models/summary_def_language.dart';
+import '../states/bookmark_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import '../utils.dart';
 import '../widgets/navigation_drawer.dart';
+import 'entry_items_page.dart';
 import 'entry_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,7 +42,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
@@ -55,10 +57,14 @@ class _HomePageState extends State<HomePage> {
   OverlayEntry? searchModeSelectors;
   // The EntryPage corresponding to the select search result (used in wide screens)
   EntryPage? selectedSearchResultEntryPage;
+  late final TabController _historyAndBookmarksTabController;
 
   @override
   void initState() {
     super.initState();
+
+    _historyAndBookmarksTabController =
+        TabController(vsync: this, initialIndex: 0, length: 2);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final query = context.read<SearchQueryState>().query;
@@ -103,6 +109,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   onSearchSubmitted(String query) {
+    if (query.isEmpty) {
+      return;
+    }
+
     final state = context.read<SearchModeState>();
     if (state.mode == SearchMode.variant || state.mode == SearchMode.combined) {
       // No search results should be produced in other modes
@@ -171,25 +181,44 @@ class _HomePageState extends State<HomePage> {
                     child: (finishedSearch && isSearchResultsEmpty)
                         ? showResultsNotFound()
                         : (queryEmptied
-                            ? showWatermark()
+                            ? showHistoryAndBookmarks()
                             : showSearchResults(
                                 selectedSearchResultEntryPage)))));
   }
 
-  Widget showWatermark() {
-    double watermarkSize = min(MediaQuery.of(context).size.width * 0.4, 300);
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(top: appBarHeight * 1.6),
-        child: MediaQuery.of(context).platformBrightness == Brightness.light
-            ? Image(
-                width: watermarkSize,
-                image: const AssetImage('assets/icon.png'))
-            : Image(
-                width: watermarkSize,
-                image: const AssetImage('assets/icon_grey.png')),
-      ),
+  Widget showHistoryAndBookmarks() {
+    return Column(
+      children: [
+        TabBar(
+          controller: _historyAndBookmarksTabController,
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.history),
+            Tab(text: AppLocalizations.of(context)!.bookmarks),
+          ],
+          labelColor: Theme.of(context).textTheme.bodyMedium!.color!,
+          unselectedLabelColor: Theme.of(context).textTheme.bodyMedium!.color!,
+          indicator: UnderlineTabIndicator(
+            borderSide: BorderSide(color: Theme.of(context).textTheme.bodyMedium!.color!, width: 2),
+            // Indicator height
+            insets: const EdgeInsets.symmetric(
+                horizontal: 30), // Indicator width
+          ),
+        ),
+        Expanded(
+          child: TabBarView(controller: _historyAndBookmarksTabController, children: [
+            EntryItemsPage<HistoryState>(
+              emptyMessage: AppLocalizations.of(context)!.noHistory,
+              deletionConfirmationMessage:
+                  AppLocalizations.of(context)!.historyDeleteConfirmation,
+            ),
+            EntryItemsPage<BookmarkState>(
+              emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+              deletionConfirmationMessage:
+                  AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+            )
+          ]),
+        )
+      ],
     );
   }
 
@@ -696,6 +725,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _historyAndBookmarksTabController.dispose();
+    super.dispose();
   }
 }
 

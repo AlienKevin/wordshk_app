@@ -19,7 +19,6 @@ import 'package:uuid/uuid_util.dart';
 import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/about_page.dart';
 import 'package:wordshk/pages/dictionary_license_page.dart';
-import 'package:wordshk/pages/entry_items_page.dart';
 import 'package:wordshk/pages/entry_not_published_page.dart';
 import 'package:wordshk/pages/entry_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
@@ -294,24 +293,6 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
       GoRoute(
         path: '/exercise',
         builder: (context, state) => const ExercisePage(),
-      ),
-      GoRoute(
-        path: '/bookmarks',
-        builder: (context, state) => EntryItemsPage<BookmarkState>(
-          title: AppLocalizations.of(context)!.bookmarks,
-          emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-          deletionConfirmationMessage:
-              AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
-        ),
-      ),
-      GoRoute(
-        path: '/history',
-        builder: (context, state) => EntryItemsPage<HistoryState>(
-          title: AppLocalizations.of(context)!.history,
-          emptyMessage: AppLocalizations.of(context)!.noHistory,
-          deletionConfirmationMessage:
-              AppLocalizations.of(context)!.historyDeleteConfirmation,
-        ),
       ),
       GoRoute(
         path: '/about',
