@@ -66,6 +66,7 @@ class _EntryTabState extends State<EntryTab> {
       padding: const EdgeInsets.all(10.0),
       child: EntryDef(
         def: widget.entry.defs[index - 1],
+        defIndex: index - 1,
         entryLanguage: context.watch<EntryLanguageState>().language,
         script: widget.script,
         lineTextStyle: widget.lineTextStyle,
