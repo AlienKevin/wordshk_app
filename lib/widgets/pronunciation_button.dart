@@ -49,6 +49,8 @@ class PronunciationButtonState extends State<PronunciationButton> {
             ),
           )
         : IconButton(
+            iconSize: Theme.of(context).textTheme.bodyMedium!.fontSize!,
+            constraints: BoxConstraints(maxHeight: Theme.of(context).textTheme.bodyMedium!.fontSize!),
             visualDensity: VisualDensity.compact,
             tooltip: "Pronunciation",
             alignment: widget.alignment,
@@ -59,7 +61,7 @@ class PronunciationButtonState extends State<PronunciationButton> {
                         : CupertinoIcons.stop_circle_fill
                     : PlatformIcons(context).volumeUp),
             color: Theme.of(context).colorScheme.secondary,
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
             onPressed: triggerPlay);
   }
 }

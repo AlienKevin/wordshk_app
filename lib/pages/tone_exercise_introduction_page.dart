@@ -72,8 +72,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 90,
-                      top: 15,
+                      right: 105,
+                      top: 37,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -88,8 +88,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 140,
-                      top: 80,
+                      right: 146,
+                      top: 98,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -104,8 +104,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 90,
-                      top: 135,
+                      right: 106,
+                      top: 157,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -120,8 +120,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 140,
-                      top: 170,
+                      right: 146,
+                      top: 188,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -136,8 +136,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 90,
-                      top: 195,
+                      right: 106,
+                      top: 218,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -152,8 +152,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 90,
-                      top: 230,
+                      right: 106,
+                      top: 248,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -185,18 +185,18 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                   Text(s.toneExerciseIntroductionText2),
                   Stack(children: [
                     SizedBox(
-                      height: 300,
                       width: 270,
+                      height: 300,
                       child: CustomPaint(
-                        size: const Size(270, 330),
+                        size: const Size(270, 300),
                         painter: Tone4ContourPainter(
                             strokeColor:
                                 Theme.of(context).textTheme.bodyMedium!.color!),
                       ),
                     ),
                     const Positioned(
-                      right: 90,
-                      top: 15,
+                      right: 106,
+                      top: 38,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -211,8 +211,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 165,
-                      top: 80,
+                      right: 180,
+                      top: 98,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -227,8 +227,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 90,
-                      top: 135,
+                      right: 106,
+                      top: 158,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -243,8 +243,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 120,
-                      top: 78,
+                      right: 136,
+                      top: 98,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -259,8 +259,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 70,
-                      top: 195,
+                      right: 82,
+                      top: 218,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -275,8 +275,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 115,
-                      top: 195,
+                      right: 130,
+                      top: 218,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
