@@ -30,7 +30,7 @@ class EntryLabels extends StatelessWidget {
                           labelPadding: const EdgeInsets.only(
                               left: 10, right: 10, bottom: 2),
                           labelStyle: Theme.of(context).textTheme.bodySmall!.copyWith(color: whiteColor),
-                          backgroundColor: greyColor,
+                          backgroundColor: label == Label.vulgar ? redColor : greyColor,
                           label: Text(translateLabel(
                               label, AppLocalizations.of(context)!))))
                       .toList()),
