@@ -97,6 +97,9 @@ main() async {
   await SentryFlutter.init((options) {
     options.dsn = sentryDsn;
     options.tracesSampleRate = kDebugMode ? 1.0 : 0.1;
+    // The sampling rate for profiling is relative to tracesSampleRate
+    // Setting to 1.0 will profile 100% of sampled transactions:
+    options.profilesSampleRate = 1.0;
     options.addEventProcessor(CustomSentryEventProcessor());
   }, appRunner: runMyApp);
 }
