@@ -7,6 +7,7 @@ import 'package:flutter/material.dart' hide SearchBar, NavigationDrawer;
 import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/models/embedded.dart';
 import 'package:wordshk/src/rust/api/api.dart';
@@ -75,8 +76,9 @@ class _HomePageState extends State<HomePage> {
       // Spotlight search only available on apple
       if (Platform.isIOS || Platform.isMacOS) {
         // Callback on searchable item selected
+        final historyState = context.read<HistoryState>();
         FlutterCoreSpotlight.instance.configure(
-          onSearchableItemSelected: (userActivity) {
+          onSearchableItemSelected: (userActivity) async {
             if (userActivity == null) {
               if (kDebugMode) {
                 print("Spotlight searched returned null");
@@ -88,16 +90,12 @@ class _HomePageState extends State<HomePage> {
             // Ignore the variant index and optional script type (simp/trad) after the "-"
             final entryId =
                 int.parse(userActivity.uniqueIdentifier!.split("-")[0]);
+
             if (kDebugMode) {
               print("Spotlight searched: $query, result entryId: $entryId");
             }
-            context.read<HistoryState>().updateItem(entryId);
-            Navigator.push(
-              context,
-              CustomPageRoute(
-                  builder: (context) => EntryPage(
-                      id: entryId, showFirstEntryInGroupInitially: false)),
-            );
+            await router.push("/entry/id/$entryId");
+            historyState.updateItem(entryId);
           },
         );
       }
@@ -119,13 +117,7 @@ class _HomePageState extends State<HomePage> {
               result.matchedVariant.suffix.isEmpty);
       if (exactMatchVariant != null) {
         context.read<HistoryState>().updateItem(exactMatchVariant.id);
-        Navigator.push(
-          context,
-          CustomPageRoute(
-              builder: (context) => EntryPage(
-                  id: exactMatchVariant.id,
-                  showFirstEntryInGroupInitially: true)),
-        );
+        context.push("/entry/id/${exactMatchVariant.id}");
       }
     }
   }

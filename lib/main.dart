@@ -20,6 +20,8 @@ import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/about_page.dart';
 import 'package:wordshk/pages/dictionary_license_page.dart';
 import 'package:wordshk/pages/entry_items_page.dart';
+import 'package:wordshk/pages/entry_not_published_page.dart';
+import 'package:wordshk/pages/entry_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
@@ -57,10 +59,12 @@ import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'aws_service.dart';
 import 'constants.dart';
 import 'device_info.dart';
+import 'models/embedded.dart';
 import 'states/player_state.dart';
 
 late final Future<Database> bookmarkDatabase;
 late final Future<Database> historyDatabase;
+late final GoRouter router;
 
 final AwsService awsService = AwsService();
 
@@ -137,6 +141,8 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
     // Initialize AWS service
     await awsService.init();
 
+    initializeRouter(firstTimeUser_, prefs);
+
     runApp(
       MultiProvider(
         providers: [
@@ -189,6 +195,138 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
       stackTrace: stackTrace,
     );
   }
+}
+
+initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
+  router = GoRouter(
+    initialLocation: firstTimeUser ? '/introduction' : '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const HomePage(title: 'words.hk'),
+      ),
+      GoRoute(
+        path: '/introduction',
+        builder: (context, state) => IntroductionPage(prefs: prefs),
+      ),
+      GoRoute(
+          path: '/entry/id/:entryId',
+          builder: (context, state) {
+            final entryId = int.parse(state.pathParameters['entryId']!);
+            final key = state.uri.queryParameters['key'] == null
+                ? null
+                : int.parse(state.uri.queryParameters['key']!);
+            final showFirstEntryInGroupInitially =
+                state.uri.queryParameters['showFirstInGroup'] == "true";
+            final defIndex = state.uri.queryParameters['defIndex'] == null
+                ? null
+                : int.parse(state.uri.queryParameters['defIndex']!);
+            final embedded = state.uri.queryParameters['embedded'] == null
+                ? null
+                : Embedded.values
+                .byName(state.uri.queryParameters['embedded']!);
+            if (kDebugMode) {
+              print("Going to entry $entryId");
+            }
+            if (embedded == null) {
+              return EntryPage(
+                key: key == null ? null : ValueKey(key),
+                id: entryId,
+                showFirstEntryInGroupInitially:
+                showFirstEntryInGroupInitially,
+                defIndex: defIndex,
+              );
+            } else {
+              return EntryPage(
+                key: key == null ? null : ValueKey(key),
+                id: entryId,
+                showFirstEntryInGroupInitially:
+                showFirstEntryInGroupInitially,
+                defIndex: defIndex,
+                embedded: embedded,
+              );
+            }
+          }),
+      GoRoute(
+        path: '/entry/not-published/:entryVariant',
+        builder: (context, state) => EntryNotPublishedPage(
+          entryVariant: state.pathParameters['entryVariant']!,
+        ),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: '/settings/language',
+        builder: (context, state) => const LanguagePreferencesPage(),
+      ),
+      GoRoute(
+          path: '/settings/script',
+          builder: (context, state) => const ScriptPreferencesPage()),
+      GoRoute(
+          path: '/settings/romanization',
+          builder: (context, state) => const RomanizationPreferencesPage()),
+      GoRoute(
+        path: '/settings/entry/definition/language',
+        builder: (context, state) =>
+        const EntryExplanationLanguagePreferencesPage(),
+      ),
+      GoRoute(
+        path: '/settings/entry/header/speech-rate',
+        builder: (context, state) =>
+        const EntryHeaderSpeechRatePreferencesPage(),
+      ),
+      GoRoute(
+        path: '/settings/entry/example',
+        builder: (context, state) => const EntryEgPreferencesPage(),
+      ),
+      GoRoute(
+        path: '/settings/entry/example/font-size',
+        builder: (context, state) => const EntryEgFontSizePreferencesPage(),
+      ),
+      GoRoute(
+        path: '/settings/entry/example/pronunciation',
+        builder: (context, state) =>
+        const EntryEgPronunciationMethodPreferencesPage(),
+      ),
+      GoRoute(
+        path: '/exercise',
+        builder: (context, state) => const ExercisePage(),
+      ),
+      GoRoute(
+        path: '/bookmarks',
+        builder: (context, state) => EntryItemsPage<BookmarkState>(
+          title: AppLocalizations.of(context)!.bookmarks,
+          emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+          deletionConfirmationMessage:
+          AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+        ),
+      ),
+      GoRoute(
+        path: '/history',
+        builder: (context, state) => EntryItemsPage<HistoryState>(
+          title: AppLocalizations.of(context)!.history,
+          emptyMessage: AppLocalizations.of(context)!.noHistory,
+          deletionConfirmationMessage:
+          AppLocalizations.of(context)!.historyDeleteConfirmation,
+        ),
+      ),
+      GoRoute(
+        path: '/about',
+        builder: (context, state) => const AboutPage(),
+      ),
+      GoRoute(
+        path: '/quality-control',
+        builder: (context, state) => const QualityControlPage(),
+      ),
+      GoRoute(
+        path: '/license',
+        builder: (context, state) => const DictionaryLicensePage(),
+      )
+    ],
+    observers: [SentryNavigatorObserver()],
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -317,92 +455,6 @@ class _MyAppState extends State<MyApp> {
       dividerTheme: dividerTheme,
     );
 
-    final router = GoRouter(
-      initialLocation: widget.firstTimeUser ? '/introduction' : '/',
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const HomePage(title: 'words.hk'),
-        ),
-        GoRoute(
-          path: '/introduction',
-          builder: (context, state) => IntroductionPage(prefs: widget.prefs),
-        ),
-        GoRoute(
-          path: '/settings',
-          builder: (context, state) => const SettingsPage(),
-        ),
-        GoRoute(
-          path: '/settings/language',
-          builder: (context, state) => const LanguagePreferencesPage(),
-        ),
-        GoRoute(
-            path: '/settings/script',
-            builder: (context, state) => const ScriptPreferencesPage()),
-        GoRoute(
-            path: '/settings/romanization',
-            builder: (context, state) => const RomanizationPreferencesPage()),
-        GoRoute(
-          path: '/settings/entry/definition/language',
-          builder: (context, state) =>
-              const EntryExplanationLanguagePreferencesPage(),
-        ),
-        GoRoute(
-          path: '/settings/entry/header/speech-rate',
-          builder: (context, state) =>
-              const EntryHeaderSpeechRatePreferencesPage(),
-        ),
-        GoRoute(
-          path: '/settings/entry/example',
-          builder: (context, state) => const EntryEgPreferencesPage(),
-        ),
-        GoRoute(
-          path: '/settings/entry/example/font-size',
-          builder: (context, state) => const EntryEgFontSizePreferencesPage(),
-        ),
-        GoRoute(
-          path: '/settings/entry/example/pronunciation',
-          builder: (context, state) =>
-              const EntryEgPronunciationMethodPreferencesPage(),
-        ),
-        GoRoute(
-          path: '/exercise',
-          builder: (context, state) => const ExercisePage(),
-        ),
-        GoRoute(
-          path: '/bookmarks',
-          builder: (context, state) => EntryItemsPage<BookmarkState>(
-            title: AppLocalizations.of(context)!.bookmarks,
-            emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-            deletionConfirmationMessage:
-                AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
-          ),
-        ),
-        GoRoute(
-          path: '/history',
-          builder: (context, state) => EntryItemsPage<HistoryState>(
-            title: AppLocalizations.of(context)!.history,
-            emptyMessage: AppLocalizations.of(context)!.noHistory,
-            deletionConfirmationMessage:
-                AppLocalizations.of(context)!.historyDeleteConfirmation,
-          ),
-        ),
-        GoRoute(
-          path: '/about',
-          builder: (context, state) => const AboutPage(),
-        ),
-        GoRoute(
-          path: '/quality-control',
-          builder: (context, state) => const QualityControlPage(),
-        ),
-        GoRoute(
-          path: '/license',
-          builder: (context, state) => const DictionaryLicensePage(),
-        )
-      ],
-      observers: [SentryNavigatorObserver()],
-    );
-
     return FGBGNotifier(
       onEvent: (event) async {
         if (event == FGBGType.background &&
@@ -423,7 +475,7 @@ class _MyAppState extends State<MyApp> {
           final lastSyncTime = prefs.getString("analyticsSyncTime");
           final timeNow = DateTime.now().toUtc();
           final timeNowString = timeNow.toIso8601String();
-          if (kReleaseMode &&
+          if (/*kReleaseMode &&*/
               lastSyncTime != null &&
               timeNow.difference(DateTime.parse(lastSyncTime)).inHours < 12) {
             return;

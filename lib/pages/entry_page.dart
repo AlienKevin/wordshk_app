@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/custom_page_route.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
@@ -15,7 +15,6 @@ import '../src/rust/api/api.dart';
 import '../states/player_state.dart';
 import '../widgets/entry/entry.dart';
 import '../widgets/entry/entry_action_buttons.dart';
-import 'entry_not_published_page.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;
@@ -146,25 +145,13 @@ class _EntryPageState extends State<EntryPage> {
                 .then((id) {
               context.read<PlayerState>().refreshPlayerState();
               if (id == null) {
-                Navigator.push(
-                  context,
-                  CustomPageRoute(
-                      builder: (context) =>
-                          EntryNotPublishedPage(entryVariant: entryVariant)),
-                );
+                context.push("/entry/not-published/$entryVariant");
               } else {
-                Navigator.push(
-                  context,
-                  CustomPageRoute(
-                      builder: (context) => EntryPage(
-                            id: id,
-                            showFirstEntryInGroupInitially: true,
-                            embedded: widget.embedded == Embedded.embedded ||
-                                    widget.embedded == Embedded.nestedInEmbedded
-                                ? Embedded.nestedInEmbedded
-                                : Embedded.topLevel,
-                          )),
-                );
+                final embedded = widget.embedded == Embedded.embedded ||
+                    widget.embedded == Embedded.nestedInEmbedded
+                    ? Embedded.nestedInEmbedded
+                    : Embedded.topLevel;
+                context.push("/entry/id/$id?showFirstInGroup=true&embedded=${embedded.name}");
               }
             });
           },

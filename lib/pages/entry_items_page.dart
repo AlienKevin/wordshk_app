@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/src/rust/api/api.dart';
@@ -12,7 +13,6 @@ import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../constants.dart';
-import '../custom_page_route.dart';
 import '../models/embedded.dart';
 import '../models/summary_def_language.dart';
 import '../states/entry_item_state.dart';
@@ -446,16 +446,7 @@ class _EntryItemsState<T extends EntryItemState>
                     selectedEntryId = id;
                   });
                   if (embedded != Embedded.embedded) {
-                    Navigator.push(
-                      context,
-                      CustomPageRoute(
-                          builder: (context) => EntryPage(
-                                key: ValueKey(selectedEntryId!),
-                                id: selectedEntryId!,
-                                showFirstEntryInGroupInitially: false,
-                                embedded: embedded,
-                              )),
-                    );
+                    context.push("/entry/id/$id?key=$id&embedded=${embedded.name}");
                   }
                 },
               EditMode(selectedEntryItems: var selectedEntryItems) => () {
