@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/src/rust/api/api.dart';
@@ -446,7 +445,18 @@ class _EntryItemsState<T extends EntryItemState>
                     selectedEntryId = id;
                   });
                   if (embedded != Embedded.embedded) {
-                    context.push("/entry/id/$id?key=$id&embedded=${embedded.name}");
+                    // TODO: Figure out how to use ShellRouter from GoRouter
+                    // context.push("/entry/id/$id?key=$id&embedded=${embedded.name}");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EntryPage(
+                                key: ValueKey(selectedEntryId!),
+                                id: selectedEntryId!,
+                                showFirstEntryInGroupInitially: false,
+                                embedded: embedded,
+                              )),
+                    );
                   }
                 },
               EditMode(selectedEntryItems: var selectedEntryItems) => () {

@@ -224,7 +224,7 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
             final embedded = state.uri.queryParameters['embedded'] == null
                 ? null
                 : Embedded.values
-                .byName(state.uri.queryParameters['embedded']!);
+                    .byName(state.uri.queryParameters['embedded']!);
             if (kDebugMode) {
               print("Going to entry $entryId");
             }
@@ -232,16 +232,14 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
               return EntryPage(
                 key: key == null ? null : ValueKey(key),
                 id: entryId,
-                showFirstEntryInGroupInitially:
-                showFirstEntryInGroupInitially,
+                showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
                 defIndex: defIndex,
               );
             } else {
               return EntryPage(
                 key: key == null ? null : ValueKey(key),
                 id: entryId,
-                showFirstEntryInGroupInitially:
-                showFirstEntryInGroupInitially,
+                showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
                 defIndex: defIndex,
                 embedded: embedded,
               );
@@ -270,12 +268,12 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
       GoRoute(
         path: '/settings/entry/definition/language',
         builder: (context, state) =>
-        const EntryExplanationLanguagePreferencesPage(),
+            const EntryExplanationLanguagePreferencesPage(),
       ),
       GoRoute(
         path: '/settings/entry/header/speech-rate',
         builder: (context, state) =>
-        const EntryHeaderSpeechRatePreferencesPage(),
+            const EntryHeaderSpeechRatePreferencesPage(),
       ),
       GoRoute(
         path: '/settings/entry/example',
@@ -288,7 +286,7 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
       GoRoute(
         path: '/settings/entry/example/pronunciation',
         builder: (context, state) =>
-        const EntryEgPronunciationMethodPreferencesPage(),
+            const EntryEgPronunciationMethodPreferencesPage(),
       ),
       GoRoute(
         path: '/exercise',
@@ -300,7 +298,7 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
           title: AppLocalizations.of(context)!.bookmarks,
           emptyMessage: AppLocalizations.of(context)!.noBookmarks,
           deletionConfirmationMessage:
-          AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+              AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
         ),
       ),
       GoRoute(
@@ -309,7 +307,7 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
           title: AppLocalizations.of(context)!.history,
           emptyMessage: AppLocalizations.of(context)!.noHistory,
           deletionConfirmationMessage:
-          AppLocalizations.of(context)!.historyDeleteConfirmation,
+              AppLocalizations.of(context)!.historyDeleteConfirmation,
         ),
       ),
       GoRoute(
@@ -477,7 +475,8 @@ class _MyAppState extends State<MyApp> {
           final timeNowString = timeNow.toIso8601String();
           if (/*kReleaseMode &&*/
               lastSyncTime != null &&
-              timeNow.difference(DateTime.parse(lastSyncTime)).inHours < 12) {
+                  timeNow.difference(DateTime.parse(lastSyncTime)).inHours <
+                      12) {
             return;
           }
           Map<String, dynamic> message = {

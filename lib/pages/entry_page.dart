@@ -148,10 +148,23 @@ class _EntryPageState extends State<EntryPage> {
                 context.push("/entry/not-published/$entryVariant");
               } else {
                 final embedded = widget.embedded == Embedded.embedded ||
-                    widget.embedded == Embedded.nestedInEmbedded
+                        widget.embedded == Embedded.nestedInEmbedded
                     ? Embedded.nestedInEmbedded
                     : Embedded.topLevel;
-                context.push("/entry/id/$id?showFirstInGroup=true&embedded=${embedded.name}");
+                // TODO: Figure out how to use ShellRouter from GoRouter
+                // context.push("/entry/id/$id?showFirstInGroup=true&embedded=${embedded.name}");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EntryPage(
+                            id: id,
+                            showFirstEntryInGroupInitially: true,
+                            embedded: widget.embedded == Embedded.embedded ||
+                                    widget.embedded == Embedded.nestedInEmbedded
+                                ? Embedded.nestedInEmbedded
+                                : Embedded.topLevel,
+                          )),
+                );
               }
             });
           },
