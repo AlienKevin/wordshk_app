@@ -104,22 +104,18 @@ class _EntryTabState extends State<EntryTab> {
                       prTextStyle: widget.prTextStyle,
                       lineTextStyle: widget.lineTextStyle,
                     ),
-                    EntryLabels(
-                        labels: widget.entry.labels,
-                        lineTextStyle: widget.lineTextStyle),
+                    EntryLabels(labels: widget.entry.labels),
                     EntrySimsOrAnts(
                         label: "[${AppLocalizations.of(context)!.synonym}]",
                         simsOrAnts: widget.entry.sims,
                         simsOrAntsSimp: widget.entry.simsSimp,
                         script: widget.script,
-                        lineTextStyle: widget.lineTextStyle,
                         onTapLink: widget.onTapLink),
                     EntrySimsOrAnts(
                         label: "[${AppLocalizations.of(context)!.antonym}]",
                         simsOrAnts: widget.entry.ants,
                         simsOrAntsSimp: widget.entry.antsSimp,
                         script: widget.script,
-                        lineTextStyle: widget.lineTextStyle,
                         onTapLink: widget.onTapLink),
                   ]))
           : (scrollController == null

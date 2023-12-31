@@ -6,47 +6,34 @@ import '../../models/entry.dart';
 
 class EntryLabels extends StatelessWidget {
   final List<Label> labels;
-  final TextStyle lineTextStyle;
 
   const EntryLabels(
-      {Key? key, required this.labels, required this.lineTextStyle})
+      {Key? key, required this.labels})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) => Visibility(
         visible: labels.isNotEmpty,
-        child: Builder(builder: (context) {
-          return Text.rich(TextSpan(children: [
-            WidgetSpan(
-                child: Text.rich(TextSpan(
-                    text: "[${AppLocalizations.of(context)!.label}]",
-                    style:
-                        lineTextStyle.copyWith(fontWeight: FontWeight.w600)))),
-            ...labels
-                .map((label) => [
-                      const WidgetSpan(child: SizedBox(width: 10)),
-                      WidgetSpan(
-                          child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Chip(
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            padding: EdgeInsets.zero,
-                            labelPadding: const EdgeInsets.only(
-                                left: 10, right: 10, bottom: 2),
-                            labelStyle:
-                                lineTextStyle.copyWith(color: whiteColor),
-                            backgroundColor: greyColor,
-                            label: Text(translateLabel(
-                                label, AppLocalizations.of(context)!))),
-                      ))
-                    ])
-                .expand((i) => i)
-          ]));
-        }),
+        child: Builder(
+            builder: (context) => Padding(
+                  padding: const EdgeInsets.only(top: 5),
+              child: Wrap(
+                  spacing: 5,
+                  children: labels
+                      .map((label) => Chip(
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          padding: EdgeInsets.zero,
+                          labelPadding: const EdgeInsets.only(
+                              left: 10, right: 10, bottom: 2),
+                          labelStyle: Theme.of(context).textTheme.bodySmall!.copyWith(color: whiteColor),
+                          backgroundColor: greyColor,
+                          label: Text(translateLabel(
+                              label, AppLocalizations.of(context)!))))
+                      .toList()),
+            )),
       );
 }

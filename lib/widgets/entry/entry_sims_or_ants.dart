@@ -9,7 +9,6 @@ class EntrySimsOrAnts extends StatelessWidget {
   final List<Segment> simsOrAnts;
   final List<String> simsOrAntsSimp;
   final Script script;
-  final TextStyle lineTextStyle;
   final OnTapLink onTapLink;
 
   const EntrySimsOrAnts(
@@ -18,19 +17,17 @@ class EntrySimsOrAnts extends StatelessWidget {
       required this.simsOrAnts,
       required this.simsOrAntsSimp,
       required this.script,
-      required this.lineTextStyle,
       required this.onTapLink})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) => Visibility(
       visible: simsOrAnts.isNotEmpty,
-      child: Text.rich(TextSpan(style: lineTextStyle, children: [
-        WidgetSpan(
-            child: Text.rich(TextSpan(
+      child: Text.rich(TextSpan(children: [
+        TextSpan(
                 text: label,
-                style: lineTextStyle.copyWith(fontWeight: FontWeight.w600)))),
-        const WidgetSpan(child: SizedBox(width: 10)),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w600)),
+        const WidgetSpan(child: SizedBox(width: 5)),
         ...(script == Script.traditional
                 ? simsOrAnts
                 : simsOrAnts
@@ -47,7 +44,7 @@ class EntrySimsOrAnts extends StatelessWidget {
             seg.type == SegmentType.link
                 ? TextSpan(
                     text: seg.segment,
-                    style: TextStyle(
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Theme.of(context).colorScheme.secondary),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () => onTapLink(seg.segment))

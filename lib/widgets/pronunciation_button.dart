@@ -61,7 +61,7 @@ class PronunciationButtonState extends State<PronunciationButton> {
                         : CupertinoIcons.stop_circle_fill
                     : PlatformIcons(context).volumeUp),
             color: Theme.of(context).colorScheme.secondary,
-            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+            padding: const EdgeInsets.only(left: 5),
             onPressed: triggerPlay);
   }
 }

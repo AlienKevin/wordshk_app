@@ -65,11 +65,8 @@
     "posOnomatopoeia": "onomatopoeia",
     "posUnknown": "unknown",
 
-    "label": "tag",
     "synonym": "synonym",
     "antonym": "antonym",
-    "cantonese": "jyut",
-    "english": "eng",
 
     "labelVulgar": "vulgar",
     "labelSlang": "slang",
