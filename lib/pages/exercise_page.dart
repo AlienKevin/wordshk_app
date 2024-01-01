@@ -6,8 +6,6 @@ import 'package:wordshk/pages/tone_exercise_page.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
-import '../widgets/navigation_drawer.dart';
-
 class ExercisePage extends StatelessWidget {
   const ExercisePage({super.key});
 
@@ -17,7 +15,6 @@ class ExercisePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.exercise),
       ),
-      drawer: const NavigationDrawer(),
       body: ConstrainedContent(
         child: ListView(
           children: [

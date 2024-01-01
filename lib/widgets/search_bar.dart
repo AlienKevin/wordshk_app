@@ -431,7 +431,7 @@ class IsSearching extends State<SearchBar> {
           ? null
           : Consumer<SearchModeState>(
               builder: (context, searchModeState, child) => Padding(
-                padding: const EdgeInsets.only(right: 10, top: 2),
+                padding: const EdgeInsets.only(left: 14, right: 10, top: 2),
                 child: SizedBox(
                     height: 48,
                     child: KeyboardActions(

@@ -54,6 +54,7 @@ import 'package:wordshk/states/search_mode_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
+import 'package:wordshk/widgets/scaffold_with_bottom_navigation.dart';
 
 import 'aws_service.dart';
 import 'constants.dart';
@@ -204,108 +205,116 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
     initialLocation: firstTimeUser ? '/introduction' : '/',
     routes: [
       GoRoute(
-        path: '/',
-        builder: (context, state) => const HomePage(title: 'words.hk'),
-      ),
-      GoRoute(
         path: '/introduction',
         builder: (context, state) => IntroductionPage(prefs: prefs),
       ),
-      GoRoute(
-          path: '/entry/id/:entryId',
-          builder: (context, state) {
-            final entryId = int.parse(state.pathParameters['entryId']!);
-            final key = state.uri.queryParameters['key'] == null
-                ? null
-                : int.parse(state.uri.queryParameters['key']!);
-            final showFirstEntryInGroupInitially =
-                state.uri.queryParameters['showFirstInGroup'] == "true";
-            final defIndex = state.uri.queryParameters['defIndex'] == null
-                ? null
-                : int.parse(state.uri.queryParameters['defIndex']!);
-            final embedded = state.uri.queryParameters['embedded'] == null
-                ? null
-                : Embedded.values
-                    .byName(state.uri.queryParameters['embedded']!);
-            if (kDebugMode) {
-              print("Going to entry $entryId");
-            }
-            if (embedded == null) {
-              return EntryPage(
-                key: key == null ? null : ValueKey(key),
-                id: entryId,
-                showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
-                defIndex: defIndex,
-              );
-            } else {
-              return EntryPage(
-                key: key == null ? null : ValueKey(key),
-                id: entryId,
-                showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
-                defIndex: defIndex,
-                embedded: embedded,
-              );
-            }
-          }),
-      GoRoute(
-        path: '/entry/not-published/:entryVariant',
-        builder: (context, state) => EntryNotPublishedPage(
-          entryVariant: state.pathParameters['entryVariant']!,
-        ),
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsPage(),
-      ),
-      GoRoute(
-        path: '/settings/language',
-        builder: (context, state) => const LanguagePreferencesPage(),
-      ),
-      GoRoute(
-          path: '/settings/script',
-          builder: (context, state) => const ScriptPreferencesPage()),
-      GoRoute(
-          path: '/settings/romanization',
-          builder: (context, state) => const RomanizationPreferencesPage()),
-      GoRoute(
-        path: '/settings/entry/definition/language',
-        builder: (context, state) =>
-            const EntryExplanationLanguagePreferencesPage(),
-      ),
-      GoRoute(
-        path: '/settings/entry/header/speech-rate',
-        builder: (context, state) =>
-            const EntryHeaderSpeechRatePreferencesPage(),
-      ),
-      GoRoute(
-        path: '/settings/entry/example',
-        builder: (context, state) => const EntryEgPreferencesPage(),
-      ),
-      GoRoute(
-        path: '/settings/entry/example/font-size',
-        builder: (context, state) => const EntryEgFontSizePreferencesPage(),
-      ),
-      GoRoute(
-        path: '/settings/entry/example/pronunciation',
-        builder: (context, state) =>
-            const EntryEgPronunciationMethodPreferencesPage(),
-      ),
-      GoRoute(
-        path: '/exercise',
-        builder: (context, state) => const ExercisePage(),
-      ),
-      GoRoute(
-        path: '/about',
-        builder: (context, state) => const AboutPage(),
-      ),
-      GoRoute(
-        path: '/quality-control',
-        builder: (context, state) => const QualityControlPage(),
-      ),
-      GoRoute(
-        path: '/license',
-        builder: (context, state) => const DictionaryLicensePage(),
-      )
+      ShellRoute(
+          builder: (BuildContext context, GoRouterState state, Widget child) => ScaffoldWithBottomNavigation(child: child),
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (context, state) => const HomePage(title: 'words.hk'),
+            ),
+            GoRoute(
+                path: '/entry/id/:entryId',
+                builder: (context, state) {
+                  final entryId = int.parse(state.pathParameters['entryId']!);
+                  final key = state.uri.queryParameters['key'] == null
+                      ? null
+                      : int.parse(state.uri.queryParameters['key']!);
+                  final showFirstEntryInGroupInitially =
+                      state.uri.queryParameters['showFirstInGroup'] == "true";
+                  final defIndex = state.uri.queryParameters['defIndex'] == null
+                      ? null
+                      : int.parse(state.uri.queryParameters['defIndex']!);
+                  final embedded = state.uri.queryParameters['embedded'] == null
+                      ? null
+                      : Embedded.values
+                          .byName(state.uri.queryParameters['embedded']!);
+                  if (kDebugMode) {
+                    print("Going to entry $entryId");
+                  }
+                  if (embedded == null) {
+                    return EntryPage(
+                      key: key == null ? null : ValueKey(key),
+                      id: entryId,
+                      showFirstEntryInGroupInitially:
+                          showFirstEntryInGroupInitially,
+                      defIndex: defIndex,
+                    );
+                  } else {
+                    return EntryPage(
+                      key: key == null ? null : ValueKey(key),
+                      id: entryId,
+                      showFirstEntryInGroupInitially:
+                          showFirstEntryInGroupInitially,
+                      defIndex: defIndex,
+                      embedded: embedded,
+                    );
+                  }
+                }),
+            GoRoute(
+              path: '/entry/not-published/:entryVariant',
+              builder: (context, state) => EntryNotPublishedPage(
+                entryVariant: state.pathParameters['entryVariant']!,
+              ),
+            ),
+            GoRoute(
+              path: '/settings',
+              builder: (context, state) => const SettingsPage(),
+            ),
+            GoRoute(
+              path: '/settings/language',
+              builder: (context, state) => const LanguagePreferencesPage(),
+            ),
+            GoRoute(
+                path: '/settings/script',
+                builder: (context, state) => const ScriptPreferencesPage()),
+            GoRoute(
+                path: '/settings/romanization',
+                builder: (context, state) =>
+                    const RomanizationPreferencesPage()),
+            GoRoute(
+              path: '/settings/entry/definition/language',
+              builder: (context, state) =>
+                  const EntryExplanationLanguagePreferencesPage(),
+            ),
+            GoRoute(
+              path: '/settings/entry/header/speech-rate',
+              builder: (context, state) =>
+                  const EntryHeaderSpeechRatePreferencesPage(),
+            ),
+            GoRoute(
+              path: '/settings/entry/example',
+              builder: (context, state) => const EntryEgPreferencesPage(),
+            ),
+            GoRoute(
+              path: '/settings/entry/example/font-size',
+              builder: (context, state) =>
+                  const EntryEgFontSizePreferencesPage(),
+            ),
+            GoRoute(
+              path: '/settings/entry/example/pronunciation',
+              builder: (context, state) =>
+                  const EntryEgPronunciationMethodPreferencesPage(),
+            ),
+            GoRoute(
+              path: '/exercise',
+              builder: (context, state) => const ExercisePage(),
+            ),
+            GoRoute(
+              path: '/about',
+              builder: (context, state) => const AboutPage(),
+            ),
+            GoRoute(
+              path: '/quality-control',
+              builder: (context, state) => const QualityControlPage(),
+            ),
+            GoRoute(
+              path: '/license',
+              builder: (context, state) => const DictionaryLicensePage(),
+            )
+          ])
     ],
     observers: [SentryNavigatorObserver()],
   );

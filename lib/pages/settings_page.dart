@@ -15,7 +15,6 @@ import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
 import '../states/speech_rate_state.dart';
-import '../widgets/navigation_drawer.dart';
 import '../widgets/preferences/settings_list.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -34,7 +33,6 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(title: Text(s.settings)),
-        drawer: const NavigationDrawer(),
         body: ConstrainedContent(
           child: MySettingsList(
             sections: [

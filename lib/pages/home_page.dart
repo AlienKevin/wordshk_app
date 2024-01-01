@@ -29,7 +29,6 @@ import '../states/romanization_state.dart';
 import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import '../utils.dart';
-import '../widgets/navigation_drawer.dart';
 import 'entry_items_page.dart';
 import 'entry_page.dart';
 
@@ -164,7 +163,6 @@ class _HomePageState extends State<HomePage>
               },
               onSubmitted: onSearchSubmitted,
             ),
-            drawer: const NavigationDrawer(),
             body: inputMode == InputMode.ink
                 ? DigitalInkView(
                     typeCharacter: (character) {
