@@ -320,52 +320,6 @@ class _EntryItemsState<T extends EntryItemState>
     );
   }
 
-  itemsList(EntryItemState s, Embedded embedded) =>
-      embedded == Embedded.topLevel
-          ? rawItemList(s, embedded)
-          : Column(
-              children: [
-                Container(
-                  color: Theme.of(context).dividerColor,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SegmentedButton<SummaryDefLanguage>(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith(
-                                (states) => states
-                                        .contains(MaterialState.selected)
-                                    ? Theme.of(context).primaryColor
-                                    : Theme.of(context).colorScheme.surface),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          segments: [
-                            ButtonSegment(
-                                value: SummaryDefLanguage.cantonese,
-                                label: Text(AppLocalizations.of(context)!
-                                    .entryLanguageCantonese)),
-                            ButtonSegment(
-                                value: SummaryDefLanguage.english,
-                                label: Text(AppLocalizations.of(context)!
-                                    .entryLanguageEnglish)),
-                          ],
-                          onSelectionChanged: (value) {
-                            setState(() {
-                              summaryDefLanguage = value.first;
-                            });
-                          },
-                          selected: {summaryDefLanguage},
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(child: rawItemList(s, embedded)),
-              ],
-            );
-
   getSummaryDef(List<(String, String)> summaryDefs,
           SummaryDefLanguage summaryDefLanguage) =>
       switch (summaryDefLanguage) {
@@ -375,7 +329,7 @@ class _EntryItemsState<T extends EntryItemState>
           summaryDefs.map((pair) => pair.$2).toList()
       };
 
-  rawItemList(EntryItemState s, Embedded embedded) => ListView.separated(
+  itemsList(EntryItemState s, Embedded embedded) => ListView.separated(
         itemCount: _hasMore
             ? _entryItemSummaries.length + 1
             : _entryItemSummaries.length,
