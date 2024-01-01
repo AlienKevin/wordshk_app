@@ -3,9 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/custom_page_route.dart';
-import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 
 import '../../models/entry.dart';
@@ -55,12 +54,7 @@ class EntryActionButtons extends StatelessWidget {
                             TextButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  CustomPageRoute(
-                                      builder: (context) =>
-                                          const QualityControlPage()),
-                                );
+                                context.push('/quality-control');
                               },
                               child:
                                   Text(AppLocalizations.of(context)!.learnMore),

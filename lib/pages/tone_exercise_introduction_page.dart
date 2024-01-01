@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/pages/tone_exercise_page.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 import 'package:wordshk/widgets/preferences/title.dart';
 
-import '../custom_page_route.dart';
 import '../widgets/syllable_pronunciation_button.dart';
 
 class ToneExerciseIntroductionPage extends StatelessWidget {
@@ -28,14 +27,9 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
         safeAreaList: const [false, false, true, true],
         onDone: () {
           // Go back to previous tone exercise if there is any
-          if (openedInExercise) {
-            Navigator.pop(context);
-          } else {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              CustomPageRoute(builder: (context) => const ToneExercisePage()),
-            );
+          Navigator.pop(context);
+          if (!openedInExercise) {
+            context.go("/exercise/tone");
             context
                 .read<ExerciseIntroductionState>()
                 .setToneExerciseIntroduced();

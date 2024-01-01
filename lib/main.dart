@@ -236,7 +236,7 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                 ],
               ),
             ]),
-            StatefulShellBranch(routes: <RouteBase>[
+            StatefulShellBranch(initialLocation: '/', routes: <RouteBase>[
               GoRoute(
                   path: '/',
                   builder: (context, state) =>
