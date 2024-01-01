@@ -34,6 +34,8 @@ import 'package:wordshk/pages/preferences/romanization_page.dart';
 import 'package:wordshk/pages/preferences/script_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/pages/settings_page.dart';
+import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
+import 'package:wordshk/pages/tone_exercise_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/src/rust/frb_generated.dart';
@@ -217,6 +219,21 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
               GoRoute(
                 path: '/exercise',
                 builder: (context, state) => const ExercisePage(),
+                routes: [
+                  GoRoute(
+                      path: 'tone',
+                      builder: (context, state) => const ToneExercisePage(),
+                      routes: [
+                        GoRoute(
+                          path: 'introduction',
+                          builder: (context, state) =>
+                              ToneExerciseIntroductionPage(
+                                  openedInExercise: state.uri.queryParameters[
+                                          'openedInExercise'] ==
+                                      'true'),
+                        ),
+                      ]),
+                ],
               ),
             ]),
             StatefulShellBranch(routes: <RouteBase>[

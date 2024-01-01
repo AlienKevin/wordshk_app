@@ -4,9 +4,9 @@ import 'package:draw_on_path/draw_on_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/constants.dart';
-import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
 
 import '../widgets/pronunciation_button.dart';
 import '../widgets/syllable_pronunciation_button.dart';
@@ -124,13 +124,7 @@ class ToneExercisePageState extends State<ToneExercisePage> {
         actions: [
           IconButton(
               onPressed: () {
-                // Go to the intro page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ToneExerciseIntroductionPage(
-                          openedInExercise: true)),
-                );
+                context.go("/exercise/tone/introduction?openedInExercise=true");
               },
               icon: Icon(PlatformIcons(context).info))
         ],

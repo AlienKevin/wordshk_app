@@ -21,7 +21,7 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
     final s = AppLocalizations.of(context)!;
 
     const pageDecoration = PageDecoration(
-      titlePadding: EdgeInsets.only(top: 0.0, bottom: 24.0),
+      titlePadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
       contentMargin: EdgeInsets.all(32.0),
     );
     return IntroductionScreen(

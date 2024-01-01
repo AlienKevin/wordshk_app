@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
-import 'package:wordshk/pages/tone_exercise_page.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
@@ -32,19 +31,9 @@ class ExercisePage extends StatelessWidget {
                     if (context
                         .read<ExerciseIntroductionState>()
                         .toneExerciseIntroduced) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ToneExercisePage()),
-                      );
+                      context.go("/exercise/tone");
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const ToneExerciseIntroductionPage(
-                                    openedInExercise: false)),
-                      );
+                      context.go("/exercise/tone/introduction?openedInExercise=false");
                     }
                   },
                 ),
