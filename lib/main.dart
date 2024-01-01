@@ -293,63 +293,65 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                     ),
                   ])
             ]),
-            StatefulShellBranch(routes: <RouteBase>[
-              GoRoute(
-                path: '/about',
-                builder: (context, state) => const AboutPage(),
-              ),
-              GoRoute(
-                path: '/quality-control',
-                builder: (context, state) => const QualityControlPage(),
-              ),
-              GoRoute(
-                path: '/license',
-                builder: (context, state) => const DictionaryLicensePage(),
-              ),
-              GoRoute(
-                  path: '/settings',
-                  builder: (context, state) => const SettingsPage(),
-                  routes: [
-                    GoRoute(
-                      path: 'language',
-                      builder: (context, state) =>
-                          const LanguagePreferencesPage(),
-                    ),
-                    GoRoute(
-                        path: 'script',
-                        builder: (context, state) =>
-                            const ScriptPreferencesPage()),
-                    GoRoute(
-                        path: 'romanization',
-                        builder: (context, state) =>
-                            const RomanizationPreferencesPage()),
-                    GoRoute(
-                      path: 'entry/definition/language',
-                      builder: (context, state) =>
-                          const EntryExplanationLanguagePreferencesPage(),
-                    ),
-                    GoRoute(
-                      path: 'entry/header/speech-rate',
-                      builder: (context, state) =>
-                          const EntryHeaderSpeechRatePreferencesPage(),
-                    ),
-                    GoRoute(
-                      path: 'entry/example',
-                      builder: (context, state) =>
-                          const EntryEgPreferencesPage(),
-                    ),
-                    GoRoute(
-                      path: 'entry/example/font-size',
-                      builder: (context, state) =>
-                          const EntryEgFontSizePreferencesPage(),
-                    ),
-                    GoRoute(
-                      path: 'entry/example/pronunciation',
-                      builder: (context, state) =>
-                          const EntryEgPronunciationMethodPreferencesPage(),
-                    ),
-                  ]),
-            ]),
+            StatefulShellBranch(
+                initialLocation: '/settings',
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/about',
+                    builder: (context, state) => const AboutPage(),
+                  ),
+                  GoRoute(
+                    path: '/quality-control',
+                    builder: (context, state) => const QualityControlPage(),
+                  ),
+                  GoRoute(
+                    path: '/license',
+                    builder: (context, state) => const DictionaryLicensePage(),
+                  ),
+                  GoRoute(
+                      path: '/settings',
+                      builder: (context, state) => const SettingsPage(),
+                      routes: [
+                        GoRoute(
+                          path: 'language',
+                          builder: (context, state) =>
+                              const LanguagePreferencesPage(),
+                        ),
+                        GoRoute(
+                            path: 'script',
+                            builder: (context, state) =>
+                                const ScriptPreferencesPage()),
+                        GoRoute(
+                            path: 'romanization',
+                            builder: (context, state) =>
+                                const RomanizationPreferencesPage()),
+                        GoRoute(
+                          path: 'entry/definition/language',
+                          builder: (context, state) =>
+                              const EntryExplanationLanguagePreferencesPage(),
+                        ),
+                        GoRoute(
+                          path: 'entry/header/speech-rate',
+                          builder: (context, state) =>
+                              const EntryHeaderSpeechRatePreferencesPage(),
+                        ),
+                        GoRoute(
+                          path: 'entry/example',
+                          builder: (context, state) =>
+                              const EntryEgPreferencesPage(),
+                        ),
+                        GoRoute(
+                          path: 'entry/example/font-size',
+                          builder: (context, state) =>
+                              const EntryEgFontSizePreferencesPage(),
+                        ),
+                        GoRoute(
+                          path: 'entry/example/pronunciation',
+                          builder: (context, state) =>
+                              const EntryEgPronunciationMethodPreferencesPage(),
+                        ),
+                      ]),
+                ]),
           ])
     ],
     observers: [SentryNavigatorObserver()],

@@ -33,7 +33,7 @@ class ScaffoldWithBottomNavigation extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(PlatformIcons(context).search),
-            label: AppLocalizations.of(context)!.dictionary,
+            label: AppLocalizations.of(context)!.searchDictionary,
           ),
           BottomNavigationBarItem(
             icon: Icon(isMaterial(context)
