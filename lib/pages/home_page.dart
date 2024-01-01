@@ -17,7 +17,6 @@ import 'package:wordshk/widgets/search_bar.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
 import '../constants.dart';
-import '../custom_page_route.dart';
 import '../main.dart';
 import '../models/input_mode.dart';
 import '../models/search_mode.dart';
@@ -75,8 +74,12 @@ class _HomePageState extends State<HomePage>
         final query = context.read<SearchQueryState>().query;
         doSearch(query, context);
       });
-      context.read<InputModeState>().setOnDone(
-          () => onSearchSubmitted(context.read<SearchQueryState>().query));
+      context.read<InputModeState>().setOnDone(() {
+        final embedded = MediaQuery.of(context).size.width > wideScreenThreshold
+            ? Embedded.embedded
+            : Embedded.topLevel;
+        onSearchSubmitted(context.read<SearchQueryState>().query, embedded);
+      });
 
       // Spotlight search only available on apple
       if (Platform.isIOS || Platform.isMacOS) {
@@ -107,7 +110,7 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  onSearchSubmitted(String query) {
+  onSearchSubmitted(String query, Embedded embedded) {
     if (query.isEmpty) {
       return;
     }
@@ -120,13 +123,23 @@ class _HomePageState extends State<HomePage>
           return;
         }
       }
-      final exactMatchVariant = variantSearchResults.firstWhereOrNull(
-          (result) =>
-              result.matchedVariant.prefix.isEmpty &&
-              result.matchedVariant.suffix.isEmpty);
+      final exactMatchVariant = variantSearchResults.indexed.firstWhereOrNull(
+          (item) =>
+              item.$2.matchedVariant.prefix.isEmpty &&
+              item.$2.matchedVariant.suffix.isEmpty);
       if (exactMatchVariant != null) {
-        context.read<HistoryState>().updateItem(exactMatchVariant.id);
-        context.push("/entry/id/${exactMatchVariant.id}");
+        final (index, variant) = exactMatchVariant;
+        context.read<HistoryState>().updateItem(variant.id);
+        if (embedded != Embedded.embedded) {
+          context.push("/entry/id/${variant.id}");
+        } else {
+          setState(() {
+            selectedSearchResultEntryPage = EntryPage(
+                key: ValueKey(index),
+                id: variant.id,
+                showFirstEntryInGroupInitially: false);
+          });
+        }
       }
     }
   }
@@ -161,7 +174,13 @@ class _HomePageState extends State<HomePage>
                   selectedSearchResultEntryPage = null;
                 });
               },
-              onSubmitted: onSearchSubmitted,
+              onSubmitted: (query) {
+                final embedded =
+                    MediaQuery.of(context).size.width > wideScreenThreshold
+                        ? Embedded.embedded
+                        : Embedded.topLevel;
+                onSearchSubmitted(query, embedded);
+              },
             ),
             body: inputMode == InputMode.ink
                 ? DigitalInkView(
@@ -709,10 +728,8 @@ class _HomePageState extends State<HomePage>
             });
             if (embedded != Embedded.embedded) {
               analyticsState.clickSearchResultType(resultType);
-              Navigator.push(
-                context,
-                CustomPageRoute(builder: (context) => entryPage),
-              );
+              context.push(
+                  "/entry/id/$id?showFirstInGroup=$showFirstEntryInGroupInitially${defIndex == null ? "" : "&defIndex=$defIndex"}&embedded=${embedded.name}");
             }
           },
           child: Padding(
