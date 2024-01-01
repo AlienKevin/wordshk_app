@@ -50,7 +50,8 @@ class PronunciationButtonState extends State<PronunciationButton> {
           )
         : IconButton(
             iconSize: Theme.of(context).textTheme.bodyMedium!.fontSize!,
-            constraints: BoxConstraints(maxHeight: Theme.of(context).textTheme.bodyMedium!.fontSize!),
+            constraints: BoxConstraints(
+                maxHeight: Theme.of(context).textTheme.bodyMedium!.fontSize!),
             visualDensity: VisualDensity.compact,
             tooltip: "Pronunciation",
             alignment: widget.alignment,

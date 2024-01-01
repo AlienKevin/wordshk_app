@@ -196,25 +196,29 @@ class _HomePageState extends State<HomePage>
           labelColor: Theme.of(context).textTheme.bodyMedium!.color!,
           unselectedLabelColor: Theme.of(context).textTheme.bodyMedium!.color!,
           indicator: UnderlineTabIndicator(
-            borderSide: BorderSide(color: Theme.of(context).textTheme.bodyMedium!.color!, width: 2),
+            borderSide: BorderSide(
+                color: Theme.of(context).textTheme.bodyMedium!.color!,
+                width: 2),
             // Indicator height
-            insets: const EdgeInsets.symmetric(
-                horizontal: 30), // Indicator width
+            insets:
+                const EdgeInsets.symmetric(horizontal: 30), // Indicator width
           ),
         ),
         Expanded(
-          child: TabBarView(controller: _historyAndBookmarksTabController, children: [
-            EntryItemsPage<HistoryState>(
-              emptyMessage: AppLocalizations.of(context)!.noHistory,
-              deletionConfirmationMessage:
-                  AppLocalizations.of(context)!.historyDeleteConfirmation,
-            ),
-            EntryItemsPage<BookmarkState>(
-              emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-              deletionConfirmationMessage:
-                  AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
-            )
-          ]),
+          child: TabBarView(
+              controller: _historyAndBookmarksTabController,
+              children: [
+                EntryItemsPage<HistoryState>(
+                  emptyMessage: AppLocalizations.of(context)!.noHistory,
+                  deletionConfirmationMessage:
+                      AppLocalizations.of(context)!.historyDeleteConfirmation,
+                ),
+                EntryItemsPage<BookmarkState>(
+                  emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+                  deletionConfirmationMessage:
+                      AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+                )
+              ]),
         )
       ],
     );

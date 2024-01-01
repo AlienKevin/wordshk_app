@@ -25,8 +25,11 @@ class EntrySimsOrAnts extends StatelessWidget {
       visible: simsOrAnts.isNotEmpty,
       child: Text.rich(TextSpan(children: [
         TextSpan(
-                text: label,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w600)),
+            text: label,
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .copyWith(fontWeight: FontWeight.w600)),
         const WidgetSpan(child: SizedBox(width: 5)),
         ...(script == Script.traditional
                 ? simsOrAnts
