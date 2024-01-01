@@ -82,7 +82,7 @@ class AboutPageState extends State<AboutPage> {
 
     linkedTextSpanWithOnTap(String text, TapGestureRecognizer recognizer,
         {IconData? icon}) {
-      final color = Theme.of(context).colorScheme.secondary;
+      final color = Theme.of(context).primaryColor;
       return TextSpan(children: [
         icon == null
             ? const TextSpan()
