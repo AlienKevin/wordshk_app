@@ -18,6 +18,7 @@ lazy_static = "1.4.0"
 log = "0.4.20"
 rkyv = { version = "0.7.43", features = [ "alloc" ] }
 regex = "1.5.5"
+sentry = { version = "0.32.1", features = ["debug-images"] }
 
 [lib]
 crate-type = ["cdylib", "staticlib"]

@@ -8,7 +8,7 @@ use std::time::Instant;
 use anyhow::Result;
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
-use once_cell::sync::Lazy;
+use once_cell::sync::{Lazy, OnceCell};
 use parking_lot::RwLock;
 use rkyv::{AlignedVec, Deserialize};
 use wordshk_tools::dict::{clause_to_string, EntryId};
@@ -128,6 +128,7 @@ macro_rules! log {
 }
 
 static API: Lazy<Mutex<WordshkApi>> = Lazy::new(|| Mutex::new(WordshkApi::new()));
+static SENTRY_GUARD: OnceCell<sentry::ClientInitGuard> = OnceCell::new();
 
 pub fn init_api(dict_data: Vec<u8>, english_index_data: Vec<u8>) -> () {
     env::set_var("RUST_BACKTRACE", "1");
@@ -155,6 +156,12 @@ pub fn init_api(dict_data: Vec<u8>, english_index_data: Vec<u8>) -> () {
 
 impl WordshkApi {
     fn new() -> WordshkApi {
+        let guard = sentry::init((include_str!("../../sentry_dsn.txt"), sentry::ClientOptions {
+            release: sentry::release_name!(),
+            ..Default::default()
+        }));
+        let _ = SENTRY_GUARD.set(guard);
+
         let mut t = Instant::now();
 
         let word_list = include_str!("../../data/word_list.tsv");
