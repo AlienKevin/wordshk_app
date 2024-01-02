@@ -19,7 +19,7 @@ class EntryVariant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final prs = variant.prs.split(", ");
+    final prs = variant.prs.split(", ").takeWhile((pr) => !pr.contains("!"));
 
     return Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
       Text.rich(
@@ -29,19 +29,24 @@ class EntryVariant extends StatelessWidget {
         ),
       ),
       const SizedBox(width: 10),
-      ...prs.takeWhile((pr) => !pr.contains("!")).map((pr) => Text.rich(
+      ...prs.indexed.map((item) => Text.rich(
             TextSpan(
-                text: context.read<RomanizationState>().showPrs(pr.split(" ")),
+                text: context
+                    .read<RomanizationState>()
+                    .showPrs(item.$2.split(" ")),
                 style: prTextStyle,
                 children: [
                   WidgetSpan(
                     child: SyllablePronunciationButton(
-                      prs: [pr.split(" ")],
+                      prs: [item.$2.split(" ")],
                       alignment: Alignment.center,
                       atHeader: true,
                     ),
                     alignment: PlaceholderAlignment.middle,
-                  )
+                  ),
+                  ...(item.$1 < prs.length - 1
+                      ? [const TextSpan(text: "  ")]
+                      : []),
                 ]),
           ))
     ]);
