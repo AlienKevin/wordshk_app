@@ -22,11 +22,13 @@ import 'entry_page.dart';
 class EntryItemsPage<T extends EntryItemState> extends StatefulWidget {
   final String emptyMessage;
   final String deletionConfirmationMessage;
-  const EntryItemsPage(
-      {Key? key,
-      required this.emptyMessage,
-      required this.deletionConfirmationMessage})
-      : super(key: key);
+  final bool allowEdits;
+  const EntryItemsPage({
+    Key? key,
+    required this.emptyMessage,
+    required this.deletionConfirmationMessage,
+    required this.allowEdits,
+  }) : super(key: key);
 
   @override
   _EntryItemsState<T> createState() => _EntryItemsState<T>();
@@ -141,7 +143,7 @@ class _EntryItemsState<T extends EntryItemState>
     return Scaffold(
       floatingActionButton: KeyboardVisibilityBuilder(
         builder: (context, isKeyboardVisible) => Visibility(
-            visible: _entryItemSummaries.isNotEmpty && !isKeyboardVisible,
+            visible: widget.allowEdits && _entryItemSummaries.isNotEmpty && !isKeyboardVisible,
             child: ElevatedButton(
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(

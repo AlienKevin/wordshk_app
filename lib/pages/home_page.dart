@@ -221,11 +221,13 @@ class _HomePageState extends State<HomePage>
                     emptyMessage: AppLocalizations.of(context)!.noHistory,
                     deletionConfirmationMessage:
                         AppLocalizations.of(context)!.historyDeleteConfirmation,
+                    allowEdits: false,
                   ),
                   EntryItemsPage<BookmarkState>(
                     emptyMessage: AppLocalizations.of(context)!.noBookmarks,
                     deletionConfirmationMessage:
                         AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+                    allowEdits: true,
                   )
                 ]),
           ),
