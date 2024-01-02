@@ -23,6 +23,7 @@ class EntryLabels extends StatelessWidget {
                                   MaterialTapTargetSize.shrinkWrap,
                               visualDensity: VisualDensity.compact,
                               shape: const RoundedRectangleBorder(
+                                  side: BorderSide(style: BorderStyle.none),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               padding: EdgeInsets.zero,
@@ -31,11 +32,17 @@ class EntryLabels extends StatelessWidget {
                               labelStyle: Theme.of(context)
                                   .textTheme
                                   .bodySmall!
-                                  .copyWith(color: whiteColor),
-                              backgroundColor:
-                                  label == Label.vulgar ? redColor : greyColor,
-                              label: Text(translateLabel(
-                                  label, AppLocalizations.of(context)!))))
+                                  .copyWith(
+                                      color: MediaQuery.of(context)
+                                                  .platformBrightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black),
+                              backgroundColor: label == Label.vulgar
+                                  ? redColor
+                                  : Theme.of(context).splashColor,
+                              label: Text(
+                                  translateLabel(label, AppLocalizations.of(context)!))))
                           .toList()),
                 )),
       );
