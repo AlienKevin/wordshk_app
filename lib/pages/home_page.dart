@@ -68,10 +68,8 @@ class _HomePageState extends State<HomePage>
         doSearch(query, context);
       }
       context.read<InputModeState>().setOnDone(() {
-        final embedded = MediaQuery.of(context).size.width > wideScreenThreshold
-            ? Embedded.embedded
-            : Embedded.topLevel;
-        onSearchSubmitted(context.read<SearchQueryState>().query, embedded);
+        onSearchSubmitted(
+            context.read<SearchQueryState>().query, getEmbedded());
       });
 
       // Spotlight search only available on apple
@@ -162,11 +160,7 @@ class _HomePageState extends State<HomePage>
                 });
               },
               onSubmitted: (query) {
-                final embedded =
-                    MediaQuery.of(context).size.width > wideScreenThreshold
-                        ? Embedded.embedded
-                        : Embedded.topLevel;
-                onSearchSubmitted(query, embedded);
+                onSearchSubmitted(query, getEmbedded());
               },
             ),
             body: inputMode == InputMode.ink
@@ -191,10 +185,11 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget showHistoryAndBookmarks() {
+    final embedded = getEmbedded();
     return Column(
       children: [
         Material(
-            elevation: 2,
+            elevation: embedded == Embedded.topLevel ? 2 : 0,
             child: TabBar(
               controller: _historyAndBookmarksTabController,
               tabs: [
@@ -213,7 +208,7 @@ class _HomePageState extends State<HomePage>
             )),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: 5),
+            padding: EdgeInsets.only(top: embedded == Embedded.topLevel ? 5 : 0),
             child: TabBarView(
                 controller: _historyAndBookmarksTabController,
                 children: [
@@ -225,8 +220,8 @@ class _HomePageState extends State<HomePage>
                   ),
                   EntryItemsPage<BookmarkState>(
                     emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-                    deletionConfirmationMessage:
-                        AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+                    deletionConfirmationMessage: AppLocalizations.of(context)!
+                        .bookmarkDeleteConfirmation,
                     allowEdits: true,
                   )
                 ]),
@@ -354,46 +349,40 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget showSearchResults(EntryPage? selectedSearchResultEntryPage) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        // Embedded search results in the right column on wide screens
-        final embedded = constraints.maxWidth > wideScreenThreshold
-            ? Embedded.embedded
-            : Embedded.topLevel;
-        final results = showCombinedSearchResults(
-            Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(fontWeight: FontWeight.normal),
-            embedded);
-        final resultList = ListView.separated(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          separatorBuilder: (_, __) => const Divider(),
-          itemBuilder: (_, index) => results[index],
-          itemCount: results.length,
-        );
-        return embedded == Embedded.embedded
-            ? Row(
-                children: [
-                  Expanded(child: resultList),
-                  const VerticalDivider(
-                    width: 1,
-                    thickness: 1,
-                  ),
-                  Expanded(
-                      flex: 2,
-                      child: selectedSearchResultEntryPage != null
-                          ? Navigator(
-                              key: selectedSearchResultEntryPage.key,
-                              onGenerateRoute: (settings) => MaterialPageRoute(
-                                  builder: (context) =>
-                                      selectedSearchResultEntryPage))
-                          : Container()),
-                ],
-              )
-            : resultList;
-      },
+    // Embedded search results in the right column on wide screens
+    final embedded = getEmbedded();
+    final results = showCombinedSearchResults(
+        Theme.of(context)
+            .textTheme
+            .bodyLarge!
+            .copyWith(fontWeight: FontWeight.normal),
+        embedded);
+    final resultList = ListView.separated(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      separatorBuilder: (_, __) => const Divider(),
+      itemBuilder: (_, index) => results[index],
+      itemCount: results.length,
     );
+    return embedded == Embedded.embedded
+        ? Row(
+            children: [
+              Expanded(child: resultList),
+              const VerticalDivider(
+                width: 1,
+                thickness: 1,
+              ),
+              Expanded(
+                  flex: 2,
+                  child: selectedSearchResultEntryPage != null
+                      ? Navigator(
+                          key: selectedSearchResultEntryPage.key,
+                          onGenerateRoute: (settings) => MaterialPageRoute(
+                              builder: (context) =>
+                                  selectedSearchResultEntryPage))
+                      : Container()),
+            ],
+          )
+        : resultList;
   }
 
   List<Widget> showEnglishSearchResults(
@@ -678,6 +667,11 @@ class _HomePageState extends State<HomePage>
       ],
     );
   }
+
+  Embedded getEmbedded() =>
+      MediaQuery.of(context).size.width > wideScreenThreshold
+          ? Embedded.embedded
+          : Embedded.topLevel;
 
   @override
   void dispose() {
