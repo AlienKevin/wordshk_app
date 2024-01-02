@@ -433,10 +433,10 @@ class _MyAppState extends State<MyApp> {
           padding: MaterialStateProperty.all(
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
         ));
-    dividerColor(Brightness brightness) => brightness == Brightness.light
-        ? lightGreyColor
-        : darkGreyColor;
-    dividerTheme(Brightness brightness) => DividerThemeData(space: 0, thickness: 1, color: dividerColor(brightness));
+    dividerColor(Brightness brightness) =>
+        brightness == Brightness.light ? lightGreyColor : darkGreyColor;
+    dividerTheme(Brightness brightness) => DividerThemeData(
+        space: 0, thickness: 1, color: dividerColor(brightness));
 
     const lightThemeAccentColor = blueColor;
     const darkThemeAccentColor = lightBlueColor;
@@ -473,6 +473,7 @@ class _MyAppState extends State<MyApp> {
       scaffoldBackgroundColor: Colors.black,
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
+      canvasColor: Colors.black,
       appBarTheme: appBarTheme,
       textSelectionTheme: textSelectionTheme(Brightness.dark),
       fontFamily: 'ChironHeiHK',
