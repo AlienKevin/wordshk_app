@@ -2,27 +2,21 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:flutter_portal/flutter_portal.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/src/rust/api/api.dart' show Romanization;
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/utils.dart';
-import 'package:wordshk/widgets/search_mode_button.dart';
-import 'package:wordshk/widgets/search_mode_radio_list_tile.dart';
 
 import '../constants.dart';
 import '../models/input_mode.dart';
-import '../models/search_mode.dart';
 import '../states/romanization_state.dart';
-import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import 'text_scale_factor_clamper.dart';
 
@@ -388,195 +382,86 @@ class IsSearching extends State<SearchBar> {
     Color? buttonColor = theme.textTheme.bodyMedium!.color;
     final textColor = theme.textTheme.bodyMedium!.color;
 
-    final romanization = context.watch<RomanizationState>().romanization;
-    final romanizationName =
-        getRomanizationName(romanization, AppLocalizations.of(context)!);
-    late final String searchRomanizationExample;
-    searchRomanizationExample = switch (romanization) {
-      Romanization.jyutping => "hou2 coi2",
-      Romanization.yale => "hou choi",
-    };
+    final s = AppLocalizations.of(context)!;
 
-    searchModeRadioListTile(
-            SearchMode mode, String subtitle, SearchMode groupMode) =>
-        SearchModeRadioListTile(
-          activeColor: blueColor,
-          title: Text(
-            translateSearchMode(
-                mode, romanizationName, AppLocalizations.of(context)!),
-            textAlign: TextAlign.end,
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(subtitle, textAlign: TextAlign.end),
-          ),
-          value: mode,
-          groupValue: groupMode,
-          onChanged: (SearchMode? value) {
-            if (value != null) {
-              context
-                  .read<SearchModeState>()
-                  .updateSearchModeAndCloseSelector(value);
-            } else {
-              context.read<SearchModeState>().toggleSearchModeSelector();
-            }
-          },
-          searchTextFieldFocusNode: focusNode,
-          autofocus: true,
-        );
+    final romanization = context.watch<RomanizationState>().romanization;
+    final romanizationName = getRomanizationName(romanization, s);
 
     return AppBar(
       titleSpacing: 0.0,
       title: !isSearching.value
           ? null
-          : Consumer<SearchModeState>(
-              builder: (context, searchModeState, child) => Padding(
-                padding: const EdgeInsets.only(left: 14, right: 10, top: 2),
-                child: SizedBox(
-                    height: 48,
-                    child: KeyboardActions(
-                        config: _buildKeyboardActionsConfig(context),
-                        child: TextField(
-                          textAlignVertical: TextAlignVertical.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(color: textColor),
-                          focusNode: focusNode,
-                          onTap: beginSearch,
-                          key: const Key('SearchBarTextField'),
-                          autocorrect: false,
-                          enableSuggestions: true,
-                          keyboardType: context.watch<InputModeState>().mode ==
-                                  InputMode.keyboard
-                              ? TextInputType.text
-                              : TextInputType.none,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            filled: true,
-                            fillColor: Theme.of(context).canvasColor,
-                            contentPadding: const EdgeInsets.only(left: 8),
-                            hintText: translateSearchMode(
-                                searchModeState.mode,
-                                romanizationName,
-                                AppLocalizations.of(context)!),
-                            hintStyle: TextStyle(
-                              color: textColor,
-                            ),
-                            suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
-                                showClearButton
-                                    ? IconButton(
-                                        icon: Icon(PlatformIcons(context).clear,
-                                            semanticLabel: "Clear"),
-                                        color: buttonColor,
-                                        disabledColor:
-                                            theme.disabledColor.withOpacity(0),
-                                        onPressed: !_clearActive
-                                            ? null
-                                            : () {
-                                                widget.onCleared?.call();
-                                                controller.clear();
-                                                FocusScope.of(context)
-                                                    .requestFocus(focusNode);
-                                                context
-                                                    .read<SearchQueryState>()
-                                                    .updateSearchQuery("");
-                                              })
-                                    : null,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (query) {
-                            context
-                                .read<SearchQueryState>()
-                                .updateSearchQuery(query);
-                            widget.onChanged?.call(query);
-                          },
-                          onSubmitted: (String val) async {
-                            if (widget.closeOnSubmit) {
-                              await Navigator.maybePop(context);
-                            }
+          : Padding(
+              padding: const EdgeInsets.only(left: 14, right: 10, top: 2),
+              child: SizedBox(
+                  height: 48,
+                  child: KeyboardActions(
+                      config: _buildKeyboardActionsConfig(context),
+                      child: TextField(
+                        textAlignVertical: TextAlignVertical.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: textColor),
+                        focusNode: focusNode,
+                        onTap: beginSearch,
+                        key: const Key('SearchBarTextField'),
+                        autocorrect: false,
+                        enableSuggestions: true,
+                        keyboardType: context.watch<InputModeState>().mode ==
+                                InputMode.keyboard
+                            ? TextInputType.text
+                            : TextInputType.none,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          filled: true,
+                          fillColor: Theme.of(context).canvasColor,
+                          contentPadding: const EdgeInsets.only(left: 8),
+                          hintText: s.searchDictionaryHint(romanizationName),
+                          suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
+                              showClearButton
+                                  ? IconButton(
+                                      icon: Icon(PlatformIcons(context).clear,
+                                          semanticLabel: "Clear"),
+                                      color: buttonColor,
+                                      disabledColor:
+                                          theme.disabledColor.withOpacity(0),
+                                      onPressed: !_clearActive
+                                          ? null
+                                          : () {
+                                              widget.onCleared?.call();
+                                              controller.clear();
+                                              FocusScope.of(context)
+                                                  .requestFocus(focusNode);
+                                              context
+                                                  .read<SearchQueryState>()
+                                                  .updateSearchQuery("");
+                                            })
+                                  : null,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (query) {
+                          context
+                              .read<SearchQueryState>()
+                              .updateSearchQuery(query);
+                          widget.onChanged?.call(query);
+                        },
+                        onSubmitted: (String val) async {
+                          if (widget.closeOnSubmit) {
+                            await Navigator.maybePop(context);
+                          }
 
-                            if (widget.clearOnSubmit) {
-                              controller.clear();
-                            }
-                            widget.onSubmitted?.call(val);
-                          },
-                          autofocus: true,
-                          controller: controller,
-                        ))),
-              ),
+                          if (widget.clearOnSubmit) {
+                            controller.clear();
+                          }
+                          widget.onSubmitted?.call(val);
+                        },
+                        autofocus: true,
+                        controller: controller,
+                      ))),
             ),
-      actions: [
-        Consumer<SearchModeState>(
-            builder: (context, searchModeState, child) =>
-                TextScaleFactorClamper(child: Builder(builder: (context) {
-                  return PortalTarget(
-                      visible: searchModeState.showSearchModeSelector,
-                      anchor: const Aligned(
-                        follower: Alignment.topRight,
-                        target: Alignment.bottomRight,
-                        offset: Offset(0, 4),
-                      ),
-                      portalFollower: Material(
-                          color: Theme.of(context).canvasColor,
-                          child: Container(
-                            width: 270.0 *
-                                (log(MediaQuery.of(context).textScaleFactor) *
-                                        1 /
-                                        1.4 +
-                                    1),
-                            height: 275.0 *
-                                (log(MediaQuery.of(context).textScaleFactor) *
-                                        0.95 +
-                                    1),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
-                                    width: 2.0, color: theme.dividerColor),
-                                bottom: BorderSide(
-                                    width: 2.0, color: theme.dividerColor),
-                              ),
-                              color: Theme.of(context).canvasColor,
-                            ),
-                            child: Consumer<SearchModeState>(
-                                builder: (context, searchModeState, child) =>
-                                    Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: <Widget>[
-                                          searchModeRadioListTile(
-                                              SearchMode.combined,
-                                              "好彩/$searchRomanizationExample/lucky",
-                                              searchModeState.mode),
-                                          const Divider(thickness: 2),
-                                          searchModeRadioListTile(
-                                              SearchMode.variant,
-                                              "好彩",
-                                              searchModeState.mode),
-                                          const Divider(thickness: 2),
-                                          searchModeRadioListTile(
-                                              SearchMode.pr,
-                                              searchRomanizationExample,
-                                              searchModeState.mode),
-                                          const Divider(thickness: 2),
-                                          searchModeRadioListTile(
-                                              SearchMode.english,
-                                              "lucky",
-                                              searchModeState.mode),
-                                        ])),
-                          )),
-                      child: SearchModeButton(
-                        getMode: (mode) => mode,
-                        highlighted: true,
-                        inAppBar: true,
-                        onPressed: () => context
-                            .read<SearchModeState>()
-                            .toggleSearchModeSelector(),
-                      ));
-                }))),
-      ],
     );
   }
 }

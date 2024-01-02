@@ -463,16 +463,6 @@ pub fn wire_eg_search(
 }
 
 #[wasm_bindgen]
-pub fn wire_english_search(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: u32,
-    query: String,
-    script: i32,
-) {
-    wire_english_search_impl(port_, capacity, query, script)
-}
-
-#[wasm_bindgen]
 pub fn wire_generate_pr_indices(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     romanization: i32,
@@ -525,25 +515,4 @@ pub fn wire_init_api(
     english_index_data: Box<[u8]>,
 ) {
     wire_init_api_impl(port_, dict_data, english_index_data)
-}
-
-#[wasm_bindgen]
-pub fn wire_pr_search(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: u32,
-    query: String,
-    script: i32,
-    romanization: i32,
-) {
-    wire_pr_search_impl(port_, capacity, query, script, romanization)
-}
-
-#[wasm_bindgen]
-pub fn wire_variant_search(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: u32,
-    query: String,
-    script: i32,
-) {
-    wire_variant_search_impl(port_, capacity, query, script)
 }

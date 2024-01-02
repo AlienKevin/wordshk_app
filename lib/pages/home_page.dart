@@ -19,13 +19,11 @@ import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import '../constants.dart';
 import '../main.dart';
 import '../models/input_mode.dart';
-import '../models/search_mode.dart';
 import '../models/search_result_type.dart';
 import '../models/summary_def_language.dart';
 import '../states/bookmark_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
-import '../states/search_mode_state.dart';
 import '../states/search_query_state.dart';
 import '../utils.dart';
 import 'entry_items_page.dart';
@@ -51,8 +49,6 @@ class _HomePageState extends State<HomePage>
   bool finishedSearch = false;
   bool isSearchResultsEmpty = false;
   bool queryEmptied = true;
-  bool showSearchModeSelector = false;
-  OverlayEntry? searchModeSelectors;
   // The EntryPage corresponding to the select search result (used in wide screens)
   EntryPage? selectedSearchResultEntryPage;
   late final TabController _historyAndBookmarksTabController;
@@ -70,10 +66,6 @@ class _HomePageState extends State<HomePage>
         queryEmptied = false;
         doSearch(query, context);
       }
-      context.read<SearchModeState>().addListener(() {
-        final query = context.read<SearchQueryState>().query;
-        doSearch(query, context);
-      });
       context.read<InputModeState>().setOnDone(() {
         final embedded = MediaQuery.of(context).size.width > wideScreenThreshold
             ? Embedded.embedded
@@ -115,31 +107,25 @@ class _HomePageState extends State<HomePage>
       return;
     }
 
-    final state = context.read<SearchModeState>();
-    if (state.mode == SearchMode.variant || state.mode == SearchMode.combined) {
-      // No search results should be produced in other modes
-      if (state.mode == SearchMode.combined) {
-        if (prSearchResults.isNotEmpty || englishSearchResults.isNotEmpty) {
-          return;
-        }
-      }
-      final exactMatchVariant = variantSearchResults.indexed.firstWhereOrNull(
-          (item) =>
-              item.$2.matchedVariant.prefix.isEmpty &&
-              item.$2.matchedVariant.suffix.isEmpty);
-      if (exactMatchVariant != null) {
-        final (index, variant) = exactMatchVariant;
-        context.read<HistoryState>().updateItem(variant.id);
-        if (embedded != Embedded.embedded) {
-          context.push("/entry/id/${variant.id}");
-        } else {
-          setState(() {
-            selectedSearchResultEntryPage = EntryPage(
-                key: ValueKey(index),
-                id: variant.id,
-                showFirstEntryInGroupInitially: false);
-          });
-        }
+    if (prSearchResults.isNotEmpty || englishSearchResults.isNotEmpty) {
+      return;
+    }
+    final exactMatchVariant = variantSearchResults.indexed.firstWhereOrNull(
+        (item) =>
+            item.$2.matchedVariant.prefix.isEmpty &&
+            item.$2.matchedVariant.suffix.isEmpty);
+    if (exactMatchVariant != null) {
+      final (index, variant) = exactMatchVariant;
+      context.read<HistoryState>().updateItem(variant.id);
+      if (embedded != Embedded.embedded) {
+        context.push("/entry/id/${variant.id}");
+      } else {
+        setState(() {
+          selectedSearchResultEntryPage = EntryPage(
+              key: ValueKey(index),
+              id: variant.id,
+              showFirstEntryInGroupInitially: false);
+        });
       }
     }
   }
@@ -306,103 +292,57 @@ class _HomePageState extends State<HomePage>
         finishedSearch = false;
         lastSearchStartTime = searchStartTime;
       });
-      final searchMode = context.read<SearchModeState>().mode;
       final script = context.read<LanguageState>().getScript();
       final romanization = context.read<RomanizationState>().romanization;
-      switch (searchMode) {
-        case SearchMode.pr:
-          prSearch(
-                  capacity: 10,
-                  query: query,
-                  script: script,
-                  romanization: romanization)
-              .then((results) {
-            if (!context.mounted) return;
-            if (searchStartTime >= lastSearchStartTime) {
-              setState(() {
-                prSearchResults = results;
-                isSearchResultsEmpty = prSearchResults.isEmpty;
-                finishedSearch = true;
-              });
-            }
-          });
-          break;
-        case SearchMode.variant:
-          variantSearch(capacity: 10, query: query, script: script)
-              .then((results) {
-            if (!context.mounted) return;
-            if (searchStartTime >= lastSearchStartTime) {
-              setState(() {
-                variantSearchResults = results;
-                isSearchResultsEmpty = variantSearchResults.isEmpty;
-                finishedSearch = true;
-              });
-            }
-          });
-          break;
-        case SearchMode.combined:
-          combinedSearch(
-                  capacity: 10,
-                  query: query,
-                  script: script,
-                  romanization: romanization)
-              .then((results) {
-            if (!context.mounted) return;
-            if (searchStartTime >= lastSearchStartTime) {
-              final isCombinedResultsEmpty = results.prResults.isEmpty &&
-                  results.variantResults.isEmpty &&
-                  results.englishResults.isEmpty;
-              if (isCombinedResultsEmpty) {
-                egSearch(
-                        capacity: 10,
-                        maxFirstIndexInEg: 10,
-                        query: query,
-                        script: script)
-                    .then((result) {
-                  if (!context.mounted) return;
-                  if (searchStartTime >= lastSearchStartTime) {
-                    final (queryNormalized, results) = result;
-                    // print("Query: $query");
-                    // print("Result: ${results.map((res) => res.eg)}");
-                    if (isSearchResultsEmpty &&
-                        query == context.read<SearchQueryState>().query) {
-                      setState(() {
-                        egSearchResults = results.unique((result) => result.eg);
-                        egSearchQueryNormalized = queryNormalized;
-                        isSearchResultsEmpty = egSearchResults.isEmpty;
-                        finishedSearch = true;
-                      });
-                    }
-                  }
-                });
-              }
-              setState(() {
-                isSearchResultsEmpty = isCombinedResultsEmpty;
-                egSearchResults.clear();
-                egSearchQueryNormalized = null;
-                prSearchResults = results.prResults;
-                variantSearchResults = results.variantResults;
-                englishSearchResults = results.englishResults;
-                if (!isCombinedResultsEmpty) {
-                  finishedSearch = true;
+
+      combinedSearch(
+              capacity: 100,
+              query: query,
+              script: script,
+              romanization: romanization)
+          .then((results) {
+        if (!context.mounted) return;
+        if (searchStartTime >= lastSearchStartTime) {
+          final isCombinedResultsEmpty = results.prResults.isEmpty &&
+              results.variantResults.isEmpty &&
+              results.englishResults.isEmpty;
+          if (isCombinedResultsEmpty) {
+            egSearch(
+                    capacity: 10,
+                    maxFirstIndexInEg: 10,
+                    query: query,
+                    script: script)
+                .then((result) {
+              if (!context.mounted) return;
+              if (searchStartTime >= lastSearchStartTime) {
+                final (queryNormalized, results) = result;
+                // print("Query: $query");
+                // print("Result: ${results.map((res) => res.eg)}");
+                if (isSearchResultsEmpty &&
+                    query == context.read<SearchQueryState>().query) {
+                  setState(() {
+                    egSearchResults = results.unique((result) => result.eg);
+                    egSearchQueryNormalized = queryNormalized;
+                    isSearchResultsEmpty = egSearchResults.isEmpty;
+                    finishedSearch = true;
+                  });
                 }
-              });
+              }
+            });
+          }
+          setState(() {
+            isSearchResultsEmpty = isCombinedResultsEmpty;
+            egSearchResults.clear();
+            egSearchQueryNormalized = null;
+            prSearchResults = results.prResults;
+            variantSearchResults = results.variantResults;
+            englishSearchResults = results.englishResults;
+            if (!isCombinedResultsEmpty) {
+              finishedSearch = true;
             }
           });
-          break;
-        case SearchMode.english:
-          englishSearch(capacity: 10, query: query, script: script)
-              .then((results) {
-            if (!context.mounted) return;
-            if (searchStartTime >= lastSearchStartTime) {
-              setState(() {
-                englishSearchResults = results;
-                finishedSearch = true;
-              });
-            }
-          });
-          break;
-      }
+        }
+      });
     }
   }
 
@@ -413,12 +353,11 @@ class _HomePageState extends State<HomePage>
         final embedded = constraints.maxWidth > wideScreenThreshold
             ? Embedded.embedded
             : Embedded.topLevel;
-        final results = showSearchResultsHelper(
+        final results = showCombinedSearchResults(
             Theme.of(context)
                 .textTheme
                 .bodyLarge!
                 .copyWith(fontWeight: FontWeight.normal),
-            context.watch<SearchModeState>().mode,
             embedded);
         final resultList = ListView.separated(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -448,20 +387,6 @@ class _HomePageState extends State<HomePage>
             : resultList;
       },
     );
-  }
-
-  List<Widget> showSearchResultsHelper(
-      TextStyle textStyle, SearchMode searchMode, Embedded embedded) {
-    switch (searchMode) {
-      case SearchMode.pr:
-        return showPrSearchResults(0, textStyle, embedded);
-      case SearchMode.variant:
-        return showVariantSearchResults(0, textStyle, embedded);
-      case SearchMode.combined:
-        return showCombinedSearchResults(0, textStyle, embedded);
-      case SearchMode.english:
-        return showEnglishSearchResults(0, textStyle, embedded);
-    }
   }
 
   List<Widget> showEnglishSearchResults(
@@ -651,7 +576,8 @@ class _HomePageState extends State<HomePage>
       ));
 
   List<Widget> showCombinedSearchResults(
-      int startIndex, TextStyle textStyle, Embedded embedded) {
+      TextStyle textStyle, Embedded embedded) {
+    const startIndex = 0;
     final s = AppLocalizations.of(context)!;
     final romanization = context.read<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);

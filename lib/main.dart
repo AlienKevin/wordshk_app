@@ -52,7 +52,6 @@ import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
-import 'package:wordshk/states/search_mode_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/states/spotlight_indexing_state.dart';
@@ -155,8 +154,6 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
               create: (_) => AnalyticsSettingsState(prefs)),
           ChangeNotifierProvider<SpotlightIndexingState>(
               create: (_) => SpotlightIndexingState(prefs)),
-          ChangeNotifierProvider<SearchModeState>(
-              create: (_) => SearchModeState()),
           ChangeNotifierProvider<SearchQueryState>(
               create: (_) => SearchQueryState()),
           ChangeNotifierProvider<InputModeState>(

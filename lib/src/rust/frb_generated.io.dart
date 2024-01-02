@@ -3,12 +3,14 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
-import 'frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
+
+import 'api/api.dart';
+import 'frb_generated.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -727,30 +729,6 @@ class RustLibWire implements BaseWire {
   late final _wire_eg_search = _wire_eg_searchPtr.asFunction<
       void Function(int, int, int, ffi.Pointer<wire_cst_list_prim_u_8>, int)>();
 
-  void wire_english_search(
-    int port_,
-    int capacity,
-    ffi.Pointer<wire_cst_list_prim_u_8> query,
-    int script,
-  ) {
-    return _wire_english_search(
-      port_,
-      capacity,
-      query,
-      script,
-    );
-  }
-
-  late final _wire_english_searchPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(
-              ffi.Int64,
-              ffi.Uint32,
-              ffi.Pointer<wire_cst_list_prim_u_8>,
-              ffi.Int32)>>('wire_english_search');
-  late final _wire_english_search = _wire_english_searchPtr.asFunction<
-      void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>, int)>();
-
   void wire_generate_pr_indices(
     int port_,
     int romanization,
@@ -888,57 +866,6 @@ class RustLibWire implements BaseWire {
   late final _wire_init_api = _wire_init_apiPtr.asFunction<
       void Function(int, ffi.Pointer<wire_cst_list_prim_u_8>,
           ffi.Pointer<wire_cst_list_prim_u_8>)>();
-
-  void wire_pr_search(
-    int port_,
-    int capacity,
-    ffi.Pointer<wire_cst_list_prim_u_8> query,
-    int script,
-    int romanization,
-  ) {
-    return _wire_pr_search(
-      port_,
-      capacity,
-      query,
-      script,
-      romanization,
-    );
-  }
-
-  late final _wire_pr_searchPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(
-              ffi.Int64,
-              ffi.Uint32,
-              ffi.Pointer<wire_cst_list_prim_u_8>,
-              ffi.Int32,
-              ffi.Int32)>>('wire_pr_search');
-  late final _wire_pr_search = _wire_pr_searchPtr.asFunction<
-      void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>, int, int)>();
-
-  void wire_variant_search(
-    int port_,
-    int capacity,
-    ffi.Pointer<wire_cst_list_prim_u_8> query,
-    int script,
-  ) {
-    return _wire_variant_search(
-      port_,
-      capacity,
-      query,
-      script,
-    );
-  }
-
-  late final _wire_variant_searchPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(
-              ffi.Int64,
-              ffi.Uint32,
-              ffi.Pointer<wire_cst_list_prim_u_8>,
-              ffi.Int32)>>('wire_variant_search');
-  late final _wire_variant_search = _wire_variant_searchPtr.asFunction<
-      void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8>, int)>();
 
   ffi.Pointer<ffi.Uint32> cst_new_box_autoadd_u_32(
     int value,

@@ -17,14 +17,7 @@
     "searchResultsCategoryEnglish": "英文",
     "searchResultsCategoryExample": "例句",
 
-    "searchModeVariant": "字詞",
-    "searchModePr": "拼音",
-    "searchModeCombined": "自動檢測",
-    "searchModeEnglish": "英文",
-    "searchModeVariantIcon": "詞",
-    "searchModePrIcon": "拼",
-    "searchModeCombinedIcon": "自",
-    "searchModeEnglishIcon": "英",
+    "searchDictionaryHint": "廣東話/{romanization}/英文",
 
     "inkModelDownloading": "下載緊手寫識別模型...",
     "inkModelFailedToDownload": "無法下載手寫識別模型。請檢查您嘅網路連結後重試。",

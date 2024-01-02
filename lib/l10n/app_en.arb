@@ -21,14 +21,7 @@
     "searchResultsCategoryEnglish": "English",
     "searchResultsCategoryExample": "Example Sentence",
 
-    "searchModeVariant": "Word",
-    "searchModePr": "Romanization",
-    "searchModeCombined": "Auto Detection",
-    "searchModeEnglish": "English",
-    "searchModeVariantIcon": "W",
-    "searchModePrIcon": "R",
-    "searchModeCombinedIcon": "A",
-    "searchModeEnglishIcon": "E",
+    "searchDictionaryHint": "Cantonese/English/{romanization}",
 
     "inkModelDownloading": "Downloading ink recognition model...",
     "inkModelFailedToDownload": "Failed to download ink recognition model. Please check your internet connection and try again.",

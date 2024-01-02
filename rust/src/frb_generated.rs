@@ -117,34 +117,6 @@ fn wire_eg_search_impl(
         },
     )
 }
-fn wire_english_search_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: impl CstDecode<u32> + core::panic::UnwindSafe,
-    query: impl CstDecode<String> + core::panic::UnwindSafe,
-    script: impl CstDecode<crate::api::api::Script> + core::panic::UnwindSafe,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "english_search",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_capacity = capacity.cst_decode();
-            let api_query = query.cst_decode();
-            let api_script = script.cst_decode();
-            move |context| {
-                transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::english_search(
-                        api_capacity,
-                        api_query,
-                        api_script,
-                    ))
-                })())
-            }
-        },
-    )
-}
 fn wire_generate_pr_indices_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     romanization: impl CstDecode<crate::api::api::Romanization> + core::panic::UnwindSafe,
@@ -304,65 +276,6 @@ fn wire_init_api_impl(
                     Result::<_, ()>::Ok(crate::api::api::init_api(
                         api_dict_data,
                         api_english_index_data,
-                    ))
-                })())
-            }
-        },
-    )
-}
-fn wire_pr_search_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: impl CstDecode<u32> + core::panic::UnwindSafe,
-    query: impl CstDecode<String> + core::panic::UnwindSafe,
-    script: impl CstDecode<crate::api::api::Script> + core::panic::UnwindSafe,
-    romanization: impl CstDecode<crate::api::api::Romanization> + core::panic::UnwindSafe,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "pr_search",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_capacity = capacity.cst_decode();
-            let api_query = query.cst_decode();
-            let api_script = script.cst_decode();
-            let api_romanization = romanization.cst_decode();
-            move |context| {
-                transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::pr_search(
-                        api_capacity,
-                        api_query,
-                        api_script,
-                        api_romanization,
-                    ))
-                })())
-            }
-        },
-    )
-}
-fn wire_variant_search_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: impl CstDecode<u32> + core::panic::UnwindSafe,
-    query: impl CstDecode<String> + core::panic::UnwindSafe,
-    script: impl CstDecode<crate::api::api::Script> + core::panic::UnwindSafe,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "variant_search",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_capacity = capacity.cst_decode();
-            let api_query = query.cst_decode();
-            let api_script = script.cst_decode();
-            move |context| {
-                transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::variant_search(
-                        api_capacity,
-                        api_query,
-                        api_script,
                     ))
                 })())
             }

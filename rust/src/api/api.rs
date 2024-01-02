@@ -225,25 +225,6 @@ pub fn generate_pr_indices(romanization: Romanization) -> Result<()> {
     Ok(())
 }
 
-pub fn pr_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> Vec<PrSearchResult> {
-    let api = API.lock().unwrap();
-    // Wait for pr_indices to be updated
-    match &api.pr_indices {
-        None => vec![],
-        Some(pr_indices) => {
-            let mut ranks = search::pr_search(pr_indices, dict(&api.dict_data), &query, romanization);
-            let results = pr_ranks_to_results(&mut ranks, &api.variants_map, dict(&api.dict_data), script, capacity);
-            results
-        }
-    }
-}
-
-pub fn variant_search(capacity: u32, query: String, script: Script) -> Vec<VariantSearchResult> {
-    let api = API.lock().unwrap();
-    let mut ranks = search::variant_search(&api.variants_map, &query, script);
-    variant_ranks_to_results(&mut ranks, &api.variants_map, dict(&api.dict_data), script, capacity)
-}
-
 pub fn combined_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
     let api = API.lock().unwrap();
     match &mut search::combined_search(&api.variants_map, api.pr_indices.as_ref(), english_index(&api.english_index_data), dict(&api.dict_data), &query, script, romanization) {
@@ -266,12 +247,6 @@ pub fn combined_search(capacity: u32, query: String, script: Script, romanizatio
                 english_results: english_ranks_to_results(english_ranks, &api.variants_map, script, capacity)
             }
     }
-}
-
-pub fn english_search(capacity: u32, query: String, script: Script) -> Vec<EnglishSearchResult> {
-    let api = API.lock().unwrap();
-    let english_ranks = search::english_search(english_index(&api.english_index_data), dict(&api.dict_data), &query);
-    english_ranks_to_results(&english_ranks, &api.variants_map, script, capacity)
 }
 
 pub fn eg_search(capacity: u32, max_first_index_in_eg: u32, query: String, script: Script) -> (Option<String>, Vec<EgSearchResult>) {

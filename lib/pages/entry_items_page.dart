@@ -395,7 +395,8 @@ class _EntryItemsState<T extends EntryItemState>
                     selectedEntryId = id;
                   });
                   if (embedded != Embedded.embedded) {
-                    context.push("/entry/id/$id?key=$id&embedded=${embedded.name}");
+                    context.push(
+                        "/entry/id/$id?key=$id&embedded=${embedded.name}");
                   }
                 },
               EditMode(selectedEntryItems: var selectedEntryItems) => () {

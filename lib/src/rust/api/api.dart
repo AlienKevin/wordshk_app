@@ -3,8 +3,9 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
+import '../frb_generated.dart';
 
 Stream<String> createLogStream({dynamic hint}) =>
     RustLib.instance.api.createLogStream(hint: hint);
@@ -26,27 +27,6 @@ Future<void> generatePrIndices(
     RustLib.instance.api
         .generatePrIndices(romanization: romanization, hint: hint);
 
-Future<List<PrSearchResult>> prSearch(
-        {required int capacity,
-        required String query,
-        required Script script,
-        required Romanization romanization,
-        dynamic hint}) =>
-    RustLib.instance.api.prSearch(
-        capacity: capacity,
-        query: query,
-        script: script,
-        romanization: romanization,
-        hint: hint);
-
-Future<List<VariantSearchResult>> variantSearch(
-        {required int capacity,
-        required String query,
-        required Script script,
-        dynamic hint}) =>
-    RustLib.instance.api.variantSearch(
-        capacity: capacity, query: query, script: script, hint: hint);
-
 Future<CombinedSearchResults> combinedSearch(
         {required int capacity,
         required String query,
@@ -59,14 +39,6 @@ Future<CombinedSearchResults> combinedSearch(
         script: script,
         romanization: romanization,
         hint: hint);
-
-Future<List<EnglishSearchResult>> englishSearch(
-        {required int capacity,
-        required String query,
-        required Script script,
-        dynamic hint}) =>
-    RustLib.instance.api.englishSearch(
-        capacity: capacity, query: query, script: script, hint: hint);
 
 Future<(String?, List<EgSearchResult>)> egSearch(
         {required int capacity,

@@ -1,15 +1,9 @@
-import '../models/search_mode.dart';
 import '../models/search_result_type.dart';
 
 class AnalyticsState {
-  List<SearchMode> searchModes = [];
   List<SearchResultType> searchResultTypesClicked = [];
 
   AnalyticsState();
-
-  void addSearchMode(SearchMode searchMode) {
-    searchModes.add(searchMode);
-  }
 
   void clickSearchResultType(SearchResultType searchResultType) {
     searchResultTypesClicked.add(searchResultType);
@@ -28,13 +22,11 @@ class AnalyticsState {
   }
 
   void clear() {
-    searchModes.clear();
     searchResultTypesClicked.clear();
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "SearchModes": _compressEnumList(searchModes),
       "searchResultTypesClicked": _compressEnumList(searchResultTypesClicked),
     };
   }

@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
+
+import 'api/api.dart';
+import 'frb_generated.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -589,10 +591,6 @@ class RustLibWire extends BaseWire {
       wasmModule.wire_eg_search(
           port_, capacity, max_first_index_in_eg, query, script);
 
-  void wire_english_search(
-          NativePortType port_, int capacity, String query, int script) =>
-      wasmModule.wire_english_search(port_, capacity, query, script);
-
   void wire_generate_pr_indices(NativePortType port_, int romanization) =>
       wasmModule.wire_generate_pr_indices(port_, romanization);
 
@@ -618,14 +616,6 @@ class RustLibWire extends BaseWire {
   void wire_init_api(NativePortType port_, Uint8List dict_data,
           Uint8List english_index_data) =>
       wasmModule.wire_init_api(port_, dict_data, english_index_data);
-
-  void wire_pr_search(NativePortType port_, int capacity, String query,
-          int script, int romanization) =>
-      wasmModule.wire_pr_search(port_, capacity, query, script, romanization);
-
-  void wire_variant_search(
-          NativePortType port_, int capacity, String query, int script) =>
-      wasmModule.wire_variant_search(port_, capacity, query, script);
 }
 
 @JS('wasm_bindgen')
@@ -651,9 +641,6 @@ class RustLibWasmModule implements WasmModule {
   external void wire_eg_search(NativePortType port_, int capacity,
       int max_first_index_in_eg, String query, int script);
 
-  external void wire_english_search(
-      NativePortType port_, int capacity, String query, int script);
-
   external void wire_generate_pr_indices(
       NativePortType port_, int romanization);
 
@@ -673,10 +660,4 @@ class RustLibWasmModule implements WasmModule {
 
   external void wire_init_api(
       NativePortType port_, Uint8List dict_data, Uint8List english_index_data);
-
-  external void wire_pr_search(NativePortType port_, int capacity, String query,
-      int script, int romanization);
-
-  external void wire_variant_search(
-      NativePortType port_, int capacity, String query, int script);
 }

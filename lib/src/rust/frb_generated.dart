@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
+import 'api/api.dart';
+import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
 
 /// Main entrypoint of the Rust API
 class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
@@ -72,12 +74,6 @@ abstract class RustLibApi extends BaseApi {
       required Script script,
       dynamic hint});
 
-  Future<List<EnglishSearchResult>> englishSearch(
-      {required int capacity,
-      required String query,
-      required Script script,
-      dynamic hint});
-
   Future<void> generatePrIndices(
       {required Romanization romanization, dynamic hint});
 
@@ -98,19 +94,6 @@ abstract class RustLibApi extends BaseApi {
   Future<void> initApi(
       {required Uint8List dictData,
       required Uint8List englishIndexData,
-      dynamic hint});
-
-  Future<List<PrSearchResult>> prSearch(
-      {required int capacity,
-      required String query,
-      required Script script,
-      required Romanization romanization,
-      dynamic hint});
-
-  Future<List<VariantSearchResult>> variantSearch(
-      {required int capacity,
-      required String query,
-      required Script script,
       dynamic hint});
 }
 
@@ -204,35 +187,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kEgSearchConstMeta => const TaskConstMeta(
         debugName: "eg_search",
         argNames: ["capacity", "maxFirstIndexInEg", "query", "script"],
-      );
-
-  @override
-  Future<List<EnglishSearchResult>> englishSearch(
-      {required int capacity,
-      required String query,
-      required Script script,
-      dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_u_32(capacity);
-        var arg1 = cst_encode_String(query);
-        var arg2 = cst_encode_script(script);
-        return wire.wire_english_search(port_, arg0, arg1, arg2);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_english_search_result,
-        decodeErrorData: null,
-      ),
-      constMeta: kEnglishSearchConstMeta,
-      argValues: [capacity, query, script],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kEnglishSearchConstMeta => const TaskConstMeta(
-        debugName: "english_search",
-        argNames: ["capacity", "query", "script"],
       );
 
   @override
@@ -425,66 +379,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kInitApiConstMeta => const TaskConstMeta(
         debugName: "init_api",
         argNames: ["dictData", "englishIndexData"],
-      );
-
-  @override
-  Future<List<PrSearchResult>> prSearch(
-      {required int capacity,
-      required String query,
-      required Script script,
-      required Romanization romanization,
-      dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_u_32(capacity);
-        var arg1 = cst_encode_String(query);
-        var arg2 = cst_encode_script(script);
-        var arg3 = cst_encode_romanization(romanization);
-        return wire.wire_pr_search(port_, arg0, arg1, arg2, arg3);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_pr_search_result,
-        decodeErrorData: null,
-      ),
-      constMeta: kPrSearchConstMeta,
-      argValues: [capacity, query, script, romanization],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kPrSearchConstMeta => const TaskConstMeta(
-        debugName: "pr_search",
-        argNames: ["capacity", "query", "script", "romanization"],
-      );
-
-  @override
-  Future<List<VariantSearchResult>> variantSearch(
-      {required int capacity,
-      required String query,
-      required Script script,
-      dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_u_32(capacity);
-        var arg1 = cst_encode_String(query);
-        var arg2 = cst_encode_script(script);
-        return wire.wire_variant_search(port_, arg0, arg1, arg2);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_variant_search_result,
-        decodeErrorData: null,
-      ),
-      constMeta: kVariantSearchConstMeta,
-      argValues: [capacity, query, script],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kVariantSearchConstMeta => const TaskConstMeta(
-        debugName: "variant_search",
-        argNames: ["capacity", "query", "script"],
       );
 
   @protected

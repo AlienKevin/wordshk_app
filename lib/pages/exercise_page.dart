@@ -33,7 +33,8 @@ class ExercisePage extends StatelessWidget {
                         .toneExerciseIntroduced) {
                       context.go("/exercise/tone");
                     } else {
-                      context.go("/exercise/tone/introduction?openedInExercise=false");
+                      context.go(
+                          "/exercise/tone/introduction?openedInExercise=false");
                     }
                   },
                 ),

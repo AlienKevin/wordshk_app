@@ -15,14 +15,7 @@
     "searchResultsCategoryEnglish": "英语",
     "searchResultsCategoryExample": "例句",
 
-    "searchModeVariant": "字词",
-    "searchModePr": "拼音",
-    "searchModeCombined": "自动检测",
-    "searchModeEnglish": "英语",
-    "searchModeVariantIcon": "词",
-    "searchModePrIcon": "拼",
-    "searchModeCombinedIcon": "自",
-    "searchModeEnglishIcon": "英",
+    "searchDictionaryHint": "粤语/{romanization}/英语",
 
     "inkModelDownloading": "正在下载手写识别模型...",
     "inkModelFailedToDownload": "无法下载手写识别模型。请检查您的网络链接后重试。",

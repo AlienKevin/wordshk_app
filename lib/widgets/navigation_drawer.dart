@@ -17,7 +17,8 @@ class NavigationDrawer extends StatelessWidget {
           key: key,
           icon: Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: Icon(icon, color: Theme.of(context).colorScheme.secondary)),
+              child:
+                  Icon(icon, color: Theme.of(context).colorScheme.secondary)),
           label: Align(
               alignment: Alignment.centerLeft,
               child: Text(

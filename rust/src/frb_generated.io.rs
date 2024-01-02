@@ -446,16 +446,6 @@ pub extern "C" fn wire_eg_search(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_english_search(
-    port_: i64,
-    capacity: u32,
-    query: *mut wire_cst_list_prim_u_8,
-    script: i32,
-) {
-    wire_english_search_impl(port_, capacity, query, script)
-}
-
-#[no_mangle]
 pub extern "C" fn wire_generate_pr_indices(port_: i64, romanization: i32) {
     wire_generate_pr_indices_impl(port_, romanization)
 }
@@ -501,27 +491,6 @@ pub extern "C" fn wire_init_api(
     english_index_data: *mut wire_cst_list_prim_u_8,
 ) {
     wire_init_api_impl(port_, dict_data, english_index_data)
-}
-
-#[no_mangle]
-pub extern "C" fn wire_pr_search(
-    port_: i64,
-    capacity: u32,
-    query: *mut wire_cst_list_prim_u_8,
-    script: i32,
-    romanization: i32,
-) {
-    wire_pr_search_impl(port_, capacity, query, script, romanization)
-}
-
-#[no_mangle]
-pub extern "C" fn wire_variant_search(
-    port_: i64,
-    capacity: u32,
-    query: *mut wire_cst_list_prim_u_8,
-    script: i32,
-) {
-    wire_variant_search_impl(port_, capacity, query, script)
 }
 
 #[no_mangle]
