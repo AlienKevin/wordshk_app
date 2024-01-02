@@ -60,40 +60,41 @@ class _EntryWidgetState extends State<EntryWidget>
             Expanded(
                 child: Align(
               alignment: Alignment.centerLeft,
-              child: TabBar(
-                dividerColor: Theme.of(context).dividerColor,
-                dividerHeight: 2,
-                controller: _tabController,
-                onTap: (newIndex) {
-                  if (newIndex != entryIndex) {
-                    context.read<PlayerState>().stop();
-                    setState(() {
-                      entryIndex = newIndex;
-                    });
-                    widget.updateEntryIndex(newIndex);
-                  }
-                },
-                isScrollable: true,
-                // Required
-                labelColor: lineTextStyle.color,
-                unselectedLabelColor: lineTextStyle.color,
-                // Other tabs color
-                labelPadding: const EdgeInsets.symmetric(horizontal: 30),
-                // Space between tabs
-                indicator: BubbleTabIndicator(
-                  indicatorHeight: Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
-                  indicatorColor: Theme.of(context).splashColor,
-                  tabBarIndicatorSize: TabBarIndicatorSize.label,
+              child: Material(
+                elevation: 2,
+                child: TabBar(
+                  controller: _tabController,
+                  onTap: (newIndex) {
+                    if (newIndex != entryIndex) {
+                      context.read<PlayerState>().stop();
+                      setState(() {
+                        entryIndex = newIndex;
+                      });
+                      widget.updateEntryIndex(newIndex);
+                    }
+                  },
+                  isScrollable: true,
+                  // Required
+                  labelColor: lineTextStyle.color,
+                  unselectedLabelColor: lineTextStyle.color,
+                  // Other tabs color
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 30),
+                  // Space between tabs
+                  indicator: BubbleTabIndicator(
+                    indicatorHeight: Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+                    indicatorColor: Theme.of(context).splashColor,
+                    tabBarIndicatorSize: TabBarIndicatorSize.label,
+                  ),
+                  tabAlignment: TabAlignment.start,
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  tabs: widget.entryGroup
+                      .asMap()
+                      .entries
+                      .map((entry) => Tab(
+                          text:
+                              "${entry.key + 1} ${entry.value.poses.map((pos) => translatePos(pos, localizationContext)).join("/")}"))
+                      .toList(),
                 ),
-                tabAlignment: TabAlignment.start,
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                tabs: widget.entryGroup
-                    .asMap()
-                    .entries
-                    .map((entry) => Tab(
-                        text:
-                            "${entry.key + 1} ${entry.value.poses.map((pos) => translatePos(pos, localizationContext)).join("/")}"))
-                    .toList(),
               ),
             )),
             widget.entryActionButtons ?? Container(),

@@ -193,35 +193,42 @@ class _HomePageState extends State<HomePage>
   Widget showHistoryAndBookmarks() {
     return Column(
       children: [
-        TabBar(
-          controller: _historyAndBookmarksTabController,
-          tabs: [
-            Tab(text: AppLocalizations.of(context)!.history),
-            Tab(text: AppLocalizations.of(context)!.bookmarks),
-          ],
-          labelColor: Theme.of(context).textTheme.bodyMedium!.color!,
-          unselectedLabelColor: Theme.of(context).textTheme.bodyMedium!.color!,
-          indicator: BubbleTabIndicator(
-            indicatorHeight: Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
-            indicatorColor: Theme.of(context).splashColor,
-            tabBarIndicatorSize: TabBarIndicatorSize.label,
-          ),
-        ),
-        Expanded(
-          child: TabBarView(
+        Material(
+            elevation: 2,
+            child: TabBar(
               controller: _historyAndBookmarksTabController,
-              children: [
-                EntryItemsPage<HistoryState>(
-                  emptyMessage: AppLocalizations.of(context)!.noHistory,
-                  deletionConfirmationMessage:
-                      AppLocalizations.of(context)!.historyDeleteConfirmation,
-                ),
-                EntryItemsPage<BookmarkState>(
-                  emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-                  deletionConfirmationMessage:
-                      AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
-                )
-              ]),
+              tabs: [
+                Tab(text: AppLocalizations.of(context)!.history),
+                Tab(text: AppLocalizations.of(context)!.bookmarks),
+              ],
+              labelColor: Theme.of(context).textTheme.bodyMedium!.color!,
+              unselectedLabelColor:
+                  Theme.of(context).textTheme.bodyMedium!.color!,
+              indicator: BubbleTabIndicator(
+                indicatorHeight:
+                    Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+                indicatorColor: Theme.of(context).splashColor,
+                tabBarIndicatorSize: TabBarIndicatorSize.label,
+              ),
+            )),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: TabBarView(
+                controller: _historyAndBookmarksTabController,
+                children: [
+                  EntryItemsPage<HistoryState>(
+                    emptyMessage: AppLocalizations.of(context)!.noHistory,
+                    deletionConfirmationMessage:
+                        AppLocalizations.of(context)!.historyDeleteConfirmation,
+                  ),
+                  EntryItemsPage<BookmarkState>(
+                    emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+                    deletionConfirmationMessage:
+                        AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+                  )
+                ]),
+          ),
         )
       ],
     );

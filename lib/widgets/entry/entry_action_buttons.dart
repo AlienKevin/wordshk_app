@@ -37,6 +37,7 @@ class EntryActionButtons extends StatelessWidget {
               !(isLoading || hasError || entryGroup![entryIndex!].published),
           child: Container(
             color: inAppBar ? null : Theme.of(context).primaryColor,
+            padding: inAppBar ? null : const EdgeInsets.symmetric(vertical: 6),
             child: IconButton(
               onPressed: () {
                 context.read<PlayerState>().stop();
@@ -76,6 +77,8 @@ class EntryActionButtons extends StatelessWidget {
       !(isLoading || hasError)
           ? Container(
               color: inAppBar ? null : Theme.of(context).primaryColor,
+              padding:
+                  inAppBar ? null : const EdgeInsets.symmetric(vertical: 6),
               child: Row(
                 children: [
                   IconButton(
