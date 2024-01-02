@@ -17,7 +17,7 @@ class NavigationDrawer extends StatelessWidget {
           key: key,
           icon: Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: Icon(icon, color: Theme.of(context).primaryColor)),
+              child: Icon(icon, color: Theme.of(context).colorScheme.secondary)),
           label: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -50,7 +50,7 @@ class NavigationDrawer extends StatelessWidget {
                   height: 180 * MediaQuery.of(context).textScaleFactor,
                   child: DrawerHeader(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     margin: EdgeInsets.zero,
                     child: Column(

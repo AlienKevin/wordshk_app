@@ -21,7 +21,7 @@ class ScaffoldWithBottomNavigation extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Theme.of(context).primaryColor,
+        selectedItemColor: Theme.of(context).colorScheme.secondary,
         // Here, the items of BottomNavigationBar are hard coded. In a real
         // world scenario, the items would most likely be generated from the
         // branches of the shell route, which can be fetched using
