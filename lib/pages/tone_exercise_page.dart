@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/constants.dart';
 
-import '../widgets/pronunciation_button.dart';
+import '../models/player.dart';
+import '../states/player_state.dart';
+import '../states/speech_rate_state.dart';
 import '../widgets/syllable_pronunciation_button.dart';
 
 class ToneExercisePage extends StatefulWidget {
@@ -96,8 +99,7 @@ class ToneExercisePageState extends State<ToneExercisePage> {
       selectedTone: defaultTone,
       expectedSyllableIndex:
           Random().nextInt(jyutpingFemaleSyllableNames.length));
-  final GlobalKey<PronunciationButtonState> pronunciationButtonKey =
-      GlobalKey<PronunciationButtonState>();
+  final UniqueKey pronunciationButtonKey = UniqueKey();
   // item 2 is the default selected tone: mid level tone
   final ScrollController _scrollController =
       FixedExtentScrollController(initialItem: 2);
@@ -106,8 +108,16 @@ class ToneExercisePageState extends State<ToneExercisePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      pronunciationButtonKey.currentState?.triggerPlay();
+      triggerPlay();
     });
+  }
+
+  triggerPlay() {
+    context.read<PlayerState>().play(
+        SyllablesPlayer(prs: [
+          [syllables[state.expectedSyllableIndex]],
+        ], atHeader: true, key: pronunciationButtonKey),
+        context.read<SpeechRateState>());
   }
 
   Tone6? getExpectedTone6() {
@@ -223,7 +233,7 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                       });
 
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        pronunciationButtonKey.currentState?.triggerPlay();
+                        triggerPlay();
                         // item 2 is the default selected tone: mid level tone
                         _scrollController.jumpTo(2 * 100.0);
                       });
