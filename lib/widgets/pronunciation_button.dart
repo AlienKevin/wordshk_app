@@ -64,16 +64,20 @@ class PronunciationButtonState extends State<PronunciationButton> {
                   borderRadius: BorderRadius.circular(displaySmallSize),
                 ))),
           )
-        : IconButton(
-            iconSize: Theme.of(context).textTheme.bodyMedium!.fontSize!,
+        : ConstrainedBox(
             constraints: BoxConstraints(
-                maxHeight: Theme.of(context).textTheme.bodyMedium!.fontSize!),
-            visualDensity: VisualDensity.compact,
-            tooltip: "Pronunciation",
-            alignment: widget.alignment,
-            icon: icon(),
-            color: Theme.of(context).colorScheme.secondary,
-            padding: const EdgeInsets.only(left: 5),
-            onPressed: triggerPlay);
+                maxHeight:
+                    Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5),
+            child: IconButton(
+                iconSize:
+                    Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+                visualDensity: VisualDensity.compact,
+                tooltip: "Pronunciation",
+                alignment: widget.alignment,
+                icon: icon(),
+                color: Theme.of(context).colorScheme.secondary,
+                padding: const EdgeInsets.only(left: 5),
+                onPressed: triggerPlay),
+          );
   }
 }
