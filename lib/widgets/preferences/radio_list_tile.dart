@@ -17,7 +17,7 @@ class PreferencesRadioListTile<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => RadioListTile<T>(
-        title: Text(title),
+        title: Text(title, style: Theme.of(context).textTheme.bodyMedium),
         subtitle: subtitle == null
             ? null
             : Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
