@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/language_state.dart';
-import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../constants.dart';
 import '../models/embedded.dart';
@@ -220,101 +219,101 @@ class _EntryItemsState<T extends EntryItemState>
                     .textStyle!
                     .resolve({})!.fontSize! *
                 4,
-            child: ConstrainedContent(
-              child: Row(
-                children: [
-                  ElevatedButton(
+            child: Center(
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 8),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final allEntryItems = context.read<T>().items;
+                          switch (_mode) {
+                            case ViewMode():
+                              {
+                                await Sentry.captureMessage(
+                                    'entryItem_page: All button pressed in ViewMode even though it should only be present in EditMode.');
+                                break;
+                              }
+                            case EditMode(
+                                selectedEntryItems: var selectedEntryItems
+                              ):
+                              if (selectedEntryItems.length <
+                                  allEntryItems.length) {
+                                setState(() {
+                                  selectedEntryItems.addAll(allEntryItems);
+                                });
+                              } else {
+                                setState(() {
+                                  selectedEntryItems.clear();
+                                });
+                              }
+                              break;
+                          }
+                        },
+                        child: (() {
+                          return ConstrainedBox(
+                            constraints: const BoxConstraints(minWidth: 80),
+                            child: Text(
+                              selectedEntryItems.length <
+                                      _entryItemSummaries.length
+                                  ? AppLocalizations.of(context)!.all
+                                  : AppLocalizations.of(context)!.none,
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        })()),
+                    const Spacer(),
+                    ElevatedButton(
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 8),
+                          const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         ),
                       ),
-                      onPressed: () async {
-                        final allEntryItems = context.read<T>().items;
-                        switch (_mode) {
-                          case ViewMode():
-                            {
-                              await Sentry.captureMessage(
-                                  'entryItem_page: All button pressed in ViewMode even though it should only be present in EditMode.');
-                              break;
-                            }
-                          case EditMode(
-                              selectedEntryItems: var selectedEntryItems
-                            ):
-                            if (selectedEntryItems.length <
-                                allEntryItems.length) {
-                              setState(() {
-                                selectedEntryItems.addAll(allEntryItems);
-                              });
-                            } else {
-                              setState(() {
-                                selectedEntryItems.clear();
-                              });
-                            }
-                            break;
-                        }
-                      },
-                      child: (() {
-                        return ConstrainedBox(
+                      onPressed: selectedEntryItems.isEmpty
+                          ? null
+                          : () {
+                              showPlatformDialog(
+                                context: context,
+                                builder: (_) => PlatformAlertDialog(
+                                  title: Text(widget.deletionConfirmationMessage),
+                                  actions: [
+                                    PlatformDialogAction(
+                                      child: PlatformText(
+                                          AppLocalizations.of(context)!.cancel),
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                    PlatformDialogAction(
+                                      child: PlatformText(
+                                          AppLocalizations.of(context)!.confirm),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        for (final id in selectedEntryItems) {
+                                          context.read<T>().removeItem(id);
+                                        }
+                                        setState(() {
+                                          _mode = EditMode(
+                                              selectedEntryItems: HashSet());
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                      child: ConstrainedBox(
                           constraints: const BoxConstraints(minWidth: 80),
                           child: Text(
-                            selectedEntryItems.length <
-                                    _entryItemSummaries.length
-                                ? AppLocalizations.of(context)!.all
-                                : AppLocalizations.of(context)!.none,
+                            AppLocalizations.of(context)!.delete,
                             textAlign: TextAlign.center,
-                          ),
-                        );
-                      })()),
-                  const Spacer(),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      ),
+                          )),
                     ),
-                    onPressed: selectedEntryItems.isEmpty
-                        ? null
-                        : () {
-                            showPlatformDialog(
-                              context: context,
-                              builder: (_) => PlatformAlertDialog(
-                                title: Text(widget.deletionConfirmationMessage),
-                                actions: [
-                                  PlatformDialogAction(
-                                    child: PlatformText(
-                                        AppLocalizations.of(context)!.cancel),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  PlatformDialogAction(
-                                    child: PlatformText(
-                                        AppLocalizations.of(context)!.confirm),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      for (final id in selectedEntryItems) {
-                                        context.read<T>().removeItem(id);
-                                      }
-                                      setState(() {
-                                        _mode = EditMode(
-                                            selectedEntryItems: HashSet());
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                    child: ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: 80),
-                        child: Text(
-                          AppLocalizations.of(context)!.delete,
-                          textAlign: TextAlign.center,
-                        )),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
           ),
         _ => null,
       },
