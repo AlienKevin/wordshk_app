@@ -120,7 +120,7 @@
 
     "exercise": "Exercise",
     "toneExerciseIntroductionText1": "In this exercise, you'll practice identifying the Cantonese tones. Traditionally, there are six tones in Cantonese numbered 1 to 6. Below, we'll plot the pitch levels of these tones as lines for your reference.",
-    "toneExerciseIntroductionText2": "Don't fret about the 6 tones. Recently, some are blending together. Some locals can't tell T2-T5 and T4-T6 apart due to their likeness. So, you'll only need to tell apart 4 tones here. T2 and T5 will be treated as one rising tone. T4 and T6 will be treated as one low level tone.",
+    "toneExerciseIntroductionText2": "Recently, some tones are merging. Even locals have a hard time telling apart T2-T5 and T4-T6 due to their likeness. So, you'll only be asked to distinguish between 4 tones in this exercise.",
     "startExercise": "Start",
     "backToExercise": "Close",
     "toneExercise": "Tone Exercise",

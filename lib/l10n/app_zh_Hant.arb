@@ -109,7 +109,7 @@
 
     "exercise": "練習",
     "toneExerciseIntroductionText1": "在這個練習中，你將練習識別廣東話的調。傳統上，廣東話有六個調，編號1至6。以下，我們將以線條形式繪出這些調的音高水平。",
-    "toneExerciseIntroductionText2": "不用擔心6個調太多難以區分。近期，有些調已經漸漸融合。有些本地人都分不清楚2和5、4和6的區別，因為他們很相似。所以，你在練習中只需要分辨4個調。2和5會被視為同一個上升調，4和6會被視為同一個低平調。",
+    "toneExerciseIntroductionText2": "近期，有些調已經漸漸融合。有些本地人都分不清楚2和5、4和6的區別，因為他們很相似。所以，你在練習中只需要分辨4個調值。",
     "startExercise": "開始訓練",
     "backToExercise": "返回訓練",
     "toneExercise": "聲調練習",

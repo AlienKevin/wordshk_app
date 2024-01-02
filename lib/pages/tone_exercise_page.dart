@@ -187,15 +187,35 @@ class ToneExercisePageState extends State<ToneExercisePage> {
                 ],
               ),
             ),
-            SizedBox(
-                height:
-                    Theme.of(context).textTheme.displayMedium!.fontSize! / 2,
-                child: Center(
-                    child: Text(switch (state) {
-                  CheckedState(isCorrect: true) => "✅",
-                  CheckedState(isCorrect: false) => "❌",
-                  _ => ""
-                }))),
+            Visibility(
+              visible: switch (state) {
+                CheckedState() => true,
+                _ => false,
+              },
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              child: SizedBox(
+                  child: Center(
+                child: Icon(
+                  switch (state) {
+                    CheckedState(isCorrect: true) =>
+                      PlatformIcons(context).checkMarkCircledSolid,
+                    CheckedState(isCorrect: false) =>
+                      PlatformIcons(context).clearThickCircled,
+                    // default icon as a placeholder, doesn't matter
+                    _ => PlatformIcons(context).checkMarkCircledSolid,
+                  },
+                  size: Theme.of(context).textTheme.displayLarge!.fontSize!,
+                  color: switch (state) {
+                    CheckedState(isCorrect: true) => greenColor,
+                    CheckedState(isCorrect: false) => redColor,
+                    // default color as a placeholder, doesn't matter
+                    _ => Colors.green,
+                  },
+                ),
+              )),
+            ),
             ElevatedButton(
               onPressed: switch (state) {
                 ThinkingState(selectedTone: final selectedTone) => () async {
@@ -267,7 +287,7 @@ class ToneExercisePageState extends State<ToneExercisePage> {
         width: 100,
         height: 100,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey, width: 5),
+          border: Border.all(color: Theme.of(context).primaryColor, width: 5),
           borderRadius: BorderRadius.circular(12),
           color: Theme.of(context)
               .elevatedButtonTheme
@@ -306,7 +326,7 @@ class ToneLinePainter extends CustomPainter {
           Tone4.highLevel => strokeWidth / 2,
           Tone4.rising => 0.7 * size.height,
           Tone4.midLevel => 0.5 * size.height,
-          Tone4.low => 1.0 * size.height - strokeWidth / 2,
+          Tone4.low => 0.7 * size.height,
         });
     final endPoint = Offset(
         size.width + strokeWidth,

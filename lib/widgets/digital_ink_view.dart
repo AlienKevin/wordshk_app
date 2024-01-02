@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
@@ -11,6 +10,7 @@ import 'package:wordshk/constants.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 
 import '../models/input_mode.dart';
+import '../utils.dart';
 import 'text_scale_factor_clamper.dart';
 
 class DigitalInkView extends StatefulWidget {
@@ -180,6 +180,10 @@ class DigitalInkViewState extends State<DigitalInkView> {
                                             candidatesFont.fontSize! * 1.2,
                                             candidatesFont.fontSize! * 1.2),
                                         padding: EdgeInsets.zero,
+                                        side: BorderSide(width: 1.5, color: Theme.of(context).dividerColor),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(4.0),
+                                        ),
                                       ),
                                       child: Text(character,
                                           style: candidatesFont),
@@ -329,14 +333,14 @@ class Signature extends CustomPainter {
             height: 300),
         borderPaint);
 
-    _drawDashedLine(
+    drawDashedLine(
         canvas: canvas,
         p1: Offset(size.width / 2 - 150, size.height / 2),
         p2: Offset(size.width / 2 + 150, size.height / 2),
         dashWidth: 6,
         dashSpace: 4,
         paint: borderPaint..strokeWidth = 1);
-    _drawDashedLine(
+    drawDashedLine(
         canvas: canvas,
         p1: Offset(size.width / 2, size.height / 2 - 150),
         p2: Offset(size.width / 2, size.height / 2 + 150),
@@ -356,35 +360,6 @@ class Signature extends CustomPainter {
         canvas.drawLine(Offset(p1.x.toDouble(), p1.y.toDouble()),
             Offset(p2.x.toDouble(), p2.y.toDouble()), paint);
       }
-    }
-  }
-
-  void _drawDashedLine(
-      {required Canvas canvas,
-      required Offset p1,
-      required Offset p2,
-      required int dashWidth,
-      required int dashSpace,
-      required Paint paint}) {
-    // Get normalized distance vector from p1 to p2
-    var dx = p2.dx - p1.dx;
-    var dy = p2.dy - p1.dy;
-    final magnitude = sqrt(dx * dx + dy * dy);
-    dx = dx / magnitude;
-    dy = dy / magnitude;
-
-    // Compute number of dash segments
-    final steps = magnitude ~/ (dashWidth + dashSpace);
-
-    var startX = p1.dx;
-    var startY = p1.dy;
-
-    for (int i = 0; i < steps; i++) {
-      final endX = startX + dx * dashWidth;
-      final endY = startY + dy * dashWidth;
-      canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
-      startX += dx * (dashWidth + dashSpace);
-      startY += dy * (dashWidth + dashSpace);
     }
   }
 

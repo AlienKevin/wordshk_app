@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
+import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 import 'package:wordshk/widgets/preferences/title.dart';
 
@@ -20,8 +21,9 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
     final s = AppLocalizations.of(context)!;
 
     const pageDecoration = PageDecoration(
-      titlePadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
-      contentMargin: EdgeInsets.all(32.0),
+      titlePadding: EdgeInsets.only(top: 10.0),
+      contentMargin: EdgeInsets.only(left: 20.0, right: 20.0),
+      pageMargin: EdgeInsets.only(bottom: 10.0),
     );
     return IntroductionScreen(
         safeAreaList: const [false, false, true, true],
@@ -56,18 +58,17 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                   Text(s.toneExerciseIntroductionText1),
                   Stack(children: [
                     SizedBox(
-                      height: 300,
+                      height: 360,
                       width: 270,
                       child: CustomPaint(
-                        size: const Size(270, 330),
                         painter: ToneContourPainter(
                             strokeColor:
                                 Theme.of(context).textTheme.bodyMedium!.color!),
                       ),
                     ),
                     const Positioned(
-                      right: 105,
-                      top: 37,
+                      right: 100,
+                      top: 38,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -82,8 +83,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 146,
-                      top: 98,
+                      right: 136,
+                      top: 110,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -98,8 +99,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 106,
-                      top: 157,
+                      right: 100,
+                      top: 182,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -114,8 +115,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 146,
-                      top: 188,
+                      right: 136,
+                      top: 220,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -130,8 +131,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 106,
-                      top: 218,
+                      right: 100,
+                      top: 254,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -146,8 +147,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 106,
-                      top: 248,
+                      right: 100,
+                      top: 292,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -180,16 +181,15 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                   Stack(children: [
                     SizedBox(
                       width: 270,
-                      height: 300,
+                      height: 360,
                       child: CustomPaint(
-                        size: const Size(270, 300),
                         painter: Tone4ContourPainter(
                             strokeColor:
                                 Theme.of(context).textTheme.bodyMedium!.color!),
                       ),
                     ),
                     const Positioned(
-                      right: 106,
+                      right: 100,
                       top: 38,
                       child: Column(
                         children: [
@@ -205,8 +205,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 180,
-                      top: 98,
+                      right: 174,
+                      top: 110,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -221,8 +221,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 106,
-                      top: 158,
+                      right: 100,
+                      top: 182,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -237,8 +237,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 136,
-                      top: 98,
+                      right: 128,
+                      top: 110,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -253,8 +253,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 82,
-                      top: 218,
+                      right: 52,
+                      top: 290,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -269,8 +269,8 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
                       ),
                     ),
                     const Positioned(
-                      right: 130,
-                      top: 218,
+                      right: 100,
+                      top: 290,
                       child: Column(
                         children: [
                           SyllablePronunciationButton(
@@ -313,6 +313,15 @@ class ToneContourPainter extends CustomPainter {
     final double width = size.width;
     final double height = size.height;
     final double unit = height / 5;
+
+    // Draw the 5 horizontal lines
+    paint.color = strokeColor.withOpacity(0.5);
+    for (int i = 1; i < 6; i++) {
+      final p1 = Offset(0, i * unit);
+      final p2 = Offset(width, i * unit);
+      drawDashedLine(canvas: canvas, p1: p1, p2: p2, dashWidth: 8, dashSpace: 4, paint: paint);
+    }
+    paint.color = strokeColor.withOpacity(1.0);
 
     // Define the tone contours
     final Map<int, List<Offset>> toneContours = {
@@ -379,12 +388,21 @@ class Tone4ContourPainter extends CustomPainter {
     final double height = size.height;
     final double unit = height / 5;
 
+    // Draw the 5 horizontal lines
+    paint.color = strokeColor.withOpacity(0.5);
+    for (int i = 1; i < 6; i++) {
+      final p1 = Offset(0, i * unit);
+      final p2 = Offset(width, i * unit);
+      drawDashedLine(canvas: canvas, p1: p1, p2: p2, dashWidth: 8, dashSpace: 4, paint: paint);
+    }
+    paint.color = strokeColor.withOpacity(1.0);
+
     // Define the tone contours
     final Map<int, List<Offset>> toneContours = {
       1: [Offset(0, unit), Offset(width, unit)],
       2: [Offset(0, 3 * unit), Offset(width, unit)],
       3: [Offset(0, 3 * unit), Offset(width, 3 * unit)],
-      6: [Offset(0, 4 * unit), Offset(width, 4 * unit)],
+      4: [Offset(0, 4 * unit), Offset(width, 5 * unit)],
     };
 
     // Draw the tone contours and labels
@@ -406,7 +424,7 @@ class Tone4ContourPainter extends CustomPainter {
         textPainter.text = TextSpan(
           text: tone == 2
               ? "2      5                  "
-              : tone == 6
+              : tone == 4
                   ? "4      6"
                   : tone.toString(),
           style: TextStyle(color: strokeColor, fontSize: 20),
@@ -414,7 +432,7 @@ class Tone4ContourPainter extends CustomPainter {
         textPainter.layout();
         textPainter.paint(
           canvas,
-          middlePoint - Offset(textPainter.width / 2, textPainter.height / 2),
+          middlePoint - Offset((tone == 4 ? -24 : 0) + textPainter.width / 2, textPainter.height / 2),
         );
       }
     }

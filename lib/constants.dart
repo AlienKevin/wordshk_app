@@ -8,6 +8,7 @@ const greyColor = Color(0xff808080);
 const darkGreyColor = Color(0xff33373b);
 const blackColor = Color(0xff000000);
 const redColor = Color(0xfff44336);
+const greenColor = Color(0xff4caf50);
 const double appBarHeight = 60.0;
 const double wideScreenThreshold = 600.0;
 const jyutpingFemaleSyllableNames = {

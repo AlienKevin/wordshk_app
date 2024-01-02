@@ -408,6 +408,7 @@ class _MyAppState extends State<MyApp> {
     );
     var appBarTheme = AppBarTheme.of(context).copyWith(
       backgroundColor: blueColor,
+      foregroundColor: Colors.white,
       centerTitle: true,
     );
     textSelectionTheme(Brightness brightness) => TextSelectionThemeData(
@@ -428,6 +429,7 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: MaterialStateProperty.all(blueColor),
           textStyle: MaterialStateProperty.all(
               bodyLarge.copyWith(color: Colors.white)),
+          foregroundColor: MaterialStateProperty.all(Colors.white),
           padding: MaterialStateProperty.all(
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
         ));
@@ -437,10 +439,11 @@ class _MyAppState extends State<MyApp> {
     const darkThemeAccentColor = lightBlueColor;
 
     var lightTheme = ThemeData(
-      useMaterial3: false,
+      useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.light,
+        backgroundColor: Colors.white,
         accentColor: lightThemeAccentColor,
       ),
       primarySwatch: blueSwatch,
@@ -457,7 +460,7 @@ class _MyAppState extends State<MyApp> {
       dividerTheme: dividerTheme,
     );
     var darkTheme = ThemeData(
-      useMaterial3: false,
+      useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSwatch(
         brightness: Brightness.dark,

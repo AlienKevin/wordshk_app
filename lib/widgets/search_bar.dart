@@ -303,29 +303,42 @@ class IsSearching extends State<SearchBar> {
               ? Icons.brush
               : CupertinoIcons.pencil_outline));
 
-  Widget button(void Function() onPressed, Widget child) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 3),
-        child: ElevatedButton(
-            onPressed: onPressed,
-            style: ButtonStyle(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              minimumSize: MaterialStateProperty.all(Size.zero),
-              textStyle: MaterialStateProperty.all(
-                  Theme.of(context).textTheme.bodyLarge),
-              foregroundColor: MaterialStateProperty.all(
-                  MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? blackColor
-                      : whiteColor),
-              backgroundColor: MaterialStateProperty.all(
-                  MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? whiteColor
-                      : Colors.grey[700]),
-              visualDensity: VisualDensity.compact,
-              padding: MaterialStateProperty.all(
-                  const EdgeInsets.symmetric(horizontal: 10.5, vertical: 12)),
-            ),
-            child: Align(alignment: Alignment.center, child: child)),
-      );
+  Widget button(void Function() onPressed, Widget child) {
+    final background = MaterialStateProperty.all(
+        MediaQuery
+            .of(context)
+            .platformBrightness == Brightness.light
+            ? whiteColor
+            : Colors.grey[700]);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: ElevatedButton(
+          onPressed: onPressed,
+          style: ButtonStyle(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            minimumSize: MaterialStateProperty.all(Size.zero),
+            textStyle: MaterialStateProperty.all(
+                Theme
+                    .of(context)
+                    .textTheme
+                    .bodyLarge),
+            foregroundColor: MaterialStateProperty.all(
+                MediaQuery
+                    .of(context)
+                    .platformBrightness == Brightness.light
+                    ? blackColor
+                    : whiteColor),
+            backgroundColor: background,
+            surfaceTintColor: background,
+            visualDensity: VisualDensity.compact,
+            padding: MaterialStateProperty.all(
+                const EdgeInsets.symmetric(horizontal: 10.5, vertical: 12)),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5))),
+          ),
+          child: Align(alignment: Alignment.center, child: child)),
+    );
+  }
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
   /// and their focus nodes to our [FormKeyboardActions].

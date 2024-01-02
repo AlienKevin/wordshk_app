@@ -50,15 +50,19 @@ class PronunciationButtonState extends State<PronunciationButton> {
 
   @override
   Widget build(BuildContext context) {
+    final displaySmallSize =
+        Theme.of(context).textTheme.displaySmall!.fontSize!;
     return widget.large
         ? SizedBox(
-            height: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
-            width: Theme.of(context).textTheme.displaySmall!.fontSize! * 4,
+            height: displaySmallSize * 4,
+            width: displaySmallSize * 4,
             child: ElevatedButton(
                 onPressed: triggerPlay,
-                child: icon(
-                    size: Theme.of(context).textTheme.displaySmall!.fontSize! *
-                        1.5)),
+                child: icon(size: displaySmallSize * 1.5),
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(displaySmallSize),
+                ))),
           )
         : IconButton(
             iconSize: Theme.of(context).textTheme.bodyMedium!.fontSize!,
