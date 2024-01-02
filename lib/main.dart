@@ -433,7 +433,10 @@ class _MyAppState extends State<MyApp> {
           padding: MaterialStateProperty.all(
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
         ));
-    const dividerTheme = DividerThemeData(space: 0, thickness: 1);
+    dividerColor(Brightness brightness) => brightness == Brightness.light
+        ? lightGreyColor
+        : darkGreyColor;
+    dividerTheme(Brightness brightness) => DividerThemeData(space: 0, thickness: 1, color: dividerColor(brightness));
 
     const lightThemeAccentColor = blueColor;
     const darkThemeAccentColor = lightBlueColor;
@@ -456,8 +459,8 @@ class _MyAppState extends State<MyApp> {
       iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
       textButtonTheme: textButtonTheme(Brightness.light),
       elevatedButtonTheme: elevatedButtonTheme(Brightness.light),
-      dividerColor: lightGreyColor,
-      dividerTheme: dividerTheme,
+      dividerColor: dividerColor(Brightness.light),
+      dividerTheme: dividerTheme(Brightness.light),
     );
     var darkTheme = ThemeData(
       useMaterial3: true,
@@ -478,8 +481,8 @@ class _MyAppState extends State<MyApp> {
       iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
       textButtonTheme: textButtonTheme(Brightness.dark),
       elevatedButtonTheme: elevatedButtonTheme(Brightness.dark),
-      dividerColor: darkGreyColor,
-      dividerTheme: dividerTheme,
+      dividerColor: dividerColor(Brightness.dark),
+      dividerTheme: dividerTheme(Brightness.dark),
     );
 
     return FGBGNotifier(
