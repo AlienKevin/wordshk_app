@@ -12,16 +12,14 @@ class SyllablePronunciationButton extends StatelessWidget {
   final Alignment alignment;
   final bool atHeader;
   final bool large;
-  final Key? buttonKey;
 
   const SyllablePronunciationButton({
-    Key? key,
-    this.buttonKey,
+    super.key,
     required this.prs,
     required this.alignment,
     required this.atHeader,
     this.large = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) => Consumer<PronunciationMethodState>(
@@ -32,8 +30,8 @@ class SyllablePronunciationButton extends StatelessWidget {
             maintainAnimation: true,
             maintainState: true,
             child: PronunciationButton(
-              key: buttonKey,
-              player: SyllablesPlayer(prs: prs, atHeader: atHeader),
+              key: key,
+              player: SyllablesPlayer(prs: prs, atHeader: atHeader, key: key),
               alignment: alignment,
               large: large,
             ),

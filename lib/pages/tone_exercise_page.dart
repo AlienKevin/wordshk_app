@@ -136,7 +136,7 @@ class ToneExercisePageState extends State<ToneExercisePage> {
           runSpacing: Theme.of(context).textTheme.displayMedium!.fontSize! / 2,
           children: [
             SyllablePronunciationButton(
-              buttonKey: pronunciationButtonKey,
+              key: pronunciationButtonKey,
               prs: [
                 [syllables[state.expectedSyllableIndex]],
               ],

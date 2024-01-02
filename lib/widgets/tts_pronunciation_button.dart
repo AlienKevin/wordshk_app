@@ -8,11 +8,10 @@ class TtsPronunciationButton extends StatelessWidget {
   final bool atHeader;
 
   const TtsPronunciationButton(
-      {Key? key,
+      {super.key,
       required this.text,
       required this.alignment,
-      required this.atHeader})
-      : super(key: key);
+      required this.atHeader});
 
   @override
   Widget build(BuildContext context) => PronunciationButton(
