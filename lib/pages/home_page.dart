@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide SearchBar, NavigationDrawer;
@@ -200,13 +201,10 @@ class _HomePageState extends State<HomePage>
           ],
           labelColor: Theme.of(context).textTheme.bodyMedium!.color!,
           unselectedLabelColor: Theme.of(context).textTheme.bodyMedium!.color!,
-          indicator: UnderlineTabIndicator(
-            borderSide: BorderSide(
-                color: Theme.of(context).textTheme.bodyMedium!.color!,
-                width: 2),
-            // Indicator height
-            insets:
-                const EdgeInsets.symmetric(horizontal: 30), // Indicator width
+          indicator: BubbleTabIndicator(
+            indicatorHeight: Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+            indicatorColor: Theme.of(context).splashColor,
+            tabBarIndicatorSize: TabBarIndicatorSize.label,
           ),
         ),
         Expanded(

@@ -81,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bubble_tab_indicator:
+    dependency: "direct main"
+    description:
+      name: bubble_tab_indicator
+      sha256: "0aa37980a00e3374d917f9da8e83acd7f59ba872a3d05c306220063f28f945aa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.6"
   build:
     dependency: transitive
     description:

@@ -32,10 +32,8 @@ class EntryLine extends StatelessWidget {
               TextSpan(
                   text: tag,
                   style: const TextStyle(fontWeight: FontWeight.w600)),
-              ...line.segments
-                  .map((segment) => showSegment(segment,
-                      Theme.of(context).colorScheme.secondary, onTapLink))
-                  .toList(),
+              ...line.segments.map((segment) => showSegment(
+                  segment, Theme.of(context).colorScheme.secondary, onTapLink)),
               ...isCantonese
                   ? [
                       WidgetSpan(

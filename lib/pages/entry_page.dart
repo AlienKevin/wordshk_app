@@ -122,53 +122,50 @@ class _EntryPageState extends State<EntryPage> {
     } else {
       final hideEntryActionButtons = widget.embedded == Embedded.topLevel ||
           widget.embedded == Embedded.nestedInEmbedded;
-      return Padding(
-        padding: const EdgeInsets.only(left: 10),
-        child: EntryWidget(
-          entryActionButtons: hideEntryActionButtons
-              ? null
-              : EntryActionButtons(
-                  entryGroup: entryGroup!,
-                  entryIndex: entryIndex!,
-                  isLoading: isLoading,
-                  hasError: hasError,
-                  inAppBar: false),
-          entryGroup: entryGroup!,
-          initialEntryIndex: entryIndex!,
-          initialDefIndex: widget.defIndex,
-          updateEntryIndex: updateEntryIndex,
-          onTapLink: (entryVariant) {
-            log("Tapped on link $entryVariant");
-            getEntryId(
-                    query: entryVariant,
-                    script: context.read<LanguageState>().getScript())
-                .then((id) {
-              context.read<PlayerState>().refreshPlayerState();
-              if (id == null) {
-                context.push("/entry/not-published/$entryVariant");
-              } else {
-                final embedded = widget.embedded == Embedded.embedded ||
-                        widget.embedded == Embedded.nestedInEmbedded
-                    ? Embedded.nestedInEmbedded
-                    : Embedded.topLevel;
-                // TODO: Figure out how to use ShellRouter from GoRouter
-                // context.push("/entry/id/$id?showFirstInGroup=true&embedded=${embedded.name}");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EntryPage(
-                            id: id,
-                            showFirstEntryInGroupInitially: true,
-                            embedded: widget.embedded == Embedded.embedded ||
-                                    widget.embedded == Embedded.nestedInEmbedded
-                                ? Embedded.nestedInEmbedded
-                                : Embedded.topLevel,
-                          )),
-                );
-              }
-            });
-          },
-        ),
+      return EntryWidget(
+        entryActionButtons: hideEntryActionButtons
+            ? null
+            : EntryActionButtons(
+                entryGroup: entryGroup!,
+                entryIndex: entryIndex!,
+                isLoading: isLoading,
+                hasError: hasError,
+                inAppBar: false),
+        entryGroup: entryGroup!,
+        initialEntryIndex: entryIndex!,
+        initialDefIndex: widget.defIndex,
+        updateEntryIndex: updateEntryIndex,
+        onTapLink: (entryVariant) {
+          log("Tapped on link $entryVariant");
+          getEntryId(
+                  query: entryVariant,
+                  script: context.read<LanguageState>().getScript())
+              .then((id) {
+            context.read<PlayerState>().refreshPlayerState();
+            if (id == null) {
+              context.push("/entry/not-published/$entryVariant");
+            } else {
+              final embedded = widget.embedded == Embedded.embedded ||
+                      widget.embedded == Embedded.nestedInEmbedded
+                  ? Embedded.nestedInEmbedded
+                  : Embedded.topLevel;
+              // TODO: Figure out how to use ShellRouter from GoRouter
+              // context.push("/entry/id/$id?showFirstInGroup=true&embedded=${embedded.name}");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EntryPage(
+                          id: id,
+                          showFirstEntryInGroupInitially: true,
+                          embedded: widget.embedded == Embedded.embedded ||
+                                  widget.embedded == Embedded.nestedInEmbedded
+                              ? Embedded.nestedInEmbedded
+                              : Embedded.topLevel,
+                        )),
+              );
+            }
+          });
+        },
       );
     }
   }

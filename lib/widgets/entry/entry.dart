@@ -1,3 +1,4 @@
+import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -50,7 +51,9 @@ class _EntryWidgetState extends State<EntryWidget>
     double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
     TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
     final localizationContext = AppLocalizations.of(context)!;
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
       Expanded(
         child: Column(children: [
           Row(children: [
@@ -58,6 +61,8 @@ class _EntryWidgetState extends State<EntryWidget>
                 child: Align(
               alignment: Alignment.centerLeft,
               child: TabBar(
+                dividerColor: Theme.of(context).dividerColor,
+                dividerHeight: 2,
                 controller: _tabController,
                 onTap: (newIndex) {
                   if (newIndex != entryIndex) {
@@ -75,12 +80,13 @@ class _EntryWidgetState extends State<EntryWidget>
                 // Other tabs color
                 labelPadding: const EdgeInsets.symmetric(horizontal: 30),
                 // Space between tabs
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(color: lineTextStyle.color!, width: 2),
-                  // Indicator height
-                  insets: const EdgeInsets.symmetric(
-                      horizontal: 30), // Indicator width
+                indicator: BubbleTabIndicator(
+                  indicatorHeight: Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+                  indicatorColor: Theme.of(context).splashColor,
+                  tabBarIndicatorSize: TabBarIndicatorSize.label,
                 ),
+                tabAlignment: TabAlignment.start,
+                padding: const EdgeInsets.symmetric(vertical: 6),
                 tabs: widget.entryGroup
                     .asMap()
                     .entries
@@ -93,24 +99,27 @@ class _EntryWidgetState extends State<EntryWidget>
             widget.entryActionButtons ?? Container(),
           ]),
           Expanded(
-            child: TabBarView(
-                controller: _tabController,
-                children: widget.entryGroup
-                    .mapIndexed((index, entry) => EntryTab(
-                          entry: entry,
-                          script: context.watch<LanguageState>().getScript(),
-                          variantTextStyle:
-                              Theme.of(context).textTheme.headlineSmall!,
-                          prTextStyle: Theme.of(context).textTheme.bodySmall!,
-                          lineTextStyle: lineTextStyle,
-                          linkColor: Theme.of(context).colorScheme.secondary,
-                          rubyFontSize: rubyFontSize,
-                          onTapLink: widget.onTapLink,
-                          initialDefIndex: index == widget.initialEntryIndex
-                              ? widget.initialDefIndex
-                              : null,
-                        ))
-                    .toList()),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: TabBarView(
+                  controller: _tabController,
+                  children: widget.entryGroup
+                      .mapIndexed((index, entry) => EntryTab(
+                            entry: entry,
+                            script: context.watch<LanguageState>().getScript(),
+                            variantTextStyle:
+                                Theme.of(context).textTheme.headlineSmall!,
+                            prTextStyle: Theme.of(context).textTheme.bodySmall!,
+                            lineTextStyle: lineTextStyle,
+                            linkColor: Theme.of(context).colorScheme.secondary,
+                            rubyFontSize: rubyFontSize,
+                            onTapLink: widget.onTapLink,
+                            initialDefIndex: index == widget.initialEntryIndex
+                                ? widget.initialDefIndex
+                                : null,
+                          ))
+                      .toList()),
+            ),
           ),
         ]),
       )
