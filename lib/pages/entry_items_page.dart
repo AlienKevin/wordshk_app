@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
@@ -143,7 +142,9 @@ class _EntryItemsState<T extends EntryItemState>
     return Scaffold(
       floatingActionButton: KeyboardVisibilityBuilder(
         builder: (context, isKeyboardVisible) => Visibility(
-            visible: widget.allowEdits && _entryItemSummaries.isNotEmpty && !isKeyboardVisible,
+            visible: widget.allowEdits &&
+                _entryItemSummaries.isNotEmpty &&
+                !isKeyboardVisible,
             child: ElevatedButton(
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(
@@ -278,32 +279,37 @@ class _EntryItemsState<T extends EntryItemState>
                     onPressed: selectedEntryItems.isEmpty
                         ? null
                         : () {
-                            showPlatformDialog(
+                            showDialog(
+                              useRootNavigator: false,
                               context: context,
-                              builder: (_) => PlatformAlertDialog(
-                                title: Text(widget.deletionConfirmationMessage),
-                                actions: [
-                                  PlatformDialogAction(
-                                    child: PlatformText(
-                                        AppLocalizations.of(context)!.cancel),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  PlatformDialogAction(
-                                    child: PlatformText(
-                                        AppLocalizations.of(context)!.confirm),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      for (final id in selectedEntryItems) {
-                                        context.read<T>().removeItem(id);
-                                      }
-                                      setState(() {
-                                        _mode = EditMode(
-                                            selectedEntryItems: HashSet());
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
+                              builder: (_) => AlertDialog(
+                                  content:
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 200),
+                                    child: Text(widget.deletionConfirmationMessage)),
+                                  actions: [
+                                    TextButton(
+                                      child: Text(
+                                          AppLocalizations.of(context)!.cancel),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                    ),
+                                    TextButton(
+                                      child: Text(AppLocalizations.of(context)!
+                                          .confirm),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        for (final id in selectedEntryItems) {
+                                          context.read<T>().removeItem(id);
+                                        }
+                                        setState(() {
+                                          _mode = EditMode(
+                                              selectedEntryItems: HashSet());
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
                             );
                           },
                     child: ConstrainedBox(
