@@ -218,18 +218,16 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                 builder: (context, state) => const ExercisePage(),
                 routes: [
                   GoRoute(
-                      path: 'tone',
-                      builder: (context, state) => const ToneExercisePage(),
-                      routes: [
-                        GoRoute(
-                          path: 'introduction',
-                          builder: (context, state) =>
-                              ToneExerciseIntroductionPage(
-                                  openedInExercise: state.uri.queryParameters[
-                                          'openedInExercise'] ==
-                                      'true'),
-                        ),
-                      ]),
+                    path: 'tone',
+                    builder: (context, state) => const ToneExercisePage(),
+                  ),
+                  GoRoute(
+                    path: 'tone/introduction',
+                    builder: (context, state) => ToneExerciseIntroductionPage(
+                        openedInExercise:
+                            state.uri.queryParameters['openedInExercise'] ==
+                                'true'),
+                  ),
                 ],
               ),
             ]),
