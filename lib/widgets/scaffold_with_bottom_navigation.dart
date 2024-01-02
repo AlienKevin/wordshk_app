@@ -28,7 +28,9 @@ class ScaffoldWithBottomNavigation extends StatelessWidget {
         // `navigationShell.route.branches`.
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(PlatformIcons(context).volumeUp),
+            icon: Icon(isMaterial(context)
+                ? Icons.rocket_launch_rounded
+                : CupertinoIcons.rocket_fill),
             label: AppLocalizations.of(context)!.exercise,
           ),
           BottomNavigationBarItem(
@@ -37,8 +39,8 @@ class ScaffoldWithBottomNavigation extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(isMaterial(context)
-                ? Icons.settings_outlined
-                : CupertinoIcons.settings),
+                ? Icons.settings
+                : CupertinoIcons.gear_solid),
             label: AppLocalizations.of(context)!.settings,
           ),
         ],
