@@ -616,6 +616,9 @@ class RustLibWire extends BaseWire {
   void wire_init_api(NativePortType port_, Uint8List dict_data,
           Uint8List english_index_data) =>
       wasmModule.wire_init_api(port_, dict_data, english_index_data);
+
+  void wire_init_utils(NativePortType port_) =>
+      wasmModule.wire_init_utils(port_);
 }
 
 @JS('wasm_bindgen')
@@ -660,4 +663,6 @@ class RustLibWasmModule implements WasmModule {
 
   external void wire_init_api(
       NativePortType port_, Uint8List dict_data, Uint8List english_index_data);
+
+  external void wire_init_utils(NativePortType port_);
 }

@@ -516,3 +516,8 @@ pub fn wire_init_api(
 ) {
     wire_init_api_impl(port_, dict_data, english_index_data)
 }
+
+#[wasm_bindgen]
+pub fn wire_init_utils(port_: flutter_rust_bridge::for_generated::MessagePort) {
+    wire_init_utils_impl(port_)
+}

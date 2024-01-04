@@ -869,6 +869,20 @@ class RustLibWire implements BaseWire {
       void Function(int, ffi.Pointer<wire_cst_list_prim_u_8>,
           ffi.Pointer<wire_cst_list_prim_u_8>)>();
 
+  void wire_init_utils(
+    int port_,
+  ) {
+    return _wire_init_utils(
+      port_,
+    );
+  }
+
+  late final _wire_init_utilsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'frbgen_wordshk_wire_init_utils');
+  late final _wire_init_utils =
+      _wire_init_utilsPtr.asFunction<void Function(int)>();
+
   ffi.Pointer<ffi.Uint32> cst_new_box_autoadd_u_32(
     int value,
   ) {

@@ -498,6 +498,11 @@ pub extern "C" fn frbgen_wordshk_wire_init_api(
 }
 
 #[no_mangle]
+pub extern "C" fn frbgen_wordshk_wire_init_utils(port_: i64) {
+    wire_init_utils_impl(port_)
+}
+
+#[no_mangle]
 pub extern "C" fn frbgen_wordshk_cst_new_box_autoadd_u_32(value: u32) -> *mut u32 {
     flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
 }

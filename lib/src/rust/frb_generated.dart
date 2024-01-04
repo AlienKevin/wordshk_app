@@ -46,7 +46,9 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
       RustLibWire.fromExternalLibrary;
 
   @override
-  Future<void> executeRustInitializers() async {}
+  Future<void> executeRustInitializers() async {
+    await api.initUtils();
+  }
 
   @override
   ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
@@ -98,6 +100,8 @@ abstract class RustLibApi extends BaseApi {
       {required Uint8List dictData,
       required Uint8List englishIndexData,
       dynamic hint});
+
+  Future<void> initUtils({dynamic hint});
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -382,6 +386,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kInitApiConstMeta => const TaskConstMeta(
         debugName: "init_api",
         argNames: ["dictData", "englishIndexData"],
+      );
+
+  @override
+  Future<void> initUtils({dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        return wire.wire_init_utils(port_);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kInitUtilsConstMeta,
+      argValues: [],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kInitUtilsConstMeta => const TaskConstMeta(
+        debugName: "init_utils",
+        argNames: [],
       );
 
   @protected
