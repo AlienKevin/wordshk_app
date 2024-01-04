@@ -406,11 +406,11 @@ class _MyAppState extends State<MyApp> {
       bodyLarge: bodyLarge,
       bodyMedium: bodyMedium,
     );
-    var appBarTheme = AppBarTheme.of(context).copyWith(
-      backgroundColor: blueColor,
-      foregroundColor: Colors.white,
-      centerTitle: true,
-    );
+    appBarTheme(Brightness brightness) => AppBarTheme.of(context).copyWith(
+          backgroundColor:
+              brightness == Brightness.light ? lightGreyColor : null,
+          centerTitle: true,
+        );
     textSelectionTheme(Brightness brightness) => TextSelectionThemeData(
         selectionColor: lightBlueColor.withAlpha(50),
         selectionHandleColor:
@@ -451,7 +451,7 @@ class _MyAppState extends State<MyApp> {
       ),
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
-      appBarTheme: appBarTheme,
+      appBarTheme: appBarTheme(Brightness.light),
       textSelectionTheme: textSelectionTheme(Brightness.light),
       fontFamily: 'ChironHeiHK',
       textTheme: textTheme.copyWith(
@@ -474,7 +474,7 @@ class _MyAppState extends State<MyApp> {
       primarySwatch: blueSwatch,
       primaryColor: blueColor,
       canvasColor: Colors.black,
-      appBarTheme: appBarTheme,
+      appBarTheme: appBarTheme(Brightness.dark),
       textSelectionTheme: textSelectionTheme(Brightness.dark),
       fontFamily: 'ChironHeiHK',
       textTheme: textTheme.copyWith(

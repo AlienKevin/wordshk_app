@@ -305,9 +305,7 @@ class IsSearching extends State<SearchBar> {
 
   Widget button(void Function() onPressed, Widget child) {
     final background = MaterialStateProperty.all(
-        MediaQuery
-            .of(context)
-            .platformBrightness == Brightness.light
+        MediaQuery.of(context).platformBrightness == Brightness.light
             ? whiteColor
             : Colors.grey[700]);
     return Padding(
@@ -318,14 +316,9 @@ class IsSearching extends State<SearchBar> {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             minimumSize: MaterialStateProperty.all(Size.zero),
             textStyle: MaterialStateProperty.all(
-                Theme
-                    .of(context)
-                    .textTheme
-                    .bodyLarge),
+                Theme.of(context).textTheme.bodyLarge),
             foregroundColor: MaterialStateProperty.all(
-                MediaQuery
-                    .of(context)
-                    .platformBrightness == Brightness.light
+                MediaQuery.of(context).platformBrightness == Brightness.light
                     ? blackColor
                     : whiteColor),
             backgroundColor: background,
@@ -333,8 +326,8 @@ class IsSearching extends State<SearchBar> {
             visualDensity: VisualDensity.compact,
             padding: MaterialStateProperty.all(
                 const EdgeInsets.symmetric(horizontal: 10.5, vertical: 12)),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5))),
+            shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
           ),
           child: Align(alignment: Alignment.center, child: child)),
     );
@@ -429,7 +422,7 @@ class IsSearching extends State<SearchBar> {
                           isDense: true,
                           filled: true,
                           fillColor: Theme.of(context).canvasColor,
-                          contentPadding: const EdgeInsets.only(left: 8),
+                          contentPadding: const EdgeInsets.only(left: 20),
                           hintText: s.searchDictionaryHint(romanizationName),
                           suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
                               showClearButton
@@ -451,9 +444,17 @@ class IsSearching extends State<SearchBar> {
                                                   .updateSearchQuery("");
                                             })
                                   : null,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          border: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: const BorderSide(width: 2.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: BorderSide(width: 2.0, color: theme.colorScheme.primary),
+                          ),
                         ),
                         onChanged: (query) {
                           context
