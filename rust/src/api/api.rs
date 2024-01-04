@@ -14,7 +14,7 @@ use wordshk_tools::dict::{clause_to_string, EntryId};
 use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishSearchRank};
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
-use wordshk_tools::pr_index::PrIndices;
+use wordshk_tools::pr_index::FstPrIndices;
 use wordshk_tools::rich_dict::{RichDict, RichEntry, RichLine};
 use wordshk_tools::rich_dict::ArchivedRichDict;
 use wordshk_tools::search;
@@ -104,7 +104,7 @@ pub struct EntrySummary {
 pub struct WordshkApi {
     dict_data: AlignedVec,
     english_index_data: AlignedVec,
-    pr_indices: Option<PrIndices>,
+    pr_indices: Option<FstPrIndices>,
     variants_map: VariantsMap,
     word_list: HashMap<String, Vec<String>>,
 }
@@ -219,7 +219,7 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<En
 
 pub fn generate_pr_indices(romanization: Romanization) -> Result<()> {
     let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(&API.lock().unwrap().dict_data), romanization);
-    API.lock().unwrap().pr_indices = Some(pr_indices);
+    API.lock().unwrap().pr_indices = Some(wordshk_tools::pr_index::pr_indices_into_fst(pr_indices));
     Ok(())
 }
 

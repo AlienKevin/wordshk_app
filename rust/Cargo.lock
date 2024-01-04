@@ -504,6 +504,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "fst"
+version = "0.4.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7ab85b9b05e3978cc9a9cf8fea7f01b494e1a09ed3037e16ba39edc7a29eb61a"
+dependencies = [
+ "utf8-ranges",
+]
+
+[[package]]
 name = "funty"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1764,6 +1773,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "utf8-ranges"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fcfc827f90e53a02eaef5e535ee14266c1d569214c6aa70133a624d8a3164ba"
+
+[[package]]
 name = "uuid"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2057,11 +2072,12 @@ dependencies = [
 [[package]]
 name = "wordshk_tools"
 version = "3.16.0-beta.10"
-source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=dce4d20d4043c6a4af1216462504de416463ce4d#dce4d20d4043c6a4af1216462504de416463ce4d"
+source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=47fb9e12905b05ceb9ae75258d391412b7607a3d#47fb9e12905b05ceb9ae75258d391412b7607a3d"
 dependencies = [
  "csv",
  "deunicode",
  "fast2s",
+ "fst",
  "indexmap",
  "indoc",
  "itertools",
@@ -2081,7 +2097,6 @@ dependencies = [
  "unicode-normalization",
  "unicode-segmentation",
  "unicode_names2",
- "xxhash-rust",
 ]
 
 [[package]]
@@ -2098,9 +2113,3 @@ name = "xi-unicode"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a67300977d3dc3f8034dae89778f502b6ba20b269527b3223ba59c0cf393bb8a"
-
-[[package]]
-name = "xxhash-rust"
-version = "0.8.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53be06678ed9e83edb1745eb72efc0bbcd7b5c3c35711a860906aed827a13d61"
