@@ -9,11 +9,6 @@ use super::*;
 
 // Section: dart2rust
 
-impl CstDecode<anyhow::Error> for *mut wire_cst_list_prim_u_8 {
-    fn cst_decode(self) -> anyhow::Error {
-        unimplemented!()
-    }
-}
 impl CstDecode<String> for *mut wire_cst_list_prim_u_8 {
     fn cst_decode(self) -> String {
         let vec: Vec<u8> = self.cst_decode();

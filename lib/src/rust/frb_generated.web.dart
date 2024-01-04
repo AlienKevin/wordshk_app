@@ -18,9 +18,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   @protected
-  AnyhowException dco_decode_AnyhowException(dynamic raw);
-
-  @protected
   String dco_decode_String(dynamic raw);
 
   @protected
@@ -120,9 +117,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   VariantSearchResult dco_decode_variant_search_result(dynamic raw);
-
-  @protected
-  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
   @protected
   String sse_decode_String(SseDeserializer deserializer);
@@ -237,11 +231,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   VariantSearchResult sse_decode_variant_search_result(
       SseDeserializer deserializer);
-
-  @protected
-  String cst_encode_AnyhowException(AnyhowException raw) {
-    throw UnimplementedError();
-  }
 
   @protected
   String cst_encode_String(String raw) {
@@ -443,10 +432,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void cst_encode_unit(void raw);
-
-  @protected
-  void sse_encode_AnyhowException(
-      AnyhowException self, SseSerializer serializer);
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);

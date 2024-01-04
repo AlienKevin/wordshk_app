@@ -131,7 +131,7 @@ fn wire_generate_pr_indices_impl(
             let api_romanization = romanization.cst_decode();
             move |context| {
                 transform_result_dco((move || {
-                    crate::api::api::generate_pr_indices(api_romanization)
+                    Result::<_, ()>::Ok(crate::api::api::generate_pr_indices(api_romanization))
                 })())
             }
         },
@@ -215,7 +215,10 @@ fn wire_get_entry_summaries_impl(
             let api_script = script.cst_decode();
             move |context| {
                 transform_result_dco((move || {
-                    crate::api::api::get_entry_summaries(api_entry_ids, api_script)
+                    Result::<_, ()>::Ok(crate::api::api::get_entry_summaries(
+                        api_entry_ids,
+                        api_script,
+                    ))
                 })())
             }
         },
@@ -368,12 +371,6 @@ impl CstDecode<u8> for u8 {
         self
     }
 }
-impl SseDecode for anyhow::Error {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        unimplemented!("not yet supported in serialized mode, feel free to create an issue");
-    }
-}
-
 impl SseDecode for String {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <Vec<u8>>::sse_decode(deserializer);
@@ -946,12 +943,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::api::VariantSearchResult>
 {
     fn into_into_dart(self) -> crate::api::api::VariantSearchResult {
         self
-    }
-}
-
-impl SseEncode for anyhow::Error {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <String>::sse_encode(format!("{:?}", self), serializer);
     }
 }
 

@@ -204,7 +204,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
+        decodeErrorData: null,
       ),
       constMeta: kGeneratePrIndicesConstMeta,
       argValues: [romanization],
@@ -300,7 +300,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_list_entry_summary,
-        decodeErrorData: dco_decode_AnyhowException,
+        decodeErrorData: null,
       ),
       constMeta: kGetEntrySummariesConstMeta,
       argValues: [entryIds, script],
@@ -407,11 +407,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         debugName: "init_utils",
         argNames: [],
       );
-
-  @protected
-  AnyhowException dco_decode_AnyhowException(dynamic raw) {
-    return AnyhowException(raw as String);
-  }
 
   @protected
   String dco_decode_String(dynamic raw) {
@@ -670,12 +665,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       yues: dco_decode_list_String(arr[2]),
       engs: dco_decode_list_String(arr[3]),
     );
-  }
-
-  @protected
-  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
-    var inner = sse_decode_String(deserializer);
-    return AnyhowException(inner);
   }
 
   @protected
@@ -1016,13 +1005,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void cst_encode_unit(void raw) {
     return raw;
-  }
-
-  @protected
-  void sse_encode_AnyhowException(
-      AnyhowException self, SseSerializer serializer) {
-    throw UnimplementedError(
-        'not yet supported in serialized mode, feel free to create an issue');
   }
 
   @protected

@@ -18,11 +18,6 @@ where
         (!self.is_null() && !self.is_undefined()).then(|| self.cst_decode())
     }
 }
-impl CstDecode<anyhow::Error> for String {
-    fn cst_decode(self) -> anyhow::Error {
-        unimplemented!()
-    }
-}
 impl CstDecode<String> for String {
     fn cst_decode(self) -> String {
         self
@@ -357,11 +352,6 @@ impl CstDecode<crate::api::api::VariantSearchResult>
             yues: self_.get(2).cst_decode(),
             engs: self_.get(3).cst_decode(),
         }
-    }
-}
-impl CstDecode<anyhow::Error> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-    fn cst_decode(self) -> anyhow::Error {
-        unimplemented!()
     }
 }
 impl CstDecode<String> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {

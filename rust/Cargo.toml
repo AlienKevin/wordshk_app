@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 wordshk_tools = { git = "https://github.com/AlienKevin/wordshk-tools.git", rev = "47fb9e12905b05ceb9ae75258d391412b7607a3d" }
 flutter_rust_bridge = { version = "2.0.0-dev.11" }
-anyhow = { version = "1.0.75", features = ["backtrace"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 parking_lot = "0.12.1"
@@ -18,6 +17,7 @@ lazy_static = "1.4.0"
 log = "0.4.20"
 rkyv = { version = "0.7.43", features = [ "alloc" ] }
 regex = "1.5.5"
+#anyhow = { version = "1.0.79", features = ["backtrace"] }
 
 [lib]
 crate-type = ["cdylib", "staticlib"]

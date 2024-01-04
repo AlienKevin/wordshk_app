@@ -1,10 +1,8 @@
 use std::collections::{BTreeMap, HashMap};
 use std::collections::BinaryHeap;
-use std::io::Write;
 use std::sync::Mutex;
 use std::time::Instant;
 
-use anyhow::Result;
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
@@ -130,7 +128,6 @@ static API: Lazy<Mutex<WordshkApi>> = Lazy::new(|| Mutex::new(WordshkApi::new())
 
 #[frb(init)]
 pub fn init_utils() {
-    env::set_var("RUST_BACKTRACE", "1");
     // Default utilities - feel free to customize
     flutter_rust_bridge::setup_default_user_utils();
 }
@@ -203,7 +200,7 @@ fn english_index(english_index_data: &AlignedVec) -> &ArchivedEnglishIndex {
     unsafe { rkyv::archived_root::<EnglishIndex>(english_index_data) }
 }
 
-pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<EntrySummary>> {
+pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Vec<EntrySummary> {
     let summaries = entry_ids.into_iter().map(|entry_id| {
         let api = API.lock().unwrap();
         let entry = api.variants_map.get(&entry_id).unwrap().first().unwrap();
@@ -214,13 +211,12 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Result<Vec<En
         let defs = get_entry_defs(entry_id, dict(&api.dict_data), script);
         EntrySummary { variant, defs }
     }).collect();
-    Ok(summaries)
+    summaries
 }
 
-pub fn generate_pr_indices(romanization: Romanization) -> Result<()> {
+pub fn generate_pr_indices(romanization: Romanization) {
     let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(&API.lock().unwrap().dict_data), romanization);
     API.lock().unwrap().pr_indices = Some(wordshk_tools::pr_index::pr_indices_into_fst(pr_indices));
-    Ok(())
 }
 
 pub fn combined_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
