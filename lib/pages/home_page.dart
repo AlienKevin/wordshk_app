@@ -188,6 +188,22 @@ class _HomePageState extends State<HomePage>
     final embedded = getEmbedded();
     return Column(
       children: [
+        Expanded(
+          child: TabBarView(controller: _historyAndBookmarksTabController, children: [
+            EntryItemsPage<HistoryState>(
+              emptyMessage: AppLocalizations.of(context)!.noHistory,
+              deletionConfirmationMessage:
+                  AppLocalizations.of(context)!.historyDeleteConfirmation,
+              allowEdits: false,
+            ),
+            EntryItemsPage<BookmarkState>(
+              emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+              deletionConfirmationMessage:
+                  AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+              allowEdits: true,
+            )
+          ]),
+        ),
         Material(
             elevation: embedded == Embedded.topLevel ? 2 : 0,
             child: TabBar(
@@ -206,27 +222,6 @@ class _HomePageState extends State<HomePage>
                 tabBarIndicatorSize: TabBarIndicatorSize.label,
               ),
             )),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(top: embedded == Embedded.topLevel ? 5 : 0),
-            child: TabBarView(
-                controller: _historyAndBookmarksTabController,
-                children: [
-                  EntryItemsPage<HistoryState>(
-                    emptyMessage: AppLocalizations.of(context)!.noHistory,
-                    deletionConfirmationMessage:
-                        AppLocalizations.of(context)!.historyDeleteConfirmation,
-                    allowEdits: false,
-                  ),
-                  EntryItemsPage<BookmarkState>(
-                    emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-                    deletionConfirmationMessage: AppLocalizations.of(context)!
-                        .bookmarkDeleteConfirmation,
-                    allowEdits: true,
-                  )
-                ]),
-          ),
-        )
       ],
     );
   }
