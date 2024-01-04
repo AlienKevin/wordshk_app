@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_rust_bridge: ^2.0.0-dev.9
+  flutter_rust_bridge: ^2.0.0-dev.11
   equatable: ^2.0.0
   flutter_native_splash: ^2.3.6
   just_audio: ^0.9.35

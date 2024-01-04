@@ -45,9 +45,9 @@ dependencies = [
 
 [[package]]
 name = "allo-isolate"
-version = "0.1.20"
+version = "0.1.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f56b7997817c178b853573e8bdfb6c3afe02810b43f17d766d6703560074b0c3"
+checksum = "b2ad11546cc848f5e627a2d00f9b3281e96bbe2e124c7ccc193d00ac1d6d953a"
 dependencies = [
  "anyhow",
  "atomic",
@@ -60,6 +60,24 @@ name = "android-tzdata"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
+
+[[package]]
+name = "android_log-sys"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ecc8056bf6ab9892dcd53216c83d1597487d7dacac16c8df6b877d127df9937"
+
+[[package]]
+name = "android_logger"
+version = "0.13.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c494134f746c14dc653a35a4ea5aca24ac368529da5370ecf41fe0341c35772f"
+dependencies = [
+ "android_log-sys",
+ "env_logger",
+ "log",
+ "once_cell",
+]
 
 [[package]]
 name = "android_system_properties"
@@ -323,6 +341,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "dashmap"
+version = "4.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e77a43b28d0668df09411cb0bc9a8c2adc40f9a048afe863e05fd43251e8e39c"
+dependencies = [
+ "cfg-if",
+ "num_cpus",
+]
+
+[[package]]
 name = "debugid"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -374,6 +402,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "env_logger"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "95b3f3e67048839cb0d0781f445682a35113da7121f7c949db0e2be96a4fbece"
+dependencies = [
+ "log",
+ "regex",
+]
+
+[[package]]
 name = "equivalent"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -420,11 +458,12 @@ dependencies = [
 
 [[package]]
 name = "flutter_rust_bridge"
-version = "2.0.0-dev.9"
+version = "2.0.0-dev.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bceedf6c72b74cfffbbaefa856b37acb1465e2cdd06cc83e2b41ce5b38611cd"
+checksum = "59b62696a062230760899134d5125a9af73fcc2262f7607524d7464321f94c81"
 dependencies = [
  "allo-isolate",
+ "android_logger",
  "anyhow",
  "backtrace",
  "build-target",
@@ -441,6 +480,7 @@ dependencies = [
  "lazy_static",
  "libc",
  "log",
+ "oslog",
  "parking_lot",
  "threadpool",
  "tokio",
@@ -451,9 +491,9 @@ dependencies = [
 
 [[package]]
 name = "flutter_rust_bridge_macros"
-version = "2.0.0-dev.9"
+version = "2.0.0-dev.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4616dd525ca80edde2763103aface171031eae84844c2c012439103ed6cf9a9"
+checksum = "87e8ea0271fca3e72c80e960a2147db8e14f0f3e24fd67037f892d152669fe5a"
 
 [[package]]
 name = "fnv"
@@ -1044,6 +1084,17 @@ dependencies = [
  "log",
  "serde",
  "winapi",
+]
+
+[[package]]
+name = "oslog"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8343ce955f18e7e68c0207dd0ea776ec453035685395ababd2ea651c569728b3"
+dependencies = [
+ "cc",
+ "dashmap",
+ "log",
 ]
 
 [[package]]
