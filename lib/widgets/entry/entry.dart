@@ -1,7 +1,9 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/language_state.dart';
 
@@ -15,7 +17,6 @@ class EntryWidget extends StatefulWidget {
   final int? initialDefIndex;
   final OnTapLink onTapLink;
   final UpdateEntryIndex updateEntryIndex;
-  final Widget? entryActionButtons;
 
   const EntryWidget({
     Key? key,
@@ -24,7 +25,6 @@ class EntryWidget extends StatefulWidget {
     required this.initialDefIndex,
     required this.onTapLink,
     required this.updateEntryIndex,
-    this.entryActionButtons,
   }) : super(key: key);
 
   @override
@@ -51,12 +51,45 @@ class _EntryWidgetState extends State<EntryWidget>
     double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
     TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
     final localizationContext = AppLocalizations.of(context)!;
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(
         child: Column(children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: TabBarView(
+                  controller: _tabController,
+                  children: widget.entryGroup
+                      .mapIndexed((index, entry) => EntryTab(
+                            entry: entry,
+                            script: context.watch<LanguageState>().getScript(),
+                            variantTextStyle:
+                                Theme.of(context).textTheme.headlineSmall!,
+                            prTextStyle: Theme.of(context).textTheme.bodySmall!,
+                            lineTextStyle: lineTextStyle,
+                            linkColor: Theme.of(context).colorScheme.secondary,
+                            rubyFontSize: rubyFontSize,
+                            onTapLink: widget.onTapLink,
+                            initialDefIndex: index == widget.initialEntryIndex
+                                ? widget.initialDefIndex
+                                : null,
+                          ))
+                      .toList()),
+            ),
+          ),
           Row(children: [
+            IconButton(
+              icon: Icon(
+                  isMaterial(context)
+                      ? Icons.arrow_back
+                      : CupertinoIcons.chevron_left,
+                  color: Theme.of(context).textTheme.bodyMedium!.color!),
+              onPressed: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
             Expanded(
                 child: Align(
               alignment: Alignment.centerLeft,
@@ -81,7 +114,8 @@ class _EntryWidgetState extends State<EntryWidget>
                   labelPadding: const EdgeInsets.symmetric(horizontal: 30),
                   // Space between tabs
                   indicator: BubbleTabIndicator(
-                    indicatorHeight: Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+                    indicatorHeight:
+                        Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
                     indicatorColor: Theme.of(context).splashColor,
                     tabBarIndicatorSize: TabBarIndicatorSize.label,
                   ),
@@ -97,31 +131,7 @@ class _EntryWidgetState extends State<EntryWidget>
                 ),
               ),
             )),
-            widget.entryActionButtons ?? Container(),
           ]),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: TabBarView(
-                  controller: _tabController,
-                  children: widget.entryGroup
-                      .mapIndexed((index, entry) => EntryTab(
-                            entry: entry,
-                            script: context.watch<LanguageState>().getScript(),
-                            variantTextStyle:
-                                Theme.of(context).textTheme.headlineSmall!,
-                            prTextStyle: Theme.of(context).textTheme.bodySmall!,
-                            lineTextStyle: lineTextStyle,
-                            linkColor: Theme.of(context).colorScheme.secondary,
-                            rubyFontSize: rubyFontSize,
-                            onTapLink: widget.onTapLink,
-                            initialDefIndex: index == widget.initialEntryIndex
-                                ? widget.initialDefIndex
-                                : null,
-                          ))
-                      .toList()),
-            ),
-          ),
         ]),
       )
     ]);

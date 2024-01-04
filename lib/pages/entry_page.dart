@@ -14,7 +14,6 @@ import '../models/entry.dart';
 import '../src/rust/api/api.dart';
 import '../states/player_state.dart';
 import '../widgets/entry/entry.dart';
-import '../widgets/entry/entry_action_buttons.dart';
 
 class EntryPage extends StatefulWidget {
   final int id;
@@ -76,20 +75,6 @@ class _EntryPageState extends State<EntryPage> {
           return Future.value(true);
         },
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: widget.embedded == Embedded.embedded
-              ? null
-              : AppBar(
-                  actions: [
-                    EntryActionButtons(
-                      entryGroup: entryGroup,
-                      entryIndex: entryIndex,
-                      isLoading: isLoading,
-                      hasError: hasError,
-                      inAppBar: true,
-                    )
-                  ],
-                ),
           body: switch (widget.embedded) {
             Embedded.topLevel => ConstrainedContent(child: showEntry()),
             Embedded.embedded || Embedded.nestedInEmbedded => showEntry(),
@@ -120,17 +105,7 @@ class _EntryPageState extends State<EntryPage> {
     } else if (isLoading) {
       return Container();
     } else {
-      final hideEntryActionButtons = widget.embedded == Embedded.topLevel ||
-          widget.embedded == Embedded.nestedInEmbedded;
       return EntryWidget(
-        entryActionButtons: hideEntryActionButtons
-            ? null
-            : EntryActionButtons(
-                entryGroup: entryGroup!,
-                entryIndex: entryIndex!,
-                isLoading: isLoading,
-                hasError: hasError,
-                inAppBar: false),
         entryGroup: entryGroup!,
         initialEntryIndex: entryIndex!,
         initialDefIndex: widget.defIndex,
@@ -157,10 +132,7 @@ class _EntryPageState extends State<EntryPage> {
                     builder: (context) => EntryPage(
                           id: id,
                           showFirstEntryInGroupInitially: true,
-                          embedded: widget.embedded == Embedded.embedded ||
-                                  widget.embedded == Embedded.nestedInEmbedded
-                              ? Embedded.nestedInEmbedded
-                              : Embedded.topLevel,
+                          embedded: embedded,
                         )),
               );
             }
