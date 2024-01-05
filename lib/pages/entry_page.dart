@@ -76,7 +76,8 @@ class _EntryPageState extends State<EntryPage> {
         },
         child: Scaffold(
           body: switch (widget.embedded) {
-            Embedded.topLevel => ConstrainedContent(child: showEntry()),
+            Embedded.topLevel =>
+              SafeArea(child: ConstrainedContent(child: showEntry())),
             Embedded.embedded || Embedded.nestedInEmbedded => showEntry(),
           },
         ));
