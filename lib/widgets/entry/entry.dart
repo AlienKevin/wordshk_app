@@ -8,7 +8,6 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:wordshk/states/language_state.dart';
 
 import '../../models/entry.dart';
-import '../../states/player_state.dart';
 import 'entry_tab.dart';
 
 class EntryWidget extends StatefulWidget {
@@ -16,7 +15,6 @@ class EntryWidget extends StatefulWidget {
   final int initialEntryIndex;
   final int? initialDefIndex;
   final OnTapLink onTapLink;
-  final UpdateEntryIndex updateEntryIndex;
 
   const EntryWidget({
     Key? key,
@@ -24,7 +22,6 @@ class EntryWidget extends StatefulWidget {
     required this.initialEntryIndex,
     required this.initialDefIndex,
     required this.onTapLink,
-    required this.updateEntryIndex,
   }) : super(key: key);
 
   @override
@@ -36,6 +33,10 @@ class _EntryWidgetState extends State<EntryWidget>
   int? entryIndex;
   late TabController _tabController;
   late AutoScrollController _autoScrollController;
+
+  getStartDefIndex(int entryIndex) => widget.entryGroup
+          .take(entryIndex)
+          .fold(0, (len, entry) => len + (entry.defs.length + 1));
 
   @override
   void initState() {
@@ -51,9 +52,7 @@ class _EntryWidgetState extends State<EntryWidget>
         axis: Axis.vertical);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final targetDefIndex = widget.entryGroup
-              .take(widget.initialEntryIndex)
-              .fold(0, (len, entry) => len + (entry.defs.length + 1)) +
+      final targetDefIndex = getStartDefIndex(widget.initialEntryIndex) +
           (widget.initialDefIndex != null ? widget.initialDefIndex! + 1 : 0);
       print("initialEntryIndex: ${widget.initialEntryIndex}");
       print("initialDefIndex: ${widget.initialDefIndex}");
@@ -88,9 +87,7 @@ class _EntryWidgetState extends State<EntryWidget>
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, entryIndex) => EntryTab(
               entryGroupSize: widget.entryGroup.length,
-              startDefIndex: widget.entryGroup
-                  .take(entryIndex)
-                  .fold(0, (len, entry) => len + (entry.defs.length + 1)),
+              startDefIndex: getStartDefIndex(entryIndex),
               entry: widget.entryGroup[entryIndex],
               script: context.watch<LanguageState>().getScript(),
               variantTextStyle: Theme.of(context).textTheme.headlineSmall!,
@@ -124,13 +121,16 @@ class _EntryWidgetState extends State<EntryWidget>
             elevation: 2,
             child: TabBar(
               controller: _tabController,
-              onTap: (newIndex) {
+              onTap: (newIndex) async {
                 if (newIndex != entryIndex) {
-                  context.read<PlayerState>().stop();
+                  // context.read<PlayerState>().stop();
                   setState(() {
                     entryIndex = newIndex;
                   });
-                  widget.updateEntryIndex(newIndex);
+                  final targetDefIndex = getStartDefIndex(newIndex);
+                  await _autoScrollController.scrollToIndex(targetDefIndex,
+                      preferPosition: AutoScrollPosition.begin,
+                      duration: const Duration(milliseconds: 15));
                 }
               },
               isScrollable: true,

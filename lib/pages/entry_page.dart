@@ -34,7 +34,7 @@ class EntryPage extends StatefulWidget {
 }
 
 class _EntryPageState extends State<EntryPage> {
-  int? entryIndex;
+  int? initialEntryIndex;
   List<Entry>? entryGroup;
   bool hasError = false;
   bool isLoading = true;
@@ -49,7 +49,7 @@ class _EntryPageState extends State<EntryPage> {
           entryGroup = json
               .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
               .toList();
-          entryIndex = widget.showFirstEntryInGroupInitially
+          initialEntryIndex = widget.showFirstEntryInGroupInitially
               ? 0
               : entryGroup!.indexWhere((entry) => entry.id == widget.id);
           isLoading = false;
@@ -83,10 +83,6 @@ class _EntryPageState extends State<EntryPage> {
         ));
   }
 
-  void updateEntryIndex(int newIndex) {
-    entryIndex = newIndex;
-  }
-
   showEntry() {
     if (hasError) {
       log("Entry page failed to load due to an error.");
@@ -108,9 +104,8 @@ class _EntryPageState extends State<EntryPage> {
     } else {
       return EntryWidget(
         entryGroup: entryGroup!,
-        initialEntryIndex: entryIndex!,
+        initialEntryIndex: initialEntryIndex!,
         initialDefIndex: widget.defIndex,
-        updateEntryIndex: updateEntryIndex,
         onTapLink: (entryVariant) {
           log("Tapped on link $entryVariant");
           getEntryId(
