@@ -5,9 +5,11 @@ import '../../constants.dart';
 import '../../models/entry.dart';
 
 class EntryLabels extends StatelessWidget {
+  final List<Pos> poses;
   final List<Label> labels;
 
-  const EntryLabels({Key? key, required this.labels}) : super(key: key);
+  const EntryLabels({Key? key, required this.poses, required this.labels})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) => Visibility(
@@ -17,7 +19,14 @@ class EntryLabels extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 5),
                   child: Wrap(
                       spacing: 5,
-                      children: labels
+                      children: [
+                        poses
+                            .map((pos) => translatePos(
+                                pos, AppLocalizations.of(context)!))
+                            .join("/"),
+                        ...labels.map((label) => translateLabel(
+                            label, AppLocalizations.of(context)!))
+                      ]
                           .map((label) => Chip(
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,
@@ -41,8 +50,7 @@ class EntryLabels extends StatelessWidget {
                               backgroundColor: label == Label.vulgar
                                   ? redColor
                                   : Theme.of(context).splashColor,
-                              label: Text(
-                                  translateLabel(label, AppLocalizations.of(context)!))))
+                              label: Text(label)))
                           .toList()),
                 )),
       );
