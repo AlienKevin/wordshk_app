@@ -60,10 +60,11 @@ class _EntryWidgetState extends State<EntryWidget>
     // print("initialDefIndex: ${widget.initialDefIndex}");
     // print("targetDefIndex: $targetDefIndex");
 
-    _observerController = ListObserverController(controller: _autoScrollController)
-      ..initialIndexModel = ObserverIndexPositionModel(
-        index: targetDefIndex,
-      );
+    _observerController =
+        ListObserverController(controller: _autoScrollController)
+          ..initialIndexModel = ObserverIndexPositionModel(
+            index: targetDefIndex,
+          );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
@@ -116,15 +117,16 @@ class _EntryWidgetState extends State<EntryWidget>
               //       'item - ${item.index} ${item.leadingMarginToViewport} ${item.trailingMarginToViewport} ${item.displayPercentage}');
               // }
 
-                if (!isScrollingToTarget && resultModel.displayingChildModelList.isNotEmpty) {
-                  final focusedChild = resultModel.displayingChildModelList
-                      .reduce((a, b) =>
-                  a.displayPercentage >= b.displayPercentage ? a : b);
-                  // debugPrint("animating tab to ${focusedChild.index}");
-                  setState(() {
-                    _tabController.animateTo(focusedChild.index);
-                  });
-                }
+              if (!isScrollingToTarget &&
+                  resultModel.displayingChildModelList.isNotEmpty) {
+                final focusedChild = resultModel.displayingChildModelList
+                    .reduce((a, b) =>
+                        a.displayPercentage >= b.displayPercentage ? a : b);
+                // debugPrint("animating tab to ${focusedChild.index}");
+                setState(() {
+                  _tabController.animateTo(focusedChild.index);
+                });
+              }
             },
             child: ListView.separated(
               controller: _autoScrollController,
@@ -148,17 +150,20 @@ class _EntryWidgetState extends State<EntryWidget>
         ),
       ),
       Row(children: [
-        IconButton(
-          icon: Icon(
-              isMaterial(context)
-                  ? Icons.arrow_back
-                  : CupertinoIcons.chevron_left,
-              color: Theme.of(context).textTheme.bodyMedium!.color!),
-          onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            }
-          },
+        Visibility(
+          visible: Navigator.of(context).canPop(),
+          child: IconButton(
+            icon: Icon(
+                isMaterial(context)
+                    ? Icons.arrow_back
+                    : CupertinoIcons.chevron_left,
+                color: Theme.of(context).textTheme.bodyMedium!.color!),
+            onPressed: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
         ),
         Expanded(
             child: Align(
