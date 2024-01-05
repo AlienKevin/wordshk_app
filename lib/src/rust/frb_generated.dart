@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
+import 'api/api.dart';
+import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
 
 /// Main entrypoint of the Rust API
 class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
@@ -91,8 +93,6 @@ abstract class RustLibApi extends BaseApi {
       {required Uint32List entryIds, required Script script, dynamic hint});
 
   Future<List<String>> getJyutping({required String query, dynamic hint});
-
-  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint});
 
   Future<void> initApi(
       {required Uint8List dictData,
@@ -338,28 +338,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire_get_splotlight_summaries(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_spotlight_entry_summary,
-        decodeErrorData: null,
-      ),
-      constMeta: kGetSplotlightSummariesConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kGetSplotlightSummariesConstMeta => const TaskConstMeta(
-        debugName: "get_splotlight_summaries",
-        argNames: [],
-      );
-
-  @override
   Future<void> initApi(
       {required Uint8List dictData,
       required Uint8List englishIndexData,
@@ -526,14 +504,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<SpotlightEntrySummary> dco_decode_list_spotlight_entry_summary(
-      dynamic raw) {
-    return (raw as List<dynamic>)
-        .map(dco_decode_spotlight_entry_summary)
-        .toList();
-  }
-
-  @protected
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw) {
     return (raw as List<dynamic>)
         .map(dco_decode_variant_search_result)
@@ -620,23 +590,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   Script dco_decode_script(dynamic raw) {
     return Script.values[raw as int];
-  }
-
-  @protected
-  SpotlightEntrySummary dco_decode_spotlight_entry_summary(dynamic raw) {
-    final arr = raw as List<dynamic>;
-    if (arr.length != 8)
-      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
-    return SpotlightEntrySummary(
-      id: dco_decode_u_32(arr[0]),
-      variants: dco_decode_list_String(arr[1]),
-      variantsSimp: dco_decode_list_String(arr[2]),
-      jyutpings: dco_decode_list_String(arr[3]),
-      yales: dco_decode_list_String(arr[4]),
-      def: dco_decode_String(arr[5]),
-      defSimp: dco_decode_String(arr[6]),
-      defEn: dco_decode_String(arr[7]),
-    );
   }
 
   @protected
@@ -824,17 +777,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<SpotlightEntrySummary> sse_decode_list_spotlight_entry_summary(
-      SseDeserializer deserializer) {
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <SpotlightEntrySummary>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_spotlight_entry_summary(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
       SseDeserializer deserializer) {
     var len_ = sse_decode_i_32(deserializer);
@@ -921,28 +863,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Script sse_decode_script(SseDeserializer deserializer) {
     var inner = sse_decode_i_32(deserializer);
     return Script.values[inner];
-  }
-
-  @protected
-  SpotlightEntrySummary sse_decode_spotlight_entry_summary(
-      SseDeserializer deserializer) {
-    var var_id = sse_decode_u_32(deserializer);
-    var var_variants = sse_decode_list_String(deserializer);
-    var var_variantsSimp = sse_decode_list_String(deserializer);
-    var var_jyutpings = sse_decode_list_String(deserializer);
-    var var_yales = sse_decode_list_String(deserializer);
-    var var_def = sse_decode_String(deserializer);
-    var var_defSimp = sse_decode_String(deserializer);
-    var var_defEn = sse_decode_String(deserializer);
-    return SpotlightEntrySummary(
-        id: var_id,
-        variants: var_variants,
-        variantsSimp: var_variantsSimp,
-        jyutpings: var_jyutpings,
-        yales: var_yales,
-        def: var_def,
-        defSimp: var_defSimp,
-        defEn: var_defEn);
   }
 
   @protected
@@ -1135,15 +1055,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_spotlight_entry_summary(
-      List<SpotlightEntrySummary> self, SseSerializer serializer) {
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_spotlight_entry_summary(item, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_list_variant_search_result(
       List<VariantSearchResult> self, SseSerializer serializer) {
     sse_encode_i_32(self.length, serializer);
@@ -1215,19 +1126,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_script(Script self, SseSerializer serializer) {
     sse_encode_i_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_spotlight_entry_summary(
-      SpotlightEntrySummary self, SseSerializer serializer) {
-    sse_encode_u_32(self.id, serializer);
-    sse_encode_list_String(self.variants, serializer);
-    sse_encode_list_String(self.variantsSimp, serializer);
-    sse_encode_list_String(self.jyutpings, serializer);
-    sse_encode_list_String(self.yales, serializer);
-    sse_encode_String(self.def, serializer);
-    sse_encode_String(self.defSimp, serializer);
-    sse_encode_String(self.defEn, serializer);
   }
 
   @protected

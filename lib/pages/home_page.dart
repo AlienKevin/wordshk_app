@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide SearchBar, NavigationDrawer;
-import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:go_router/go_router.dart';
@@ -71,33 +67,6 @@ class _HomePageState extends State<HomePage>
         onSearchSubmitted(
             context.read<SearchQueryState>().query, getEmbedded());
       });
-
-      // Spotlight search only available on apple
-      if (Platform.isIOS || Platform.isMacOS) {
-        // Callback on searchable item selected
-        final historyState = context.read<HistoryState>();
-        FlutterCoreSpotlight.instance.configure(
-          onSearchableItemSelected: (userActivity) async {
-            if (userActivity == null) {
-              if (kDebugMode) {
-                print("Spotlight searched returned null");
-              }
-              return;
-            }
-            final query =
-                userActivity.userInfo!['kCSSearchQueryString'] as String;
-            // Ignore the variant index and optional script type (simp/trad) after the "-"
-            final entryId =
-                int.parse(userActivity.uniqueIdentifier!.split("-")[0]);
-
-            if (kDebugMode) {
-              print("Spotlight searched: $query, result entryId: $entryId");
-            }
-            await router.push("/entry/id/$entryId");
-            historyState.updateItem(entryId);
-          },
-        );
-      }
     });
   }
 

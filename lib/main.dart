@@ -54,7 +54,6 @@ import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
-import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'package:wordshk/widgets/scaffold_with_bottom_navigation.dart';
 
 import 'aws_service.dart';
@@ -152,15 +151,12 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
         providers: [
           ChangeNotifierProvider<AnalyticsSettingsState>(
               create: (_) => AnalyticsSettingsState(prefs)),
-          ChangeNotifierProvider<SpotlightIndexingState>(
-              create: (_) => SpotlightIndexingState(prefs)),
           ChangeNotifierProvider<SearchQueryState>(
               create: (_) => SearchQueryState()),
           ChangeNotifierProvider<InputModeState>(
               create: (_) => InputModeState()),
           ChangeNotifierProvider<LanguageState>(
-              create: (context) => LanguageState(prefs,
-                  Provider.of<SpotlightIndexingState>(context, listen: false)),
+              create: (context) => LanguageState(prefs),
               lazy: false),
           ChangeNotifierProvider<EntryLanguageState>(
               create: (_) => EntryLanguageState(prefs)),
@@ -169,8 +165,7 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
           ChangeNotifierProvider<EntryEgFontSizeState>(
               create: (_) => EntryEgFontSizeState(prefs)),
           ChangeNotifierProvider<RomanizationState>(
-              create: (context) => RomanizationState(prefs,
-                  Provider.of<SpotlightIndexingState>(context, listen: false)),
+              create: (context) => RomanizationState(prefs),
               lazy: false),
           ChangeNotifierProvider<EntryEgJumpyPrsState>(
               create: (_) => EntryEgJumpyPrsState(prefs)),
@@ -492,8 +487,6 @@ class _MyAppState extends State<MyApp> {
           final entryEgPrMethod =
               context.read<PronunciationMethodState>().entryEgMethod;
           final entryEgFontSize = context.read<EntryEgFontSizeState>().size;
-          final spotlightEnabled =
-              context.read<SpotlightIndexingState>().enabled;
 
           final prefs = await SharedPreferences.getInstance();
           final lastSyncTime = prefs.getString("analyticsSyncTime");
@@ -519,7 +512,6 @@ class _MyAppState extends State<MyApp> {
             "numHistory": numHistory,
             "entryEgPrMethod": entryEgPrMethod,
             "entryEgFontSize": entryEgFontSize,
-            "spotlightEnabled": spotlightEnabled,
             ...analyticsState.toJson(),
           };
           final ok = await awsService.sendMessage(jsonEncode(message));

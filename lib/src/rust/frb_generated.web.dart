@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
+
+import 'api/api.dart';
+import 'frb_generated.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -69,10 +71,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
-  List<SpotlightEntrySummary> dco_decode_list_spotlight_entry_summary(
-      dynamic raw);
-
-  @protected
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
 
   @protected
@@ -102,9 +100,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Script dco_decode_script(dynamic raw);
-
-  @protected
-  SpotlightEntrySummary dco_decode_spotlight_entry_summary(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -178,10 +173,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
-  List<SpotlightEntrySummary> sse_decode_list_spotlight_entry_summary(
-      SseDeserializer deserializer);
-
-  @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
       SseDeserializer deserializer);
 
@@ -214,10 +205,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Script sse_decode_script(SseDeserializer deserializer);
-
-  @protected
-  SpotlightEntrySummary sse_decode_spotlight_entry_summary(
-      SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -328,12 +315,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  List<dynamic> cst_encode_list_spotlight_entry_summary(
-      List<SpotlightEntrySummary> raw) {
-    return raw.map(cst_encode_spotlight_entry_summary).toList();
-  }
-
-  @protected
   List<dynamic> cst_encode_list_variant_search_result(
       List<VariantSearchResult> raw) {
     return raw.map(cst_encode_variant_search_result).toList();
@@ -386,20 +367,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<dynamic> cst_encode_record_string_string((String, String) raw) {
     return [cst_encode_String(raw.$1), cst_encode_String(raw.$2)];
-  }
-
-  @protected
-  List<dynamic> cst_encode_spotlight_entry_summary(SpotlightEntrySummary raw) {
-    return [
-      cst_encode_u_32(raw.id),
-      cst_encode_list_String(raw.variants),
-      cst_encode_list_String(raw.variantsSimp),
-      cst_encode_list_String(raw.jyutpings),
-      cst_encode_list_String(raw.yales),
-      cst_encode_String(raw.def),
-      cst_encode_String(raw.defSimp),
-      cst_encode_String(raw.defEn)
-    ];
   }
 
   @protected
@@ -494,10 +461,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<(String, String)> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_spotlight_entry_summary(
-      List<SpotlightEntrySummary> self, SseSerializer serializer);
-
-  @protected
   void sse_encode_list_variant_search_result(
       List<VariantSearchResult> self, SseSerializer serializer);
 
@@ -532,10 +495,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_script(Script self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_spotlight_entry_summary(
-      SpotlightEntrySummary self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
@@ -593,9 +552,6 @@ class RustLibWire extends BaseWire {
   void wire_get_jyutping(NativePortType port_, String query) =>
       wasmModule.wire_get_jyutping(port_, query);
 
-  void wire_get_splotlight_summaries(NativePortType port_) =>
-      wasmModule.wire_get_splotlight_summaries(port_);
-
   void wire_init_api(NativePortType port_, Uint8List dict_data,
           Uint8List english_index_data) =>
       wasmModule.wire_init_api(port_, dict_data, english_index_data);
@@ -641,8 +597,6 @@ class RustLibWasmModule implements WasmModule {
       NativePortType port_, Uint32List entry_ids, int script);
 
   external void wire_get_jyutping(NativePortType port_, String query);
-
-  external void wire_get_splotlight_summaries(NativePortType port_);
 
   external void wire_init_api(
       NativePortType port_, Uint8List dict_data, Uint8List english_index_data);

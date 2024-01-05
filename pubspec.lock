@@ -366,15 +366,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_core_spotlight:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "500ac5ebb5fc3b88e4e57d64c8c8c645f71980b5"
-      resolved-ref: "500ac5ebb5fc3b88e4e57d64c8c8c645f71980b5"
-      url: "https://github.com/AlienKevin/flutter_core_spotlight.git"
-    source: git
-    version: "1.0.4"
   flutter_driver:
     dependency: transitive
     description: flutter

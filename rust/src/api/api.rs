@@ -13,7 +13,7 @@ use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishSe
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::pr_index::FstPrIndices;
-use wordshk_tools::rich_dict::{RichDict, RichEntry, RichLine};
+use wordshk_tools::rich_dict::{RichDict, RichLine};
 use wordshk_tools::rich_dict::ArchivedRichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
@@ -81,17 +81,6 @@ pub struct EgSearchResult {
     pub def_index: u32,
     pub eg_index: u32,
     pub eg: String,
-}
-
-pub struct SpotlightEntrySummary {
-    pub id: u32,
-    pub variants: Vec<String>,
-    pub variants_simp: Vec<String>,
-    pub jyutpings: Vec<String>,
-    pub yales: Vec<String>,
-    pub def: String,
-    pub def_simp: String,
-    pub def_en: String,
 }
 
 pub struct EntrySummary {
@@ -267,28 +256,6 @@ pub fn eg_search(capacity: u32, max_first_index_in_eg: u32, query: String, scrip
         i += 1;
     }
     (query_found, results)
-}
-
-pub fn get_splotlight_summaries() -> Vec<SpotlightEntrySummary> {
-    // Create the final EntrySummary list
-    let api = API.lock().unwrap();
-    let summaries: Vec<SpotlightEntrySummary> = dict(&api.dict_data).iter()
-        .map(|(id, entry)| {
-            let entry: RichEntry = entry.deserialize(&mut rkyv::Infallible).unwrap();
-            SpotlightEntrySummary {
-                id: *id,
-                variants: entry.variants.to_words().iter().map(|word| word.to_string()).collect(),
-                variants_simp: entry.variants_simp.clone(),
-                jyutpings: entry.variants.0.iter().map(|variant| variant.prs.0[0].to_string()).collect(),
-                yales: entry.variants.0.iter().map(|variant| variant.prs.0[0].to_yale()).collect(),
-                def: clause_to_string(&entry.defs[0].yue),
-                def_simp: clause_to_string(&entry.defs[0].yue_simp),
-                def_en: entry.defs[0].eng.as_ref().map(|c| clause_to_string(c)).unwrap_or("".to_string()),
-            }
-        })
-        .collect();
-
-    summaries
 }
 
 pub fn get_entry_json(id: u32) -> String {

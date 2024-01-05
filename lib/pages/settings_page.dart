@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -7,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/pages/share_feedback_page.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
-import 'package:wordshk/states/spotlight_indexing_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
@@ -80,22 +77,6 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              SettingsSection(
-                  tiles: ((Platform.isIOS || Platform.isMacOS)
-                      ? <SettingsTile>[
-                          SettingsTile.switchTile(
-                              description: Text(s.spotlightSearchDescription),
-                              initialValue: context
-                                  .watch<SpotlightIndexingState>()
-                                  .enabled,
-                              onToggle: (newEnabled) {
-                                context
-                                    .read<SpotlightIndexingState>()
-                                    .updateSpotlightIndexEnabled(newEnabled);
-                              },
-                              title: Text(s.spotlightSearch)),
-                        ]
-                      : [])),
               SettingsSection(
                 title: Text(s.privacy),
                 tiles: [

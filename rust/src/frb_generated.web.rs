@@ -190,17 +190,6 @@ impl CstDecode<Vec<(String, String)>>
             .collect()
     }
 }
-impl CstDecode<Vec<crate::api::api::SpotlightEntrySummary>>
-    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-{
-    fn cst_decode(self) -> Vec<crate::api::api::SpotlightEntrySummary> {
-        self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap()
-            .iter()
-            .map(CstDecode::cst_decode)
-            .collect()
-    }
-}
 impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
@@ -306,31 +295,6 @@ impl CstDecode<(String, String)> for flutter_rust_bridge::for_generated::wasm_bi
             self_.length()
         );
         (self_.get(0).cst_decode(), self_.get(1).cst_decode())
-    }
-}
-impl CstDecode<crate::api::api::SpotlightEntrySummary>
-    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-{
-    fn cst_decode(self) -> crate::api::api::SpotlightEntrySummary {
-        let self_ = self
-            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap();
-        assert_eq!(
-            self_.length(),
-            8,
-            "Expected 8 elements, got {}",
-            self_.length()
-        );
-        crate::api::api::SpotlightEntrySummary {
-            id: self_.get(0).cst_decode(),
-            variants: self_.get(1).cst_decode(),
-            variants_simp: self_.get(2).cst_decode(),
-            jyutpings: self_.get(3).cst_decode(),
-            yales: self_.get(4).cst_decode(),
-            def: self_.get(5).cst_decode(),
-            def_simp: self_.get(6).cst_decode(),
-            def_en: self_.get(7).cst_decode(),
-        }
     }
 }
 impl CstDecode<crate::api::api::VariantSearchResult>
@@ -491,11 +455,6 @@ pub fn wire_get_entry_summaries(
 #[wasm_bindgen]
 pub fn wire_get_jyutping(port_: flutter_rust_bridge::for_generated::MessagePort, query: String) {
     wire_get_jyutping_impl(port_, query)
-}
-
-#[wasm_bindgen]
-pub fn wire_get_splotlight_summaries(port_: flutter_rust_bridge::for_generated::MessagePort) {
-    wire_get_splotlight_summaries_impl(port_)
 }
 
 #[wasm_bindgen]

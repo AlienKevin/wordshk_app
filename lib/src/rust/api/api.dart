@@ -3,8 +3,9 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
+import '../frb_generated.dart';
 
 Stream<String> createLogStream({dynamic hint}) =>
     RustLib.instance.api.createLogStream(hint: hint);
@@ -51,9 +52,6 @@ Future<(String?, List<EgSearchResult>)> egSearch(
         query: query,
         script: script,
         hint: hint);
-
-Future<List<SpotlightEntrySummary>> getSplotlightSummaries({dynamic hint}) =>
-    RustLib.instance.api.getSplotlightSummaries(hint: hint);
 
 Future<String> getEntryJson({required int id, dynamic hint}) =>
     RustLib.instance.api.getEntryJson(id: id, hint: hint);
@@ -265,53 +263,6 @@ enum Romanization {
 enum Script {
   simplified,
   traditional,
-}
-
-class SpotlightEntrySummary {
-  final int id;
-  final List<String> variants;
-  final List<String> variantsSimp;
-  final List<String> jyutpings;
-  final List<String> yales;
-  final String def;
-  final String defSimp;
-  final String defEn;
-
-  const SpotlightEntrySummary({
-    required this.id,
-    required this.variants,
-    required this.variantsSimp,
-    required this.jyutpings,
-    required this.yales,
-    required this.def,
-    required this.defSimp,
-    required this.defEn,
-  });
-
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      variants.hashCode ^
-      variantsSimp.hashCode ^
-      jyutpings.hashCode ^
-      yales.hashCode ^
-      def.hashCode ^
-      defSimp.hashCode ^
-      defEn.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SpotlightEntrySummary &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          variants == other.variants &&
-          variantsSimp == other.variantsSimp &&
-          jyutpings == other.jyutpings &&
-          yales == other.yales &&
-          def == other.def &&
-          defSimp == other.defSimp &&
-          defEn == other.defEn;
 }
 
 class VariantSearchResult {

@@ -244,22 +244,6 @@ fn wire_get_jyutping_impl(
         },
     )
 }
-fn wire_get_splotlight_summaries_impl(port_: flutter_rust_bridge::for_generated::MessagePort) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "get_splotlight_summaries",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            move |context| {
-                transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::get_splotlight_summaries())
-                })())
-            }
-        },
-    )
-}
 fn wire_init_api_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     dict_data: impl CstDecode<Vec<u8>>,
@@ -549,19 +533,6 @@ impl SseDecode for Vec<(String, String)> {
     }
 }
 
-impl SseDecode for Vec<crate::api::api::SpotlightEntrySummary> {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut len_ = <i32>::sse_decode(deserializer);
-        let mut ans_ = vec![];
-        for idx_ in 0..len_ {
-            ans_.push(<crate::api::api::SpotlightEntrySummary>::sse_decode(
-                deserializer,
-            ));
-        }
-        return ans_;
-    }
-}
-
 impl SseDecode for Vec<crate::api::api::VariantSearchResult> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut len_ = <i32>::sse_decode(deserializer);
@@ -670,29 +641,6 @@ impl SseDecode for crate::api::api::Script {
             0 => crate::api::api::Script::Simplified,
             1 => crate::api::api::Script::Traditional,
             _ => unreachable!("Invalid variant for Script: {}", inner),
-        };
-    }
-}
-
-impl SseDecode for crate::api::api::SpotlightEntrySummary {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_id = <u32>::sse_decode(deserializer);
-        let mut var_variants = <Vec<String>>::sse_decode(deserializer);
-        let mut var_variantsSimp = <Vec<String>>::sse_decode(deserializer);
-        let mut var_jyutpings = <Vec<String>>::sse_decode(deserializer);
-        let mut var_yales = <Vec<String>>::sse_decode(deserializer);
-        let mut var_def = <String>::sse_decode(deserializer);
-        let mut var_defSimp = <String>::sse_decode(deserializer);
-        let mut var_defEn = <String>::sse_decode(deserializer);
-        return crate::api::api::SpotlightEntrySummary {
-            id: var_id,
-            variants: var_variants,
-            variants_simp: var_variantsSimp,
-            jyutpings: var_jyutpings,
-            yales: var_yales,
-            def: var_def,
-            def_simp: var_defSimp,
-            def_en: var_defEn,
         };
     }
 }
@@ -897,32 +845,6 @@ impl flutter_rust_bridge::IntoIntoDart<mirror_Script> for crate::api::api::Scrip
         mirror_Script(self)
     }
 }
-impl flutter_rust_bridge::IntoDart for crate::api::api::SpotlightEntrySummary {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        vec![
-            self.id.into_into_dart().into_dart(),
-            self.variants.into_into_dart().into_dart(),
-            self.variants_simp.into_into_dart().into_dart(),
-            self.jyutpings.into_into_dart().into_dart(),
-            self.yales.into_into_dart().into_dart(),
-            self.def.into_into_dart().into_dart(),
-            self.def_simp.into_into_dart().into_dart(),
-            self.def_en.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::api::SpotlightEntrySummary
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::api::SpotlightEntrySummary>
-    for crate::api::api::SpotlightEntrySummary
-{
-    fn into_into_dart(self) -> crate::api::api::SpotlightEntrySummary {
-        self
-    }
-}
 impl flutter_rust_bridge::IntoDart for crate::api::api::VariantSearchResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         vec![
@@ -1079,15 +1001,6 @@ impl SseEncode for Vec<(String, String)> {
     }
 }
 
-impl SseEncode for Vec<crate::api::api::SpotlightEntrySummary> {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <i32>::sse_encode(self.len() as _, serializer);
-        for item in self {
-            <crate::api::api::SpotlightEntrySummary>::sse_encode(item, serializer);
-        }
-    }
-}
-
 impl SseEncode for Vec<crate::api::api::VariantSearchResult> {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(self.len() as _, serializer);
@@ -1163,19 +1076,6 @@ impl SseEncode for crate::api::api::Romanization {
 impl SseEncode for crate::api::api::Script {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(self as _, serializer);
-    }
-}
-
-impl SseEncode for crate::api::api::SpotlightEntrySummary {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <u32>::sse_encode(self.id, serializer);
-        <Vec<String>>::sse_encode(self.variants, serializer);
-        <Vec<String>>::sse_encode(self.variants_simp, serializer);
-        <Vec<String>>::sse_encode(self.jyutpings, serializer);
-        <Vec<String>>::sse_encode(self.yales, serializer);
-        <String>::sse_encode(self.def, serializer);
-        <String>::sse_encode(self.def_simp, serializer);
-        <String>::sse_encode(self.def_en, serializer);
     }
 }
 

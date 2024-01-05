@@ -3,12 +3,14 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
-import 'frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
+
+import 'api/api.dart';
+import 'frb_generated.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -70,10 +72,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
-  List<SpotlightEntrySummary> dco_decode_list_spotlight_entry_summary(
-      dynamic raw);
-
-  @protected
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
 
   @protected
@@ -103,9 +101,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Script dco_decode_script(dynamic raw);
-
-  @protected
-  SpotlightEntrySummary dco_decode_spotlight_entry_summary(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -179,10 +174,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
-  List<SpotlightEntrySummary> sse_decode_list_spotlight_entry_summary(
-      SseDeserializer deserializer);
-
-  @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
       SseDeserializer deserializer);
 
@@ -215,10 +206,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Script sse_decode_script(SseDeserializer deserializer);
-
-  @protected
-  SpotlightEntrySummary sse_decode_spotlight_entry_summary(
-      SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -328,16 +315,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  ffi.Pointer<wire_cst_list_spotlight_entry_summary>
-      cst_encode_list_spotlight_entry_summary(List<SpotlightEntrySummary> raw) {
-    final ans = wire.cst_new_list_spotlight_entry_summary(raw.length);
-    for (var i = 0; i < raw.length; ++i) {
-      cst_api_fill_to_wire_spotlight_entry_summary(raw[i], ans.ref.ptr[i]);
-    }
-    return ans;
-  }
-
-  @protected
   ffi.Pointer<wire_cst_list_variant_search_result>
       cst_encode_list_variant_search_result(List<VariantSearchResult> raw) {
     final ans = wire.cst_new_list_variant_search_result(raw.length);
@@ -434,19 +411,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  void cst_api_fill_to_wire_spotlight_entry_summary(
-      SpotlightEntrySummary apiObj, wire_cst_spotlight_entry_summary wireObj) {
-    wireObj.id = cst_encode_u_32(apiObj.id);
-    wireObj.variants = cst_encode_list_String(apiObj.variants);
-    wireObj.variants_simp = cst_encode_list_String(apiObj.variantsSimp);
-    wireObj.jyutpings = cst_encode_list_String(apiObj.jyutpings);
-    wireObj.yales = cst_encode_list_String(apiObj.yales);
-    wireObj.def = cst_encode_String(apiObj.def);
-    wireObj.def_simp = cst_encode_String(apiObj.defSimp);
-    wireObj.def_en = cst_encode_String(apiObj.defEn);
-  }
-
-  @protected
   void cst_api_fill_to_wire_variant_search_result(
       VariantSearchResult apiObj, wire_cst_variant_search_result wireObj) {
     wireObj.id = cst_encode_u_32(apiObj.id);
@@ -538,10 +502,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<(String, String)> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_spotlight_entry_summary(
-      List<SpotlightEntrySummary> self, SseSerializer serializer);
-
-  @protected
   void sse_encode_list_variant_search_result(
       List<VariantSearchResult> self, SseSerializer serializer);
 
@@ -576,10 +536,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_script(Script self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_spotlight_entry_summary(
-      SpotlightEntrySummary self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
@@ -816,20 +772,6 @@ class RustLibWire implements BaseWire {
   late final _wire_get_jyutping = _wire_get_jyutpingPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8>)>();
 
-  void wire_get_splotlight_summaries(
-    int port_,
-  ) {
-    return _wire_get_splotlight_summaries(
-      port_,
-    );
-  }
-
-  late final _wire_get_splotlight_summariesPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_wordshk_wire_get_splotlight_summaries');
-  late final _wire_get_splotlight_summaries =
-      _wire_get_splotlight_summariesPtr.asFunction<void Function(int)>();
-
   void wire_init_api(
     int port_,
     ffi.Pointer<wire_cst_list_prim_u_8> dict_data,
@@ -1018,24 +960,6 @@ class RustLibWire implements BaseWire {
       _cst_new_list_record_string_stringPtr.asFunction<
           ffi.Pointer<wire_cst_list_record_string_string> Function(int)>();
 
-  ffi.Pointer<wire_cst_list_spotlight_entry_summary>
-      cst_new_list_spotlight_entry_summary(
-    int len,
-  ) {
-    return _cst_new_list_spotlight_entry_summary(
-      len,
-    );
-  }
-
-  late final _cst_new_list_spotlight_entry_summaryPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Pointer<wire_cst_list_spotlight_entry_summary> Function(
-                  ffi.Int32)>>(
-      'frbgen_wordshk_cst_new_list_spotlight_entry_summary');
-  late final _cst_new_list_spotlight_entry_summary =
-      _cst_new_list_spotlight_entry_summaryPtr.asFunction<
-          ffi.Pointer<wire_cst_list_spotlight_entry_summary> Function(int)>();
-
   ffi.Pointer<wire_cst_list_variant_search_result>
       cst_new_list_variant_search_result(
     int len,
@@ -1181,32 +1105,6 @@ final class wire_cst_pr_search_result extends ffi.Struct {
 
 final class wire_cst_list_pr_search_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_pr_search_result> ptr;
-
-  @ffi.Int32()
-  external int len;
-}
-
-final class wire_cst_spotlight_entry_summary extends ffi.Struct {
-  @ffi.Uint32()
-  external int id;
-
-  external ffi.Pointer<wire_cst_list_String> variants;
-
-  external ffi.Pointer<wire_cst_list_String> variants_simp;
-
-  external ffi.Pointer<wire_cst_list_String> jyutpings;
-
-  external ffi.Pointer<wire_cst_list_String> yales;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8> def;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8> def_simp;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8> def_en;
-}
-
-final class wire_cst_list_spotlight_entry_summary extends ffi.Struct {
-  external ffi.Pointer<wire_cst_spotlight_entry_summary> ptr;
 
   @ffi.Int32()
   external int len;

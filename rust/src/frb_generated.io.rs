@@ -139,17 +139,6 @@ impl CstDecode<Vec<(String, String)>> for *mut wire_cst_list_record_string_strin
         vec.into_iter().map(CstDecode::cst_decode).collect()
     }
 }
-impl CstDecode<Vec<crate::api::api::SpotlightEntrySummary>>
-    for *mut wire_cst_list_spotlight_entry_summary
-{
-    fn cst_decode(self) -> Vec<crate::api::api::SpotlightEntrySummary> {
-        let vec = unsafe {
-            let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
-            flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
-        };
-        vec.into_iter().map(CstDecode::cst_decode).collect()
-    }
-}
 impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
     for *mut wire_cst_list_variant_search_result
 {
@@ -199,20 +188,6 @@ impl CstDecode<(Option<String>, Vec<crate::api::api::EgSearchResult>)>
 impl CstDecode<(String, String)> for wire_cst_record_string_string {
     fn cst_decode(self) -> (String, String) {
         (self.field0.cst_decode(), self.field1.cst_decode())
-    }
-}
-impl CstDecode<crate::api::api::SpotlightEntrySummary> for wire_cst_spotlight_entry_summary {
-    fn cst_decode(self) -> crate::api::api::SpotlightEntrySummary {
-        crate::api::api::SpotlightEntrySummary {
-            id: self.id.cst_decode(),
-            variants: self.variants.cst_decode(),
-            variants_simp: self.variants_simp.cst_decode(),
-            jyutpings: self.jyutpings.cst_decode(),
-            yales: self.yales.cst_decode(),
-            def: self.def.cst_decode(),
-            def_simp: self.def_simp.cst_decode(),
-            def_en: self.def_en.cst_decode(),
-        }
     }
 }
 impl CstDecode<crate::api::api::VariantSearchResult> for wire_cst_variant_search_result {
@@ -361,25 +336,6 @@ impl Default for wire_cst_record_string_string {
         Self::new_with_null_ptr()
     }
 }
-impl NewWithNullPtr for wire_cst_spotlight_entry_summary {
-    fn new_with_null_ptr() -> Self {
-        Self {
-            id: Default::default(),
-            variants: core::ptr::null_mut(),
-            variants_simp: core::ptr::null_mut(),
-            jyutpings: core::ptr::null_mut(),
-            yales: core::ptr::null_mut(),
-            def: core::ptr::null_mut(),
-            def_simp: core::ptr::null_mut(),
-            def_en: core::ptr::null_mut(),
-        }
-    }
-}
-impl Default for wire_cst_spotlight_entry_summary {
-    fn default() -> Self {
-        Self::new_with_null_ptr()
-    }
-}
 impl NewWithNullPtr for wire_cst_variant_search_result {
     fn new_with_null_ptr() -> Self {
         Self {
@@ -476,11 +432,6 @@ pub extern "C" fn frbgen_wordshk_wire_get_entry_summaries(
 #[no_mangle]
 pub extern "C" fn frbgen_wordshk_wire_get_jyutping(port_: i64, query: *mut wire_cst_list_prim_u_8) {
     wire_get_jyutping_impl(port_, query)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_wordshk_wire_get_splotlight_summaries(port_: i64) {
-    wire_get_splotlight_summaries_impl(port_)
 }
 
 #[no_mangle]
@@ -617,20 +568,6 @@ pub extern "C" fn frbgen_wordshk_cst_new_list_record_string_string(
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_wordshk_cst_new_list_spotlight_entry_summary(
-    len: i32,
-) -> *mut wire_cst_list_spotlight_entry_summary {
-    let wrap = wire_cst_list_spotlight_entry_summary {
-        ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
-            <wire_cst_spotlight_entry_summary>::new_with_null_ptr(),
-            len,
-        ),
-        len,
-    };
-    flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
-}
-
-#[no_mangle]
 pub extern "C" fn frbgen_wordshk_cst_new_list_variant_search_result(
     len: i32,
 ) -> *mut wire_cst_list_variant_search_result {
@@ -730,12 +667,6 @@ pub struct wire_cst_list_record_string_string {
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct wire_cst_list_spotlight_entry_summary {
-    ptr: *mut wire_cst_spotlight_entry_summary,
-    len: i32,
-}
-#[repr(C)]
-#[derive(Clone, Copy)]
 pub struct wire_cst_list_variant_search_result {
     ptr: *mut wire_cst_variant_search_result,
     len: i32,
@@ -773,18 +704,6 @@ pub struct wire_cst_record_opt_string_list_eg_search_result {
 pub struct wire_cst_record_string_string {
     field0: *mut wire_cst_list_prim_u_8,
     field1: *mut wire_cst_list_prim_u_8,
-}
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct wire_cst_spotlight_entry_summary {
-    id: u32,
-    variants: *mut wire_cst_list_String,
-    variants_simp: *mut wire_cst_list_String,
-    jyutpings: *mut wire_cst_list_String,
-    yales: *mut wire_cst_list_String,
-    def: *mut wire_cst_list_prim_u_8,
-    def_simp: *mut wire_cst_list_prim_u_8,
-    def_en: *mut wire_cst_list_prim_u_8,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]

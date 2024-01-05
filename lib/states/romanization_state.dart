@@ -1,13 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/src/rust/api/api.dart';
-import 'package:wordshk/states/spotlight_indexing_state.dart';
 
 class RomanizationState with ChangeNotifier {
   late Romanization romanization;
-  final SpotlightIndexingState spotlightIndexingState;
 
-  RomanizationState(SharedPreferences prefs, this.spotlightIndexingState) {
+  RomanizationState(SharedPreferences prefs) {
     final romanizationIndex = prefs.getInt("romanization");
     // Reset invalid romanization index to the jyutping default
     if (romanizationIndex != null &&
@@ -20,14 +18,11 @@ class RomanizationState with ChangeNotifier {
           : Romanization.values[romanizationIndex];
     }
 
-    spotlightIndexingState.initSpotlightIndexRomanization(romanization);
-
     generatePrIndices(romanization: romanization);
   }
 
   void updateRomanization(Romanization newRomanization) async {
     romanization = newRomanization;
-    spotlightIndexingState.updateSpotlightIndexRomanization(romanization);
 
     notifyListeners();
     SharedPreferences.getInstance().then((prefs) async {
