@@ -66,14 +66,19 @@ class _EntryWidgetState extends State<EntryWidget>
       );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        isScrollingToTarget = true;
+      });
+      await _autoScrollController.scrollToIndex(targetDefIndex,
+          preferPosition: AutoScrollPosition.begin,
+          duration: const Duration(milliseconds: 500));
+      setState(() {
+        isScrollingToTarget = false;
+      });
       // Trigger an observation manually after layout
       if (mounted) {
         _observerController.dispatchOnceObserve();
       }
-
-      await _autoScrollController.scrollToIndex(targetDefIndex,
-          preferPosition: AutoScrollPosition.begin,
-          duration: const Duration(milliseconds: 500));
       _autoScrollController.highlight(targetDefIndex,
           highlightDuration: const Duration(milliseconds: 500));
     });
@@ -115,7 +120,7 @@ class _EntryWidgetState extends State<EntryWidget>
                   final focusedChild = resultModel.displayingChildModelList
                       .reduce((a, b) =>
                   a.displayPercentage >= b.displayPercentage ? a : b);
-                  debugPrint("animating tab to ${focusedChild.index}");
+                  // debugPrint("animating tab to ${focusedChild.index}");
                   setState(() {
                     _tabController.animateTo(focusedChild.index);
                   });

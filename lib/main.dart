@@ -255,30 +255,23 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                                       state.uri.queryParameters['defIndex']!);
                           final embedded =
                               state.uri.queryParameters['embedded'] == null
-                                  ? null
+                                  ? Embedded.topLevel
                                   : Embedded.values.byName(
                                       state.uri.queryParameters['embedded']!);
-                          if (kDebugMode) {
-                            print("Going to entry $entryId");
-                          }
-                          if (embedded == null) {
-                            return EntryPage(
-                              key: key == null ? null : ValueKey(key),
-                              id: entryId,
-                              showFirstEntryInGroupInitially:
-                                  showFirstEntryInGroupInitially,
-                              defIndex: defIndex,
-                            );
-                          } else {
-                            return EntryPage(
-                              key: key == null ? null : ValueKey(key),
-                              id: entryId,
-                              showFirstEntryInGroupInitially:
-                                  showFirstEntryInGroupInitially,
-                              defIndex: defIndex,
-                              embedded: embedded,
-                            );
-                          }
+
+                          debugPrint("Going to entry $entryId");
+                          debugPrint("showFirstEntryInGroupInitially: $showFirstEntryInGroupInitially");
+                          debugPrint("embedded: $embedded");
+                          debugPrint("defIndex: $defIndex");
+
+                          return EntryPage(
+                            key: key == null ? null : ValueKey(key),
+                            id: entryId,
+                            showFirstEntryInGroupInitially:
+                                showFirstEntryInGroupInitially,
+                            defIndex: defIndex,
+                            embedded: embedded,
+                          );
                         }),
                     GoRoute(
                       path: 'entry/not-published/:entryVariant',

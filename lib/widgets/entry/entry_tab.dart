@@ -92,6 +92,7 @@ class _EntryTabState extends State<EntryTab> {
             highlightContent(highlight)(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
                       padding: const EdgeInsets.all(10.0),
