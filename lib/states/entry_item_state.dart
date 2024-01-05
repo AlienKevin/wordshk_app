@@ -7,6 +7,7 @@ import '../models/entry.dart';
 
 typedef RemoveItemCallback = void Function(int entryId);
 typedef AddItemCallback = Future<void> Function(int entryId);
+typedef LoadedItemsCallback = void Function();
 
 class EntryItemState with ChangeNotifier {
   final String tableName;
@@ -14,12 +15,21 @@ class EntryItemState with ChangeNotifier {
   List<int> _items = [];
   final List<RemoveItemCallback> _onRemoveListeners = [];
   final List<AddItemCallback> _onAddListeners = [];
+  final List<LoadedItemsCallback> _onLoadedListeners = [];
 
   EntryItemState({required this.tableName, required this.getDatabase}) {
     _loadItems();
   }
 
   // Methods to add and remove listeners
+  void registerLoadedItemsListener(LoadedItemsCallback listener) {
+    _onLoadedListeners.add(listener);
+  }
+
+  void unregisterLoadedItemsListener(LoadedItemsCallback listener) {
+    _onLoadedListeners.remove(listener);
+  }
+
   void registerRemoveItemListener(RemoveItemCallback listener) {
     _onRemoveListeners.add(listener);
   }
@@ -61,6 +71,9 @@ class EntryItemState with ChangeNotifier {
     // sort by ordering more recent items first
     results.sort((a, b) => b['time'] - a['time']);
     _items = results.map((e) => e['id'] as int).toList();
+    for (final listener in _onLoadedListeners) {
+      listener();
+    }
     notifyListeners();
   }
 

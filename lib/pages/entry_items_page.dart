@@ -48,6 +48,7 @@ class _EntryItemsState<T extends EntryItemState>
   final LinkedHashMap<int, EntrySummary> _entryItemSummaries = LinkedHashMap();
   late final RemoveItemCallback removeEntryItemListener;
   late final AddItemCallback addEntryItemListener;
+  late final LoadedItemsCallback loadedItemsListener;
   bool _isLoading = false;
   bool _hasMore = true;
   Mode _mode = ViewMode();
@@ -60,6 +61,9 @@ class _EntryItemsState<T extends EntryItemState>
     super.initState();
 
     summaryDefLanguage = getSummaryDefLanguage(context);
+
+    loadedItemsListener = _loadMore;
+    context.read<T>().registerLoadedItemsListener(loadedItemsListener);
 
     removeEntryItemListener = (id) {
       setState(() {
@@ -78,19 +82,19 @@ class _EntryItemsState<T extends EntryItemState>
       });
     };
     context.read<T>().registerAddItemListener(addEntryItemListener);
-
-    _loadMore();
   }
 
   @override
   void activate() {
     super.activate();
+    context.read<T>().registerLoadedItemsListener(loadedItemsListener);
     context.read<T>().registerRemoveItemListener(removeEntryItemListener);
     context.read<T>().registerAddItemListener(addEntryItemListener);
   }
 
   @override
   void deactivate() {
+    context.read<T>().unregisterLoadedItemsListener(loadedItemsListener);
     context.read<T>().unregisterRemoveItemListener(removeEntryItemListener);
     context.read<T>().unregisterAddItemListener(addEntryItemListener);
     super.deactivate();
@@ -107,6 +111,7 @@ class _EntryItemsState<T extends EntryItemState>
 
   Future<LinkedHashMap<int, EntrySummary>> _fetchMoreEntryItems(int amount) {
     final allEntryItems = context.read<T>().items;
+    debugPrint("allEntryItems: ${allEntryItems.length}");
     if (allEntryItems.length > _entryItemSummaries.length) {
       final ids = allEntryItems.sublist(_entryItemSummaries.length,
           min(_entryItemSummaries.length + amount, allEntryItems.length));
