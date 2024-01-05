@@ -170,11 +170,11 @@ List<TextSpan> showDefSummary(
 
 void drawDashedLine(
     {required Canvas canvas,
-      required Offset p1,
-      required Offset p2,
-      required int dashWidth,
-      required int dashSpace,
-      required Paint paint}) {
+    required Offset p1,
+    required Offset p2,
+    required int dashWidth,
+    required int dashSpace,
+    required Paint paint}) {
   // Get normalized distance vector from p1 to p2
   var dx = p2.dx - p1.dx;
   var dy = p2.dy - p1.dy;

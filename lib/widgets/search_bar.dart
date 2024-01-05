@@ -453,7 +453,8 @@ class IsSearching extends State<SearchBar> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide(width: 2.0, color: theme.colorScheme.primary),
+                            borderSide: BorderSide(
+                                width: 2.0, color: theme.colorScheme.primary),
                           ),
                         ),
                         onChanged: (query) {

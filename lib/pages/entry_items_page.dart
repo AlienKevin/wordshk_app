@@ -283,33 +283,34 @@ class _EntryItemsState<T extends EntryItemState>
                               useRootNavigator: false,
                               context: context,
                               builder: (_) => AlertDialog(
-                                  content:
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(maxWidth: 200),
-                                    child: Text(widget.deletionConfirmationMessage)),
-                                  actions: [
-                                    TextButton(
-                                      child: Text(
-                                          AppLocalizations.of(context)!.cancel),
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                    ),
-                                    TextButton(
-                                      child: Text(AppLocalizations.of(context)!
-                                          .confirm),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        for (final id in selectedEntryItems) {
-                                          context.read<T>().removeItem(id);
-                                        }
-                                        setState(() {
-                                          _mode = EditMode(
-                                              selectedEntryItems: HashSet());
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                content: ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 200),
+                                    child: Text(
+                                        widget.deletionConfirmationMessage)),
+                                actions: [
+                                  TextButton(
+                                    child: Text(
+                                        AppLocalizations.of(context)!.cancel),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                  ),
+                                  TextButton(
+                                    child: Text(
+                                        AppLocalizations.of(context)!.confirm),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      for (final id in selectedEntryItems) {
+                                        context.read<T>().removeItem(id);
+                                      }
+                                      setState(() {
+                                        _mode = EditMode(
+                                            selectedEntryItems: HashSet());
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
                             );
                           },
                     child: ConstrainedBox(

@@ -134,7 +134,8 @@ class ToneExercisePageState extends State<ToneExercisePage> {
         actions: [
           IconButton(
               onPressed: () {
-                context.push("/exercise/tone/introduction?openedInExercise=true");
+                context
+                    .push("/exercise/tone/introduction?openedInExercise=true");
               },
               icon: Icon(PlatformIcons(context).info))
         ],

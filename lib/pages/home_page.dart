@@ -189,20 +189,22 @@ class _HomePageState extends State<HomePage>
     return Column(
       children: [
         Expanded(
-          child: TabBarView(controller: _historyAndBookmarksTabController, children: [
-            EntryItemsPage<HistoryState>(
-              emptyMessage: AppLocalizations.of(context)!.noHistory,
-              deletionConfirmationMessage:
-                  AppLocalizations.of(context)!.historyDeleteConfirmation,
-              allowEdits: false,
-            ),
-            EntryItemsPage<BookmarkState>(
-              emptyMessage: AppLocalizations.of(context)!.noBookmarks,
-              deletionConfirmationMessage:
-                  AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
-              allowEdits: true,
-            )
-          ]),
+          child: TabBarView(
+              controller: _historyAndBookmarksTabController,
+              children: [
+                EntryItemsPage<HistoryState>(
+                  emptyMessage: AppLocalizations.of(context)!.noHistory,
+                  deletionConfirmationMessage:
+                      AppLocalizations.of(context)!.historyDeleteConfirmation,
+                  allowEdits: false,
+                ),
+                EntryItemsPage<BookmarkState>(
+                  emptyMessage: AppLocalizations.of(context)!.noBookmarks,
+                  deletionConfirmationMessage:
+                      AppLocalizations.of(context)!.bookmarkDeleteConfirmation,
+                  allowEdits: true,
+                )
+              ]),
         ),
         Material(
             elevation: embedded == Embedded.topLevel ? 2 : 0,

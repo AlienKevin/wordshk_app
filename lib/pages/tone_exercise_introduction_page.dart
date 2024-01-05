@@ -319,7 +319,13 @@ class ToneContourPainter extends CustomPainter {
     for (int i = 1; i < 6; i++) {
       final p1 = Offset(0, i * unit);
       final p2 = Offset(width, i * unit);
-      drawDashedLine(canvas: canvas, p1: p1, p2: p2, dashWidth: 8, dashSpace: 4, paint: paint);
+      drawDashedLine(
+          canvas: canvas,
+          p1: p1,
+          p2: p2,
+          dashWidth: 8,
+          dashSpace: 4,
+          paint: paint);
     }
     paint.color = strokeColor.withOpacity(1.0);
 
@@ -393,7 +399,13 @@ class Tone4ContourPainter extends CustomPainter {
     for (int i = 1; i < 6; i++) {
       final p1 = Offset(0, i * unit);
       final p2 = Offset(width, i * unit);
-      drawDashedLine(canvas: canvas, p1: p1, p2: p2, dashWidth: 8, dashSpace: 4, paint: paint);
+      drawDashedLine(
+          canvas: canvas,
+          p1: p1,
+          p2: p2,
+          dashWidth: 8,
+          dashSpace: 4,
+          paint: paint);
     }
     paint.color = strokeColor.withOpacity(1.0);
 
@@ -432,7 +444,9 @@ class Tone4ContourPainter extends CustomPainter {
         textPainter.layout();
         textPainter.paint(
           canvas,
-          middlePoint - Offset((tone == 4 ? -24 : 0) + textPainter.width / 2, textPainter.height / 2),
+          middlePoint -
+              Offset((tone == 4 ? -24 : 0) + textPainter.width / 2,
+                  textPainter.height / 2),
         );
       }
     }

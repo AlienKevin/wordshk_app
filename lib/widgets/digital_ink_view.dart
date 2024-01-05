@@ -180,9 +180,13 @@ class DigitalInkViewState extends State<DigitalInkView> {
                                             candidatesFont.fontSize! * 1.2,
                                             candidatesFont.fontSize! * 1.2),
                                         padding: EdgeInsets.zero,
-                                        side: BorderSide(width: 1.5, color: Theme.of(context).dividerColor),
+                                        side: BorderSide(
+                                            width: 1.5,
+                                            color:
+                                                Theme.of(context).dividerColor),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(4.0),
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
                                         ),
                                       ),
                                       child: Text(character,
