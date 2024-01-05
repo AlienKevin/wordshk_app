@@ -35,6 +35,7 @@ class _EntryWidgetState extends State<EntryWidget>
   late TabController _tabController;
   late AutoScrollController _autoScrollController;
   late ListObserverController _observerController;
+  bool isScrollingToTarget = false;
 
   getStartDefIndex(int entryIndex) => widget.entryGroup
       .take(entryIndex)
@@ -72,7 +73,7 @@ class _EntryWidgetState extends State<EntryWidget>
 
       await _autoScrollController.scrollToIndex(targetDefIndex,
           preferPosition: AutoScrollPosition.begin,
-          duration: const Duration(milliseconds: 15));
+          duration: const Duration(milliseconds: 500));
       _autoScrollController.highlight(targetDefIndex,
           highlightDuration: const Duration(milliseconds: 500));
     });
@@ -110,12 +111,15 @@ class _EntryWidgetState extends State<EntryWidget>
               //       'item - ${item.index} ${item.leadingMarginToViewport} ${item.trailingMarginToViewport} ${item.displayPercentage}');
               // }
 
-              setState(() {
-                if (resultModel.displayingChildModelList.isNotEmpty) {
-                  final focusedChild = resultModel.displayingChildModelList.reduce((a, b) => a.displayPercentage >= b.displayPercentage ? a : b);
-                  _tabController.animateTo(focusedChild.index);
+                if (!isScrollingToTarget && resultModel.displayingChildModelList.isNotEmpty) {
+                  final focusedChild = resultModel.displayingChildModelList
+                      .reduce((a, b) =>
+                  a.displayPercentage >= b.displayPercentage ? a : b);
+                  debugPrint("animating tab to ${focusedChild.index}");
+                  setState(() {
+                    _tabController.animateTo(focusedChild.index);
+                  });
                 }
-              });
             },
             child: ListView.separated(
               controller: _autoScrollController,
@@ -163,11 +167,15 @@ class _EntryWidgetState extends State<EntryWidget>
                   // context.read<PlayerState>().stop();
                   setState(() {
                     entryIndex = newIndex;
+                    isScrollingToTarget = true;
                   });
                   final targetDefIndex = getStartDefIndex(newIndex);
                   await _autoScrollController.scrollToIndex(targetDefIndex,
                       preferPosition: AutoScrollPosition.begin,
-                      duration: const Duration(milliseconds: 15));
+                      duration: const Duration(milliseconds: 500));
+                  setState(() {
+                    isScrollingToTarget = false;
+                  });
                 }
               },
               isScrollable: true,
