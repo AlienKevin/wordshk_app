@@ -13,7 +13,7 @@ class EntryLabels extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Visibility(
-        visible: labels.isNotEmpty,
+        visible: poses.isNotEmpty || labels.isNotEmpty,
         child: Builder(
             builder: (context) => Padding(
                   padding: const EdgeInsets.only(top: 5),

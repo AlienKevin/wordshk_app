@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/states/language_state.dart';
 
 import '../../models/entry.dart';
@@ -33,10 +34,11 @@ class _EntryWidgetState extends State<EntryWidget>
   int? entryIndex;
   late TabController _tabController;
   late AutoScrollController _autoScrollController;
+  late ListObserverController _observerController;
 
   getStartDefIndex(int entryIndex) => widget.entryGroup
-          .take(entryIndex)
-          .fold(0, (len, entry) => len + (entry.defs.length + 1));
+      .take(entryIndex)
+      .fold(0, (len, entry) => len + (entry.defs.length + 1));
 
   @override
   void initState() {
@@ -51,12 +53,23 @@ class _EntryWidgetState extends State<EntryWidget>
             Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
         axis: Axis.vertical);
 
+    final targetDefIndex = getStartDefIndex(widget.initialEntryIndex) +
+        (widget.initialDefIndex != null ? widget.initialDefIndex! + 1 : 0);
+    // print("initialEntryIndex: ${widget.initialEntryIndex}");
+    // print("initialDefIndex: ${widget.initialDefIndex}");
+    // print("targetDefIndex: $targetDefIndex");
+
+    _observerController = ListObserverController(controller: _autoScrollController)
+      ..initialIndexModel = ObserverIndexPositionModel(
+        index: targetDefIndex,
+      );
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final targetDefIndex = getStartDefIndex(widget.initialEntryIndex) +
-          (widget.initialDefIndex != null ? widget.initialDefIndex! + 1 : 0);
-      print("initialEntryIndex: ${widget.initialEntryIndex}");
-      print("initialDefIndex: ${widget.initialDefIndex}");
-      print("targetDefIndex: $targetDefIndex");
+      // Trigger an observation manually after layout
+      if (mounted) {
+        _observerController.dispatchOnceObserve();
+      }
+
       await _autoScrollController.scrollToIndex(targetDefIndex,
           preferPosition: AutoScrollPosition.begin,
           duration: const Duration(milliseconds: 15));
@@ -67,6 +80,7 @@ class _EntryWidgetState extends State<EntryWidget>
 
   @override
   void dispose() {
+    _observerController.controller?.dispose();
     _tabController.dispose();
     _autoScrollController.dispose();
     super.dispose();
@@ -81,22 +95,46 @@ class _EntryWidgetState extends State<EntryWidget>
       Expanded(
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
-          child: ListView.separated(
-            controller: _autoScrollController,
-            itemCount: widget.entryGroup.length,
-            separatorBuilder: (context, index) => const Divider(),
-            itemBuilder: (context, entryIndex) => EntryTab(
-              entryGroupSize: widget.entryGroup.length,
-              startDefIndex: getStartDefIndex(entryIndex),
-              entry: widget.entryGroup[entryIndex],
-              script: context.watch<LanguageState>().getScript(),
-              variantTextStyle: Theme.of(context).textTheme.headlineSmall!,
-              prTextStyle: Theme.of(context).textTheme.bodySmall!,
-              lineTextStyle: lineTextStyle,
-              linkColor: Theme.of(context).colorScheme.secondary,
-              rubyFontSize: rubyFontSize,
-              onTapLink: widget.onTapLink,
-              autoScrollController: _autoScrollController,
+          child: ListViewObserver(
+            controller: _observerController,
+            autoTriggerObserveTypes: const [
+              ObserverAutoTriggerObserveType.scrollUpdate,
+            ],
+            triggerOnObserveType: ObserverTriggerOnObserveType.directly,
+            onObserve: (resultModel) {
+              // debugPrint('visible -- ${resultModel.visible}');
+              // debugPrint('firstChild.index -- ${resultModel.firstChild?.index}');
+              // debugPrint('displaying -- ${resultModel.displayingChildIndexList}');
+
+              // for (var item in resultModel.displayingChildModelList) {
+              //   debugPrint(
+              //       'item - ${item.index} ${item.leadingMarginToViewport} ${item.trailingMarginToViewport} ${item.displayPercentage}');
+              // }
+
+              setState(() {
+                if (resultModel.displayingChildModelList.isNotEmpty) {
+                  final focusedChild = resultModel.displayingChildModelList.reduce((a, b) => a.displayPercentage >= b.displayPercentage ? a : b);
+                  _tabController.animateTo(focusedChild.index);
+                }
+              });
+            },
+            child: ListView.separated(
+              controller: _autoScrollController,
+              itemCount: widget.entryGroup.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, entryIndex) => EntryTab(
+                entryGroupSize: widget.entryGroup.length,
+                startDefIndex: getStartDefIndex(entryIndex),
+                entry: widget.entryGroup[entryIndex],
+                script: context.watch<LanguageState>().getScript(),
+                variantTextStyle: Theme.of(context).textTheme.headlineSmall!,
+                prTextStyle: Theme.of(context).textTheme.bodySmall!,
+                lineTextStyle: lineTextStyle,
+                linkColor: Theme.of(context).colorScheme.secondary,
+                rubyFontSize: rubyFontSize,
+                onTapLink: widget.onTapLink,
+                autoScrollController: _autoScrollController,
+              ),
             ),
           ),
         ),

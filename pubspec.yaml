@@ -58,6 +58,7 @@ dependencies:
   email_validator: ^2.1.17
   go_router: ^13.0.0
   bubble_tab_indicator: ^0.1.6
+  scrollview_observer: ^1.19.0
 
 dev_dependencies:
   flutter_test:
