@@ -259,10 +259,10 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                                   : Embedded.values.byName(
                                       state.uri.queryParameters['embedded']!);
 
-                          debugPrint("Going to entry $entryId");
-                          debugPrint("showFirstEntryInGroupInitially: $showFirstEntryInGroupInitially");
-                          debugPrint("embedded: $embedded");
-                          debugPrint("defIndex: $defIndex");
+                          // debugPrint("Going to entry $entryId");
+                          // debugPrint("showFirstEntryInGroupInitially: $showFirstEntryInGroupInitially");
+                          // debugPrint("embedded: $embedded");
+                          // debugPrint("defIndex: $defIndex");
 
                           return EntryPage(
                             key: key == null ? null : ValueKey(key),

@@ -68,11 +68,16 @@ class _EntryPageState extends State<EntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PopScope(
         // detect user pressing back button
-        onWillPop: () {
-          context.read<PlayerState>().refreshPlayerState();
-          return Future.value(true);
+        canPop: true,
+        onPopInvoked: (didPop) {
+          // TODO: wait for go_router to be fixed: https://github.com/flutter/flutter/issues/138737
+          print("didPop: $didPop");
+          if (didPop) {
+            debugPrint("hello");
+            context.read<PlayerState>().refreshPlayerState();
+          }
         },
         child: Scaffold(
           body: switch (widget.embedded) {

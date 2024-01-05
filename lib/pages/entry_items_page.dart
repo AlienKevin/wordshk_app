@@ -111,7 +111,6 @@ class _EntryItemsState<T extends EntryItemState>
 
   Future<LinkedHashMap<int, EntrySummary>> _fetchMoreEntryItems(int amount) {
     final allEntryItems = context.read<T>().items;
-    debugPrint("allEntryItems: ${allEntryItems.length}");
     if (allEntryItems.length > _entryItemSummaries.length) {
       final ids = allEntryItems.sublist(_entryItemSummaries.length,
           min(_entryItemSummaries.length + amount, allEntryItems.length));
