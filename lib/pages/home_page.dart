@@ -323,9 +323,8 @@ class _HomePageState extends State<HomePage>
             .bodyLarge!
             .copyWith(fontWeight: FontWeight.normal),
         embedded);
-    final resultList = ListView.separated(
+    final resultList = ListView.builder(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      separatorBuilder: (_, __) => const Divider(),
       itemBuilder: (_, index) => results[index],
       itemCount: results.length,
     );
@@ -530,12 +529,25 @@ class _HomePageState extends State<HomePage>
     }).toList();
   }
 
-  Widget showSearchResultCategory(String category) => DecoratedBox(
-      decoration: BoxDecoration(color: Theme.of(context).dividerColor),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-        child: Text(category),
-      ));
+  Widget showSearchResultCategory(String category) => Row(
+        children: [
+          Expanded(
+            child: DecoratedBox(
+                decoration:
+                    BoxDecoration(color: Theme.of(context).dividerColor),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+                  child: Text(category),
+                )),
+          )
+        ],
+      );
+
+  List<Widget> addSeparator(List<Widget> items) => items.indexed
+      .expand((item) =>
+          item.$1 == items.length - 1 ? [item.$2] : [item.$2, const Divider()])
+      .toList();
 
   List<Widget> showCombinedSearchResults(
       TextStyle textStyle, Embedded embedded) {
@@ -546,37 +558,52 @@ class _HomePageState extends State<HomePage>
     return [
       ...variantSearchResults.isNotEmpty
           ? [
-              showSearchResultCategory(
-                  s.searchResults(s.searchResultsCategoryCantonese))
+              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                showSearchResultCategory(
+                    s.searchResults(s.searchResultsCategoryCantonese)),
+                ...addSeparator(
+                    showVariantSearchResults(startIndex, textStyle, embedded))
+              ])
             ]
           : [],
-      ...showVariantSearchResults(startIndex, textStyle, embedded),
       ...prSearchResults.isNotEmpty
-          ? [showSearchResultCategory(s.searchResults(romanizationName))]
+          ? [
+              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                showSearchResultCategory(s.searchResults(romanizationName)),
+                ...addSeparator(showPrSearchResults(
+                    startIndex + variantSearchResults.length,
+                    textStyle,
+                    embedded))
+              ])
+            ]
           : [],
-      ...showPrSearchResults(
-          startIndex + variantSearchResults.length, textStyle, embedded),
       ...englishSearchResults.isNotEmpty
           ? [
-              showSearchResultCategory(
-                  s.searchResults(s.searchResultsCategoryEnglish))
+              Column(children: [
+                showSearchResultCategory(
+                    s.searchResults(s.searchResultsCategoryEnglish)),
+                ...addSeparator(showEnglishSearchResults(
+                    startIndex +
+                        variantSearchResults.length +
+                        prSearchResults.length,
+                    textStyle,
+                    embedded))
+              ])
             ]
           : [],
-      ...showEnglishSearchResults(
-          startIndex + variantSearchResults.length + prSearchResults.length,
-          textStyle,
-          embedded),
       ...egSearchResults.isNotEmpty
           ? [
-              showSearchResultCategory(
-                  s.searchResults(s.searchResultsCategoryExample)),
-              ...showEgSearchResults(
-                  startIndex +
-                      variantSearchResults.length +
-                      prSearchResults.length +
-                      englishSearchResults.length,
-                  egSearchQueryNormalized!,
-                  embedded),
+              Column(children: [
+                showSearchResultCategory(
+                    s.searchResults(s.searchResultsCategoryExample)),
+                ...addSeparator(showEgSearchResults(
+                    startIndex +
+                        variantSearchResults.length +
+                        prSearchResults.length +
+                        englishSearchResults.length,
+                    egSearchQueryNormalized!,
+                    embedded)),
+              ])
             ]
           : [],
     ];
