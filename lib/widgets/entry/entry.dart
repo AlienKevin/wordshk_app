@@ -80,9 +80,8 @@ class _EntryWidgetState extends State<EntryWidget>
 
   @override
   void dispose() {
-    _observerController.controller?.dispose();
-    _tabController.dispose();
     _autoScrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
