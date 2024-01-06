@@ -295,13 +295,29 @@ class _EntryItemsState<T extends EntryItemState>
                                 actions: [
                                   TextButton(
                                     child: Text(
-                                        AppLocalizations.of(context)!.cancel),
+                                        AppLocalizations.of(context)!.cancel,
+                                        style: TextStyle(
+                                            color: MediaQuery.of(context)
+                                                        .platformBrightness ==
+                                                    Brightness.light
+                                                ? null
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary)),
                                     onPressed: () =>
                                         Navigator.of(context).pop(),
                                   ),
                                   TextButton(
                                     child: Text(
-                                        AppLocalizations.of(context)!.confirm),
+                                        AppLocalizations.of(context)!.confirm,
+                                        style: TextStyle(
+                                            color: MediaQuery.of(context)
+                                                        .platformBrightness ==
+                                                    Brightness.light
+                                                ? null
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary)),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                       for (final id in selectedEntryItems) {
