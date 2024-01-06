@@ -3,8 +3,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../models/entry.dart';
-
 typedef RemoveItemCallback = void Function(int entryId);
 typedef AddItemCallback = Future<void> Function(int entryId);
 typedef LoadedItemsCallback = void Function();
@@ -114,20 +112,15 @@ class EntryItemState with ChangeNotifier {
     notifyListeners();
   }
 
-  bool isItemInStore(List<Entry> entryGroup) {
-    return entryGroup.any((entry) => _items.contains(entry.id));
+  bool isItemInStore(int entryId) {
+    return _items.contains(entryId);
   }
 
-  int getItemEntryIndex(List<Entry> entryGroup) {
-    return entryGroup.indexWhere((entry) => _items.contains(entry.id));
-  }
-
-  Future<void> toggleItem(List<Entry> entryGroup, int entryIndex) async {
-    final itemIndex = getItemEntryIndex(entryGroup);
-    if (itemIndex < 0) {
-      await addItem(entryGroup[entryIndex].id);
+  Future<void> toggleItem(int entryId) async {
+    if (!isItemInStore(entryId)) {
+      await addItem(entryId);
     } else {
-      await removeItem(entryGroup[itemIndex].id);
+      await removeItem(entryId);
     }
   }
 }

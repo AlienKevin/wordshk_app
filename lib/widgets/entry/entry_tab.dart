@@ -107,7 +107,7 @@ class _EntryTabState extends State<EntryTab> {
                               prTextStyle: widget.prTextStyle,
                               lineTextStyle: widget.lineTextStyle,
                             ),
-                            EntryLabels(poses: widget.entry.poses, labels: widget.entry.labels),
+                            EntryLabels(entryId: widget.entry.id, poses: widget.entry.poses, labels: widget.entry.labels),
                             EntrySimsOrAnts(
                                 label:
                                     "[${AppLocalizations.of(context)!.synonym}]",
