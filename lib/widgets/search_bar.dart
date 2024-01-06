@@ -2,12 +2,14 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/utils.dart';
 
@@ -271,6 +273,19 @@ class IsSearching extends State<SearchBar> {
     controller.selection = TextSelection.collapsed(offset: extentOffset);
   }
 
+  Widget diacriticButton(String diacritic) => Expanded(
+        child: IconButton(
+            visualDensity: VisualDensity.compact,
+            // Trim the beginning "combining dotted circle" (U+25CC)
+            onPressed: () => typeDiacritic(diacritic.substring(1)),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Theme.of(context).canvasColor)),
+            icon: Text(diacritic,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge!)),
+      );
+
   /// Builds the search bar!
   ///
   /// The leading will always be a back button.
@@ -288,7 +303,7 @@ class IsSearching extends State<SearchBar> {
     final romanization = context.watch<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);
 
-    return SizedBox(
+    final textField = SizedBox(
         height: 48,
         child: TextField(
           textAlignVertical: TextAlignVertical.center,
@@ -371,5 +386,24 @@ class IsSearching extends State<SearchBar> {
           autofocus: false,
           controller: controller,
         ));
+
+    return switch (romanization) {
+      Romanization.jyutping => textField,
+      Romanization.yale => Column(mainAxisSize: MainAxisSize.min, children: [
+          textField,
+          const SizedBox(height: 10),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+                maxWidth: max(200, MediaQuery.of(context).size.width * 1 / 3)),
+            child: Row(children: [
+              diacriticButton("◌̄"),
+              const SizedBox(width: 10),
+              diacriticButton("◌́"),
+              const SizedBox(width: 10),
+              diacriticButton("◌̀"),
+            ]),
+          )
+        ]),
+    };
   }
 }
