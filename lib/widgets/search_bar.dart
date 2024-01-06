@@ -303,89 +303,94 @@ class IsSearching extends State<SearchBar> {
     final romanization = context.watch<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);
 
-    final textField = SizedBox(
-        height: 48,
-        child: TextField(
-          textAlignVertical: TextAlignVertical.center,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: textColor),
-          focusNode: focusNode,
-          onTap: beginSearch,
-          key: const Key('SearchBarTextField'),
-          autocorrect: false,
-          enableSuggestions: true,
-          keyboardType:
-              context.watch<InputModeState>().mode == InputMode.keyboard
-                  ? TextInputType.text
-                  : TextInputType.none,
-          decoration: InputDecoration(
-            isDense: true,
-            filled: true,
-            fillColor: Theme.of(context).canvasColor,
-            contentPadding: const EdgeInsets.only(left: 20),
-            hintText: s.searchDictionaryHint(romanizationName),
-            suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
-                Wrap(children: [
-              IconButton(
-                  icon: const Icon(Icons.brush),
-                  onPressed: () {
-                    context
-                        .read<InputModeState>()
-                        .updateInputMode(InputMode.ink);
-                  }),
-              ...(showClearButton && _clearActive
-                  ? [
-                      IconButton(
-                          icon: Icon(PlatformIcons(context).clearThickCircled,
-                              semanticLabel: "Clear"),
-                          color: buttonColor,
-                          disabledColor: theme.disabledColor.withOpacity(0),
-                          onPressed: !_clearActive
-                              ? null
-                              : () {
-                                  widget.onCleared?.call();
-                                  controller.clear();
-                                  FocusScope.of(context)
-                                      .requestFocus(focusNode);
-                                  context
-                                      .read<SearchQueryState>()
-                                      .updateSearchQuery("");
-                                })
-                    ]
-                  : [])
-            ]),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20.0),
-              borderSide: const BorderSide(width: 2.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20.0),
-              borderSide:
-                  BorderSide(width: 2.0, color: theme.colorScheme.primary),
-            ),
-          ),
-          onChanged: (query) {
-            context.read<SearchQueryState>().updateSearchQuery(query);
-            widget.onChanged?.call(query);
-          },
-          onSubmitted: (String val) async {
-            if (widget.closeOnSubmit) {
-              await Navigator.maybePop(context);
-            }
+    final textField = ConstrainedBox(
+        constraints: BoxConstraints(
+            maxWidth: max(wideScreenThreshold * 2 / 3,
+                MediaQuery.of(context).size.width * 1 / 3)),
+        child: SizedBox(
+            height: 48,
+            child: TextField(
+              textAlignVertical: TextAlignVertical.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: textColor),
+              focusNode: focusNode,
+              onTap: beginSearch,
+              key: const Key('SearchBarTextField'),
+              autocorrect: false,
+              enableSuggestions: true,
+              keyboardType:
+                  context.watch<InputModeState>().mode == InputMode.keyboard
+                      ? TextInputType.text
+                      : TextInputType.none,
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                fillColor: Theme.of(context).canvasColor,
+                contentPadding: const EdgeInsets.only(left: 20),
+                hintText: s.searchDictionaryHint(romanizationName),
+                suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
+                    Wrap(children: [
+                  IconButton(
+                      icon: const Icon(Icons.brush),
+                      onPressed: () {
+                        context
+                            .read<InputModeState>()
+                            .updateInputMode(InputMode.ink);
+                      }),
+                  ...(showClearButton && _clearActive
+                      ? [
+                          IconButton(
+                              icon: Icon(
+                                  PlatformIcons(context).clearThickCircled,
+                                  semanticLabel: "Clear"),
+                              color: buttonColor,
+                              disabledColor: theme.disabledColor.withOpacity(0),
+                              onPressed: !_clearActive
+                                  ? null
+                                  : () {
+                                      widget.onCleared?.call();
+                                      controller.clear();
+                                      FocusScope.of(context)
+                                          .requestFocus(focusNode);
+                                      context
+                                          .read<SearchQueryState>()
+                                          .updateSearchQuery("");
+                                    })
+                        ]
+                      : [])
+                ]),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide: const BorderSide(width: 2.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide:
+                      BorderSide(width: 2.0, color: theme.colorScheme.primary),
+                ),
+              ),
+              onChanged: (query) {
+                context.read<SearchQueryState>().updateSearchQuery(query);
+                widget.onChanged?.call(query);
+              },
+              onSubmitted: (String val) async {
+                if (widget.closeOnSubmit) {
+                  await Navigator.maybePop(context);
+                }
 
-            if (widget.clearOnSubmit) {
-              controller.clear();
-            }
-            widget.onSubmitted?.call(val);
-          },
-          autofocus: false,
-          controller: controller,
-        ));
+                if (widget.clearOnSubmit) {
+                  controller.clear();
+                }
+                widget.onSubmitted?.call(val);
+              },
+              autofocus: false,
+              controller: controller,
+            )));
 
     return switch (romanization) {
       Romanization.jyutping => textField,
@@ -394,7 +399,8 @@ class IsSearching extends State<SearchBar> {
           const SizedBox(height: 10),
           ConstrainedBox(
             constraints: BoxConstraints(
-                maxWidth: max(200, MediaQuery.of(context).size.width * 1 / 3)),
+                maxWidth: max(wideScreenThreshold * 1 / 3,
+                    MediaQuery.of(context).size.width * 1 / 3)),
             child: Row(children: [
               diacriticButton("◌̄"),
               const SizedBox(width: 10),
