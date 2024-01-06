@@ -43,9 +43,12 @@ class EditMode extends Mode {
   EditMode({required this.selectedEntryItems});
 }
 
+typedef EntryItemSummaries = DoubleLinkedQueue<(int, EntrySummary)>;
+
 class _EntryItemsState<T extends EntryItemState>
     extends State<EntryItemsPage<T>> {
-  final LinkedHashMap<int, EntrySummary> _entryItemSummaries = LinkedHashMap();
+  // TODO: find a more scalable data structure for removal or summaries by entryId
+  final EntryItemSummaries _entryItemSummaries = DoubleLinkedQueue();
   late final RemoveItemCallback removeEntryItemListener;
   late final AddItemCallback addEntryItemListener;
   late final LoadedItemsCallback loadedItemsListener;
@@ -67,7 +70,7 @@ class _EntryItemsState<T extends EntryItemState>
 
     removeEntryItemListener = (id) {
       setState(() {
-        _entryItemSummaries.remove(id);
+        _entryItemSummaries.removeWhere((item) => item.$1 == id);
         if (selectedEntryId == id) {
           selectedEntryId = null;
         }
@@ -77,8 +80,9 @@ class _EntryItemsState<T extends EntryItemState>
 
     addEntryItemListener = (id) async {
       final summaries = await fetchSummaries([id]);
+      assert(summaries.length == 1);
       setState(() {
-        _entryItemSummaries.addAll(summaries);
+        _entryItemSummaries.addFirst((id, summaries.first.$2));
       });
     };
     context.read<T>().registerAddItemListener(addEntryItemListener);
@@ -100,23 +104,24 @@ class _EntryItemsState<T extends EntryItemState>
     super.deactivate();
   }
 
-  Future<LinkedHashMap<int, EntrySummary>> fetchSummaries(List<int> ids) {
+  Future<EntryItemSummaries> fetchSummaries(List<int> ids) {
     final script = context.read<LanguageState>().getScript();
 
     return getEntrySummaries(
       entryIds: Uint32List.fromList(ids),
       script: script,
-    ).then((summaries) => LinkedHashMap.fromIterables(ids, summaries));
+    ).then((summaries) => EntryItemSummaries.of(
+        summaries.indexed.map((item) => (ids[item.$1], item.$2))));
   }
 
-  Future<LinkedHashMap<int, EntrySummary>> _fetchMoreEntryItems(int amount) {
+  Future<EntryItemSummaries> _fetchMoreEntryItems(int amount) {
     final allEntryItems = context.read<T>().items;
     if (allEntryItems.length > _entryItemSummaries.length) {
       final ids = allEntryItems.sublist(_entryItemSummaries.length,
           min(_entryItemSummaries.length + amount, allEntryItems.length));
       return fetchSummaries(ids);
     } else {
-      return Future.value(LinkedHashMap<int, EntrySummary>());
+      return Future.value(EntryItemSummaries());
     }
   }
 
@@ -367,9 +372,9 @@ class _EntryItemsState<T extends EntryItemState>
             _loadMore();
             return const Center(child: CircularProgressIndicator());
           }
-          final summaryEntry = _entryItemSummaries.entries.elementAt(index);
-          final id = summaryEntry.key;
-          final summary = summaryEntry.value;
+          final summaryEntry = _entryItemSummaries.elementAt(index);
+          final id = summaryEntry.$1;
+          final summary = summaryEntry.$2;
           final selected =
               embedded == Embedded.embedded && id == selectedEntryId;
           return ListTile(
