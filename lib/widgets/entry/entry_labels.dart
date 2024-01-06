@@ -66,6 +66,7 @@ class EntryLabels extends StatelessWidget {
                                   .fontSize! *
                               1.5),
                       child: IconButton(
+                          color: Theme.of(context).textTheme.bodyMedium!.color,
                           iconSize: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -73,13 +74,11 @@ class EntryLabels extends StatelessWidget {
                               1.5,
                           visualDensity: VisualDensity.compact,
                           onPressed: () {
-                            context
-                                .read<BookmarkState>()
-                                .toggleItem(entryId);
+                            context.read<BookmarkState>().toggleItem(entryId);
                           },
                           icon: context
-                              .watch<BookmarkState>()
-                              .isItemInStore(entryId)
+                                  .watch<BookmarkState>()
+                                  .isItemInStore(entryId)
                               ? Icon(PlatformIcons(context).bookmarkSolid)
                               : Icon(PlatformIcons(context).bookmarkOutline)),
                     ),
