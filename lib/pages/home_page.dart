@@ -474,7 +474,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       style: textStyle.copyWith(
                         fontSize:
                             Theme.of(context).textTheme.bodySmall!.fontSize,
-                        color: selected ? lightGreyColor : greyColor,
+                        color: selected
+                            ? lightGreyColor
+                            : (segment.matched
+                                ? Theme.of(context).colorScheme.primary
+                                : greyColor),
                         fontWeight: segment.matched ? FontWeight.w600 : null,
                       )))
                 ],
@@ -503,7 +507,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         ? Theme.of(context)
                                             .colorScheme
                                             .onPrimary
-                                        : null))
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .primary))
                       ]),
                 TextSpan(
                     text: segment,
@@ -548,7 +554,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         .map((segment) => TextSpan(
                             text: segment.segment,
                             style: textStyle.copyWith(
-                              color: selected ? lightGreyColor : greyColor,
+                              color: selected
+                                  ? lightGreyColor
+                                  : ((segment.matched ||
+                                          segment.segment == "\u{0301}" ||
+                                          segment.segment == "\u{0300}" ||
+                                          segment.segment == "\u{0304}")
+                                      ? Theme.of(context).colorScheme.primary
+                                      : greyColor),
                               // Workaround for accent marks not displayed
                               // in correct position when font weights don't match
                               fontSize: Theme.of(context)
@@ -600,8 +613,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           TextSpan(
               text: result.matchedVariant.query,
               style: textStyle.copyWith(
-                  color:
-                      selected ? Theme.of(context).colorScheme.onPrimary : null,
+                  color: selected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w600)),
           TextSpan(
               text: "${result.matchedVariant.suffix}\n",
