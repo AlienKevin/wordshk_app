@@ -152,94 +152,93 @@ class DigitalInkViewState extends State<DigitalInkView> {
       ),
       Container(
         color: Theme.of(context).canvasColor,
-        child: SafeArea(
-          child: Column(
-            children: [
-              TextScaleFactorClamper(
-                  maxScaleFactor: 1.2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: SizedBox(
-                      height: candidatesFont.fontSize! *
-                              1.2 *
-                              MediaQuery.of(context).textScaleFactor +
-                          2,
-                      child: Wrap(
-                          children: _recognizedCharacters
-                              .map((character) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6),
-                                    child: OutlinedButton(
-                                      onPressed: () {
-                                        widget.typeCharacter(character);
-                                        _clearPad();
-                                        widget.moveToEndOfSelection();
-                                      },
-                                      style: OutlinedButton.styleFrom(
-                                        minimumSize: Size(
-                                            candidatesFont.fontSize! * 1.2,
-                                            candidatesFont.fontSize! * 1.2),
-                                        padding: EdgeInsets.zero,
-                                        side: BorderSide(
-                                            width: 1.5,
-                                            color:
-                                                Theme.of(context).dividerColor),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
+        child: Column(
+          children: [
+            TextScaleFactorClamper(
+                maxScaleFactor: 1.2,
+                child: Center(
+                  child: SizedBox(
+                    height: candidatesFont.fontSize! *
+                            1.2 *
+                            MediaQuery.of(context).textScaleFactor +
+                        2,
+                    child: Wrap(
+                        children: _recognizedCharacters
+                            .map((character) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      widget.typeCharacter(character);
+                                      _clearPad();
+                                      widget.moveToEndOfSelection();
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      minimumSize: Size(
+                                          candidatesFont.fontSize! * 1.2,
+                                          candidatesFont.fontSize! * 1.2),
+                                      padding: EdgeInsets.zero,
+                                      side: BorderSide(
+                                          width: 1.5,
+                                          color:
+                                              Theme.of(context).dividerColor),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(4.0),
                                       ),
-                                      child: Text(character,
-                                          style: candidatesFont),
                                     ),
-                                  ))
-                              .toList()),
-                    ),
-                  )),
-              Row(children: [
-                const SizedBox(width: 15),
-                IconButton(
-                    onPressed: () {
-                      context
-                          .read<InputModeState>()
-                          .updateInputMode(InputMode.keyboard);
-                    },
-                    icon: Icon(isMaterial(context)
-                        ? Icons.keyboard
-                        : CupertinoIcons.keyboard),
-                    color: Theme.of(context).colorScheme.secondary),
-                const Spacer(),
-                IconButton(
-                    onPressed: _undoStroke,
-                    icon: Icon(isMaterial(context)
-                        ? Icons.undo
-                        : CupertinoIcons.arrow_uturn_left),
-                    color: Theme.of(context).colorScheme.secondary),
-                IconButton(
-                    onPressed: () {
-                      _clearPad();
-                      widget.backspace();
-                    },
-                    icon: Icon(isMaterial(context)
-                        ? Icons.backspace
-                        : CupertinoIcons.delete_left_fill),
-                    color: Theme.of(context).colorScheme.secondary),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<InputModeState>()
-                          .updateInputMode(InputMode.done);
-                    },
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                            const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 15.0))),
-                    child: Text(AppLocalizations.of(context)!.done)),
-                const SizedBox(width: 20),
-              ]),
-            ],
-          ),
+                                    child:
+                                        Text(character, style: candidatesFont),
+                                  ),
+                                ))
+                            .toList()),
+                  ),
+                )),
+            const SizedBox(height: 15.0),
+            Row(children: [
+              const SizedBox(width: 15),
+              IconButton(
+                  onPressed: () {
+                    context
+                        .read<InputModeState>()
+                        .updateInputMode(InputMode.keyboard);
+                  },
+                  icon: Icon(isMaterial(context)
+                      ? Icons.keyboard
+                      : CupertinoIcons.keyboard),
+                  color: Theme.of(context).colorScheme.secondary),
+              const Spacer(),
+              IconButton(
+                  onPressed: _undoStroke,
+                  icon: Icon(isMaterial(context)
+                      ? Icons.undo
+                      : CupertinoIcons.arrow_uturn_left),
+                  color: Theme.of(context).colorScheme.secondary),
+              IconButton(
+                  onPressed: () {
+                    _clearPad();
+                    widget.backspace();
+                  },
+                  icon: Icon(isMaterial(context)
+                      ? Icons.backspace
+                      : CupertinoIcons.delete_left_fill),
+                  color: Theme.of(context).colorScheme.secondary),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                  onPressed: () {
+                    context
+                        .read<InputModeState>()
+                        .updateInputMode(InputMode.done);
+                  },
+                  style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 15.0))),
+                  child: Text(AppLocalizations.of(context)!.done)),
+              const SizedBox(width: 20),
+            ]),
+            const SizedBox(height: 15.0),
+          ],
         ),
       ),
     ]);
