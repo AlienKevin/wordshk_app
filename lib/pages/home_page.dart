@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/models/embedded.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/history_state.dart';
@@ -35,8 +36,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
@@ -50,12 +50,30 @@ class _HomePageState extends State<HomePage>
   EntryPage? selectedSearchResultEntryPage;
   late final TabController _historyAndBookmarksTabController;
 
+  late TabController _searchResultTabController;
+  late final ScrollController _searchResultScrollController;
+  late final ListObserverController _observerController;
+  bool _isScrollingToSearchResult = false;
+  int? searchResultGroupIndex;
+
   @override
   void initState() {
     super.initState();
 
     _historyAndBookmarksTabController =
         TabController(vsync: this, initialIndex: 0, length: 2);
+
+    _searchResultTabController = TabController(
+      vsync: this,
+      length: 0,
+      initialIndex: 0,
+    );
+    _searchResultScrollController = ScrollController();
+    _observerController =
+        ListObserverController(controller: _searchResultScrollController)
+          ..initialIndexModel = ObserverIndexPositionModel(
+            index: 0,
+          );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final query = context.read<SearchQueryState>().query;
@@ -323,11 +341,87 @@ class _HomePageState extends State<HomePage>
             .bodyLarge!
             .copyWith(fontWeight: FontWeight.normal),
         embedded);
-    final resultList = ListView.builder(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      itemBuilder: (_, index) => results[index],
-      itemCount: results.length,
-    );
+    if (results.length != _searchResultTabController.length) {
+      setState(() {
+        _searchResultTabController.dispose();
+        _searchResultTabController = TabController(
+          vsync: this,
+          length: results.length,
+          initialIndex: 0,
+        );
+      });
+    }
+
+    final resultList = Column(children: [
+      Expanded(
+        child: ListViewObserver(
+            controller: _observerController,
+            autoTriggerObserveTypes: const [
+              ObserverAutoTriggerObserveType.scrollUpdate,
+            ],
+            triggerOnObserveType: ObserverTriggerOnObserveType.directly,
+            onObserve: (resultModel) {
+              if (!_isScrollingToSearchResult &&
+                  resultModel.displayingChildModelList.isNotEmpty) {
+                final focusedChild = resultModel.displayingChildModelList
+                    .reduce((a, b) =>
+                        a.displayPercentage >= b.displayPercentage ? a : b);
+                setState(() {
+                  _searchResultTabController.animateTo(focusedChild.index);
+                });
+              }
+            },
+            child: ListView.builder(
+              controller: _searchResultScrollController,
+              shrinkWrap: true,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              itemBuilder: (_, index) => results[index].$2,
+              itemCount: results.length,
+            )),
+      ),
+      Align(
+        alignment: Alignment.centerLeft,
+        child: Material(
+          elevation: 2,
+          child: TabBar(
+            controller: _searchResultTabController,
+            onTap: (newIndex) async {
+              if (newIndex != searchResultGroupIndex) {
+                setState(() {
+                  searchResultGroupIndex = newIndex;
+                  _isScrollingToSearchResult = true;
+                });
+                await _observerController.jumpTo(
+                  index: newIndex,
+                );
+                setState(() {
+                  _isScrollingToSearchResult = false;
+                });
+              }
+            },
+            isScrollable: true,
+            labelColor: Theme.of(context).textTheme.bodyMedium!.color,
+            unselectedLabelColor: Theme.of(context).textTheme.bodyMedium!.color,
+            // Other tabs color
+            labelPadding: const EdgeInsets.symmetric(horizontal: 30),
+            // Space between tabs
+            indicator: BubbleTabIndicator(
+              indicatorHeight:
+                  Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+              indicatorColor: Theme.of(context).splashColor,
+              tabBarIndicatorSize: TabBarIndicatorSize.label,
+            ),
+            tabAlignment: TabAlignment.start,
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            tabs: results
+                .map((result) => Tab(
+                    text: getSearchResultTypeName(
+                        result.$1, context, AppLocalizations.of(context)!)))
+                .toList(),
+          ),
+        ),
+      ),
+    ]);
     return embedded == Embedded.embedded
         ? Row(
             children: [
@@ -549,7 +643,7 @@ class _HomePageState extends State<HomePage>
           item.$1 == items.length - 1 ? [item.$2] : [item.$2, const Divider()])
       .toList();
 
-  List<Widget> showCombinedSearchResults(
+  List<(SearchResultType, Widget)> showCombinedSearchResults(
       TextStyle textStyle, Embedded embedded) {
     const startIndex = 0;
     final s = AppLocalizations.of(context)!;
@@ -558,52 +652,64 @@ class _HomePageState extends State<HomePage>
     return [
       ...variantSearchResults.isNotEmpty
           ? [
-              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                showSearchResultCategory(
-                    s.searchResults(s.searchResultsCategoryCantonese)),
-                ...addSeparator(
-                    showVariantSearchResults(startIndex, textStyle, embedded))
-              ])
+              (
+                SearchResultType.variant,
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  showSearchResultCategory(
+                      s.searchResults(s.searchResultsCategoryCantonese)),
+                  ...addSeparator(
+                      showVariantSearchResults(startIndex, textStyle, embedded))
+                ])
+              )
             ]
           : [],
       ...prSearchResults.isNotEmpty
           ? [
-              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                showSearchResultCategory(s.searchResults(romanizationName)),
-                ...addSeparator(showPrSearchResults(
-                    startIndex + variantSearchResults.length,
-                    textStyle,
-                    embedded))
-              ])
+              (
+                SearchResultType.pr,
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  showSearchResultCategory(s.searchResults(romanizationName)),
+                  ...addSeparator(showPrSearchResults(
+                      startIndex + variantSearchResults.length,
+                      textStyle,
+                      embedded))
+                ])
+              )
             ]
           : [],
       ...englishSearchResults.isNotEmpty
           ? [
-              Column(children: [
-                showSearchResultCategory(
-                    s.searchResults(s.searchResultsCategoryEnglish)),
-                ...addSeparator(showEnglishSearchResults(
-                    startIndex +
-                        variantSearchResults.length +
-                        prSearchResults.length,
-                    textStyle,
-                    embedded))
-              ])
+              (
+                SearchResultType.english,
+                Column(children: [
+                  showSearchResultCategory(
+                      s.searchResults(s.searchResultsCategoryEnglish)),
+                  ...addSeparator(showEnglishSearchResults(
+                      startIndex +
+                          variantSearchResults.length +
+                          prSearchResults.length,
+                      textStyle,
+                      embedded))
+                ])
+              )
             ]
           : [],
       ...egSearchResults.isNotEmpty
           ? [
-              Column(children: [
-                showSearchResultCategory(
-                    s.searchResults(s.searchResultsCategoryExample)),
-                ...addSeparator(showEgSearchResults(
-                    startIndex +
-                        variantSearchResults.length +
-                        prSearchResults.length +
-                        englishSearchResults.length,
-                    egSearchQueryNormalized!,
-                    embedded)),
-              ])
+              (
+                SearchResultType.eg,
+                Column(children: [
+                  showSearchResultCategory(
+                      s.searchResults(s.searchResultsCategoryExample)),
+                  ...addSeparator(showEgSearchResults(
+                      startIndex +
+                          variantSearchResults.length +
+                          prSearchResults.length +
+                          englishSearchResults.length,
+                      egSearchQueryNormalized!,
+                      embedded)),
+                ])
+              )
             ]
           : [],
     ];
@@ -668,6 +774,8 @@ class _HomePageState extends State<HomePage>
 
   @override
   void dispose() {
+    _searchResultScrollController.dispose();
+    _searchResultTabController.dispose();
     _historyAndBookmarksTabController.dispose();
     super.dispose();
   }

@@ -8,9 +8,11 @@ import 'package:provider/provider.dart';
 import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
+import 'package:wordshk/models/search_result_type.dart';
 import 'package:wordshk/models/speech_rate.dart';
 import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/states/romanization_state.dart';
 
 import 'models/font_size.dart';
 import 'models/language.dart';
@@ -49,6 +51,16 @@ switchKeyboardType(FocusNode focusNode) {
     (_) => focusNode.requestFocus(),
   );
 }
+
+String getSearchResultTypeName(
+        SearchResultType type, BuildContext context, AppLocalizations s) =>
+    switch (type) {
+      SearchResultType.pr =>
+        getRomanizationName(context.read<RomanizationState>().romanization, s),
+      SearchResultType.variant => s.searchResultsCategoryCantonese,
+      SearchResultType.english => s.searchResultsCategoryEnglish,
+      SearchResultType.eg => s.searchResultsCategoryExample
+    };
 
 String getRomanizationName(Romanization romanization, AppLocalizations s) {
   return switch (romanization) {
