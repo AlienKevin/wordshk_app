@@ -96,8 +96,7 @@ class _EntryPageState extends State<EntryPage> {
           const SizedBox(height: 20),
           ElevatedButton(
               onPressed: () {
-                // Back to previous search page
-                Navigator.pop(context);
+                context.go("/");
               },
               child: Text(AppLocalizations.of(context)!.backToSearch))
         ]),

@@ -43,12 +43,12 @@ class EditMode extends Mode {
   EditMode({required this.selectedEntryItems});
 }
 
-typedef EntryItemSummaries = DoubleLinkedQueue<(int, EntrySummary)>;
+typedef EntryItemSummaries = ListQueue<(int, EntrySummary)>;
 
 class _EntryItemsState<T extends EntryItemState>
     extends State<EntryItemsPage<T>> {
   // TODO: find a more scalable data structure for removal or summaries by entryId
-  final EntryItemSummaries _entryItemSummaries = DoubleLinkedQueue();
+  final EntryItemSummaries _entryItemSummaries = EntryItemSummaries();
   late final RemoveItemCallback removeEntryItemListener;
   late final AddItemCallback addEntryItemListener;
   late final LoadedItemsCallback loadedItemsListener;
@@ -70,9 +70,20 @@ class _EntryItemsState<T extends EntryItemState>
 
     removeEntryItemListener = (id) {
       setState(() {
-        _entryItemSummaries.removeWhere((item) => item.$1 == id);
+        var removeIndex = 0;
+        var found = false;
+        _entryItemSummaries.removeWhere((item) {
+          final itemFound = item.$1 == id;
+          found |= itemFound;
+          if (!found) {
+            removeIndex++;
+          }
+          return itemFound;
+        });
         if (selectedEntryId == id) {
-          selectedEntryId = null;
+          selectedEntryId = removeIndex < _entryItemSummaries.length
+              ? _entryItemSummaries.elementAt(removeIndex).$1
+              : null;
         }
       });
     };
