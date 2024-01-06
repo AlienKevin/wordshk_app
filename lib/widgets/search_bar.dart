@@ -3,7 +3,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -16,7 +15,6 @@ import '../constants.dart';
 import '../models/input_mode.dart';
 import '../states/romanization_state.dart';
 import '../states/search_query_state.dart';
-import 'text_scale_factor_clamper.dart';
 
 typedef TextFieldSubmitCallback = void Function(String value);
 typedef TextFieldChangeCallback = void Function(String value);
@@ -273,64 +271,6 @@ class IsSearching extends State<SearchBar> {
     controller.selection = TextSelection.collapsed(offset: extentOffset);
   }
 
-  Widget digitButton(int digit) => button(
-      () => typeDigit(digit),
-      TextScaleFactorClamper(
-          maxScaleFactor: 1.2,
-          child: Text(digit.toString(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(height: 1.2))));
-
-  Widget diacriticButton(String diacritic) => Padding(
-      padding: const EdgeInsets.only(
-        left: 5,
-        right: 5,
-      ),
-      child: button(
-          () => typeDiacritic(diacritic),
-          TextScaleFactorClamper(
-              maxScaleFactor: 1.2,
-              child: Text("$diacritic  ",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(height: 1.2)))));
-
-  Widget inkInputModeButton() => button(() {
-        context.read<InputModeState>().updateInputMode(InputMode.ink);
-      },
-          Icon(isMaterial(context)
-              ? Icons.brush
-              : CupertinoIcons.pencil_outline));
-
-  Widget button(void Function() onPressed, Widget child) {
-    final background = MaterialStateProperty.all(
-        MediaQuery.of(context).platformBrightness == Brightness.light
-            ? whiteColor
-            : Colors.grey[700]);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      child: ElevatedButton(
-          onPressed: onPressed,
-          style: ButtonStyle(
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            minimumSize: MaterialStateProperty.all(Size.zero),
-            textStyle: MaterialStateProperty.all(
-                Theme.of(context).textTheme.bodyLarge),
-            foregroundColor: MaterialStateProperty.all(
-                MediaQuery.of(context).platformBrightness == Brightness.light
-                    ? blackColor
-                    : whiteColor),
-            backgroundColor: background,
-            surfaceTintColor: background,
-            visualDensity: VisualDensity.compact,
-            padding: MaterialStateProperty.all(
-                const EdgeInsets.symmetric(horizontal: 10.5, vertical: 12)),
-            shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-          ),
-          child: Align(alignment: Alignment.center, child: child)),
-    );
-  }
-
   /// Builds the search bar!
   ///
   /// The leading will always be a back button.
@@ -349,77 +289,87 @@ class IsSearching extends State<SearchBar> {
     final romanizationName = getRomanizationName(romanization, s);
 
     return SizedBox(
-            height: 48,
-            child: TextField(
-                  textAlignVertical: TextAlignVertical.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: textColor),
-                  focusNode: focusNode,
-                  onTap: beginSearch,
-                  key: const Key('SearchBarTextField'),
-                  autocorrect: false,
-                  enableSuggestions: true,
-                  keyboardType:
-                      context.watch<InputModeState>().mode == InputMode.keyboard
-                          ? TextInputType.text
-                          : TextInputType.none,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: Theme.of(context).canvasColor,
-                    contentPadding: const EdgeInsets.only(left: 20),
-                    hintText: s.searchDictionaryHint(romanizationName),
-                    suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
-                        showClearButton
-                            ? IconButton(
-                                icon: Icon(PlatformIcons(context).clear,
-                                    semanticLabel: "Clear"),
-                                color: buttonColor,
-                                disabledColor:
-                                    theme.disabledColor.withOpacity(0),
-                                onPressed: !_clearActive
-                                    ? null
-                                    : () {
-                                        widget.onCleared?.call();
-                                        controller.clear();
-                                        FocusScope.of(context)
-                                            .requestFocus(focusNode);
-                                        context
-                                            .read<SearchQueryState>()
-                                            .updateSearchQuery("");
-                                      })
-                            : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: const BorderSide(width: 2.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide(
-                          width: 2.0, color: theme.colorScheme.primary),
-                    ),
-                  ),
-                  onChanged: (query) {
-                    context.read<SearchQueryState>().updateSearchQuery(query);
-                    widget.onChanged?.call(query);
-                  },
-                  onSubmitted: (String val) async {
-                    if (widget.closeOnSubmit) {
-                      await Navigator.maybePop(context);
-                    }
+        height: 48,
+        child: TextField(
+          textAlignVertical: TextAlignVertical.center,
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: textColor),
+          focusNode: focusNode,
+          onTap: beginSearch,
+          key: const Key('SearchBarTextField'),
+          autocorrect: false,
+          enableSuggestions: true,
+          keyboardType:
+              context.watch<InputModeState>().mode == InputMode.keyboard
+                  ? TextInputType.text
+                  : TextInputType.none,
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: Theme.of(context).canvasColor,
+            contentPadding: const EdgeInsets.only(left: 20),
+            hintText: s.searchDictionaryHint(romanizationName),
+            suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
+                Wrap(children: [
+              IconButton(
+                  icon: const Icon(Icons.brush),
+                  onPressed: () {
+                    context
+                        .read<InputModeState>()
+                        .updateInputMode(InputMode.ink);
+                  }),
+              ...(showClearButton && _clearActive
+                  ? [
+                      IconButton(
+                          icon: Icon(PlatformIcons(context).clearThickCircled,
+                              semanticLabel: "Clear"),
+                          color: buttonColor,
+                          disabledColor: theme.disabledColor.withOpacity(0),
+                          onPressed: !_clearActive
+                              ? null
+                              : () {
+                                  widget.onCleared?.call();
+                                  controller.clear();
+                                  FocusScope.of(context)
+                                      .requestFocus(focusNode);
+                                  context
+                                      .read<SearchQueryState>()
+                                      .updateSearchQuery("");
+                                })
+                    ]
+                  : [])
+            ]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20.0),
+              borderSide: const BorderSide(width: 2.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20.0),
+              borderSide:
+                  BorderSide(width: 2.0, color: theme.colorScheme.primary),
+            ),
+          ),
+          onChanged: (query) {
+            context.read<SearchQueryState>().updateSearchQuery(query);
+            widget.onChanged?.call(query);
+          },
+          onSubmitted: (String val) async {
+            if (widget.closeOnSubmit) {
+              await Navigator.maybePop(context);
+            }
 
-                    if (widget.clearOnSubmit) {
-                      controller.clear();
-                    }
-                    widget.onSubmitted?.call(val);
-                  },
-                  autofocus: true,
-                  controller: controller,
-                ));
+            if (widget.clearOnSubmit) {
+              controller.clear();
+            }
+            widget.onSubmitted?.call(val);
+          },
+          autofocus: true,
+          controller: controller,
+        ));
   }
 }
