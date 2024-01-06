@@ -122,7 +122,7 @@ List<Widget> showRubySegment(
                   child: Center(
                       child: Transform(
                           alignment: Alignment.center,
-                          transform: Matrix4.translationValues(0, -rubySize, 0),
+                          transform: Matrix4.translationValues(0, -rubySize * 0.8, 0),
                           child: Text.rich(TextSpan(
                               text: prs,
                               style: TextStyle(
