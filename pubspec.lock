@@ -717,14 +717,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.9"
-  keyboard_actions:
-    dependency: "direct main"
-    description:
-      name: keyboard_actions
-      sha256: "31e0ab2a706ac8f58887efa60efc1f19aecdf37d8ab0f665a0f156d1fbeab650"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.2.0"
   lints:
     dependency: transitive
     description:

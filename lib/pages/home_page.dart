@@ -119,60 +119,68 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final InputMode inputMode = context.watch<InputModeState>().mode;
+    final searchBar = SearchBar(
+      key: const Key("homePageSearchBar"),
+      onChanged: (query) {
+        if (query.isEmpty) {
+          setState(() {
+            queryEmptied = true;
+            finishedSearch = false;
+            selectedSearchResultEntryPage = null;
+          });
+        } else {
+          setState(() {
+            queryEmptied = false;
+            finishedSearch = false;
+          });
+        }
+        doSearch(query, context);
+      },
+      onCleared: () {
+        setState(() {
+          // TODO: hide search results
+          queryEmptied = true;
+          selectedSearchResultEntryPage = null;
+        });
+      },
+      onSubmitted: (query) {
+        onSearchSubmitted(query, getEmbedded());
+      },
+    );
 
     return KeyboardVisibilityProvider(
-        child: Scaffold(
-            appBar: SearchBar(
-              key: const Key("homePageSearchBar"),
-              onChanged: (query) {
-                if (query.isEmpty) {
-                  setState(() {
-                    queryEmptied = true;
-                    finishedSearch = false;
-                    selectedSearchResultEntryPage = null;
-                  });
-                } else {
-                  setState(() {
-                    queryEmptied = false;
-                    finishedSearch = false;
-                  });
-                }
-                doSearch(query, context);
-              },
-              onCleared: () {
-                setState(() {
-                  // TODO: hide search results
-                  queryEmptied = true;
-                  selectedSearchResultEntryPage = null;
-                });
-              },
-              onSubmitted: (query) {
-                onSearchSubmitted(query, getEmbedded());
-              },
-            ),
-            body: inputMode == InputMode.ink
-                ? DigitalInkView(
-                    typeCharacter: (character) {
-                      context.read<SearchQueryState>().typeCharacter(character);
-                    },
-                    backspace: () {
-                      context.read<SearchQueryState>().backspace();
-                    },
-                    moveToEndOfSelection: () {
-                      context.read<SearchQueryState>().moveToEndOfSelection();
-                    },
-                  )
-                : SafeArea(
-                    child: (finishedSearch && isSearchResultsEmpty)
-                        ? showResultsNotFound()
-                        : (queryEmptied
-                            ? showHistoryAndBookmarks()
-                            : showSearchResults(
-                                selectedSearchResultEntryPage)))));
+      child: Scaffold(
+        bottomNavigationBar: Container(
+          color: Theme.of(context).appBarTheme.backgroundColor ??
+              Theme.of(context).colorScheme.surface,
+          child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 14, right: 10, top: 10, bottom: 10),
+              child: searchBar),
+        ),
+        body: inputMode == InputMode.ink
+            ? DigitalInkView(
+                typeCharacter: (character) {
+                  context.read<SearchQueryState>().typeCharacter(character);
+                },
+                backspace: () {
+                  context.read<SearchQueryState>().backspace();
+                },
+                moveToEndOfSelection: () {
+                  context.read<SearchQueryState>().moveToEndOfSelection();
+                },
+              )
+            : SafeArea(
+                child: (finishedSearch && isSearchResultsEmpty)
+                    ? showResultsNotFound()
+                    : (queryEmptied
+                        ? showHistoryAndBookmarks()
+                        : showSearchResults(selectedSearchResultEntryPage))),
+      ),
+    );
   }
 
   Widget showHistoryAndBookmarks() {
-    final embedded = getEmbedded();
     return Column(
       children: [
         Expanded(
@@ -193,24 +201,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 )
               ]),
         ),
-        Material(
-            elevation: embedded == Embedded.topLevel ? 2 : 0,
-            child: TabBar(
-              controller: _historyAndBookmarksTabController,
-              tabs: [
-                Tab(text: AppLocalizations.of(context)!.history),
-                Tab(text: AppLocalizations.of(context)!.bookmarks),
-              ],
-              labelColor: Theme.of(context).textTheme.bodyMedium!.color!,
-              unselectedLabelColor:
-                  Theme.of(context).textTheme.bodyMedium!.color!,
-              indicator: BubbleTabIndicator(
-                indicatorHeight:
-                    Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
-                indicatorColor: Theme.of(context).splashColor,
-                tabBarIndicatorSize: TabBarIndicatorSize.label,
-              ),
-            )),
+        TabBar(
+          controller: _historyAndBookmarksTabController,
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.history),
+            Tab(text: AppLocalizations.of(context)!.bookmarks),
+          ],
+          labelColor: Theme.of(context).textTheme.bodyMedium!.color!,
+          unselectedLabelColor: Theme.of(context).textTheme.bodyMedium!.color!,
+          indicator: BubbleTabIndicator(
+            indicatorHeight:
+                Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
+            indicatorColor: Theme.of(context).splashColor,
+            tabBarIndicatorSize: TabBarIndicatorSize.label,
+          ),
+        ),
       ],
     );
   }

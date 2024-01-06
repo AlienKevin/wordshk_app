@@ -28,7 +28,6 @@ dependencies:
   scroll_to_index: ^3.0.1
   flutter_tts: ^3.8.3
   audio_session: ^0.1.16
-  keyboard_actions: ^4.2.0
   csv: ^5.0.2
   flutter_keyboard_visibility: ^5.4.1
   google_mlkit_digital_ink_recognition: ^0.10.0
