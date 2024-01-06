@@ -393,7 +393,10 @@ class IsSearching extends State<SearchBar> {
             )));
 
     return switch (romanization) {
-      Romanization.jyutping => textField,
+      Romanization.jyutping => Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [textField]),
       Romanization.yale => Column(mainAxisSize: MainAxisSize.min, children: [
           textField,
           const SizedBox(height: 10),
