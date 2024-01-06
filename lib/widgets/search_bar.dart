@@ -368,7 +368,7 @@ class IsSearching extends State<SearchBar> {
             }
             widget.onSubmitted?.call(val);
           },
-          autofocus: true,
+          autofocus: false,
           controller: controller,
         ));
   }
