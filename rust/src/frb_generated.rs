@@ -287,10 +287,10 @@ fn wire_init_utils_impl(port_: flutter_rust_bridge::for_generated::MessagePort) 
 // Section: wrapper_structs
 
 #[derive(Clone)]
-pub struct mirror_MatchedSegment(crate::api::api::MatchedSegment);
+pub struct mirror_MatchedInfix(crate::api::api::MatchedInfix);
 
 #[derive(Clone)]
-pub struct mirror_MatchedVariant(crate::api::api::MatchedVariant);
+pub struct mirror_MatchedSegment(crate::api::api::MatchedSegment);
 
 #[derive(Clone)]
 pub struct mirror_Romanization(crate::api::api::Romanization);
@@ -303,15 +303,15 @@ pub struct mirror_Script(crate::api::api::Script);
 #[allow(clippy::unnecessary_literal_unwrap)]
 const _: fn() = || {
     {
+        let MatchedInfix = None::<crate::api::api::MatchedInfix>.unwrap();
+        let _: String = MatchedInfix.prefix;
+        let _: String = MatchedInfix.query;
+        let _: String = MatchedInfix.suffix;
+    }
+    {
         let MatchedSegment = None::<crate::api::api::MatchedSegment>.unwrap();
         let _: String = MatchedSegment.segment;
         let _: bool = MatchedSegment.matched;
-    }
-    {
-        let MatchedVariant = None::<crate::api::api::MatchedVariant>.unwrap();
-        let _: String = MatchedVariant.prefix;
-        let _: String = MatchedVariant.query;
-        let _: String = MatchedVariant.suffix;
     }
 };
 
@@ -388,12 +388,12 @@ impl SseDecode for crate::api::api::EgSearchResult {
         let mut var_id = <u32>::sse_decode(deserializer);
         let mut var_defIndex = <u32>::sse_decode(deserializer);
         let mut var_egIndex = <u32>::sse_decode(deserializer);
-        let mut var_eg = <String>::sse_decode(deserializer);
+        let mut var_matchedEg = <crate::api::api::MatchedInfix>::sse_decode(deserializer);
         return crate::api::api::EgSearchResult {
             id: var_id,
             def_index: var_defIndex,
             eg_index: var_egIndex,
-            eg: var_eg,
+            matched_eg: var_matchedEg,
         };
     }
 }
@@ -546,6 +546,19 @@ impl SseDecode for Vec<crate::api::api::VariantSearchResult> {
     }
 }
 
+impl SseDecode for crate::api::api::MatchedInfix {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_prefix = <String>::sse_decode(deserializer);
+        let mut var_query = <String>::sse_decode(deserializer);
+        let mut var_suffix = <String>::sse_decode(deserializer);
+        return crate::api::api::MatchedInfix {
+            prefix: var_prefix,
+            query: var_query,
+            suffix: var_suffix,
+        };
+    }
+}
+
 impl SseDecode for crate::api::api::MatchedSegment {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_segment = <String>::sse_decode(deserializer);
@@ -554,29 +567,6 @@ impl SseDecode for crate::api::api::MatchedSegment {
             segment: var_segment,
             matched: var_matched,
         };
-    }
-}
-
-impl SseDecode for crate::api::api::MatchedVariant {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_prefix = <String>::sse_decode(deserializer);
-        let mut var_query = <String>::sse_decode(deserializer);
-        let mut var_suffix = <String>::sse_decode(deserializer);
-        return crate::api::api::MatchedVariant {
-            prefix: var_prefix,
-            query: var_query,
-            suffix: var_suffix,
-        };
-    }
-}
-
-impl SseDecode for Option<String> {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<String>::sse_decode(deserializer));
-        } else {
-            return None;
-        }
     }
 }
 
@@ -604,14 +594,6 @@ impl SseDecode for crate::api::api::PrSearchResult {
             yues: var_yues,
             engs: var_engs,
         };
-    }
-}
-
-impl SseDecode for (Option<String>, Vec<crate::api::api::EgSearchResult>) {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_field0 = <Option<String>>::sse_decode(deserializer);
-        let mut var_field1 = <Vec<crate::api::api::EgSearchResult>>::sse_decode(deserializer);
-        return (var_field0, var_field1);
     }
 }
 
@@ -664,7 +646,7 @@ impl SseDecode for () {
 impl SseDecode for crate::api::api::VariantSearchResult {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <u32>::sse_decode(deserializer);
-        let mut var_matchedVariant = <crate::api::api::MatchedVariant>::sse_decode(deserializer);
+        let mut var_matchedVariant = <crate::api::api::MatchedInfix>::sse_decode(deserializer);
         let mut var_yues = <Vec<String>>::sse_decode(deserializer);
         let mut var_engs = <Vec<String>>::sse_decode(deserializer);
         return crate::api::api::VariantSearchResult {
@@ -705,7 +687,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::EgSearchResult {
             self.id.into_into_dart().into_dart(),
             self.def_index.into_into_dart().into_dart(),
             self.eg_index.into_into_dart().into_dart(),
-            self.eg.into_into_dart().into_dart(),
+            self.matched_eg.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -761,6 +743,22 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::api::EntrySummary>
         self
     }
 }
+impl flutter_rust_bridge::IntoDart for mirror_MatchedInfix {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        vec![
+            self.0.prefix.into_into_dart().into_dart(),
+            self.0.query.into_into_dart().into_dart(),
+            self.0.suffix.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for mirror_MatchedInfix {}
+impl flutter_rust_bridge::IntoIntoDart<mirror_MatchedInfix> for crate::api::api::MatchedInfix {
+    fn into_into_dart(self) -> mirror_MatchedInfix {
+        mirror_MatchedInfix(self)
+    }
+}
 impl flutter_rust_bridge::IntoDart for mirror_MatchedSegment {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         vec![
@@ -774,22 +772,6 @@ impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for mirror_Matc
 impl flutter_rust_bridge::IntoIntoDart<mirror_MatchedSegment> for crate::api::api::MatchedSegment {
     fn into_into_dart(self) -> mirror_MatchedSegment {
         mirror_MatchedSegment(self)
-    }
-}
-impl flutter_rust_bridge::IntoDart for mirror_MatchedVariant {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        vec![
-            self.0.prefix.into_into_dart().into_dart(),
-            self.0.query.into_into_dart().into_dart(),
-            self.0.suffix.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for mirror_MatchedVariant {}
-impl flutter_rust_bridge::IntoIntoDart<mirror_MatchedVariant> for crate::api::api::MatchedVariant {
-    fn into_into_dart(self) -> mirror_MatchedVariant {
-        mirror_MatchedVariant(self)
     }
 }
 impl flutter_rust_bridge::IntoDart for crate::api::api::PrSearchResult {
@@ -893,7 +875,7 @@ impl SseEncode for crate::api::api::EgSearchResult {
         <u32>::sse_encode(self.id, serializer);
         <u32>::sse_encode(self.def_index, serializer);
         <u32>::sse_encode(self.eg_index, serializer);
-        <String>::sse_encode(self.eg, serializer);
+        <crate::api::api::MatchedInfix>::sse_encode(self.matched_eg, serializer);
     }
 }
 
@@ -1010,14 +992,7 @@ impl SseEncode for Vec<crate::api::api::VariantSearchResult> {
     }
 }
 
-impl SseEncode for crate::api::api::MatchedSegment {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <String>::sse_encode(self.segment, serializer);
-        <bool>::sse_encode(self.matched, serializer);
-    }
-}
-
-impl SseEncode for crate::api::api::MatchedVariant {
+impl SseEncode for crate::api::api::MatchedInfix {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.prefix, serializer);
         <String>::sse_encode(self.query, serializer);
@@ -1025,12 +1000,10 @@ impl SseEncode for crate::api::api::MatchedVariant {
     }
 }
 
-impl SseEncode for Option<String> {
+impl SseEncode for crate::api::api::MatchedSegment {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <String>::sse_encode(value, serializer);
-        }
+        <String>::sse_encode(self.segment, serializer);
+        <bool>::sse_encode(self.matched, serializer);
     }
 }
 
@@ -1050,13 +1023,6 @@ impl SseEncode for crate::api::api::PrSearchResult {
         <Vec<crate::api::api::MatchedSegment>>::sse_encode(self.matched_pr, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
-    }
-}
-
-impl SseEncode for (Option<String>, Vec<crate::api::api::EgSearchResult>) {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Option<String>>::sse_encode(self.0, serializer);
-        <Vec<crate::api::api::EgSearchResult>>::sse_encode(self.1, serializer);
     }
 }
 
@@ -1098,7 +1064,7 @@ impl SseEncode for () {
 impl SseEncode for crate::api::api::VariantSearchResult {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.id, serializer);
-        <crate::api::api::MatchedVariant>::sse_encode(self.matched_variant, serializer);
+        <crate::api::api::MatchedInfix>::sse_encode(self.matched_variant, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
     }

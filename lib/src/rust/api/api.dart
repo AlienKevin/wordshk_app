@@ -40,7 +40,7 @@ Future<CombinedSearchResults> combinedSearch(
         romanization: romanization,
         hint: hint);
 
-Future<(String?, List<EgSearchResult>)> egSearch(
+Future<List<EgSearchResult>> egSearch(
         {required int capacity,
         required int maxFirstIndexInEg,
         required String query,
@@ -95,18 +95,18 @@ class EgSearchResult {
   final int id;
   final int defIndex;
   final int egIndex;
-  final String eg;
+  final MatchedInfix matchedEg;
 
   const EgSearchResult({
     required this.id,
     required this.defIndex,
     required this.egIndex,
-    required this.eg,
+    required this.matchedEg,
   });
 
   @override
   int get hashCode =>
-      id.hashCode ^ defIndex.hashCode ^ egIndex.hashCode ^ eg.hashCode;
+      id.hashCode ^ defIndex.hashCode ^ egIndex.hashCode ^ matchedEg.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -116,7 +116,7 @@ class EgSearchResult {
           id == other.id &&
           defIndex == other.defIndex &&
           egIndex == other.egIndex &&
-          eg == other.eg;
+          matchedEg == other.matchedEg;
 }
 
 class EnglishSearchResult {
@@ -175,6 +175,30 @@ class EntrySummary {
           defs == other.defs;
 }
 
+class MatchedInfix {
+  final String prefix;
+  final String query;
+  final String suffix;
+
+  const MatchedInfix({
+    required this.prefix,
+    required this.query,
+    required this.suffix,
+  });
+
+  @override
+  int get hashCode => prefix.hashCode ^ query.hashCode ^ suffix.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MatchedInfix &&
+          runtimeType == other.runtimeType &&
+          prefix == other.prefix &&
+          query == other.query &&
+          suffix == other.suffix;
+}
+
 class MatchedSegment {
   final String segment;
   final bool matched;
@@ -194,30 +218,6 @@ class MatchedSegment {
           runtimeType == other.runtimeType &&
           segment == other.segment &&
           matched == other.matched;
-}
-
-class MatchedVariant {
-  final String prefix;
-  final String query;
-  final String suffix;
-
-  const MatchedVariant({
-    required this.prefix,
-    required this.query,
-    required this.suffix,
-  });
-
-  @override
-  int get hashCode => prefix.hashCode ^ query.hashCode ^ suffix.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MatchedVariant &&
-          runtimeType == other.runtimeType &&
-          prefix == other.prefix &&
-          query == other.query &&
-          suffix == other.suffix;
 }
 
 class PrSearchResult {
@@ -267,7 +267,7 @@ enum Script {
 
 class VariantSearchResult {
   final int id;
-  final MatchedVariant matchedVariant;
+  final MatchedInfix matchedVariant;
   final List<String> yues;
   final List<String> engs;
 

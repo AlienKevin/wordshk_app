@@ -74,23 +74,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
 
   @protected
+  MatchedInfix dco_decode_matched_infix(dynamic raw);
+
+  @protected
   MatchedSegment dco_decode_matched_segment(dynamic raw);
-
-  @protected
-  MatchedVariant dco_decode_matched_variant(dynamic raw);
-
-  @protected
-  String? dco_decode_opt_String(dynamic raw);
 
   @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
 
   @protected
   PrSearchResult dco_decode_pr_search_result(dynamic raw);
-
-  @protected
-  (String?, List<EgSearchResult>)
-      dco_decode_record_opt_string_list_eg_search_result(dynamic raw);
 
   @protected
   (String, String) dco_decode_record_string_string(dynamic raw);
@@ -177,24 +170,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  MatchedInfix sse_decode_matched_infix(SseDeserializer deserializer);
+
+  @protected
   MatchedSegment sse_decode_matched_segment(SseDeserializer deserializer);
-
-  @protected
-  MatchedVariant sse_decode_matched_variant(SseDeserializer deserializer);
-
-  @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
   PrSearchResult sse_decode_pr_search_result(SseDeserializer deserializer);
-
-  @protected
-  (String?, List<EgSearchResult>)
-      sse_decode_record_opt_string_list_eg_search_result(
-          SseDeserializer deserializer);
 
   @protected
   (String, String) sse_decode_record_string_string(
@@ -244,7 +229,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_u_32(raw.id),
       cst_encode_u_32(raw.defIndex),
       cst_encode_u_32(raw.egIndex),
-      cst_encode_String(raw.eg)
+      cst_encode_matched_infix(raw.matchedEg)
     ];
   }
 
@@ -321,12 +306,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  List<dynamic> cst_encode_matched_segment(MatchedSegment raw) {
-    return [cst_encode_String(raw.segment), cst_encode_bool(raw.matched)];
-  }
-
-  @protected
-  List<dynamic> cst_encode_matched_variant(MatchedVariant raw) {
+  List<dynamic> cst_encode_matched_infix(MatchedInfix raw) {
     return [
       cst_encode_String(raw.prefix),
       cst_encode_String(raw.query),
@@ -335,8 +315,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  String? cst_encode_opt_String(String? raw) {
-    return raw == null ? null : cst_encode_String(raw);
+  List<dynamic> cst_encode_matched_segment(MatchedSegment raw) {
+    return [cst_encode_String(raw.segment), cst_encode_bool(raw.matched)];
   }
 
   @protected
@@ -356,15 +336,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  List<dynamic> cst_encode_record_opt_string_list_eg_search_result(
-      (String?, List<EgSearchResult>) raw) {
-    return [
-      cst_encode_opt_String(raw.$1),
-      cst_encode_list_eg_search_result(raw.$2)
-    ];
-  }
-
-  @protected
   List<dynamic> cst_encode_record_string_string((String, String) raw) {
     return [cst_encode_String(raw.$1), cst_encode_String(raw.$2)];
   }
@@ -373,7 +344,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<dynamic> cst_encode_variant_search_result(VariantSearchResult raw) {
     return [
       cst_encode_u_32(raw.id),
-      cst_encode_matched_variant(raw.matchedVariant),
+      cst_encode_matched_infix(raw.matchedVariant),
       cst_encode_list_String(raw.yues),
       cst_encode_list_String(raw.engs)
     ];
@@ -465,15 +436,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<VariantSearchResult> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_matched_infix(MatchedInfix self, SseSerializer serializer);
+
+  @protected
   void sse_encode_matched_segment(
       MatchedSegment self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_matched_variant(
-      MatchedVariant self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
@@ -481,10 +448,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_pr_search_result(
       PrSearchResult self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_record_opt_string_list_eg_search_result(
-      (String?, List<EgSearchResult>) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_string(

@@ -60,7 +60,7 @@ impl CstDecode<crate::api::api::EgSearchResult>
             id: self_.get(0).cst_decode(),
             def_index: self_.get(1).cst_decode(),
             eg_index: self_.get(2).cst_decode(),
-            eg: self_.get(3).cst_decode(),
+            matched_eg: self_.get(3).cst_decode(),
         }
     }
 }
@@ -201,6 +201,26 @@ impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
             .collect()
     }
 }
+impl CstDecode<crate::api::api::MatchedInfix>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> crate::api::api::MatchedInfix {
+        let self_ = self
+            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap();
+        assert_eq!(
+            self_.length(),
+            3,
+            "Expected 3 elements, got {}",
+            self_.length()
+        );
+        crate::api::api::MatchedInfix {
+            prefix: self_.get(0).cst_decode(),
+            query: self_.get(1).cst_decode(),
+            suffix: self_.get(2).cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::MatchedSegment>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
@@ -218,31 +238,6 @@ impl CstDecode<crate::api::api::MatchedSegment>
             segment: self_.get(0).cst_decode(),
             matched: self_.get(1).cst_decode(),
         }
-    }
-}
-impl CstDecode<crate::api::api::MatchedVariant>
-    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-{
-    fn cst_decode(self) -> crate::api::api::MatchedVariant {
-        let self_ = self
-            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap();
-        assert_eq!(
-            self_.length(),
-            3,
-            "Expected 3 elements, got {}",
-            self_.length()
-        );
-        crate::api::api::MatchedVariant {
-            prefix: self_.get(0).cst_decode(),
-            query: self_.get(1).cst_decode(),
-            suffix: self_.get(2).cst_decode(),
-        }
-    }
-}
-impl CstDecode<Option<String>> for Option<String> {
-    fn cst_decode(self) -> Option<String> {
-        self.map(CstDecode::cst_decode)
     }
 }
 impl CstDecode<crate::api::api::PrSearchResult>
@@ -265,22 +260,6 @@ impl CstDecode<crate::api::api::PrSearchResult>
             yues: self_.get(3).cst_decode(),
             engs: self_.get(4).cst_decode(),
         }
-    }
-}
-impl CstDecode<(Option<String>, Vec<crate::api::api::EgSearchResult>)>
-    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-{
-    fn cst_decode(self) -> (Option<String>, Vec<crate::api::api::EgSearchResult>) {
-        let self_ = self
-            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap();
-        assert_eq!(
-            self_.length(),
-            2,
-            "Expected 2 elements, got {}",
-            self_.length()
-        );
-        (self_.get(0).cst_decode(), self_.get(1).cst_decode())
     }
 }
 impl CstDecode<(String, String)> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {

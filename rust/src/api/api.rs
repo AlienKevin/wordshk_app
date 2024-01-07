@@ -13,11 +13,11 @@ use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishSe
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::pr_index::FstPrIndices;
-use wordshk_tools::rich_dict::{RichDict, RichLine};
 use wordshk_tools::rich_dict::ArchivedRichDict;
+use wordshk_tools::rich_dict::RichDict;
 use wordshk_tools::search;
 use wordshk_tools::search::{CombinedSearchRank, VariantsMap};
-pub use wordshk_tools::search::{MatchedSegment, MatchedVariant, Script};
+pub use wordshk_tools::search::{MatchedInfix, MatchedSegment, Script};
 use wordshk_tools::unicode::is_cjk;
 
 use crate::frb_generated::StreamSink;
@@ -54,8 +54,8 @@ pub struct PrSearchResult {
     pub engs: Vec<String>,
 }
 
-#[frb(mirror(MatchedVariant))]
-pub struct _MatchedVariant {
+#[frb(mirror(MatchedInfix))]
+pub struct _MatchedInfix {
     prefix: String,
     query: String,
     suffix: String,
@@ -63,7 +63,7 @@ pub struct _MatchedVariant {
 
 pub struct VariantSearchResult {
     pub id: u32,
-    pub matched_variant: MatchedVariant,
+    pub matched_variant: MatchedInfix,
     pub yues: Vec<String>,
     pub engs: Vec<String>,
 }
@@ -80,7 +80,7 @@ pub struct EgSearchResult {
     pub id: u32,
     pub def_index: u32,
     pub eg_index: u32,
-    pub eg: String,
+    pub matched_eg: MatchedInfix,
 }
 
 pub struct EntrySummary {
@@ -232,30 +232,24 @@ pub fn combined_search(capacity: u32, query: String, script: Script, romanizatio
     }
 }
 
-pub fn eg_search(capacity: u32, max_first_index_in_eg: u32, query: String, script: Script) -> (Option<String>, Vec<EgSearchResult>) {
+pub fn eg_search(capacity: u32, max_first_index_in_eg: u32, query: String, script: Script) -> Vec<EgSearchResult> {
     let api = API.lock().unwrap();
-    let (query_found, mut ranks) = search::eg_search(&api.variants_map, dict(&api.dict_data), &query, max_first_index_in_eg as usize, script);
+    let mut ranks = search::eg_search(&api.variants_map, dict(&api.dict_data), &query, max_first_index_in_eg as usize, script);
     let mut results = vec![];
     let mut i = 0;
     while ranks.len() > 0 && i < capacity {
         let search::EgSearchRank {
-            id, def_index, eg_index, ..
+            id, def_index, eg_index, matched_eg, ..
         } = ranks.pop().unwrap();
         results.push(EgSearchResult {
             id: id as u32,
             def_index: def_index as u32,
             eg_index: eg_index as u32,
-            eg: match script {
-                Script::Traditional => {
-                    let line: RichLine = dict(&api.dict_data)[&id].defs[def_index].egs[eg_index].yue.as_ref().unwrap().deserialize(&mut rkyv::Infallible).unwrap();
-                    line.to_string()
-                },
-                Script::Simplified => dict(&api.dict_data)[&id].defs[def_index].egs[eg_index].yue_simp.as_ref().unwrap().to_string(),
-            }
+            matched_eg,
         });
         i += 1;
     }
-    (query_found, results)
+    results
 }
 
 pub fn get_entry_json(id: u32) -> String {

@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<VariantSearchResult> variantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
   List<EgSearchResult> egSearchResults = [];
-  String? egSearchQueryNormalized;
   int lastSearchStartTime = 0;
   bool finishedSearch = false;
   bool isSearchResultsEmpty = false;
@@ -266,7 +265,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       prSearchResults.clear();
       englishSearchResults.clear();
       egSearchResults.clear();
-      egSearchQueryNormalized = null;
       finishedSearch = false;
     });
   }
@@ -303,17 +301,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     maxFirstIndexInEg: 10,
                     query: query,
                     script: script)
-                .then((result) {
+                .then((results) {
               if (!context.mounted) return;
               if (searchStartTime >= lastSearchStartTime) {
-                final (queryNormalized, results) = result;
                 // print("Query: $query");
                 // print("Result: ${results.map((res) => res.eg)}");
                 if (isSearchResultsEmpty &&
                     query == context.read<SearchQueryState>().query) {
                   setState(() {
-                    egSearchResults = results.unique((result) => result.eg);
-                    egSearchQueryNormalized = queryNormalized;
+                    egSearchResults = results.unique((result) => result.matchedEg);
                     isSearchResultsEmpty = egSearchResults.isEmpty;
                     finishedSearch = true;
                   });
@@ -324,7 +320,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           setState(() {
             isSearchResultsEmpty = isCombinedResultsEmpty;
             egSearchResults.clear();
-            egSearchQueryNormalized = null;
             prSearchResults = results.prResults;
             variantSearchResults = results.variantResults;
             englishSearchResults = results.englishResults;
@@ -493,38 +488,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }).toList();
   }
 
-  List<Widget> showEgSearchResults(
-      int startIndex, String queryFound, Embedded embedded) {
+  List<Widget> showEgSearchResults(int startIndex, Embedded embedded) {
     return egSearchResults.mapIndexed((index, result) {
-      egs(bool selected) => result.eg
-          .split(queryFound)
-          .mapIndexed((i, segment) => <InlineSpan>[
-                ...(i == 0
-                    ? <InlineSpan>[]
-                    : [
-                        TextSpan(
-                            text: queryFound,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(
-                                    color: selected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .primary))
-                      ]),
-                TextSpan(
-                    text: segment,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(color: greyColor)),
-              ])
-          .expand((x) => x)
-          .toList();
+      egs(bool selected) => [
+            TextSpan(
+                text: result.matchedEg.prefix,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(color: greyColor)),
+            TextSpan(
+                text: result.matchedEg.query,
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: selected
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.primary)),
+            TextSpan(
+                text: result.matchedEg.suffix,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(color: greyColor)),
+          ];
       return showSearchResult(
           startIndex + index,
           result.id,
@@ -725,7 +710,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           variantSearchResults.length +
                           prSearchResults.length +
                           englishSearchResults.length,
-                      egSearchQueryNormalized!,
                       embedded)),
                 ])
               )

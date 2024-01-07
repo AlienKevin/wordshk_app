@@ -35,7 +35,7 @@ impl CstDecode<crate::api::api::EgSearchResult> for wire_cst_eg_search_result {
             id: self.id.cst_decode(),
             def_index: self.def_index.cst_decode(),
             eg_index: self.eg_index.cst_decode(),
-            eg: self.eg.cst_decode(),
+            matched_eg: self.matched_eg.cst_decode(),
         }
     }
 }
@@ -150,20 +150,20 @@ impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
         vec.into_iter().map(CstDecode::cst_decode).collect()
     }
 }
+impl CstDecode<crate::api::api::MatchedInfix> for wire_cst_matched_infix {
+    fn cst_decode(self) -> crate::api::api::MatchedInfix {
+        crate::api::api::MatchedInfix {
+            prefix: self.prefix.cst_decode(),
+            query: self.query.cst_decode(),
+            suffix: self.suffix.cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::MatchedSegment> for wire_cst_matched_segment {
     fn cst_decode(self) -> crate::api::api::MatchedSegment {
         crate::api::api::MatchedSegment {
             segment: self.segment.cst_decode(),
             matched: self.matched.cst_decode(),
-        }
-    }
-}
-impl CstDecode<crate::api::api::MatchedVariant> for wire_cst_matched_variant {
-    fn cst_decode(self) -> crate::api::api::MatchedVariant {
-        crate::api::api::MatchedVariant {
-            prefix: self.prefix.cst_decode(),
-            query: self.query.cst_decode(),
-            suffix: self.suffix.cst_decode(),
         }
     }
 }
@@ -176,13 +176,6 @@ impl CstDecode<crate::api::api::PrSearchResult> for wire_cst_pr_search_result {
             yues: self.yues.cst_decode(),
             engs: self.engs.cst_decode(),
         }
-    }
-}
-impl CstDecode<(Option<String>, Vec<crate::api::api::EgSearchResult>)>
-    for wire_cst_record_opt_string_list_eg_search_result
-{
-    fn cst_decode(self) -> (Option<String>, Vec<crate::api::api::EgSearchResult>) {
-        (self.field0.cst_decode(), self.field1.cst_decode())
     }
 }
 impl CstDecode<(String, String)> for wire_cst_record_string_string {
@@ -229,7 +222,7 @@ impl NewWithNullPtr for wire_cst_eg_search_result {
             id: Default::default(),
             def_index: Default::default(),
             eg_index: Default::default(),
-            eg: core::ptr::null_mut(),
+            matched_eg: Default::default(),
         }
     }
 }
@@ -267,6 +260,20 @@ impl Default for wire_cst_entry_summary {
         Self::new_with_null_ptr()
     }
 }
+impl NewWithNullPtr for wire_cst_matched_infix {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            prefix: core::ptr::null_mut(),
+            query: core::ptr::null_mut(),
+            suffix: core::ptr::null_mut(),
+        }
+    }
+}
+impl Default for wire_cst_matched_infix {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
 impl NewWithNullPtr for wire_cst_matched_segment {
     fn new_with_null_ptr() -> Self {
         Self {
@@ -276,20 +283,6 @@ impl NewWithNullPtr for wire_cst_matched_segment {
     }
 }
 impl Default for wire_cst_matched_segment {
-    fn default() -> Self {
-        Self::new_with_null_ptr()
-    }
-}
-impl NewWithNullPtr for wire_cst_matched_variant {
-    fn new_with_null_ptr() -> Self {
-        Self {
-            prefix: core::ptr::null_mut(),
-            query: core::ptr::null_mut(),
-            suffix: core::ptr::null_mut(),
-        }
-    }
-}
-impl Default for wire_cst_matched_variant {
     fn default() -> Self {
         Self::new_with_null_ptr()
     }
@@ -306,19 +299,6 @@ impl NewWithNullPtr for wire_cst_pr_search_result {
     }
 }
 impl Default for wire_cst_pr_search_result {
-    fn default() -> Self {
-        Self::new_with_null_ptr()
-    }
-}
-impl NewWithNullPtr for wire_cst_record_opt_string_list_eg_search_result {
-    fn new_with_null_ptr() -> Self {
-        Self {
-            field0: core::ptr::null_mut(),
-            field1: core::ptr::null_mut(),
-        }
-    }
-}
-impl Default for wire_cst_record_opt_string_list_eg_search_result {
     fn default() -> Self {
         Self::new_with_null_ptr()
     }
@@ -594,7 +574,7 @@ pub struct wire_cst_eg_search_result {
     id: u32,
     def_index: u32,
     eg_index: u32,
-    eg: *mut wire_cst_list_prim_u_8,
+    matched_eg: wire_cst_matched_infix,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -673,16 +653,16 @@ pub struct wire_cst_list_variant_search_result {
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct wire_cst_matched_segment {
-    segment: *mut wire_cst_list_prim_u_8,
-    matched: bool,
-}
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct wire_cst_matched_variant {
+pub struct wire_cst_matched_infix {
     prefix: *mut wire_cst_list_prim_u_8,
     query: *mut wire_cst_list_prim_u_8,
     suffix: *mut wire_cst_list_prim_u_8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_matched_segment {
+    segment: *mut wire_cst_list_prim_u_8,
+    matched: bool,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -695,12 +675,6 @@ pub struct wire_cst_pr_search_result {
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct wire_cst_record_opt_string_list_eg_search_result {
-    field0: *mut wire_cst_list_prim_u_8,
-    field1: *mut wire_cst_list_eg_search_result,
-}
-#[repr(C)]
-#[derive(Clone, Copy)]
 pub struct wire_cst_record_string_string {
     field0: *mut wire_cst_list_prim_u_8,
     field1: *mut wire_cst_list_prim_u_8,
@@ -709,7 +683,7 @@ pub struct wire_cst_record_string_string {
 #[derive(Clone, Copy)]
 pub struct wire_cst_variant_search_result {
     id: u32,
-    matched_variant: wire_cst_matched_variant,
+    matched_variant: wire_cst_matched_infix,
     yues: *mut wire_cst_list_String,
     engs: *mut wire_cst_list_String,
 }

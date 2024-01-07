@@ -72,7 +72,7 @@ abstract class RustLibApi extends BaseApi {
 
   Stream<String> createLogStream({dynamic hint});
 
-  Future<(String?, List<EgSearchResult>)> egSearch(
+  Future<List<EgSearchResult>> egSearch(
       {required int capacity,
       required int maxFirstIndexInEg,
       required String query,
@@ -164,7 +164,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<(String?, List<EgSearchResult>)> egSearch(
+  Future<List<EgSearchResult>> egSearch(
       {required int capacity,
       required int maxFirstIndexInEg,
       required String query,
@@ -179,7 +179,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return wire.wire_eg_search(port_, arg0, arg1, arg2, arg3);
       },
       codec: DcoCodec(
-        decodeSuccessData: dco_decode_record_opt_string_list_eg_search_result,
+        decodeSuccessData: dco_decode_list_eg_search_result,
         decodeErrorData: null,
       ),
       constMeta: kEgSearchConstMeta,
@@ -422,7 +422,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       id: dco_decode_u_32(arr[0]),
       defIndex: dco_decode_u_32(arr[1]),
       egIndex: dco_decode_u_32(arr[2]),
-      eg: dco_decode_String(arr[3]),
+      matchedEg: dco_decode_matched_infix(arr[3]),
     );
   }
 
@@ -511,6 +511,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MatchedInfix dco_decode_matched_infix(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return MatchedInfix(
+      prefix: dco_decode_String(arr[0]),
+      query: dco_decode_String(arr[1]),
+      suffix: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
   MatchedSegment dco_decode_matched_segment(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 2)
@@ -519,23 +531,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       segment: dco_decode_String(arr[0]),
       matched: dco_decode_bool(arr[1]),
     );
-  }
-
-  @protected
-  MatchedVariant dco_decode_matched_variant(dynamic raw) {
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return MatchedVariant(
-      prefix: dco_decode_String(arr[0]),
-      query: dco_decode_String(arr[1]),
-      suffix: dco_decode_String(arr[2]),
-    );
-  }
-
-  @protected
-  String? dco_decode_opt_String(dynamic raw) {
-    return raw == null ? null : dco_decode_String(raw);
   }
 
   @protected
@@ -554,19 +549,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       matchedPr: dco_decode_list_matched_segment(arr[2]),
       yues: dco_decode_list_String(arr[3]),
       engs: dco_decode_list_String(arr[4]),
-    );
-  }
-
-  @protected
-  (String?, List<EgSearchResult>)
-      dco_decode_record_opt_string_list_eg_search_result(dynamic raw) {
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) {
-      throw Exception('Expected 2 elements, got ${arr.length}');
-    }
-    return (
-      dco_decode_opt_String(arr[0]),
-      dco_decode_list_eg_search_result(arr[1]),
     );
   }
 
@@ -614,7 +596,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return VariantSearchResult(
       id: dco_decode_u_32(arr[0]),
-      matchedVariant: dco_decode_matched_variant(arr[1]),
+      matchedVariant: dco_decode_matched_infix(arr[1]),
       yues: dco_decode_list_String(arr[2]),
       engs: dco_decode_list_String(arr[3]),
     );
@@ -655,9 +637,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_id = sse_decode_u_32(deserializer);
     var var_defIndex = sse_decode_u_32(deserializer);
     var var_egIndex = sse_decode_u_32(deserializer);
-    var var_eg = sse_decode_String(deserializer);
+    var var_matchedEg = sse_decode_matched_infix(deserializer);
     return EgSearchResult(
-        id: var_id, defIndex: var_defIndex, egIndex: var_egIndex, eg: var_eg);
+        id: var_id,
+        defIndex: var_defIndex,
+        egIndex: var_egIndex,
+        matchedEg: var_matchedEg);
   }
 
   @protected
@@ -788,28 +773,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MatchedSegment sse_decode_matched_segment(SseDeserializer deserializer) {
-    var var_segment = sse_decode_String(deserializer);
-    var var_matched = sse_decode_bool(deserializer);
-    return MatchedSegment(segment: var_segment, matched: var_matched);
-  }
-
-  @protected
-  MatchedVariant sse_decode_matched_variant(SseDeserializer deserializer) {
+  MatchedInfix sse_decode_matched_infix(SseDeserializer deserializer) {
     var var_prefix = sse_decode_String(deserializer);
     var var_query = sse_decode_String(deserializer);
     var var_suffix = sse_decode_String(deserializer);
-    return MatchedVariant(
+    return MatchedInfix(
         prefix: var_prefix, query: var_query, suffix: var_suffix);
   }
 
   @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer) {
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_String(deserializer));
-    } else {
-      return null;
-    }
+  MatchedSegment sse_decode_matched_segment(SseDeserializer deserializer) {
+    var var_segment = sse_decode_String(deserializer);
+    var var_matched = sse_decode_bool(deserializer);
+    return MatchedSegment(segment: var_segment, matched: var_matched);
   }
 
   @protected
@@ -834,15 +810,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         matchedPr: var_matchedPr,
         yues: var_yues,
         engs: var_engs);
-  }
-
-  @protected
-  (String?, List<EgSearchResult>)
-      sse_decode_record_opt_string_list_eg_search_result(
-          SseDeserializer deserializer) {
-    var var_field0 = sse_decode_opt_String(deserializer);
-    var var_field1 = sse_decode_list_eg_search_result(deserializer);
-    return (var_field0, var_field1);
   }
 
   @protected
@@ -882,7 +849,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   VariantSearchResult sse_decode_variant_search_result(
       SseDeserializer deserializer) {
     var var_id = sse_decode_u_32(deserializer);
-    var var_matchedVariant = sse_decode_matched_variant(deserializer);
+    var var_matchedVariant = sse_decode_matched_infix(deserializer);
     var var_yues = sse_decode_list_String(deserializer);
     var var_engs = sse_decode_list_String(deserializer);
     return VariantSearchResult(
@@ -956,7 +923,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_u_32(self.id, serializer);
     sse_encode_u_32(self.defIndex, serializer);
     sse_encode_u_32(self.egIndex, serializer);
-    sse_encode_String(self.eg, serializer);
+    sse_encode_matched_infix(self.matchedEg, serializer);
   }
 
   @protected
@@ -1064,26 +1031,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_matched_segment(
-      MatchedSegment self, SseSerializer serializer) {
-    sse_encode_String(self.segment, serializer);
-    sse_encode_bool(self.matched, serializer);
-  }
-
-  @protected
-  void sse_encode_matched_variant(
-      MatchedVariant self, SseSerializer serializer) {
+  void sse_encode_matched_infix(MatchedInfix self, SseSerializer serializer) {
     sse_encode_String(self.prefix, serializer);
     sse_encode_String(self.query, serializer);
     sse_encode_String(self.suffix, serializer);
   }
 
   @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer) {
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_String(self, serializer);
-    }
+  void sse_encode_matched_segment(
+      MatchedSegment self, SseSerializer serializer) {
+    sse_encode_String(self.segment, serializer);
+    sse_encode_bool(self.matched, serializer);
   }
 
   @protected
@@ -1102,13 +1060,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_matched_segment(self.matchedPr, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
-  }
-
-  @protected
-  void sse_encode_record_opt_string_list_eg_search_result(
-      (String?, List<EgSearchResult>) self, SseSerializer serializer) {
-    sse_encode_opt_String(self.$1, serializer);
-    sse_encode_list_eg_search_result(self.$2, serializer);
   }
 
   @protected
@@ -1145,7 +1096,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_variant_search_result(
       VariantSearchResult self, SseSerializer serializer) {
     sse_encode_u_32(self.id, serializer);
-    sse_encode_matched_variant(self.matchedVariant, serializer);
+    sse_encode_matched_infix(self.matchedVariant, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
   }
