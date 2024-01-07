@@ -10,14 +10,15 @@ import '../../states/romanization_state.dart';
 import 'entry_word.dart';
 
 List<Widget> showRubySegment(
-  RubySegment segment,
-  Color textColor,
-  Color linkColor,
-  double rubySize,
-  double textScaleFactor,
-  OnTapLink onTapLink,
-  BuildContext context,
-) {
+    RubySegment segment,
+    Color textColor,
+    Color linkColor,
+    double rubySize,
+    double textScaleFactor,
+    OnTapLink onTapLink,
+    BuildContext context,
+    {isLinked = false}) {
+  final textColor_ = isLinked ? linkColor : textColor;
   final double rubyYPos = rubySize * textScaleFactor;
   late final Widget text;
   late final String prs;
@@ -26,27 +27,29 @@ List<Widget> showRubySegment(
     case RubySegmentType.punc:
       text = Text.rich(TextSpan(
           text: segment.segment as String,
-          style: TextStyle(fontSize: rubySize, height: 1, color: textColor)));
+          style: TextStyle(fontSize: rubySize, height: 1, color: textColor_)));
       prs = "";
       prsTones = [6]; // empty pr defaults to 6 tones (this is arbitrary)
       break;
     case RubySegmentType.word:
       text = Text.rich(TextSpan(
           children: showWord(segment.segment.word as EntryWord),
-          style: TextStyle(fontSize: rubySize, height: 1, color: textColor)));
+          style: TextStyle(fontSize: rubySize, height: 1, color: textColor_)));
       prs = context.read<RomanizationState>().showPrs(segment.segment.prs);
       prsTones = segment.segment.prsTones;
       break;
     case RubySegmentType.linkedWord:
       return (segment.segment.words as List<RubySegmentWord>)
           .map((word) => showRubySegment(
-              RubySegment(RubySegmentType.word, word),
-              textColor,
-              linkColor,
-              rubySize,
-              textScaleFactor,
-              onTapLink,
-              context))
+                RubySegment(RubySegmentType.word, word),
+                textColor,
+                linkColor,
+                rubySize,
+                textScaleFactor,
+                onTapLink,
+                context,
+                isLinked: true,
+              ))
           .expand((i) => i)
           .map((seg) => GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -122,7 +125,8 @@ List<Widget> showRubySegment(
                   child: Center(
                       child: Transform(
                           alignment: Alignment.center,
-                          transform: Matrix4.translationValues(0, -rubySize * 0.8, 0),
+                          transform:
+                              Matrix4.translationValues(0, -rubySize * 0.8, 0),
                           child: Text.rich(TextSpan(
                               text: prs,
                               style: TextStyle(
