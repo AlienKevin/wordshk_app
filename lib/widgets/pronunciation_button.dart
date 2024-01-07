@@ -11,12 +11,14 @@ class PronunciationButton extends StatefulWidget {
   final Player player;
   final Alignment alignment;
   final bool large;
+  final bool playable;
 
   const PronunciationButton({
     super.key,
     required this.player,
     required this.alignment,
     this.large = false,
+    this.playable = true,
   });
 
   @override
@@ -39,11 +41,13 @@ class PronunciationButtonState extends State<PronunciationButton> {
   icon({double? size}) =>
       Consumer<PlayerState>(builder: (context, playerState, child) {
         return Icon(
-          playerState.currentPlayer == widget.player
-              ? isMaterial(context)
-                  ? Icons.stop_circle
-                  : CupertinoIcons.stop_circle_fill
-              : PlatformIcons(context).volumeUp,
+          widget.playable
+              ? (playerState.currentPlayer == widget.player
+                  ? isMaterial(context)
+                      ? Icons.stop_circle
+                      : CupertinoIcons.stop_circle_fill
+                  : PlatformIcons(context).volumeUp)
+              : PlatformIcons(context).volumeOff,
           size: size,
         );
       });
@@ -57,7 +61,8 @@ class PronunciationButtonState extends State<PronunciationButton> {
             height: displaySmallSize * 4,
             width: displaySmallSize * 4,
             child: ElevatedButton(
-                onPressed: triggerPlay,
+                onPressed:
+                    widget.playable ? triggerPlay : null,
                 child: icon(size: displaySmallSize * 1.5),
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -77,7 +82,8 @@ class PronunciationButtonState extends State<PronunciationButton> {
                 icon: icon(),
                 color: Theme.of(context).colorScheme.secondary,
                 padding: const EdgeInsets.only(left: 5),
-                onPressed: triggerPlay),
+                onPressed:
+                    widget.playable ? triggerPlay : null),
           );
   }
 }

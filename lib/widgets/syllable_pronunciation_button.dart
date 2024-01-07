@@ -23,17 +23,14 @@ class SyllablePronunciationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Consumer<PronunciationMethodState>(
-      builder: (context, prMethodState, child) => Visibility(
-            visible:
-                jyutpingFemaleSyllableNames.containsAll(prs.expand((x) => x)),
-            maintainSize: true,
-            maintainAnimation: true,
-            maintainState: true,
-            child: PronunciationButton(
-              key: key,
-              player: SyllablesPlayer(prs: prs, atHeader: atHeader, key: key),
-              alignment: alignment,
-              large: large,
-            ),
+      builder: (context, prMethodState, child) => PronunciationButton(
+            key: key,
+            player: SyllablesPlayer(prs: prs, atHeader: atHeader, key: key),
+            alignment: alignment,
+            large: large,
+            playable: prs
+                .expand((prs) => prs)
+                .where((pr) => !jyutpingFemaleSyllableNames.contains(pr))
+                .isEmpty,
           ));
 }
