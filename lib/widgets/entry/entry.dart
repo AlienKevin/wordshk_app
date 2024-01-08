@@ -77,7 +77,8 @@ class _EntryWidgetState extends State<EntryWidget>
     _observerController = ListObserverController(controller: _scrollController)
       ..initialIndexModel = ObserverIndexPositionModel(
         index: targetDefIndex,
-      );
+      )
+      ..cacheJumpIndexOffset = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
@@ -291,8 +292,7 @@ class _EntryWidgetState extends State<EntryWidget>
     ]);
   }
 
-  showDef(int entryIndex, int index, lineTextStyle, linkColor,
-      rubyFontSize) {
+  showDef(int entryIndex, int index, lineTextStyle, linkColor, rubyFontSize) {
     final entry = widget.entryGroup[entryIndex];
     return EntryDef(
       def: entry.defs[index - 1],
@@ -344,8 +344,8 @@ class _EntryWidgetState extends State<EntryWidget>
       ]),
       ...entry.defs.indexed.map((item) {
         final index = item.$1 + 1;
-        return showDef(entryIndex, index, lineTextStyle, linkColor,
-            rubyFontSize);
+        return showDef(
+            entryIndex, index, lineTextStyle, linkColor, rubyFontSize);
       })
     ];
   }
