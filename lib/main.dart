@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -106,15 +105,7 @@ main() async {
 
 runMyApp({bool? firstTimeUser, Language? language}) async {
   try {
-    final Uint8List dictData =
-        (await rootBundle.load('assets/dict.rkyv')).buffer.asUint8List();
-    print("dictData: ${dictData.length}");
-    final Uint8List englishIndexData =
-        (await rootBundle.load('assets/english_index.rkyv'))
-            .buffer
-            .asUint8List();
-    print("englishIndexData: ${englishIndexData.length}");
-    await initApi(dictData: dictData, englishIndexData: englishIndexData);
+    await initApi();
 
     final prefs = await SharedPreferences.getInstance();
     if (kDebugMode) {

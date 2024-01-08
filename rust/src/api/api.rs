@@ -7,7 +7,7 @@ use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
 use parking_lot::RwLock;
-use rkyv::{AlignedVec, Deserialize};
+use rkyv::Deserialize;
 use wordshk_tools::dict::{clause_to_string, EntryId};
 use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishSearchRank};
 pub use wordshk_tools::jyutping::Romanization;
@@ -88,15 +88,21 @@ pub struct EntrySummary {
     pub defs: Vec<(String, String)>,
 }
 
+#[repr(align(8))]
+struct Align8<T: ?Sized>(pub T);
+
 pub struct WordshkApi {
-    dict_data: AlignedVec,
-    english_index_data: AlignedVec,
     pr_indices: Option<FstPrIndices>,
     variants_map: VariantsMap,
     word_list: HashMap<String, Vec<String>>,
 }
 
-lazy_static! { static ref log_stream_sink: RwLock<Option<StreamSink<String>>> = RwLock::new(None); }
+const dict_data: &Align8<[u8]> = &Align8(*include_bytes!("../../data/dict.rkyv"));
+const english_index_data: &Align8<[u8]> = &Align8(*include_bytes!("../../data/english_index.rkyv"));
+
+lazy_static! {
+    static ref log_stream_sink: RwLock<Option<StreamSink<String>>> = RwLock::new(None);
+}
 
 pub fn create_log_stream(s: StreamSink<String>) {
     *log_stream_sink.write() = Some(s);
@@ -121,25 +127,13 @@ pub fn init_utils() {
     flutter_rust_bridge::setup_default_user_utils();
 }
 
-pub fn init_api(dict_data: Vec<u8>, english_index_data: Vec<u8>) -> () {
+pub fn init_api() -> () {
     let mut api = API.lock().unwrap();
 
     let mut t = Instant::now();
-    let mut aligned_dict_data = AlignedVec::with_capacity(dict_data.len());
-    aligned_dict_data.extend_from_slice(&dict_data);
-    log!(t, "Copied dict_data to aligned_dict_data");
 
-    api.variants_map = search::rich_dict_to_variants_map(&dict(&aligned_dict_data));
+    api.variants_map = search::rich_dict_to_variants_map(&dict());
     log!(t, "Constructed variants_map");
-
-    api.dict_data = aligned_dict_data;
-    log!(t, "Initialized api.dict_data");
-
-    let mut aligned_english_index_data = AlignedVec::with_capacity(english_index_data.len());
-    aligned_english_index_data.extend_from_slice(&english_index_data);
-    log!(t, "Copied english_index_data to aligned_english_index_data");
-
-    api.english_index_data = aligned_english_index_data;
 
     log_stream_sink.write().as_ref().unwrap().add("Initialized API".to_string());
 }
@@ -172,8 +166,6 @@ impl WordshkApi {
         log!(t, "Loaded word_list");
 
         WordshkApi {
-            dict_data: AlignedVec::default(),
-            english_index_data: AlignedVec::default(),
             pr_indices: None,
             variants_map: BTreeMap::default(),
             word_list,
@@ -181,12 +173,12 @@ impl WordshkApi {
     }
 }
 
-fn dict(dict_data: &AlignedVec) -> &ArchivedRichDict {
-    unsafe { rkyv::archived_root::<RichDict>(dict_data) }
+fn dict() -> &'static ArchivedRichDict {
+    unsafe { rkyv::archived_root::<RichDict>(&dict_data.0) }
 }
 
-fn english_index(english_index_data: &AlignedVec) -> &ArchivedEnglishIndex {
-    unsafe { rkyv::archived_root::<EnglishIndex>(english_index_data) }
+fn english_index() -> &'static ArchivedEnglishIndex {
+    unsafe { rkyv::archived_root::<EnglishIndex>(&english_index_data.0) }
 }
 
 pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Vec<EntrySummary> {
@@ -197,36 +189,36 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Vec<EntrySumm
             Script::Traditional => entry.word_trad.clone(),
             Script::Simplified => entry.word_simp.clone(),
         };
-        let defs = get_entry_defs(entry_id, dict(&api.dict_data), script);
+        let defs = get_entry_defs(entry_id, dict(), script);
         EntrySummary { variant, defs }
     }).collect();
     summaries
 }
 
 pub fn generate_pr_indices(romanization: Romanization) {
-    let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(&API.lock().unwrap().dict_data), romanization);
+    let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(), romanization);
     API.lock().unwrap().pr_indices = Some(wordshk_tools::pr_index::pr_indices_into_fst(pr_indices));
 }
 
 pub fn combined_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
     let api = API.lock().unwrap();
-    match &mut search::combined_search(&api.variants_map, api.pr_indices.as_ref(), english_index(&api.english_index_data), dict(&api.dict_data), &query, script, romanization) {
+    match &mut search::combined_search(&api.variants_map, api.pr_indices.as_ref(), english_index(), dict(), &query, script, romanization) {
         CombinedSearchRank::Variant(variant_ranks) =>
             CombinedSearchResults {
-                variant_results: variant_ranks_to_results(variant_ranks, &api.variants_map, dict(&api.dict_data), script, capacity),
+                variant_results: variant_ranks_to_results(variant_ranks, &api.variants_map, dict(), script, capacity),
                 pr_results: vec![],
                 english_results: vec![]
             },
         CombinedSearchRank::Pr(pr_ranks) =>
             CombinedSearchResults {
                 variant_results: vec![],
-                pr_results: pr_ranks_to_results(pr_ranks, &api.variants_map,  dict(&api.dict_data),script, capacity),
+                pr_results: pr_ranks_to_results(pr_ranks, &api.variants_map,  dict(),script, capacity),
                 english_results: vec![]
             },
         CombinedSearchRank::All(variant_ranks, pr_ranks, english_ranks) =>
             CombinedSearchResults {
-                variant_results: variant_ranks_to_results(variant_ranks, &api.variants_map, dict(&api.dict_data), script, capacity),
-                pr_results: pr_ranks_to_results(pr_ranks, &api.variants_map, dict(&api.dict_data), script, capacity),
+                variant_results: variant_ranks_to_results(variant_ranks, &api.variants_map, dict(), script, capacity),
+                pr_results: pr_ranks_to_results(pr_ranks, &api.variants_map, dict(), script, capacity),
                 english_results: english_ranks_to_results(english_ranks, &api.variants_map, script, capacity)
             }
     }
@@ -234,7 +226,7 @@ pub fn combined_search(capacity: u32, query: String, script: Script, romanizatio
 
 pub fn eg_search(capacity: u32, max_first_index_in_eg: u32, query: String, script: Script) -> Vec<EgSearchResult> {
     let api = API.lock().unwrap();
-    let mut ranks = search::eg_search(&api.variants_map, dict(&api.dict_data), &query, max_first_index_in_eg as usize, script);
+    let mut ranks = search::eg_search(&api.variants_map, dict(), &query, max_first_index_in_eg as usize, script);
     let mut results = vec![];
     let mut i = 0;
     while ranks.len() > 0 && i < capacity {
@@ -253,13 +245,13 @@ pub fn eg_search(capacity: u32, max_first_index_in_eg: u32, query: String, scrip
 }
 
 pub fn get_entry_json(id: u32) -> String {
-    let rich_entry = dict(&API.lock().unwrap().dict_data).get(&id).unwrap().deserialize(&mut rkyv::Infallible).unwrap();
+    let rich_entry = dict().get(&id).unwrap().deserialize(&mut rkyv::Infallible).unwrap();
     serde_json::to_string(&to_lean_rich_entry(&rich_entry)).unwrap()
 }
 
 pub fn get_entry_group_json(id: u32) -> Vec<String> {
     let api = API.lock().unwrap();
-    let rich_entry_group = search::get_entry_group(&api.variants_map, dict(&api.dict_data), id);
+    let rich_entry_group = search::get_entry_group(&api.variants_map, dict(), id);
     rich_entry_group
         .iter()
         .map(|entry| serde_json::to_string(&to_lean_rich_entry(entry)).unwrap())

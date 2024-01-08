@@ -738,24 +738,17 @@ class RustLibWire implements BaseWire {
 
   void wire_init_api(
     int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8> dict_data,
-    ffi.Pointer<wire_cst_list_prim_u_8> english_index_data,
   ) {
     return _wire_init_api(
       port_,
-      dict_data,
-      english_index_data,
     );
   }
 
-  late final _wire_init_apiPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8>,
-                  ffi.Pointer<wire_cst_list_prim_u_8>)>>(
-      'frbgen_wordshk_wire_init_api');
-  late final _wire_init_api = _wire_init_apiPtr.asFunction<
-      void Function(int, ffi.Pointer<wire_cst_list_prim_u_8>,
-          ffi.Pointer<wire_cst_list_prim_u_8>)>();
+  late final _wire_init_apiPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'frbgen_wordshk_wire_init_api');
+  late final _wire_init_api =
+      _wire_init_apiPtr.asFunction<void Function(int)>();
 
   void wire_init_utils(
     int port_,

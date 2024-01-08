@@ -515,9 +515,7 @@ class RustLibWire extends BaseWire {
   void wire_get_jyutping(NativePortType port_, String query) =>
       wasmModule.wire_get_jyutping(port_, query);
 
-  void wire_init_api(NativePortType port_, Uint8List dict_data,
-          Uint8List english_index_data) =>
-      wasmModule.wire_init_api(port_, dict_data, english_index_data);
+  void wire_init_api(NativePortType port_) => wasmModule.wire_init_api(port_);
 
   void wire_init_utils(NativePortType port_) =>
       wasmModule.wire_init_utils(port_);
@@ -561,8 +559,7 @@ class RustLibWasmModule implements WasmModule {
 
   external void wire_get_jyutping(NativePortType port_, String query);
 
-  external void wire_init_api(
-      NativePortType port_, Uint8List dict_data, Uint8List english_index_data);
+  external void wire_init_api(NativePortType port_);
 
   external void wire_init_utils(NativePortType port_);
 }

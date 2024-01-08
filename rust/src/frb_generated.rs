@@ -244,11 +244,7 @@ fn wire_get_jyutping_impl(
         },
     )
 }
-fn wire_init_api_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    dict_data: impl CstDecode<Vec<u8>>,
-    english_index_data: impl CstDecode<Vec<u8>>,
-) {
+fn wire_init_api_impl(port_: flutter_rust_bridge::for_generated::MessagePort) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "init_api",
@@ -256,15 +252,8 @@ fn wire_init_api_impl(
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
-            let api_dict_data = dict_data.cst_decode();
-            let api_english_index_data = english_index_data.cst_decode();
             move |context| {
-                transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::init_api(
-                        api_dict_data,
-                        api_english_index_data,
-                    ))
-                })())
+                transform_result_dco((move || Result::<_, ()>::Ok(crate::api::api::init_api()))())
             }
         },
     )

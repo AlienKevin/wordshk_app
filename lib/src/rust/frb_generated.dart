@@ -94,10 +94,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<List<String>> getJyutping({required String query, dynamic hint});
 
-  Future<void> initApi(
-      {required Uint8List dictData,
-      required Uint8List englishIndexData,
-      dynamic hint});
+  Future<void> initApi({dynamic hint});
 
   Future<void> initUtils({dynamic hint});
 }
@@ -338,22 +335,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> initApi(
-      {required Uint8List dictData,
-      required Uint8List englishIndexData,
-      dynamic hint}) {
+  Future<void> initApi({dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        var arg0 = cst_encode_list_prim_u_8(dictData);
-        var arg1 = cst_encode_list_prim_u_8(englishIndexData);
-        return wire.wire_init_api(port_, arg0, arg1);
+        return wire.wire_init_api(port_);
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_unit,
         decodeErrorData: null,
       ),
       constMeta: kInitApiConstMeta,
-      argValues: [dictData, englishIndexData],
+      argValues: [],
       apiImpl: this,
       hint: hint,
     ));
@@ -361,7 +353,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kInitApiConstMeta => const TaskConstMeta(
         debugName: "init_api",
-        argNames: ["dictData", "englishIndexData"],
+        argNames: [],
       );
 
   @override
