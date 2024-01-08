@@ -100,8 +100,7 @@ class EntryEgs extends StatelessWidget {
                               linkColor: linkColor,
                               rubyFontSize: rubyFontSize,
                               onTapLink: onTapLink,
-                            ))
-                        .toList(),
+                            )),
                     Builder(builder: (context) {
                       return expandButton(
                           AppLocalizations.of(context)!.entryCollapseExamples,

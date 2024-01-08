@@ -291,7 +291,7 @@ class _EntryWidgetState extends State<EntryWidget>
     ]);
   }
 
-  showDef(int entryIndex, int index, int itemCount, lineTextStyle, linkColor,
+  showDef(int entryIndex, int index, lineTextStyle, linkColor,
       rubyFontSize) {
     final entry = widget.entryGroup[entryIndex];
     return EntryDef(
@@ -302,7 +302,7 @@ class _EntryWidgetState extends State<EntryWidget>
       lineTextStyle: lineTextStyle,
       linkColor: linkColor,
       rubyFontSize: rubyFontSize,
-      isSingleDef: entry.defs.length == 1,
+      isSingleDef: entry.defs.length == 1 && widget.entryGroup.length == 1,
       onTapLink: widget.onTapLink,
     );
   }
@@ -317,7 +317,6 @@ class _EntryWidgetState extends State<EntryWidget>
       required linkColor,
       required rubyFontSize}) {
     final entry = widget.entryGroup[entryIndex];
-    final itemCount = entry.defs.length + 1;
     return [
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         EntryVariants(
@@ -345,7 +344,7 @@ class _EntryWidgetState extends State<EntryWidget>
       ]),
       ...entry.defs.indexed.map((item) {
         final index = item.$1 + 1;
-        return showDef(entryIndex, index, itemCount, lineTextStyle, linkColor,
+        return showDef(entryIndex, index, lineTextStyle, linkColor,
             rubyFontSize);
       })
     ];
