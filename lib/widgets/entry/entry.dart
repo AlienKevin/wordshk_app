@@ -2,6 +2,7 @@ import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
@@ -48,14 +49,14 @@ class _EntryWidgetState extends State<EntryWidget>
   void initState() {
     super.initState();
 
-    getStartDefIndex(int entryIndex) => widget.entryGroup
+    innerGetStartDefIndex(int entryIndex) => widget.entryGroup
         .take(entryIndex)
         .fold(0, (len, entry) => len + (entry.defs.length + 1));
 
     defIndexRanges = widget.entryGroup
         .mapIndexed((entryIndex, entry) => (
-              getStartDefIndex(entryIndex),
-              getStartDefIndex(entryIndex) + entry.defs.length + 1
+              innerGetStartDefIndex(entryIndex),
+              innerGetStartDefIndex(entryIndex) + entry.defs.length + 1
             ))
         .toList();
 
@@ -68,9 +69,10 @@ class _EntryWidgetState extends State<EntryWidget>
 
     final targetDefIndex = getStartDefIndex(widget.initialEntryIndex) +
         (widget.initialDefIndex != null ? widget.initialDefIndex! + 1 : 0);
-    // print("initialEntryIndex: ${widget.initialEntryIndex}");
-    // print("initialDefIndex: ${widget.initialDefIndex}");
-    // print("targetDefIndex: $targetDefIndex");
+    // debugPrint("defIndexRanges: $defIndexRanges");
+    // debugPrint("initialEntryIndex: ${widget.initialEntryIndex}");
+    // debugPrint("initialDefIndex: ${widget.initialDefIndex}");
+    // debugPrint("targetDefIndex: $targetDefIndex");
 
     _observerController = ListObserverController(controller: _scrollController)
       ..initialIndexModel = ObserverIndexPositionModel(
@@ -82,9 +84,11 @@ class _EntryWidgetState extends State<EntryWidget>
         isScrollingToTarget = true;
       });
       await _observerController.animateTo(
-          index: targetDefIndex,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeIn);
+        index: targetDefIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeIn,
+        alignment: 1,
+      );
       setState(() {
         isScrollingToTarget = false;
       });
@@ -107,68 +111,115 @@ class _EntryWidgetState extends State<EntryWidget>
     double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
     TextStyle lineTextStyle = Theme.of(context).textTheme.bodyMedium!;
     final localizationContext = AppLocalizations.of(context)!;
+
+    final items = widget.entryGroup.indexed
+        .map((item) => showDefs(
+              entryIndex: item.$1,
+              script: context.watch<LanguageState>().getScript(),
+              variantTextStyle: Theme.of(context).textTheme.headlineSmall!,
+              prTextStyle: Theme.of(context).textTheme.bodySmall!,
+              lineTextStyle: lineTextStyle,
+              linkColor: Theme.of(context).colorScheme.secondary,
+              rubyFontSize: rubyFontSize,
+              onTapLink: widget.onTapLink,
+            ))
+        .expand((x) => x)
+        .toList();
+
     return Column(children: [
       Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: ListViewObserver(
-            controller: _observerController,
-            autoTriggerObserveTypes: const [
-              ObserverAutoTriggerObserveType.scrollUpdate,
-            ],
-            triggerOnObserveType: ObserverTriggerOnObserveType.directly,
-            onObserve: (resultModel) {
-              // debugPrint('visible -- ${resultModel.visible}');
-              // debugPrint('firstChild.index -- ${resultModel.firstChild?.index}');
-              // debugPrint('displaying -- ${resultModel.displayingChildIndexList}');
+          child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: ListViewObserver(
+                controller: _observerController,
+                autoTriggerObserveTypes: const [
+                  ObserverAutoTriggerObserveType.scrollUpdate,
+                ],
+                triggerOnObserveType: ObserverTriggerOnObserveType.directly,
+                onObserve: (resultModel) {
+                  // debugPrint('visible -- ${resultModel.visible}');
+                  // debugPrint('firstChild.index -- ${resultModel.firstChild?.index}');
+                  // debugPrint('displaying -- ${resultModel.displayingChildIndexList}');
 
-              // for (var item in resultModel.displayingChildModelList) {
-              //   debugPrint(
-              //       'item - ${item.index} ${item.leadingMarginToViewport} ${item.trailingMarginToViewport} ${item.displayPercentage}');
-              // }
+                  // for (var item in resultModel.displayingChildModelList) {
+                  //   debugPrint(
+                  //       'item - ${item.index} ${item.leadingMarginToViewport} ${item.trailingMarginToViewport} ${item.displayPercentage}');
+                  // }
 
-              if (!isScrollingToTarget &&
-                  resultModel.displayingChildModelList.isNotEmpty) {
-                final targetEntryIndex = groupBy(resultModel.displayingChildModelList, (child) => defIndexRanges.indexWhere((entryRange) => child.index >= entryRange.$1 && child.index < entryRange.$2))
-                    .map((defIndex, children) {
-                    return MapEntry(
-                        defIndex,
-                        children.map((child) => child.viewportMainAxisExtent).reduce((entryHeight, defHeight) => entryHeight + defHeight));
-                    })
-                    .entries
-                    .fold(
-                        (tallestEntryIndex: -1, tallestEntryHeight: -1.0),
-                        (tallestEntry, entryHeight) => tallestEntry.tallestEntryHeight >= entryHeight.value
-                            ? tallestEntry
-                            : (
-                                tallestEntryIndex: entryHeight.key,
-                                tallestEntryHeight: entryHeight.value
-                              )).tallestEntryIndex;
-                debugPrint("targetEntryIndex: $targetEntryIndex");
-                setState(() {
-                  _tabController.animateTo(targetEntryIndex);
-                });
-              }
-            },
-            child: ListView(
-                controller: _scrollController,
-                children: widget.entryGroup.indexed
-                    .map((item) => showDefs(
-                          entryIndex: item.$1,
-                          script: context.watch<LanguageState>().getScript(),
-                          variantTextStyle:
-                              Theme.of(context).textTheme.headlineSmall!,
-                          prTextStyle: Theme.of(context).textTheme.bodySmall!,
-                          lineTextStyle: lineTextStyle,
-                          linkColor: Theme.of(context).colorScheme.secondary,
-                          rubyFontSize: rubyFontSize,
-                          onTapLink: widget.onTapLink,
-                        ))
-                    .expand((x) => x)
-                    .toList()),
-          ),
-        ),
-      ),
+                  if (!isScrollingToTarget &&
+                      resultModel.displayingChildModelList.isNotEmpty) {
+                    final RenderSliverMultiBoxAdaptor list =
+                        resultModel.sliverList;
+                    List<
+                        ({
+                          RenderIndexedSemantics child,
+                          ListViewObserveDisplayingChildModel? displayingChild
+                        })> items = [];
+                    list.visitChildren((child) {
+                      if (child is! RenderIndexedSemantics) {
+                        return;
+                      }
+                      final displayingChild = resultModel
+                          .displayingChildModelList
+                          .firstWhereOrNull((displayingChild) =>
+                              displayingChild.renderObject == child);
+                      items.add(
+                          (child: child, displayingChild: displayingChild));
+                    });
+
+                    final targetEntryIndex = groupBy(
+                            items,
+                            (item) => defIndexRanges.indexWhere((entryRange) =>
+                                item.child.index >= entryRange.$1 &&
+                                item.child.index < entryRange.$2))
+                        .map((defIndex, items) {
+                          final entryDisplayingHeight = items
+                              .map((item) => (item.displayingChild == null)
+                                  ? 0
+                                  : item.displayingChild!.displayPercentage *
+                                      item.displayingChild!.mainAxisSize)
+                              .reduce((entryHeight, defHeight) =>
+                                  entryHeight + defHeight);
+                          final entryTotalHeight = items
+                              .map((item) => item.child.size.height)
+                              .reduce((entryHeight, defHeight) =>
+                                  entryHeight + defHeight);
+                          return MapEntry(defIndex,
+                              entryDisplayingHeight / entryTotalHeight);
+                        })
+                        .entries
+                        .fold(
+                            (tallestEntryIndex: -1, tallestEntryHeight: -1.0),
+                            (tallestEntry, entryHeight) =>
+                                tallestEntry.tallestEntryHeight >
+                                        entryHeight.value
+                                    ? tallestEntry
+                                    : (
+                                        tallestEntryIndex: entryHeight.key,
+                                        tallestEntryHeight: entryHeight.value
+                                      ))
+                        .tallestEntryIndex;
+
+                    debugPrint("targetEntryIndex: $targetEntryIndex");
+                    setState(() {
+                      _tabController.animateTo(targetEntryIndex);
+                    });
+                  }
+                },
+                child: ListView.separated(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(10),
+                  itemCount: items.length,
+                  separatorBuilder: (context, index) => SizedBox(
+                    height: defIndexRanges.firstWhereOrNull(
+                                (range) => range.$2 - 1 == index) !=
+                            null
+                        ? 20
+                        : 10,
+                  ),
+                  itemBuilder: (context, index) => items[index],
+                ),
+              ))),
       Row(children: [
         Visibility(
           visible: Navigator.of(context).canPop(),
@@ -201,9 +252,10 @@ class _EntryWidgetState extends State<EntryWidget>
                   });
                   final targetDefIndex = getStartDefIndex(newIndex);
                   await _observerController.animateTo(
-                      index: targetDefIndex,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeIn);
+                    index: targetDefIndex,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeIn,
+                  );
                   setState(() {
                     isScrollingToTarget = false;
                   });
@@ -241,25 +293,17 @@ class _EntryWidgetState extends State<EntryWidget>
   showDef(int entryIndex, int index, int itemCount, lineTextStyle, linkColor,
       rubyFontSize) {
     final entry = widget.entryGroup[entryIndex];
-    final content = Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: EntryDef(
-        def: entry.defs[index - 1],
-        defIndex: index - 1,
-        entryLanguage: context.watch<EntryLanguageState>().language,
-        script: context.watch<LanguageState>().getScript(),
-        lineTextStyle: lineTextStyle,
-        linkColor: linkColor,
-        rubyFontSize: rubyFontSize,
-        isSingleDef: entry.defs.length == 1,
-        onTapLink: widget.onTapLink,
-      ),
+    return EntryDef(
+      def: entry.defs[index - 1],
+      defIndex: index - 1,
+      entryLanguage: context.watch<EntryLanguageState>().language,
+      script: context.watch<LanguageState>().getScript(),
+      lineTextStyle: lineTextStyle,
+      linkColor: linkColor,
+      rubyFontSize: rubyFontSize,
+      isSingleDef: entry.defs.length == 1,
+      onTapLink: widget.onTapLink,
     );
-    return index == itemCount - 1
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [content, const SizedBox(height: 10.0)])
-        : content;
   }
 
   List<Widget> showDefs(
@@ -274,33 +318,30 @@ class _EntryWidgetState extends State<EntryWidget>
     final entry = widget.entryGroup[entryIndex];
     final itemCount = entry.defs.length + 1;
     return [
-      Padding(
-          padding: const EdgeInsets.all(10.0),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            EntryVariants(
-              variants: entry.variants,
-              variantsSimp: entry.variantsSimp,
-              script: script,
-              variantTextStyle: variantTextStyle,
-              prTextStyle: prTextStyle,
-              lineTextStyle: lineTextStyle,
-            ),
-            EntryLabels(
-                entryId: entry.id, poses: entry.poses, labels: entry.labels),
-            EntrySimsOrAnts(
-                label: "[${AppLocalizations.of(context)!.synonym}]",
-                simsOrAnts: entry.sims,
-                simsOrAntsSimp: entry.simsSimp,
-                script: script,
-                onTapLink: onTapLink),
-            EntrySimsOrAnts(
-                label: "[${AppLocalizations.of(context)!.antonym}]",
-                simsOrAnts: entry.ants,
-                simsOrAntsSimp: entry.antsSimp,
-                script: script,
-                onTapLink: onTapLink),
-          ])),
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        EntryVariants(
+          variants: entry.variants,
+          variantsSimp: entry.variantsSimp,
+          script: script,
+          variantTextStyle: variantTextStyle,
+          prTextStyle: prTextStyle,
+          lineTextStyle: lineTextStyle,
+        ),
+        EntryLabels(
+            entryId: entry.id, poses: entry.poses, labels: entry.labels),
+        EntrySimsOrAnts(
+            label: "[${AppLocalizations.of(context)!.synonym}]",
+            simsOrAnts: entry.sims,
+            simsOrAntsSimp: entry.simsSimp,
+            script: script,
+            onTapLink: onTapLink),
+        EntrySimsOrAnts(
+            label: "[${AppLocalizations.of(context)!.antonym}]",
+            simsOrAnts: entry.ants,
+            simsOrAntsSimp: entry.antsSimp,
+            script: script,
+            onTapLink: onTapLink),
+      ]),
       ...entry.defs.indexed.map((item) {
         final index = item.$1 + 1;
         return showDef(entryIndex, index, itemCount, lineTextStyle, linkColor,
