@@ -192,7 +192,7 @@ class _EntryWidgetState extends State<EntryWidget>
                         .fold(
                             (tallestEntryIndex: -1, tallestEntryHeight: -1.0),
                             (tallestEntry, entryHeight) =>
-                                tallestEntry.tallestEntryHeight >
+                                tallestEntry.tallestEntryHeight >=
                                         entryHeight.value
                                     ? tallestEntry
                                     : (
