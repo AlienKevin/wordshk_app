@@ -210,6 +210,7 @@ class _EntryWidgetState extends State<EntryWidget>
                   controller: _scrollController,
                   padding: const EdgeInsets.all(10),
                   itemCount: items.length,
+                  cacheExtent: double.infinity,
                   separatorBuilder: (context, index) => SizedBox(
                     height: defIndexRanges.firstWhereOrNull(
                                 (range) => range.$2 - 1 == index) !=
