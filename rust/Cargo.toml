@@ -21,3 +21,6 @@ regex = "1.5.5"
 
 [lib]
 crate-type = ["cdylib", "staticlib"]
+
+[profile.release]
+debug = true
