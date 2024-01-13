@@ -274,7 +274,7 @@ pub fn get_jyutping(query: String) -> Vec<String> {
 fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearchRank>, variants_map: &VariantsMap, dict: &ArchivedRichDict, script: Script, capacity: u32) -> Vec<VariantSearchResult> {
     let mut variant_search_results = vec![];
     let mut i = 0;
-    while variant_ranks.len() > 0 && i < capacity {
+    while !variant_ranks.is_empty() && i < capacity {
         let search::VariantSearchRank {
             id, matched_variant, ..
         } = variant_ranks.pop().unwrap();
@@ -294,7 +294,7 @@ fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearch
 fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants_map: &VariantsMap, dict: &ArchivedRichDict, script: Script, capacity: u32) -> Vec<PrSearchResult> {
     let mut pr_search_results = vec![];
     let mut i = 0;
-    while pr_ranks.len() > 0 && i < capacity {
+    while !pr_ranks.is_empty() && i < capacity {
         let search::PrSearchRank {
             id, variant_index, matched_pr,  ..
         } = pr_ranks.pop().unwrap();
@@ -328,18 +328,20 @@ fn get_entry_defs(id: EntryId, dict: &ArchivedRichDict, script: Script) -> Vec<(
         )).collect()
 }
 
-fn english_ranks_to_results(english_ranks: &Vec<EnglishSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<EnglishSearchResult> {
-    english_ranks[..std::cmp::min(capacity as usize, english_ranks.len())]
-        .iter()
-        .map(|entry| {
-            let variant = &search::pick_variants(&variants_map.get(&entry.entry_id).unwrap(), script).0[0];
-            EnglishSearchResult {
-                id: entry.entry_id as u32,
-                def_index: entry.def_index as u32,
-                variant: variant.word.clone(),
-                pr: variant.prs.0[0].to_string(),
-                matched_eng: entry.matched_eng.clone(),
-            }
-        })
-        .collect()
+fn english_ranks_to_results(english_ranks: &mut BinaryHeap<EnglishSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<EnglishSearchResult> {
+    let mut english_search_results = vec![];
+    let mut i = 0;
+    while !english_ranks.is_empty() && i < capacity {
+        let entry = english_ranks.pop().unwrap();
+        let variant = &search::pick_variants(&variants_map.get(&entry.entry_id).unwrap(), script).0[0];
+        english_search_results.push(EnglishSearchResult {
+            id: entry.entry_id as u32,
+            def_index: entry.def_index as u32,
+            variant: variant.word.clone(),
+            pr: variant.prs.0[0].to_string(),
+            matched_eng: entry.matched_eng.clone(),
+        });
+        i += 1;
+    }
+    english_search_results
 }
