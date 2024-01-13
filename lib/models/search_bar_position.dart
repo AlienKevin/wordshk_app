@@ -1,0 +1,4 @@
+enum SearchBarPosition {
+  top,
+  bottom,
+}

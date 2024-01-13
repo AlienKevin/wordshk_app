@@ -164,6 +164,9 @@
     "disabled": "關閉",
 
     "search": "搜尋",
+    "searchBarPosition": "搜尋欄位置",
+    "top": "頂部",
+    "bottom": "底部",
     "clearHistory": "清除搜尋紀錄",
     "historyClearConfirmation": "請問你係咪確定要清除所有搜尋紀錄？",
 

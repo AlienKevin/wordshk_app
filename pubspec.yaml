@@ -52,6 +52,7 @@ dependencies:
   go_router: ^13.0.0
   bubble_tab_indicator: ^0.1.6
   scrollview_observer: ^1.19.0
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   flutter_test:

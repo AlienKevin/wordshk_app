@@ -16,6 +16,7 @@ import 'package:wordshk/states/romanization_state.dart';
 
 import 'models/font_size.dart';
 import 'models/language.dart';
+import 'models/search_bar_position.dart';
 import 'models/summary_def_language.dart';
 import 'src/rust/api/api.dart';
 
@@ -147,6 +148,15 @@ String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
       return s.speechRateSlow;
     case SpeechRate.normal:
       return s.speechRateNormal;
+  }
+}
+
+String getSearchBarPositionName(SearchBarPosition position, AppLocalizations s) {
+  switch (position) {
+    case SearchBarPosition.top:
+      return s.top;
+    case SearchBarPosition.bottom:
+      return s.bottom;
   }
 }
 

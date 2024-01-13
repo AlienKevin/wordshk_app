@@ -7,9 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/models/embedded.dart';
+import 'package:wordshk/models/search_bar_position.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
+import 'package:wordshk/states/search_bar_position_state.dart';
 import 'package:wordshk/widgets/digital_ink_view.dart';
 import 'package:wordshk/widgets/search_bar.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
@@ -149,14 +151,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     return KeyboardVisibilityProvider(
       child: Scaffold(
-        bottomNavigationBar: Container(
-          color: Theme.of(context).appBarTheme.backgroundColor ??
-              Theme.of(context).colorScheme.surface,
-          child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 14, right: 10, top: 10, bottom: 10),
-              child: searchBar),
-        ),
+        bottomNavigationBar:
+            context.watch<SearchBarPositionState>().getSearchBarPosition() ==
+                    SearchBarPosition.bottom
+                ? Container(
+                    color: Theme.of(context).appBarTheme.backgroundColor ??
+                        Theme.of(context).colorScheme.surface,
+                    child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 14, right: 10, top: 10, bottom: 10),
+                        child: searchBar),
+                  )
+                : null,
+        appBar:
+            context.watch<SearchBarPositionState>().getSearchBarPosition() ==
+                    SearchBarPosition.top
+                ? AppBar(
+                    title: searchBar,
+                    toolbarHeight: context.watch<RomanizationState>().romanization == Romanization.yale ? 110 : appBarHeight,
+                  )
+                : null,
         body: inputMode == InputMode.ink
             ? DigitalInkView(
                 typeCharacter: (character) {
@@ -309,7 +323,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 if (isSearchResultsEmpty &&
                     query == context.read<SearchQueryState>().query) {
                   setState(() {
-                    egSearchResults = results.unique((result) => result.matchedEg);
+                    egSearchResults =
+                        results.unique((result) => result.matchedEg);
                     isSearchResultsEmpty = egSearchResults.isEmpty;
                     finishedSearch = true;
                   });

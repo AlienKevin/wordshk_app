@@ -31,6 +31,7 @@ import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
 import 'package:wordshk/pages/preferences/language_page.dart';
 import 'package:wordshk/pages/preferences/romanization_page.dart';
 import 'package:wordshk/pages/preferences/script_page.dart';
+import 'package:wordshk/pages/preferences/search_bar_position_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/pages/settings_page.dart';
 import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
@@ -51,6 +52,7 @@ import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
+import 'package:wordshk/states/search_bar_position_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/widgets/scaffold_with_bottom_navigation.dart';
@@ -144,11 +146,12 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
               create: (_) => AnalyticsSettingsState(prefs)),
           ChangeNotifierProvider<SearchQueryState>(
               create: (_) => SearchQueryState()),
+          ChangeNotifierProvider<SearchBarPositionState>(
+              create: (_) => SearchBarPositionState(prefs)),
           ChangeNotifierProvider<InputModeState>(
               create: (_) => InputModeState()),
           ChangeNotifierProvider<LanguageState>(
-              create: (context) => LanguageState(prefs),
-              lazy: false),
+              create: (context) => LanguageState(prefs), lazy: false),
           ChangeNotifierProvider<EntryLanguageState>(
               create: (_) => EntryLanguageState(prefs)),
           ChangeNotifierProvider<PronunciationMethodState>(
@@ -156,8 +159,7 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
           ChangeNotifierProvider<EntryEgFontSizeState>(
               create: (_) => EntryEgFontSizeState(prefs)),
           ChangeNotifierProvider<RomanizationState>(
-              create: (context) => RomanizationState(prefs),
-              lazy: false),
+              create: (context) => RomanizationState(prefs), lazy: false),
           ChangeNotifierProvider<EntryEgJumpyPrsState>(
               create: (_) => EntryEgJumpyPrsState(prefs)),
           ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
@@ -323,6 +325,11 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                           path: 'entry/example/pronunciation',
                           builder: (context, state) =>
                               const EntryEgPronunciationMethodPreferencesPage(),
+                        ),
+                        GoRoute(
+                          path: 'search-bar-position',
+                          builder: (context, state) =>
+                              const SearchBarPositionPreferencesPage(),
                         ),
                       ]),
                 ]),

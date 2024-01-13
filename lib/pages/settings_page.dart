@@ -12,6 +12,7 @@ import 'package:wordshk/widgets/constrained_content.dart';
 import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
+import '../states/search_bar_position_state.dart';
 import '../states/speech_rate_state.dart';
 import '../widgets/preferences/settings_list.dart';
 
@@ -82,45 +83,52 @@ class SettingsPage extends StatelessWidget {
                 title: Text(s.search),
                 tiles: [
                   SettingsTile.navigation(
+                    title: Text(s.searchBarPosition),
+                    value: Text(getSearchBarPositionName(
+                        context
+                            .watch<SearchBarPositionState>()
+                            .getSearchBarPosition(),
+                        s)),
+                    onPressed: (context) {
+                      context.push('/settings/search-bar-position');
+                    },
+                  ),
+                  SettingsTile.navigation(
                     onPressed: (context) {
                       showDialog(
                         useRootNavigator: false,
                         context: context,
                         builder: (_) => AlertDialog(
                           content: ConstrainedBox(
-                              constraints:
-                              const BoxConstraints(maxWidth: 200),
-                              child: Text(
-                                  s.historyClearConfirmation)),
+                              constraints: const BoxConstraints(maxWidth: 200),
+                              child: Text(s.historyClearConfirmation)),
                           actions: [
                             TextButton(
-                              child: Text(
-                                  s.cancel,
+                              child: Text(s.cancel,
                                   style: TextStyle(
                                       color: MediaQuery.of(context)
-                                          .platformBrightness ==
-                                          Brightness.light
+                                                  .platformBrightness ==
+                                              Brightness.light
                                           ? null
                                           : Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary)),
-                              onPressed: () =>
-                                  Navigator.of(context).pop(),
+                                              .colorScheme
+                                              .onPrimary)),
+                              onPressed: () => Navigator.of(context).pop(),
                             ),
                             TextButton(
-                              child: Text(
-                                  s.confirm,
+                              child: Text(s.confirm,
                                   style: TextStyle(
                                       color: MediaQuery.of(context)
-                                          .platformBrightness ==
-                                          Brightness.light
+                                                  .platformBrightness ==
+                                              Brightness.light
                                           ? null
                                           : Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary)),
+                                              .colorScheme
+                                              .onPrimary)),
                               onPressed: () {
                                 Navigator.of(context).pop();
-                                final historyState = context.read<HistoryState>();
+                                final historyState =
+                                    context.read<HistoryState>();
                                 for (final id in historyState.items) {
                                   historyState.removeItem(id);
                                 }

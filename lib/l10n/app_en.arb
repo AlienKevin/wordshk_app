@@ -175,6 +175,9 @@
     "disabled": "Disabled",
 
     "search": "Search",
+    "searchBarPosition": "Search Bar Position",
+    "top": "Top",
+    "bottom": "Bottom",
     "clearHistory": "Clear Search History",
     "historyClearConfirmation": "Are you sure you want to clear the search history?",
 
