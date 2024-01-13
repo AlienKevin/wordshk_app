@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
@@ -217,5 +219,24 @@ void drawDashedLine(
     canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
     startX += dx * (dashWidth + dashSpace);
     startY += dy * (dashWidth + dashSpace);
+  }
+}
+
+Future<bool> getIsPhone() async {
+  var deviceInfo = DeviceInfoPlugin();
+  if (Platform.isIOS) {
+    var iosInfo = await deviceInfo.iosInfo;
+    // iPhones have a model identifier like "iPhone", while iPads contain "iPad".
+    return !iosInfo.model.toLowerCase().contains("ipad");
+  } else if (Platform.isAndroid) {
+    var androidInfo = await deviceInfo.androidInfo;
+    // Use a heuristic based on screen size to differentiate between phone and tablet.
+    // the sizeInches can be smaller than actually official screen size because it is
+    // calculated from displayable portion of the screen.
+    return androidInfo.displayMetrics.sizeInches < 6.6;
+  } else {
+    // Add additional platform checks if necessary.
+    // For now, we default to 'false' for non-iOS and non-Android devices.
+    return false;
   }
 }

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -55,6 +56,7 @@ import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_bar_position_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
+import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/scaffold_with_bottom_navigation.dart';
 
 import 'aws_service.dart';
@@ -66,6 +68,8 @@ import 'states/player_state.dart';
 late final Future<Database> bookmarkDatabase;
 late final Future<Database> historyDatabase;
 late final GoRouter router;
+
+late final bool isPhone;
 
 final AwsService awsService = AwsService();
 
@@ -94,6 +98,16 @@ main() async {
 
   // Avoid errors caused by flutter upgrade.
   WidgetsFlutterBinding.ensureInitialized();
+
+  isPhone = await getIsPhone();
+
+  // Turn off landscape mode on phones
+
+  if (isPhone) {
+    await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp],
+    );
+  }
 
   await SentryFlutter.init((options) {
     options.dsn = sentryDsn;
