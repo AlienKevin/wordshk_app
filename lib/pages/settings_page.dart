@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/pages/share_feedback_page.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
+import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
@@ -74,6 +75,62 @@ class SettingsPage extends StatelessWidget {
                     title: Text(s.dictionaryExample),
                     onPressed: (context) =>
                         context.push('/settings/entry/example'),
+                  ),
+                ],
+              ),
+              SettingsSection(
+                title: Text(s.search),
+                tiles: [
+                  SettingsTile.navigation(
+                    onPressed: (context) {
+                      showDialog(
+                        useRootNavigator: false,
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          content: ConstrainedBox(
+                              constraints:
+                              const BoxConstraints(maxWidth: 200),
+                              child: Text(
+                                  s.historyClearConfirmation)),
+                          actions: [
+                            TextButton(
+                              child: Text(
+                                  s.cancel,
+                                  style: TextStyle(
+                                      color: MediaQuery.of(context)
+                                          .platformBrightness ==
+                                          Brightness.light
+                                          ? null
+                                          : Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary)),
+                              onPressed: () =>
+                                  Navigator.of(context).pop(),
+                            ),
+                            TextButton(
+                              child: Text(
+                                  s.confirm,
+                                  style: TextStyle(
+                                      color: MediaQuery.of(context)
+                                          .platformBrightness ==
+                                          Brightness.light
+                                          ? null
+                                          : Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary)),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                final historyState = context.read<HistoryState>();
+                                for (final id in historyState.items) {
+                                  historyState.removeItem(id);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    title: Text(s.clearHistory),
                   ),
                 ],
               ),

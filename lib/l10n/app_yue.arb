@@ -163,6 +163,10 @@
     "enabled": "開啓",
     "disabled": "關閉",
 
+    "search": "搜尋",
+    "clearHistory": "清除搜尋紀錄",
+    "historyClearConfirmation": "請問你係咪確定要清除所有搜尋紀錄？",
+
     "privacy": "私隱",
     "privacyPolicy": "私隱政策",
     "sendAnalytics": "分享使用狀況同診斷資訊",

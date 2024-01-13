@@ -161,6 +161,10 @@
     "enabled": "开启",
     "disabled": "关闭",
 
+    "search": "搜索",
+    "clearHistory": "清除搜索记录",
+    "historyClearConfirmation": "请问你是否确定要清除所有搜索记录？",
+
     "privacy": "隐私",
     "privacyPolicy": "隐私政策",
     "sendAnalytics": "分享使用情况和诊断信息",

@@ -174,6 +174,10 @@
     "enabled": "Enabled",
     "disabled": "Disabled",
 
+    "search": "Search",
+    "clearHistory": "Clear Search History",
+    "historyClearConfirmation": "Are you sure you want to clear the search history?",
+
     "privacy": "Privacy",
     "privacyPolicy": "Privacy Policy",
     "sendAnalytics": "Share Usage & Diagnostic Information",
