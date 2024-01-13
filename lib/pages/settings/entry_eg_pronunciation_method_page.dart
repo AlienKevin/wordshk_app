@@ -3,15 +3,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
-import 'package:wordshk/widgets/preferences/speech_rate_radio_list_tiles.dart';
+import 'package:wordshk/widgets/settings/speech_rate_radio_list_tiles.dart';
 
 import '../../models/pronunciation_method.dart';
 import '../../utils.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
-import '../../widgets/preferences/title.dart';
+import '../../widgets/settings/radio_list_tile.dart';
+import '../../widgets/settings/title.dart';
 
-class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
-  const EntryEgPronunciationMethodPreferencesPage({Key? key}) : super(key: key);
+class EntryEgPronunciationMethodSettingsPage extends StatelessWidget {
+  const EntryEgPronunciationMethodSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
     }
 
     methodRadioListTile(PronunciationMethod value) =>
-        PreferencesRadioListTile<PronunciationMethod>(
+        SettingsRadioListTile<PronunciationMethod>(
             title: getPronunciationMethodName(value, s),
             value: value,
             groupValue: method,
@@ -40,11 +40,11 @@ class EntryEgPronunciationMethodPreferencesPage extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              PreferencesTitle(title: s.entryEgPronunciationMethod),
+              SettingsTitle(title: s.entryEgPronunciationMethod),
               methodRadioListTile(PronunciationMethod.tts),
               methodRadioListTile(PronunciationMethod.syllableRecordings),
               const SizedBox(height: 20),
-              PreferencesTitle(title: s.entryEgSpeechRate),
+              SettingsTitle(title: s.entryEgSpeechRate),
               const SpeechRateRadioListTiles(atHeader: false),
             ]),
           ),

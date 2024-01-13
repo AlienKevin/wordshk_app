@@ -6,11 +6,11 @@ import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../../models/entry_language.dart';
 import '../../states/entry_language_state.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
-import '../../widgets/preferences/title.dart';
+import '../../widgets/settings/radio_list_tile.dart';
+import '../../widgets/settings/title.dart';
 
-class EntryExplanationLanguagePreferencesPage extends StatelessWidget {
-  const EntryExplanationLanguagePreferencesPage({Key? key}) : super(key: key);
+class EntryExplanationLanguageSettingsPage extends StatelessWidget {
+  const EntryExplanationLanguageSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class EntryExplanationLanguagePreferencesPage extends StatelessWidget {
     }
 
     entryLanguageRadioListTile(EntryLanguage value) =>
-        PreferencesRadioListTile<EntryLanguage>(
+        SettingsRadioListTile<EntryLanguage>(
             title: getEntryLanguageName(value, s),
             value: value,
             groupValue: entryLanguage,
@@ -37,7 +37,7 @@ class EntryExplanationLanguagePreferencesPage extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              PreferencesTitle(title: s.entryExplanationsLanguage),
+              SettingsTitle(title: s.entryExplanationsLanguage),
               entryLanguageRadioListTile(EntryLanguage.both),
               entryLanguageRadioListTile(EntryLanguage.cantonese),
               entryLanguageRadioListTile(EntryLanguage.english),

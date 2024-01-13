@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class PreferencesTitle extends StatelessWidget {
+class SettingsTitle extends StatelessWidget {
   final String title;
 
-  const PreferencesTitle({Key? key, required this.title}) : super(key: key);
+  const SettingsTitle({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) =>

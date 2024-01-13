@@ -14,7 +14,7 @@ import '../states/language_state.dart';
 import '../states/romanization_state.dart';
 import '../states/search_bar_position_state.dart';
 import '../states/speech_rate_state.dart';
-import '../widgets/preferences/settings_list.dart';
+import '../widgets/settings/settings_list.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

@@ -151,7 +151,8 @@ String getSpeechRateName(SpeechRate rate, AppLocalizations s) {
   }
 }
 
-String getSearchBarPositionName(SearchBarPosition position, AppLocalizations s) {
+String getSearchBarPositionName(
+    SearchBarPosition position, AppLocalizations s) {
   switch (position) {
     case SearchBarPosition.top:
       return s.top;

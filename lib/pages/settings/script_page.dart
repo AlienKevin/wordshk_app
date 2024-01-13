@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
-import '../../widgets/preferences/language_radio_list_tiles.dart';
-import '../../widgets/preferences/title.dart';
+import '../../widgets/settings/script_radio_list_tiles.dart';
+import '../../widgets/settings/title.dart';
 
-class LanguagePreferencesPage extends StatelessWidget {
-  const LanguagePreferencesPage({Key? key}) : super(key: key);
+class ScriptSettingsPage extends StatelessWidget {
+  const ScriptSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +20,8 @@ class LanguagePreferencesPage extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PreferencesTitle(title: s.language),
-                  const LanguageRadioListTiles()
+                  SettingsTitle(title: s.cantoneseScript),
+                  const ScriptRadioListTiles()
                 ]),
           ),
         ));

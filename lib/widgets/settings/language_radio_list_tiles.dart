@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/language.dart';
 import '../../states/language_state.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
+import '../../widgets/settings/radio_list_tile.dart';
 
 class LanguageRadioListTiles extends StatelessWidget {
   const LanguageRadioListTiles({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class LanguageRadioListTiles extends StatelessWidget {
       }
     }
 
-    languageRadioListTile(Language value) => PreferencesRadioListTile<Language>(
+    languageRadioListTile(Language value) => SettingsRadioListTile<Language>(
         title: value.toString(),
         value: value,
         groupValue: language,

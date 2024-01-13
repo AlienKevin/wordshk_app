@@ -5,7 +5,7 @@ import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/utils.dart';
 
 import '../../states/language_state.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
+import '../../widgets/settings/radio_list_tile.dart';
 
 class ScriptRadioListTiles extends StatelessWidget {
   const ScriptRadioListTiles({Key? key}) : super(key: key);
@@ -21,7 +21,7 @@ class ScriptRadioListTiles extends StatelessWidget {
       }
     }
 
-    scriptRadioListTile(Script value) => PreferencesRadioListTile<Script>(
+    scriptRadioListTile(Script value) => SettingsRadioListTile<Script>(
         title: getScriptName(value, s),
         value: value,
         groupValue: script,

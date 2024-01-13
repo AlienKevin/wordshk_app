@@ -27,5 +27,6 @@ class SearchBarPositionState with ChangeNotifier {
   }
 
   SearchBarPosition getSearchBarPosition() =>
-      _position ?? (Platform.isIOS ? SearchBarPosition.bottom : SearchBarPosition.top);
+      _position ??
+      (Platform.isIOS ? SearchBarPosition.bottom : SearchBarPosition.top);
 }

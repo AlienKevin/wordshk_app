@@ -6,11 +6,11 @@ import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../../models/font_size.dart';
 import '../../utils.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
-import '../../widgets/preferences/title.dart';
+import '../../widgets/settings/radio_list_tile.dart';
+import '../../widgets/settings/title.dart';
 
-class EntryEgFontSizePreferencesPage extends StatelessWidget {
-  const EntryEgFontSizePreferencesPage({Key? key}) : super(key: key);
+class EntryEgFontSizeSettingsPage extends StatelessWidget {
+  const EntryEgFontSizeSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class EntryEgFontSizePreferencesPage extends StatelessWidget {
       }
     }
 
-    sizeRadioListTile(FontSize value) => PreferencesRadioListTile<FontSize>(
+    sizeRadioListTile(FontSize value) => SettingsRadioListTile<FontSize>(
         title: getFontSizeName(value, s),
         value: value,
         groupValue: size,
@@ -36,7 +36,7 @@ class EntryEgFontSizePreferencesPage extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              PreferencesTitle(title: s.entryEgFontSize),
+              SettingsTitle(title: s.entryEgFontSize),
               sizeRadioListTile(FontSize.small),
               sizeRadioListTile(FontSize.medium),
               sizeRadioListTile(FontSize.large),

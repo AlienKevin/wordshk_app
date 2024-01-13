@@ -91,16 +91,15 @@ class EntryEgs extends StatelessWidget {
               expanded: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...egs
-                        .map((eg) => EntryEg(
-                              eg: eg,
-                              entryLanguage: entryLanguage,
-                              script: script,
-                              lineTextStyle: lineTextStyle,
-                              linkColor: linkColor,
-                              rubyFontSize: rubyFontSize,
-                              onTapLink: onTapLink,
-                            )),
+                    ...egs.map((eg) => EntryEg(
+                          eg: eg,
+                          entryLanguage: entryLanguage,
+                          script: script,
+                          lineTextStyle: lineTextStyle,
+                          linkColor: linkColor,
+                          rubyFontSize: rubyFontSize,
+                          onTapLink: onTapLink,
+                        )),
                     Builder(builder: (context) {
                       return expandButton(
                           AppLocalizations.of(context)!.entryCollapseExamples,

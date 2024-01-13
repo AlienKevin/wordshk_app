@@ -23,16 +23,16 @@ import 'package:wordshk/pages/entry_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
-import 'package:wordshk/pages/preferences/entry_eg_font_size_page.dart';
-import 'package:wordshk/pages/preferences/entry_eg_page.dart';
-import 'package:wordshk/pages/preferences/entry_eg_pronunciation_method_page.dart';
-import 'package:wordshk/pages/preferences/entry_explanation_language.dart';
-import 'package:wordshk/pages/preferences/entry_header_speech_rate.dart';
-import 'package:wordshk/pages/preferences/language_page.dart';
-import 'package:wordshk/pages/preferences/romanization_page.dart';
-import 'package:wordshk/pages/preferences/script_page.dart';
-import 'package:wordshk/pages/preferences/search_bar_position_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
+import 'package:wordshk/pages/settings/entry_eg_font_size_page.dart';
+import 'package:wordshk/pages/settings/entry_eg_page.dart';
+import 'package:wordshk/pages/settings/entry_eg_pronunciation_method_page.dart';
+import 'package:wordshk/pages/settings/entry_explanation_language.dart';
+import 'package:wordshk/pages/settings/entry_header_speech_rate.dart';
+import 'package:wordshk/pages/settings/language_page.dart';
+import 'package:wordshk/pages/settings/romanization_page.dart';
+import 'package:wordshk/pages/settings/script_page.dart';
+import 'package:wordshk/pages/settings/search_bar_position_page.dart';
 import 'package:wordshk/pages/settings_page.dart';
 import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
 import 'package:wordshk/pages/tone_exercise_page.dart';
@@ -291,45 +291,45 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                         GoRoute(
                           path: 'language',
                           builder: (context, state) =>
-                              const LanguagePreferencesPage(),
+                              const LanguageSettingsPage(),
                         ),
                         GoRoute(
                             path: 'script',
                             builder: (context, state) =>
-                                const ScriptPreferencesPage()),
+                                const ScriptSettingsPage()),
                         GoRoute(
                             path: 'romanization',
                             builder: (context, state) =>
-                                const RomanizationPreferencesPage()),
+                                const RomanizationSettingsPage()),
                         GoRoute(
                           path: 'entry/definition/language',
                           builder: (context, state) =>
-                              const EntryExplanationLanguagePreferencesPage(),
+                              const EntryExplanationLanguageSettingsPage(),
                         ),
                         GoRoute(
                           path: 'entry/header/speech-rate',
                           builder: (context, state) =>
-                              const EntryHeaderSpeechRatePreferencesPage(),
+                              const EntryHeaderSpeechRateSettingsPage(),
                         ),
                         GoRoute(
                           path: 'entry/example',
                           builder: (context, state) =>
-                              const EntryEgPreferencesPage(),
+                              const EntryEgSettingsPage(),
                         ),
                         GoRoute(
                           path: 'entry/example/font-size',
                           builder: (context, state) =>
-                              const EntryEgFontSizePreferencesPage(),
+                              const EntryEgFontSizeSettingsPage(),
                         ),
                         GoRoute(
                           path: 'entry/example/pronunciation',
                           builder: (context, state) =>
-                              const EntryEgPronunciationMethodPreferencesPage(),
+                              const EntryEgPronunciationMethodSettingsPage(),
                         ),
                         GoRoute(
                           path: 'search-bar-position',
                           builder: (context, state) =>
-                              const SearchBarPositionPreferencesPage(),
+                              const SearchBarPositionSettingsPage(),
                         ),
                       ]),
                 ]),

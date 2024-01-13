@@ -6,11 +6,11 @@ import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
 import '../../states/romanization_state.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
-import '../../widgets/preferences/title.dart';
+import '../../widgets/settings/radio_list_tile.dart';
+import '../../widgets/settings/title.dart';
 
-class RomanizationPreferencesPage extends StatelessWidget {
-  const RomanizationPreferencesPage({Key? key}) : super(key: key);
+class RomanizationSettingsPage extends StatelessWidget {
+  const RomanizationSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class RomanizationPreferencesPage extends StatelessWidget {
     }
 
     romanizationRadioListTile(Romanization value) =>
-        PreferencesRadioListTile<Romanization>(
+        SettingsRadioListTile<Romanization>(
             title: getRomanizationName(value, s),
             subtitle: getRomanizationDescription(value, s),
             value: value,
@@ -40,7 +40,7 @@ class RomanizationPreferencesPage extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    PreferencesTitle(title: s.romanization),
+                    SettingsTitle(title: s.romanization),
                     romanizationRadioListTile(Romanization.jyutping),
                     romanizationRadioListTile(Romanization.yale),
                   ]),

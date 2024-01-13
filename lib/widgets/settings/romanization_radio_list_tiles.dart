@@ -5,7 +5,7 @@ import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/utils.dart';
 
 import '../../states/romanization_state.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
+import '../../widgets/settings/radio_list_tile.dart';
 
 class RomanizationRadioListTiles extends StatelessWidget {
   final bool syncEntryRomanization;
@@ -29,7 +29,7 @@ class RomanizationRadioListTiles extends StatelessWidget {
     }
 
     romanizationRadioListTile(Romanization value) =>
-        PreferencesRadioListTile<Romanization>(
+        SettingsRadioListTile<Romanization>(
             title: getRomanizationName(value, s),
             subtitle: getRomanizationDescription(value, s),
             value: value,

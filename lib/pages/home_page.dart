@@ -168,7 +168,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     SearchBarPosition.top
                 ? AppBar(
                     title: searchBar,
-                    toolbarHeight: context.watch<RomanizationState>().romanization == Romanization.yale ? 110 : appBarHeight,
+                    toolbarHeight:
+                        context.watch<RomanizationState>().romanization ==
+                                Romanization.yale
+                            ? 110
+                            : appBarHeight,
                   )
                 : null,
         body: inputMode == InputMode.ink

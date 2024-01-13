@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class PreferencesRadioListTile<T> extends StatelessWidget {
+class SettingsRadioListTile<T> extends StatelessWidget {
   final String title;
   final String? subtitle;
   final T value;
   final T? groupValue;
   final void Function(T?) onChanged;
-  const PreferencesRadioListTile(
+  const SettingsRadioListTile(
       {required this.title,
       this.subtitle,
       required this.value,

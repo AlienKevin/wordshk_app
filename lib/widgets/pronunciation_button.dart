@@ -61,8 +61,7 @@ class PronunciationButtonState extends State<PronunciationButton> {
             height: displaySmallSize * 4,
             width: displaySmallSize * 4,
             child: ElevatedButton(
-                onPressed:
-                    widget.playable ? triggerPlay : null,
+                onPressed: widget.playable ? triggerPlay : null,
                 child: icon(size: displaySmallSize * 1.5),
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -82,8 +81,7 @@ class PronunciationButtonState extends State<PronunciationButton> {
                 icon: icon(),
                 color: Theme.of(context).colorScheme.secondary,
                 padding: const EdgeInsets.only(left: 5),
-                onPressed:
-                    widget.playable ? triggerPlay : null),
+                onPressed: widget.playable ? triggerPlay : null),
           );
   }
 }

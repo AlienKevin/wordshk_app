@@ -5,7 +5,7 @@ import 'package:wordshk/states/speech_rate_state.dart';
 
 import '../../models/speech_rate.dart';
 import '../../utils.dart';
-import '../../widgets/preferences/radio_list_tile.dart';
+import '../../widgets/settings/radio_list_tile.dart';
 
 class SpeechRateRadioListTiles extends StatelessWidget {
   final bool atHeader;
@@ -31,7 +31,7 @@ class SpeechRateRadioListTiles extends StatelessWidget {
     }
 
     speechRateRadioListTile(SpeechRate value) =>
-        PreferencesRadioListTile<SpeechRate>(
+        SettingsRadioListTile<SpeechRate>(
             title: getSpeechRateName(value, s),
             value: value,
             groupValue: speechRate,

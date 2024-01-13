@@ -5,12 +5,12 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
-import 'package:wordshk/widgets/preferences/title.dart';
+import 'package:wordshk/widgets/settings/title.dart';
 
 import '../constants.dart';
-import '../widgets/preferences/language_radio_list_tiles.dart';
-import '../widgets/preferences/radio_list_tile.dart';
-import '../widgets/preferences/romanization_radio_list_tiles.dart';
+import '../widgets/settings/language_radio_list_tiles.dart';
+import '../widgets/settings/radio_list_tile.dart';
+import '../widgets/settings/romanization_radio_list_tiles.dart';
 
 class IntroductionPage extends StatelessWidget {
   final SharedPreferences prefs;
@@ -55,7 +55,7 @@ class IntroductionPage extends StatelessWidget {
                 PageViewModel(
                   titleWidget: Align(
                       alignment: Alignment.centerLeft,
-                      child: PreferencesTitle(title: s.welcome)),
+                      child: SettingsTitle(title: s.welcome)),
                   bodyWidget: Column(children: [
                     Align(
                         alignment: Alignment.centerLeft,
@@ -73,15 +73,14 @@ class IntroductionPage extends StatelessWidget {
                 PageViewModel(
                   titleWidget: Align(
                       alignment: Alignment.centerLeft,
-                      child: PreferencesTitle(title: s.introductionLanguage)),
+                      child: SettingsTitle(title: s.introductionLanguage)),
                   bodyWidget: const LanguageRadioListTiles(),
                   decoration: pageDecoration,
                 ),
                 PageViewModel(
                   titleWidget: Align(
                       alignment: Alignment.centerLeft,
-                      child:
-                          PreferencesTitle(title: s.introductionRomanization)),
+                      child: SettingsTitle(title: s.introductionRomanization)),
                   bodyWidget: const RomanizationRadioListTiles(
                       syncEntryRomanization: true),
                   decoration: pageDecoration,
@@ -89,7 +88,7 @@ class IntroductionPage extends StatelessWidget {
                 PageViewModel(
                   titleWidget: Align(
                       alignment: Alignment.centerLeft,
-                      child: PreferencesTitle(title: s.sendAnalytics)),
+                      child: SettingsTitle(title: s.sendAnalytics)),
                   bodyWidget: Column(children: [
                     Align(
                         alignment: Alignment.centerLeft,
@@ -119,7 +118,7 @@ class AnalyticsRadioListTiles extends StatelessWidget {
       }
     }
 
-    analyticsRadioListTile(bool value) => PreferencesRadioListTile<bool>(
+    analyticsRadioListTile(bool value) => SettingsRadioListTile<bool>(
         title: value
             ? AppLocalizations.of(context)!.agreeToShare
             : AppLocalizations.of(context)!.doNotShare,

@@ -6,15 +6,15 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
-import 'package:wordshk/widgets/preferences/settings_switch_tile.dart';
+import 'package:wordshk/widgets/settings/settings_switch_tile.dart';
 
 import '../../states/entry_eg_font_size_state.dart';
 import '../../states/pronunciation_method_state.dart';
 import '../../utils.dart';
-import '../../widgets/preferences/settings_list.dart';
+import '../../widgets/settings/settings_list.dart';
 
-class EntryEgPreferencesPage extends StatelessWidget {
-  const EntryEgPreferencesPage({Key? key}) : super(key: key);
+class EntryEgSettingsPage extends StatelessWidget {
+  const EntryEgSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

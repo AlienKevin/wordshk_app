@@ -8,10 +8,10 @@ import 'package:wordshk/models/search_bar_position.dart';
 import 'package:wordshk/states/search_bar_position_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
-import '../../widgets/preferences/title.dart';
+import '../../widgets/settings/title.dart';
 
-class SearchBarPositionPreferencesPage extends StatelessWidget {
-  const SearchBarPositionPreferencesPage({Key? key}) : super(key: key);
+class SearchBarPositionSettingsPage extends StatelessWidget {
+  const SearchBarPositionSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class SearchBarPositionPreferencesPage extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              PreferencesTitle(
+              SettingsTitle(
                   title: AppLocalizations.of(context)!.searchBarPosition),
               const SizedBox(height: 20),
               Row(

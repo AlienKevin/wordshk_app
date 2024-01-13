@@ -34,15 +34,10 @@ class EntryRubyLine extends StatelessWidget {
         final wrapRunSpacingFactor = isJumpy ? 3 : 1;
         return Padding(
           padding: EdgeInsets.only(
-              top: rubyFontSize *
-                  topPaddingFactor *
-                  textScaleFactor /
-                  1.5),
+              top: rubyFontSize * topPaddingFactor * textScaleFactor / 1.5),
           child: Wrap(
-              runSpacing: rubyFontSize *
-                  wrapRunSpacingFactor *
-                  textScaleFactor *
-                  0.85,
+              runSpacing:
+                  rubyFontSize * wrapRunSpacingFactor * textScaleFactor * 0.85,
               children: [
                 ...line.segments
                     .map((segment) => showRubySegment(

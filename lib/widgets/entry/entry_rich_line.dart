@@ -25,8 +25,7 @@ class EntryRichLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rubyFontSizePreference =
-        context.watch<EntryEgFontSizeState>().size;
+    final rubyFontSizePreference = context.watch<EntryEgFontSizeState>().size;
     late final double rubyFontSizeFactor;
     switch (rubyFontSizePreference) {
       case FontSize.small:

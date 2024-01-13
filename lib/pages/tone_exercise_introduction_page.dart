@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
-import 'package:wordshk/widgets/preferences/title.dart';
+import 'package:wordshk/widgets/settings/title.dart';
 
 import '../widgets/syllable_pronunciation_button.dart';
 
@@ -50,7 +50,7 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
             titleWidget: ConstrainedContent(
               child: Align(
                   alignment: Alignment.centerLeft,
-                  child: PreferencesTitle(title: s.toneExercise)),
+                  child: SettingsTitle(title: s.toneExercise)),
             ),
             bodyWidget: ConstrainedContent(
               child: SingleChildScrollView(
@@ -172,7 +172,7 @@ class ToneExerciseIntroductionPage extends StatelessWidget {
             titleWidget: ConstrainedContent(
               child: Align(
                   alignment: Alignment.centerLeft,
-                  child: PreferencesTitle(title: s.toneExercise)),
+                  child: SettingsTitle(title: s.toneExercise)),
             ),
             bodyWidget: ConstrainedContent(
               child: SingleChildScrollView(
