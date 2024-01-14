@@ -21,6 +21,7 @@ import '../main.dart';
 import '../models/input_mode.dart';
 import '../models/search_result_type.dart';
 import '../models/summary_def_language.dart';
+import '../states/analytics_state.dart' show ResultNotFound;
 import '../states/bookmark_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
@@ -334,6 +335,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     searchResultOrder = [SearchResultType.eg];
                     finishedSearch = true;
                   });
+                  if (isSearchResultsEmpty) {
+                    analyticsState.addResultNotFound(ResultNotFound(query));
+                  }
                 }
               }
             });
@@ -764,8 +768,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             setState(() {
               selectedSearchResultEntryPage = entryPage;
             });
+            analyticsState.clickSearchResultType(resultType);
             if (embedded != Embedded.embedded) {
-              analyticsState.clickSearchResultType(resultType);
               context.push(
                   "/entry/id/$id?showFirstInGroup=$showFirstEntryInGroupInitially${defIndex == null ? "" : "&defIndex=$defIndex"}&embedded=${embedded.name}");
             }

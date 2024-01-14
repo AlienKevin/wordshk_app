@@ -1,12 +1,45 @@
 import '../models/search_result_type.dart';
 
+enum QueryType {
+  hanzi,
+  latin,
+  other;
+
+  factory QueryType.fromQuery(String query) =>
+      query.trim().contains(RegExp(r'^[\p{Script=Hani}，⋯…]+$', unicode: true))
+          ? QueryType.hanzi
+          : query.trim().contains(RegExp(r"^[\p{Script=Latn} '\-.]+$", unicode: true))
+              ? QueryType.latin
+              : QueryType.other;
+
+  toJson() => name;
+}
+
+class ResultNotFound {
+  QueryType queryType;
+  int queryLength;
+
+  ResultNotFound(String query):
+      queryType = QueryType.fromQuery(query), queryLength = query.runes.length;
+
+  Map<String, dynamic> toJson() => {
+      'queryType': queryType.toJson(),
+      'queryLength': queryLength,
+    };
+}
+
 class AnalyticsState {
   List<SearchResultType> searchResultTypesClicked = [];
+  List<ResultNotFound> resultNotFounds = [];
 
   AnalyticsState();
 
   void clickSearchResultType(SearchResultType searchResultType) {
     searchResultTypesClicked.add(searchResultType);
+  }
+
+  void addResultNotFound(ResultNotFound notFound) {
+    resultNotFounds.add(notFound);
   }
 
   List _compressEnumList<T extends Enum>(List<T> list) {
@@ -28,6 +61,7 @@ class AnalyticsState {
   Map<String, dynamic> toJson() {
     return {
       "searchResultTypesClicked": _compressEnumList(searchResultTypesClicked),
+      "resultNotFounds": resultNotFounds,
     };
   }
 }
