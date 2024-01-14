@@ -3,12 +3,14 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
-import 'frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
+
+import 'api/api.dart';
+import 'frb_generated.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -367,7 +369,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void cst_api_fill_to_wire_pr_search_result(
       PrSearchResult apiObj, wire_cst_pr_search_result wireObj) {
     wireObj.id = cst_encode_u_32(apiObj.id);
-    wireObj.variant = cst_encode_String(apiObj.variant);
+    wireObj.variants = cst_encode_list_String(apiObj.variants);
     wireObj.matched_pr = cst_encode_list_matched_segment(apiObj.matchedPr);
     wireObj.yues = cst_encode_list_String(apiObj.yues);
     wireObj.engs = cst_encode_list_String(apiObj.engs);
@@ -1057,7 +1059,7 @@ final class wire_cst_pr_search_result extends ffi.Struct {
   @ffi.Uint32()
   external int id;
 
-  external ffi.Pointer<wire_cst_list_prim_u_8> variant;
+  external ffi.Pointer<wire_cst_list_String> variants;
 
   external ffi.Pointer<wire_cst_list_matched_segment> matched_pr;
 

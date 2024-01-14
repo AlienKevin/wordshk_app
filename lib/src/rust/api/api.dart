@@ -3,8 +3,9 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
+import '../frb_generated.dart';
 
 Stream<String> createLogStream({dynamic hint}) =>
     RustLib.instance.api.createLogStream(hint: hint);
@@ -217,14 +218,14 @@ class MatchedSegment {
 
 class PrSearchResult {
   final int id;
-  final String variant;
+  final List<String> variants;
   final List<MatchedSegment> matchedPr;
   final List<String> yues;
   final List<String> engs;
 
   const PrSearchResult({
     required this.id,
-    required this.variant,
+    required this.variants,
     required this.matchedPr,
     required this.yues,
     required this.engs,
@@ -233,7 +234,7 @@ class PrSearchResult {
   @override
   int get hashCode =>
       id.hashCode ^
-      variant.hashCode ^
+      variants.hashCode ^
       matchedPr.hashCode ^
       yues.hashCode ^
       engs.hashCode;
@@ -244,7 +245,7 @@ class PrSearchResult {
       other is PrSearchResult &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          variant == other.variant &&
+          variants == other.variants &&
           matchedPr == other.matchedPr &&
           yues == other.yues &&
           engs == other.engs;

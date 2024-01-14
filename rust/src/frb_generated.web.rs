@@ -3,12 +3,10 @@
 
 // Section: imports
 
-use super::*;
-use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-use flutter_rust_bridge::for_generated::transform_result_dco;
 use flutter_rust_bridge::for_generated::wasm_bindgen;
 use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
-use flutter_rust_bridge::{Handler, IntoIntoDart};
+
+use super::*;
 
 // Section: dart2rust
 
@@ -257,7 +255,7 @@ impl CstDecode<crate::api::api::PrSearchResult>
         );
         crate::api::api::PrSearchResult {
             id: self_.get(0).cst_decode(),
-            variant: self_.get(1).cst_decode(),
+            variants: self_.get(1).cst_decode(),
             matched_pr: self_.get(2).cst_decode(),
             yues: self_.get(3).cst_decode(),
             engs: self_.get(4).cst_decode(),

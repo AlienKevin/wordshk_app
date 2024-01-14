@@ -3,11 +3,13 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables
 
-import 'api/api.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
+import 'api/api.dart';
+import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
 
 /// Main entrypoint of the Rust API
 class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
@@ -535,7 +537,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return PrSearchResult(
       id: dco_decode_u_32(arr[0]),
-      variant: dco_decode_String(arr[1]),
+      variants: dco_decode_list_String(arr[1]),
       matchedPr: dco_decode_list_matched_segment(arr[2]),
       yues: dco_decode_list_String(arr[3]),
       engs: dco_decode_list_String(arr[4]),
@@ -790,13 +792,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   PrSearchResult sse_decode_pr_search_result(SseDeserializer deserializer) {
     var var_id = sse_decode_u_32(deserializer);
-    var var_variant = sse_decode_String(deserializer);
+    var var_variants = sse_decode_list_String(deserializer);
     var var_matchedPr = sse_decode_list_matched_segment(deserializer);
     var var_yues = sse_decode_list_String(deserializer);
     var var_engs = sse_decode_list_String(deserializer);
     return PrSearchResult(
         id: var_id,
-        variant: var_variant,
+        variants: var_variants,
         matchedPr: var_matchedPr,
         yues: var_yues,
         engs: var_engs);
@@ -1046,7 +1048,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_pr_search_result(
       PrSearchResult self, SseSerializer serializer) {
     sse_encode_u_32(self.id, serializer);
-    sse_encode_String(self.variant, serializer);
+    sse_encode_list_String(self.variants, serializer);
     sse_encode_list_matched_segment(self.matchedPr, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);

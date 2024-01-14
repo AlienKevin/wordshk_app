@@ -3,10 +3,9 @@
 
 // Section: imports
 
+use flutter_rust_bridge::Handler;
+
 use super::*;
-use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-use flutter_rust_bridge::for_generated::transform_result_dco;
-use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: dart2rust
 
@@ -172,7 +171,7 @@ impl CstDecode<crate::api::api::PrSearchResult> for wire_cst_pr_search_result {
     fn cst_decode(self) -> crate::api::api::PrSearchResult {
         crate::api::api::PrSearchResult {
             id: self.id.cst_decode(),
-            variant: self.variant.cst_decode(),
+            variants: self.variants.cst_decode(),
             matched_pr: self.matched_pr.cst_decode(),
             yues: self.yues.cst_decode(),
             engs: self.engs.cst_decode(),
@@ -292,7 +291,7 @@ impl NewWithNullPtr for wire_cst_pr_search_result {
     fn new_with_null_ptr() -> Self {
         Self {
             id: Default::default(),
-            variant: core::ptr::null_mut(),
+            variants: core::ptr::null_mut(),
             matched_pr: core::ptr::null_mut(),
             yues: core::ptr::null_mut(),
             engs: core::ptr::null_mut(),
@@ -665,7 +664,7 @@ pub struct wire_cst_matched_segment {
 #[derive(Clone, Copy)]
 pub struct wire_cst_pr_search_result {
     id: u32,
-    variant: *mut wire_cst_list_prim_u_8,
+    variants: *mut wire_cst_list_String,
     matched_pr: *mut wire_cst_list_matched_segment,
     yues: *mut wire_cst_list_String,
     engs: *mut wire_cst_list_String,

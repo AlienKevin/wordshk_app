@@ -48,7 +48,7 @@ pub struct _MatchedSegment {
 
 pub struct PrSearchResult {
     pub id: u32,
-    pub variant: String,
+    pub variants: Vec<String>,
     pub matched_pr: Vec<MatchedSegment>,
     pub yues: Vec<String>,
     pub engs: Vec<String>,
@@ -296,14 +296,13 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
     let mut i = 0;
     while !pr_ranks.is_empty() && i < capacity {
         let search::PrSearchRank {
-            id, variant_index, matched_pr,  ..
+            id, variants, matched_pr,  ..
         } = pr_ranks.pop().unwrap();
-        let variant = &search::pick_variants(variants_map.get(&id).unwrap(), script).0[variant_index];
         let defs = get_entry_defs(id, dict, script);
         let (yues, engs) = defs.into_iter().unzip();
         pr_search_results.push(PrSearchResult {
             id: id as u32,
-            variant: variant.word.clone(),
+            variants,
             matched_pr,
             yues,
             engs,

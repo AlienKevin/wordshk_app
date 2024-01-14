@@ -550,7 +550,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 return TextSpan(
                   children: [
                     TextSpan(
-                        text: "${result.variant} ",
+                        text: "${result.variants.join(" / ")} ",
                         style: textStyle.copyWith(
                             color: selected
                                 ? Theme.of(context).colorScheme.onPrimary

@@ -18,9 +18,14 @@
 
 // Section: imports
 
+use flutter_rust_bridge::{Handler, IntoIntoDart};
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use flutter_rust_bridge::for_generated::transform_result_dco;
-use flutter_rust_bridge::{Handler, IntoIntoDart};
+
+#[cfg(not(target_family = "wasm"))]
+pub use io::*;
+#[cfg(target_family = "wasm")]
+pub use web::*;
 
 // Section: boilerplate
 
@@ -567,13 +572,13 @@ impl SseDecode for Option<u32> {
 impl SseDecode for crate::api::api::PrSearchResult {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <u32>::sse_decode(deserializer);
-        let mut var_variant = <String>::sse_decode(deserializer);
+        let mut var_variants = <Vec<String>>::sse_decode(deserializer);
         let mut var_matchedPr = <Vec<crate::api::api::MatchedSegment>>::sse_decode(deserializer);
         let mut var_yues = <Vec<String>>::sse_decode(deserializer);
         let mut var_engs = <Vec<String>>::sse_decode(deserializer);
         return crate::api::api::PrSearchResult {
             id: var_id,
-            variant: var_variant,
+            variants: var_variants,
             matched_pr: var_matchedPr,
             yues: var_yues,
             engs: var_engs,
@@ -762,7 +767,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::PrSearchResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         vec![
             self.id.into_into_dart().into_dart(),
-            self.variant.into_into_dart().into_dart(),
+            self.variants.into_into_dart().into_dart(),
             self.matched_pr.into_into_dart().into_dart(),
             self.yues.into_into_dart().into_dart(),
             self.engs.into_into_dart().into_dart(),
@@ -1003,7 +1008,7 @@ impl SseEncode for Option<u32> {
 impl SseEncode for crate::api::api::PrSearchResult {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.id, serializer);
-        <String>::sse_encode(self.variant, serializer);
+        <Vec<String>>::sse_encode(self.variants, serializer);
         <Vec<crate::api::api::MatchedSegment>>::sse_encode(self.matched_pr, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
@@ -1057,12 +1062,7 @@ impl SseEncode for crate::api::api::VariantSearchResult {
 #[cfg(not(target_family = "wasm"))]
 #[path = "frb_generated.io.rs"]
 mod io;
-#[cfg(not(target_family = "wasm"))]
-pub use io::*;
-
 /// cbindgen:ignore
 #[cfg(target_family = "wasm")]
 #[path = "frb_generated.web.rs"]
 mod web;
-#[cfg(target_family = "wasm")]
-pub use web::*;
