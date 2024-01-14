@@ -53,6 +53,7 @@ dependencies:
   bubble_tab_indicator: ^0.1.6
   scrollview_observer: ^1.19.0
   flutter_svg: ^2.0.9
+  package_info_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:

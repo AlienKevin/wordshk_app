@@ -1,7 +1,11 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry/sentry.dart';
+import 'package:wordshk/device_info.dart';
+
+import '../utils.dart';
 
 class ShareFeedbackPage extends StatefulWidget {
   const ShareFeedbackPage({super.key});
@@ -148,6 +152,23 @@ class _ShareFeedbackPageState extends State<ShareFeedbackPage> {
                       child: Text(AppLocalizations.of(context)!.submit),
                     ),
                   ),
+                  const Divider(height: 30),
+                  Text(AppLocalizations.of(context)!.alternativeContact),
+                  GestureDetector(
+                      child: Text("kevinli020508@gmail.com", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                      onTap: () async {
+                        final subject =
+                            Uri.encodeComponent("words.hk feedback");
+                        PackageInfo packageInfo = await PackageInfo.fromPlatform();
+                        String version = packageInfo.version;
+                        String buildNumber = packageInfo.buildNumber;
+                        final body = Uri.encodeComponent(
+                            "\n\n------------------\n"
+                            "App info:\nVersion: $version+$buildNumber\n\n"
+                            "Device info:\n${await getDeviceInfo()}");
+                        openLink(
+                            "mailto:kevinli020508@gmail.com?subject=$subject&body=$body");
+                      }),
                 ],
               ),
             )),
