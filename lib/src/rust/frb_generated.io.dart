@@ -42,6 +42,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   EnglishSearchResult dco_decode_english_search_result(dynamic raw);
 
   @protected
+  EntryDef dco_decode_entry_def(dynamic raw);
+
+  @protected
   EntrySummary dco_decode_entry_summary(dynamic raw);
 
   @protected
@@ -57,6 +60,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<EnglishSearchResult> dco_decode_list_english_search_result(dynamic raw);
 
   @protected
+  List<EntryDef> dco_decode_list_entry_def(dynamic raw);
+
+  @protected
   List<EntrySummary> dco_decode_list_entry_summary(dynamic raw);
 
   @protected
@@ -70,9 +76,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List dco_decode_list_prim_u_8(dynamic raw);
-
-  @protected
-  List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
@@ -107,9 +110,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (int?, List<VariantSearchResult>)
       dco_decode_record_opt_box_autoadd_usize_list_variant_search_result(
           dynamic raw);
-
-  @protected
-  (String, String) dco_decode_record_string_string(dynamic raw);
 
   @protected
   Romanization dco_decode_romanization(dynamic raw);
@@ -156,6 +156,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  EntryDef sse_decode_entry_def(SseDeserializer deserializer);
+
+  @protected
   EntrySummary sse_decode_entry_summary(SseDeserializer deserializer);
 
   @protected
@@ -171,6 +174,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<EnglishSearchResult> sse_decode_list_english_search_result(
       SseDeserializer deserializer);
+
+  @protected
+  List<EntryDef> sse_decode_list_entry_def(SseDeserializer deserializer);
 
   @protected
   List<EntrySummary> sse_decode_list_entry_summary(
@@ -189,10 +195,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List sse_decode_list_prim_u_8(SseDeserializer deserializer);
-
-  @protected
-  List<(String, String)> sse_decode_list_record_string_string(
-      SseDeserializer deserializer);
 
   @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
@@ -227,10 +229,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (int?, List<VariantSearchResult>)
       sse_decode_record_opt_box_autoadd_usize_list_variant_search_result(
           SseDeserializer deserializer);
-
-  @protected
-  (String, String) sse_decode_record_string_string(
-      SseDeserializer deserializer);
 
   @protected
   Romanization sse_decode_romanization(SseDeserializer deserializer);
@@ -299,6 +297,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<wire_cst_list_entry_def> cst_encode_list_entry_def(
+      List<EntryDef> raw) {
+    final ans = wire.cst_new_list_entry_def(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      cst_api_fill_to_wire_entry_def(raw[i], ans.ref.ptr[i]);
+    }
+    return ans;
+  }
+
+  @protected
   ffi.Pointer<wire_cst_list_entry_summary> cst_encode_list_entry_summary(
       List<EntrySummary> raw) {
     final ans = wire.cst_new_list_entry_summary(raw.length);
@@ -340,16 +348,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ffi.Pointer<wire_cst_list_prim_u_8> cst_encode_list_prim_u_8(Uint8List raw) {
     final ans = wire.cst_new_list_prim_u_8(raw.length);
     ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
-    return ans;
-  }
-
-  @protected
-  ffi.Pointer<wire_cst_list_record_string_string>
-      cst_encode_list_record_string_string(List<(String, String)> raw) {
-    final ans = wire.cst_new_list_record_string_string(raw.length);
-    for (var i = 0; i < raw.length; ++i) {
-      cst_api_fill_to_wire_record_string_string(raw[i], ans.ref.ptr[i]);
-    }
     return ans;
   }
 
@@ -403,10 +401,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void cst_api_fill_to_wire_entry_def(
+      EntryDef apiObj, wire_cst_entry_def wireObj) {
+    wireObj.yue_trad = cst_encode_String(apiObj.yueTrad);
+    wireObj.yue_simp = cst_encode_String(apiObj.yueSimp);
+    wireObj.eng = cst_encode_String(apiObj.eng);
+  }
+
+  @protected
   void cst_api_fill_to_wire_entry_summary(
       EntrySummary apiObj, wire_cst_entry_summary wireObj) {
-    wireObj.variant = cst_encode_String(apiObj.variant);
-    wireObj.defs = cst_encode_list_record_string_string(apiObj.defs);
+    wireObj.variant_trad = cst_encode_String(apiObj.variantTrad);
+    wireObj.variant_simp = cst_encode_String(apiObj.variantSimp);
+    wireObj.defs = cst_encode_list_entry_def(apiObj.defs);
   }
 
   @protected
@@ -460,13 +467,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
               wireObj) {
     wireObj.field0 = cst_encode_opt_box_autoadd_usize(apiObj.$1);
     wireObj.field1 = cst_encode_list_variant_search_result(apiObj.$2);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_record_string_string(
-      (String, String) apiObj, wire_cst_record_string_string wireObj) {
-    wireObj.field0 = cst_encode_String(apiObj.$1);
-    wireObj.field1 = cst_encode_String(apiObj.$2);
   }
 
   @protected
@@ -528,6 +528,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       EnglishSearchResult self, SseSerializer serializer);
 
   @protected
+  void sse_encode_entry_def(EntryDef self, SseSerializer serializer);
+
+  @protected
   void sse_encode_entry_summary(EntrySummary self, SseSerializer serializer);
 
   @protected
@@ -543,6 +546,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_english_search_result(
       List<EnglishSearchResult> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_entry_def(List<EntryDef> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_entry_summary(
@@ -561,10 +567,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_prim_u_8(Uint8List self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_list_record_string_string(
-      List<(String, String)> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_variant_search_result(
@@ -598,10 +600,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_record_opt_box_autoadd_usize_list_variant_search_result(
       (int?, List<VariantSearchResult>) self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_record_string_string(
-      (String, String) self, SseSerializer serializer);
 
   @protected
   void sse_encode_romanization(Romanization self, SseSerializer serializer);
@@ -812,22 +810,20 @@ class RustLibWire implements BaseWire {
   void wire_get_entry_summaries(
     int port_,
     ffi.Pointer<wire_cst_list_prim_u_32> entry_ids,
-    int script,
   ) {
     return _wire_get_entry_summaries(
       port_,
       entry_ids,
-      script,
     );
   }
 
   late final _wire_get_entry_summariesPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_32>,
-              ffi.Int32)>>('frbgen_wordshk_wire_get_entry_summaries');
-  late final _wire_get_entry_summaries =
-      _wire_get_entry_summariesPtr.asFunction<
-          void Function(int, ffi.Pointer<wire_cst_list_prim_u_32>, int)>();
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_32>)>>(
+      'frbgen_wordshk_wire_get_entry_summaries');
+  late final _wire_get_entry_summaries = _wire_get_entry_summariesPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_32>)>();
 
   void wire_get_jyutping(
     int port_,
@@ -950,6 +946,21 @@ class RustLibWire implements BaseWire {
       _cst_new_list_english_search_resultPtr.asFunction<
           ffi.Pointer<wire_cst_list_english_search_result> Function(int)>();
 
+  ffi.Pointer<wire_cst_list_entry_def> cst_new_list_entry_def(
+    int len,
+  ) {
+    return _cst_new_list_entry_def(
+      len,
+    );
+  }
+
+  late final _cst_new_list_entry_defPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_cst_list_entry_def> Function(
+              ffi.Int32)>>('frbgen_wordshk_cst_new_list_entry_def');
+  late final _cst_new_list_entry_def = _cst_new_list_entry_defPtr
+      .asFunction<ffi.Pointer<wire_cst_list_entry_def> Function(int)>();
+
   ffi.Pointer<wire_cst_list_entry_summary> cst_new_list_entry_summary(
     int len,
   ) {
@@ -1024,23 +1035,6 @@ class RustLibWire implements BaseWire {
               ffi.Int32)>>('frbgen_wordshk_cst_new_list_prim_u_8');
   late final _cst_new_list_prim_u_8 = _cst_new_list_prim_u_8Ptr
       .asFunction<ffi.Pointer<wire_cst_list_prim_u_8> Function(int)>();
-
-  ffi.Pointer<wire_cst_list_record_string_string>
-      cst_new_list_record_string_string(
-    int len,
-  ) {
-    return _cst_new_list_record_string_string(
-      len,
-    );
-  }
-
-  late final _cst_new_list_record_string_stringPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<wire_cst_list_record_string_string> Function(
-              ffi.Int32)>>('frbgen_wordshk_cst_new_list_record_string_string');
-  late final _cst_new_list_record_string_string =
-      _cst_new_list_record_string_stringPtr.asFunction<
-          ffi.Pointer<wire_cst_list_record_string_string> Function(int)>();
 
   ffi.Pointer<wire_cst_list_variant_search_result>
       cst_new_list_variant_search_result(
@@ -1152,23 +1146,27 @@ final class wire_cst_list_english_search_result extends ffi.Struct {
   external int len;
 }
 
-final class wire_cst_record_string_string extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8> field0;
+final class wire_cst_entry_def extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8> yue_trad;
 
-  external ffi.Pointer<wire_cst_list_prim_u_8> field1;
+  external ffi.Pointer<wire_cst_list_prim_u_8> yue_simp;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8> eng;
 }
 
-final class wire_cst_list_record_string_string extends ffi.Struct {
-  external ffi.Pointer<wire_cst_record_string_string> ptr;
+final class wire_cst_list_entry_def extends ffi.Struct {
+  external ffi.Pointer<wire_cst_entry_def> ptr;
 
   @ffi.Int32()
   external int len;
 }
 
 final class wire_cst_entry_summary extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8> variant;
+  external ffi.Pointer<wire_cst_list_prim_u_8> variant_trad;
 
-  external ffi.Pointer<wire_cst_list_record_string_string> defs;
+  external ffi.Pointer<wire_cst_list_prim_u_8> variant_simp;
+
+  external ffi.Pointer<wire_cst_list_entry_def> defs;
 }
 
 final class wire_cst_list_entry_summary extends ffi.Struct {

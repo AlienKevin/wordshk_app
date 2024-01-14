@@ -603,7 +603,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             color: selected ? lightGreyColor : greyColor)),
                     ...showDefSummary(
                         context,
-                        switch (getSummaryDefLanguage(context)) {
+                        switch (watchSummaryDefLanguage(context)) {
                           SummaryDefLanguage.english => result.engs,
                           SummaryDefLanguage.cantonese => result.yues
                         },
@@ -647,7 +647,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       : null)),
           ...showDefSummary(
               context,
-              switch (getSummaryDefLanguage(context)) {
+              switch (watchSummaryDefLanguage(context)) {
                 SummaryDefLanguage.english => result.engs,
                 SummaryDefLanguage.cantonese => result.yues
               },

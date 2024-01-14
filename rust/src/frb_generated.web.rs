@@ -85,6 +85,26 @@ impl CstDecode<crate::api::api::EnglishSearchResult>
         }
     }
 }
+impl CstDecode<crate::api::api::EntryDef>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> crate::api::api::EntryDef {
+        let self_ = self
+            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap();
+        assert_eq!(
+            self_.length(),
+            3,
+            "Expected 3 elements, got {}",
+            self_.length()
+        );
+        crate::api::api::EntryDef {
+            yue_trad: self_.get(0).cst_decode(),
+            yue_simp: self_.get(1).cst_decode(),
+            eng: self_.get(2).cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::EntrySummary>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
@@ -94,13 +114,14 @@ impl CstDecode<crate::api::api::EntrySummary>
             .unwrap();
         assert_eq!(
             self_.length(),
-            2,
-            "Expected 2 elements, got {}",
+            3,
+            "Expected 3 elements, got {}",
             self_.length()
         );
         crate::api::api::EntrySummary {
-            variant: self_.get(0).cst_decode(),
-            defs: self_.get(1).cst_decode(),
+            variant_trad: self_.get(0).cst_decode(),
+            variant_simp: self_.get(1).cst_decode(),
+            defs: self_.get(2).cst_decode(),
         }
     }
 }
@@ -128,6 +149,17 @@ impl CstDecode<Vec<crate::api::api::EnglishSearchResult>>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
     fn cst_decode(self) -> Vec<crate::api::api::EnglishSearchResult> {
+        self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap()
+            .iter()
+            .map(CstDecode::cst_decode)
+            .collect()
+    }
+}
+impl CstDecode<Vec<crate::api::api::EntryDef>>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> Vec<crate::api::api::EntryDef> {
         self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
             .unwrap()
             .iter()
@@ -176,17 +208,6 @@ impl CstDecode<Vec<u32>> for Box<[u32]> {
 impl CstDecode<Vec<u8>> for Box<[u8]> {
     fn cst_decode(self) -> Vec<u8> {
         self.into_vec()
-    }
-}
-impl CstDecode<Vec<(String, String)>>
-    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-{
-    fn cst_decode(self) -> Vec<(String, String)> {
-        self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap()
-            .iter()
-            .map(CstDecode::cst_decode)
-            .collect()
     }
 }
 impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
@@ -297,20 +318,6 @@ impl CstDecode<(Option<usize>, Vec<crate::api::api::VariantSearchResult>)>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
     fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::VariantSearchResult>) {
-        let self_ = self
-            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap();
-        assert_eq!(
-            self_.length(),
-            2,
-            "Expected 2 elements, got {}",
-            self_.length()
-        );
-        (self_.get(0).cst_decode(), self_.get(1).cst_decode())
-    }
-}
-impl CstDecode<(String, String)> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-    fn cst_decode(self) -> (String, String) {
         let self_ = self
             .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
             .unwrap();
@@ -478,9 +485,8 @@ pub fn wire_get_entry_json(port_: flutter_rust_bridge::for_generated::MessagePor
 pub fn wire_get_entry_summaries(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     entry_ids: Box<[u32]>,
-    script: i32,
 ) {
-    wire_get_entry_summaries_impl(port_, entry_ids, script)
+    wire_get_entry_summaries_impl(port_, entry_ids)
 }
 
 #[wasm_bindgen]

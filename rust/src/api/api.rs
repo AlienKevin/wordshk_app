@@ -84,8 +84,9 @@ pub struct EgSearchResult {
 }
 
 pub struct EntrySummary {
-    pub variant: String,
-    pub defs: Vec<(String, String)>,
+    pub variant_trad: String,
+    pub variant_simp: String,
+    pub defs: Vec<EntryDef>,
 }
 
 #[repr(align(8))]
@@ -181,16 +182,12 @@ fn english_index() -> &'static ArchivedEnglishIndex {
     unsafe { rkyv::archived_root::<EnglishIndex>(&english_index_data.0) }
 }
 
-pub fn get_entry_summaries(entry_ids: Vec<u32>, script: Script) -> Vec<EntrySummary> {
+pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
     let summaries = entry_ids.into_iter().map(|entry_id| {
         let api = API.lock().unwrap();
         let entry = api.variants_map.get(&entry_id).unwrap().first().unwrap();
-        let variant = match script {
-            Script::Traditional => entry.word_trad.clone(),
-            Script::Simplified => entry.word_simp.clone(),
-        };
-        let defs = get_entry_defs(entry_id, dict(), script);
-        EntrySummary { variant, defs }
+        let defs = get_entry_defs(entry_id, dict());
+        EntrySummary { variant_trad: entry.word_trad.clone(), variant_simp: entry.word_simp.clone(), defs }
     }).collect();
     summaries
 }
@@ -282,13 +279,17 @@ fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearch
         let search::VariantSearchRank {
             id, matched_variant, ..
         } = variant_ranks.pop().unwrap();
-        let defs = get_entry_defs(id, dict, script);
-        let (yues, engs) = defs.into_iter().unzip();
+        let defs = get_entry_defs(id, dict);
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
             matched_variant: matched_variant.clone(),
-            yues,
-            engs,
+            yues: defs.iter().map(|def| {
+                match script {
+                    Script::Traditional => def.yue_trad.clone(),
+                    Script::Simplified => def.yue_simp.clone(),
+                }
+            }).collect(),
+            engs: defs.iter().map(|def| def.eng.clone()).collect(),
         });
         i += 1;
     }
@@ -305,33 +306,43 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
         let search::PrSearchRank {
             id, variants, matched_pr, ..
         } = pr_ranks.pop().unwrap();
-        let defs = get_entry_defs(id, dict, script);
-        let (yues, engs) = defs.into_iter().unzip();
+        let defs = get_entry_defs(id, dict);
         pr_search_results.push(PrSearchResult {
             id: id as u32,
             variants,
             matched_pr,
-            yues,
-            engs,
+            yues: defs.iter().map(|def| {
+                match script {
+                    Script::Traditional => def.yue_trad.clone(),
+                    Script::Simplified => def.yue_simp.clone(),
+                }
+            }).collect(),
+            engs: defs.iter().map(|def| def.eng.clone()).collect(),
         });
         i += 1;
     }
     (max_score, pr_search_results)
 }
 
-fn get_entry_defs(id: EntryId, dict: &ArchivedRichDict, script: Script) -> Vec<(String, String)> {
+pub struct EntryDef {
+    pub yue_trad: String,
+    pub yue_simp: String,
+    pub eng: String,
+}
+
+fn get_entry_defs(id: EntryId, dict: &ArchivedRichDict) -> Vec<EntryDef> {
     let defs = &dict.get(&id).unwrap().defs;
     defs.iter().filter_map(|def|
         def.eng.as_ref().map(|def| {
             let result = clause_to_string(&def.deserialize(&mut rkyv::Infallible).unwrap());
             result
         }).map(|eng|
-            (clause_to_string(&match script {
-                Script::Simplified => def.yue_simp.deserialize(&mut rkyv::Infallible).unwrap(),
-                Script::Traditional => def.yue.deserialize(&mut rkyv::Infallible).unwrap(), }),
-             eng,
-            )
-        )).collect()
+            EntryDef {
+               yue_trad: clause_to_string(&def.yue.deserialize(&mut rkyv::Infallible).unwrap()),
+               yue_simp: clause_to_string(&def.yue_simp.deserialize(&mut rkyv::Infallible).unwrap()),
+               eng,
+           })
+        ).collect()
 }
 
 fn english_ranks_to_results(english_ranks: &mut BinaryHeap<EnglishSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> (Option<usize>, Vec<EnglishSearchResult>) {

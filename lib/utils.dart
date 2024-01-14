@@ -163,9 +163,9 @@ String getSearchBarPositionName(
   }
 }
 
-SummaryDefLanguage getSummaryDefLanguage(BuildContext context) {
-  final entryLanguage = context.read<EntryLanguageState>().language;
-  final language = context.read<LanguageState>().language;
+SummaryDefLanguage watchSummaryDefLanguage(BuildContext context) {
+  final entryLanguage = context.watch<EntryLanguageState>().language;
+  final language = context.watch<LanguageState>().language;
   return (entryLanguage == EntryLanguage.english ||
           (entryLanguage == EntryLanguage.both && language == Language.en))
       ? SummaryDefLanguage.english

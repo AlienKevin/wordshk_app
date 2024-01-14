@@ -54,10 +54,20 @@ impl CstDecode<crate::api::api::EnglishSearchResult> for wire_cst_english_search
         }
     }
 }
+impl CstDecode<crate::api::api::EntryDef> for wire_cst_entry_def {
+    fn cst_decode(self) -> crate::api::api::EntryDef {
+        crate::api::api::EntryDef {
+            yue_trad: self.yue_trad.cst_decode(),
+            yue_simp: self.yue_simp.cst_decode(),
+            eng: self.eng.cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::EntrySummary> for wire_cst_entry_summary {
     fn cst_decode(self) -> crate::api::api::EntrySummary {
         crate::api::api::EntrySummary {
-            variant: self.variant.cst_decode(),
+            variant_trad: self.variant_trad.cst_decode(),
+            variant_simp: self.variant_simp.cst_decode(),
             defs: self.defs.cst_decode(),
         }
     }
@@ -84,6 +94,15 @@ impl CstDecode<Vec<crate::api::api::EnglishSearchResult>>
     for *mut wire_cst_list_english_search_result
 {
     fn cst_decode(self) -> Vec<crate::api::api::EnglishSearchResult> {
+        let vec = unsafe {
+            let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
+            flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
+        };
+        vec.into_iter().map(CstDecode::cst_decode).collect()
+    }
+}
+impl CstDecode<Vec<crate::api::api::EntryDef>> for *mut wire_cst_list_entry_def {
+    fn cst_decode(self) -> Vec<crate::api::api::EntryDef> {
         let vec = unsafe {
             let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
             flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
@@ -132,15 +151,6 @@ impl CstDecode<Vec<u8>> for *mut wire_cst_list_prim_u_8 {
             let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
             flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
         }
-    }
-}
-impl CstDecode<Vec<(String, String)>> for *mut wire_cst_list_record_string_string {
-    fn cst_decode(self) -> Vec<(String, String)> {
-        let vec = unsafe {
-            let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
-            flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
-        };
-        vec.into_iter().map(CstDecode::cst_decode).collect()
     }
 }
 impl CstDecode<Vec<crate::api::api::VariantSearchResult>>
@@ -200,11 +210,6 @@ impl CstDecode<(Option<usize>, Vec<crate::api::api::VariantSearchResult>)>
     for wire_cst_record_opt_box_autoadd_usize_list_variant_search_result
 {
     fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::VariantSearchResult>) {
-        (self.field0.cst_decode(), self.field1.cst_decode())
-    }
-}
-impl CstDecode<(String, String)> for wire_cst_record_string_string {
-    fn cst_decode(self) -> (String, String) {
         (self.field0.cst_decode(), self.field1.cst_decode())
     }
 }
@@ -271,10 +276,25 @@ impl Default for wire_cst_english_search_result {
         Self::new_with_null_ptr()
     }
 }
+impl NewWithNullPtr for wire_cst_entry_def {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            yue_trad: core::ptr::null_mut(),
+            yue_simp: core::ptr::null_mut(),
+            eng: core::ptr::null_mut(),
+        }
+    }
+}
+impl Default for wire_cst_entry_def {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
 impl NewWithNullPtr for wire_cst_entry_summary {
     fn new_with_null_ptr() -> Self {
         Self {
-            variant: core::ptr::null_mut(),
+            variant_trad: core::ptr::null_mut(),
+            variant_simp: core::ptr::null_mut(),
             defs: core::ptr::null_mut(),
         }
     }
@@ -362,19 +382,6 @@ impl NewWithNullPtr for wire_cst_record_opt_box_autoadd_usize_list_variant_searc
     }
 }
 impl Default for wire_cst_record_opt_box_autoadd_usize_list_variant_search_result {
-    fn default() -> Self {
-        Self::new_with_null_ptr()
-    }
-}
-impl NewWithNullPtr for wire_cst_record_string_string {
-    fn new_with_null_ptr() -> Self {
-        Self {
-            field0: core::ptr::null_mut(),
-            field1: core::ptr::null_mut(),
-        }
-    }
-}
-impl Default for wire_cst_record_string_string {
     fn default() -> Self {
         Self::new_with_null_ptr()
     }
@@ -467,9 +474,8 @@ pub extern "C" fn frbgen_wordshk_wire_get_entry_json(port_: i64, id: u32) {
 pub extern "C" fn frbgen_wordshk_wire_get_entry_summaries(
     port_: i64,
     entry_ids: *mut wire_cst_list_prim_u_32,
-    script: i32,
 ) {
-    wire_get_entry_summaries_impl(port_, entry_ids, script)
+    wire_get_entry_summaries_impl(port_, entry_ids)
 }
 
 #[no_mangle]
@@ -538,6 +544,18 @@ pub extern "C" fn frbgen_wordshk_cst_new_list_english_search_result(
 }
 
 #[no_mangle]
+pub extern "C" fn frbgen_wordshk_cst_new_list_entry_def(len: i32) -> *mut wire_cst_list_entry_def {
+    let wrap = wire_cst_list_entry_def {
+        ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
+            <wire_cst_entry_def>::new_with_null_ptr(),
+            len,
+        ),
+        len,
+    };
+    flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
+}
+
+#[no_mangle]
 pub extern "C" fn frbgen_wordshk_cst_new_list_entry_summary(
     len: i32,
 ) -> *mut wire_cst_list_entry_summary {
@@ -598,20 +616,6 @@ pub extern "C" fn frbgen_wordshk_cst_new_list_prim_u_8(len: i32) -> *mut wire_cs
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_wordshk_cst_new_list_record_string_string(
-    len: i32,
-) -> *mut wire_cst_list_record_string_string {
-    let wrap = wire_cst_list_record_string_string {
-        ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
-            <wire_cst_record_string_string>::new_with_null_ptr(),
-            len,
-        ),
-        len,
-    };
-    flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
-}
-
-#[no_mangle]
 pub extern "C" fn frbgen_wordshk_cst_new_list_variant_search_result(
     len: i32,
 ) -> *mut wire_cst_list_variant_search_result {
@@ -650,9 +654,17 @@ pub struct wire_cst_english_search_result {
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct wire_cst_entry_def {
+    yue_trad: *mut wire_cst_list_prim_u_8,
+    yue_simp: *mut wire_cst_list_prim_u_8,
+    eng: *mut wire_cst_list_prim_u_8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct wire_cst_entry_summary {
-    variant: *mut wire_cst_list_prim_u_8,
-    defs: *mut wire_cst_list_record_string_string,
+    variant_trad: *mut wire_cst_list_prim_u_8,
+    variant_simp: *mut wire_cst_list_prim_u_8,
+    defs: *mut wire_cst_list_entry_def,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -670,6 +682,12 @@ pub struct wire_cst_list_eg_search_result {
 #[derive(Clone, Copy)]
 pub struct wire_cst_list_english_search_result {
     ptr: *mut wire_cst_english_search_result,
+    len: i32,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_list_entry_def {
+    ptr: *mut wire_cst_entry_def,
     len: i32,
 }
 #[repr(C)]
@@ -700,12 +718,6 @@ pub struct wire_cst_list_prim_u_32 {
 #[derive(Clone, Copy)]
 pub struct wire_cst_list_prim_u_8 {
     ptr: *mut u8,
-    len: i32,
-}
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct wire_cst_list_record_string_string {
-    ptr: *mut wire_cst_record_string_string,
     len: i32,
 }
 #[repr(C)]
@@ -753,12 +765,6 @@ pub struct wire_cst_record_opt_box_autoadd_usize_list_pr_search_result {
 pub struct wire_cst_record_opt_box_autoadd_usize_list_variant_search_result {
     field0: *mut usize,
     field1: *mut wire_cst_list_variant_search_result,
-}
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct wire_cst_record_string_string {
-    field0: *mut wire_cst_list_prim_u_8,
-    field1: *mut wire_cst_list_prim_u_8,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]

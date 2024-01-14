@@ -57,13 +57,10 @@ class _EntryItemsState<T extends EntryItemState>
   Mode _mode = ViewMode();
   // The EntryId corresponding to the select item (used in wide screens)
   int? selectedEntryId;
-  late SummaryDefLanguage summaryDefLanguage;
 
   @override
   void initState() {
     super.initState();
-
-    summaryDefLanguage = getSummaryDefLanguage(context);
 
     loadedItemsListener = _loadMore;
     context.read<T>().registerLoadedItemsListener(loadedItemsListener);
@@ -116,13 +113,9 @@ class _EntryItemsState<T extends EntryItemState>
   }
 
   Future<EntryItemSummaries> fetchSummaries(List<int> ids) {
-    final script = context.read<LanguageState>().getScript();
-
-    return getEntrySummaries(
-      entryIds: Uint32List.fromList(ids),
-      script: script,
-    ).then((summaries) => EntryItemSummaries.of(
-        summaries.indexed.map((item) => (ids[item.$1], item.$2))));
+    return getEntrySummaries(entryIds: Uint32List.fromList(ids)).then(
+        (summaries) => EntryItemSummaries.of(
+            summaries.indexed.map((item) => (ids[item.$1], item.$2))));
   }
 
   Future<EntryItemSummaries> _fetchMoreEntryItems(int amount) {
@@ -365,13 +358,15 @@ class _EntryItemsState<T extends EntryItemState>
     );
   }
 
-  getSummaryDef(List<(String, String)> summaryDefs,
-          SummaryDefLanguage summaryDefLanguage) =>
-      switch (summaryDefLanguage) {
-        SummaryDefLanguage.cantonese =>
-          summaryDefs.map((pair) => pair.$1).toList(),
-        SummaryDefLanguage.english =>
-          summaryDefs.map((pair) => pair.$2).toList()
+  getSummaryDef(List<EntryDef> summaryDefs,
+          SummaryDefLanguage summaryDefLanguage, Script script) =>
+      switch ((summaryDefLanguage, script)) {
+        (SummaryDefLanguage.cantonese, Script.traditional) =>
+          summaryDefs.map((def) => def.yueTrad).toList(),
+        (SummaryDefLanguage.cantonese, Script.simplified) =>
+          summaryDefs.map((def) => def.yueSimp).toList(),
+        (SummaryDefLanguage.english, _) =>
+          summaryDefs.map((def) => def.eng).toList()
       };
 
   itemsList(EntryItemState s, Embedded embedded) => ListView.separated(
@@ -416,7 +411,10 @@ class _EntryItemsState<T extends EntryItemState>
                 )
             },
             title: Text(
-              summary.variant,
+              switch (context.watch<LanguageState>().getScript()) {
+                Script.traditional => summary.variantTrad,
+                Script.simplified => summary.variantSimp,
+              },
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -424,7 +422,10 @@ class _EntryItemsState<T extends EntryItemState>
               TextSpan(
                   children: showDefSummary(
                       context,
-                      getSummaryDef(summary.defs, summaryDefLanguage),
+                      getSummaryDef(
+                          summary.defs,
+                          watchSummaryDefLanguage(context),
+                          context.watch<LanguageState>().getScript()),
                       Theme.of(context).textTheme.bodySmall!.copyWith(
                           color: selected
                               ? Theme.of(context).colorScheme.onPrimary

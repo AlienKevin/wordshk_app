@@ -41,6 +41,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   EnglishSearchResult dco_decode_english_search_result(dynamic raw);
 
   @protected
+  EntryDef dco_decode_entry_def(dynamic raw);
+
+  @protected
   EntrySummary dco_decode_entry_summary(dynamic raw);
 
   @protected
@@ -56,6 +59,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<EnglishSearchResult> dco_decode_list_english_search_result(dynamic raw);
 
   @protected
+  List<EntryDef> dco_decode_list_entry_def(dynamic raw);
+
+  @protected
   List<EntrySummary> dco_decode_list_entry_summary(dynamic raw);
 
   @protected
@@ -69,9 +75,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List dco_decode_list_prim_u_8(dynamic raw);
-
-  @protected
-  List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
@@ -106,9 +109,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (int?, List<VariantSearchResult>)
       dco_decode_record_opt_box_autoadd_usize_list_variant_search_result(
           dynamic raw);
-
-  @protected
-  (String, String) dco_decode_record_string_string(dynamic raw);
 
   @protected
   Romanization dco_decode_romanization(dynamic raw);
@@ -155,6 +155,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  EntryDef sse_decode_entry_def(SseDeserializer deserializer);
+
+  @protected
   EntrySummary sse_decode_entry_summary(SseDeserializer deserializer);
 
   @protected
@@ -170,6 +173,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<EnglishSearchResult> sse_decode_list_english_search_result(
       SseDeserializer deserializer);
+
+  @protected
+  List<EntryDef> sse_decode_list_entry_def(SseDeserializer deserializer);
 
   @protected
   List<EntrySummary> sse_decode_list_entry_summary(
@@ -188,10 +194,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List sse_decode_list_prim_u_8(SseDeserializer deserializer);
-
-  @protected
-  List<(String, String)> sse_decode_list_record_string_string(
-      SseDeserializer deserializer);
 
   @protected
   List<VariantSearchResult> sse_decode_list_variant_search_result(
@@ -226,10 +228,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (int?, List<VariantSearchResult>)
       sse_decode_record_opt_box_autoadd_usize_list_variant_search_result(
           SseDeserializer deserializer);
-
-  @protected
-  (String, String) sse_decode_record_string_string(
-      SseDeserializer deserializer);
 
   @protected
   Romanization sse_decode_romanization(SseDeserializer deserializer);
@@ -301,10 +299,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  List<dynamic> cst_encode_entry_def(EntryDef raw) {
+    return [
+      cst_encode_String(raw.yueTrad),
+      cst_encode_String(raw.yueSimp),
+      cst_encode_String(raw.eng)
+    ];
+  }
+
+  @protected
   List<dynamic> cst_encode_entry_summary(EntrySummary raw) {
     return [
-      cst_encode_String(raw.variant),
-      cst_encode_list_record_string_string(raw.defs)
+      cst_encode_String(raw.variantTrad),
+      cst_encode_String(raw.variantSimp),
+      cst_encode_list_entry_def(raw.defs)
     ];
   }
 
@@ -322,6 +330,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<dynamic> cst_encode_list_english_search_result(
       List<EnglishSearchResult> raw) {
     return raw.map(cst_encode_english_search_result).toList();
+  }
+
+  @protected
+  List<dynamic> cst_encode_list_entry_def(List<EntryDef> raw) {
+    return raw.map(cst_encode_entry_def).toList();
   }
 
   @protected
@@ -347,12 +360,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   Uint8List cst_encode_list_prim_u_8(Uint8List raw) {
     return raw;
-  }
-
-  @protected
-  List<dynamic> cst_encode_list_record_string_string(
-      List<(String, String)> raw) {
-    return raw.map(cst_encode_record_string_string).toList();
   }
 
   @protected
@@ -426,11 +433,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  List<dynamic> cst_encode_record_string_string((String, String) raw) {
-    return [cst_encode_String(raw.$1), cst_encode_String(raw.$2)];
-  }
-
-  @protected
   List<dynamic> cst_encode_variant_search_result(VariantSearchResult raw) {
     return [
       cst_encode_u_32(raw.id),
@@ -489,6 +491,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       EnglishSearchResult self, SseSerializer serializer);
 
   @protected
+  void sse_encode_entry_def(EntryDef self, SseSerializer serializer);
+
+  @protected
   void sse_encode_entry_summary(EntrySummary self, SseSerializer serializer);
 
   @protected
@@ -504,6 +509,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_english_search_result(
       List<EnglishSearchResult> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_entry_def(List<EntryDef> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_entry_summary(
@@ -522,10 +530,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_prim_u_8(Uint8List self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_list_record_string_string(
-      List<(String, String)> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_variant_search_result(
@@ -559,10 +563,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_record_opt_box_autoadd_usize_list_variant_search_result(
       (int?, List<VariantSearchResult>) self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_record_string_string(
-      (String, String) self, SseSerializer serializer);
 
   @protected
   void sse_encode_romanization(Romanization self, SseSerializer serializer);
@@ -622,9 +622,8 @@ class RustLibWire extends BaseWire {
   void wire_get_entry_json(NativePortType port_, int id) =>
       wasmModule.wire_get_entry_json(port_, id);
 
-  void wire_get_entry_summaries(
-          NativePortType port_, Uint32List entry_ids, int script) =>
-      wasmModule.wire_get_entry_summaries(port_, entry_ids, script);
+  void wire_get_entry_summaries(NativePortType port_, Uint32List entry_ids) =>
+      wasmModule.wire_get_entry_summaries(port_, entry_ids);
 
   void wire_get_jyutping(NativePortType port_, String query) =>
       wasmModule.wire_get_jyutping(port_, query);
@@ -669,7 +668,7 @@ class RustLibWasmModule implements WasmModule {
   external void wire_get_entry_json(NativePortType port_, int id);
 
   external void wire_get_entry_summaries(
-      NativePortType port_, Uint32List entry_ids, int script);
+      NativePortType port_, Uint32List entry_ids);
 
   external void wire_get_jyutping(NativePortType port_, String query);
 
