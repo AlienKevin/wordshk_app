@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/states/language_state.dart';
 
+import '../../constants.dart';
 import '../../models/entry.dart';
 import '../../states/entry_language_state.dart';
 import 'entry_def.dart';
@@ -216,7 +217,10 @@ class _EntryWidgetState extends State<EntryWidget>
                     height: defIndexRanges.firstWhereOrNull(
                                 (range) => range.$2 - 1 == index) !=
                             null
-                        ? 20
+                        ? (MediaQuery.of(context).size.width >
+                                wideScreenThreshold
+                            ? 40
+                            : 20)
                         : 10,
                   ),
                   itemBuilder: (context, index) => items[index],
