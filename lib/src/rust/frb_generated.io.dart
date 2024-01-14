@@ -338,8 +338,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       EnglishSearchResult apiObj, wire_cst_english_search_result wireObj) {
     wireObj.id = cst_encode_u_32(apiObj.id);
     wireObj.def_index = cst_encode_u_32(apiObj.defIndex);
-    wireObj.variant = cst_encode_String(apiObj.variant);
-    wireObj.pr = cst_encode_String(apiObj.pr);
+    wireObj.variants = cst_encode_list_String(apiObj.variants);
     wireObj.matched_eng = cst_encode_list_matched_segment(apiObj.matchedEng);
   }
 
@@ -1015,9 +1014,7 @@ final class wire_cst_english_search_result extends ffi.Struct {
   @ffi.Uint32()
   external int def_index;
 
-  external ffi.Pointer<wire_cst_list_prim_u_8> variant;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8> pr;
+  external ffi.Pointer<wire_cst_list_String> variants;
 
   external ffi.Pointer<wire_cst_list_matched_segment> matched_eng;
 }

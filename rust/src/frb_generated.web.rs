@@ -73,16 +73,15 @@ impl CstDecode<crate::api::api::EnglishSearchResult>
             .unwrap();
         assert_eq!(
             self_.length(),
-            5,
-            "Expected 5 elements, got {}",
+            4,
+            "Expected 4 elements, got {}",
             self_.length()
         );
         crate::api::api::EnglishSearchResult {
             id: self_.get(0).cst_decode(),
             def_index: self_.get(1).cst_decode(),
-            variant: self_.get(2).cst_decode(),
-            pr: self_.get(3).cst_decode(),
-            matched_eng: self_.get(4).cst_decode(),
+            variants: self_.get(2).cst_decode(),
+            matched_eng: self_.get(3).cst_decode(),
         }
     }
 }

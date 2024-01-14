@@ -44,8 +44,7 @@ impl CstDecode<crate::api::api::EnglishSearchResult> for wire_cst_english_search
         crate::api::api::EnglishSearchResult {
             id: self.id.cst_decode(),
             def_index: self.def_index.cst_decode(),
-            variant: self.variant.cst_decode(),
-            pr: self.pr.cst_decode(),
+            variants: self.variants.cst_decode(),
             matched_eng: self.matched_eng.cst_decode(),
         }
     }
@@ -236,8 +235,7 @@ impl NewWithNullPtr for wire_cst_english_search_result {
         Self {
             id: Default::default(),
             def_index: Default::default(),
-            variant: core::ptr::null_mut(),
-            pr: core::ptr::null_mut(),
+            variants: core::ptr::null_mut(),
             matched_eng: core::ptr::null_mut(),
         }
     }
@@ -577,8 +575,7 @@ pub struct wire_cst_eg_search_result {
 pub struct wire_cst_english_search_result {
     id: u32,
     def_index: u32,
-    variant: *mut wire_cst_list_prim_u_8,
-    pr: *mut wire_cst_list_prim_u_8,
+    variants: *mut wire_cst_list_String,
     matched_eng: *mut wire_cst_list_matched_segment,
 }
 #[repr(C)]

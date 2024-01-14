@@ -7,22 +7,6 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 import '../frb_generated.dart';
 
-Stream<String> createLogStream({dynamic hint}) =>
-    RustLib.instance.api.createLogStream(hint: hint);
-
-Future<void> initApi({dynamic hint}) =>
-    RustLib.instance.api.initApi(hint: hint);
-
-Future<List<EntrySummary>> getEntrySummaries(
-        {required Uint32List entryIds, required Script script, dynamic hint}) =>
-    RustLib.instance.api
-        .getEntrySummaries(entryIds: entryIds, script: script, hint: hint);
-
-Future<void> generatePrIndices(
-        {required Romanization romanization, dynamic hint}) =>
-    RustLib.instance.api
-        .generatePrIndices(romanization: romanization, hint: hint);
-
 Future<CombinedSearchResults> combinedSearch(
         {required int capacity,
         required String query,
@@ -35,6 +19,9 @@ Future<CombinedSearchResults> combinedSearch(
         script: script,
         romanization: romanization,
         hint: hint);
+
+Stream<String> createLogStream({dynamic hint}) =>
+    RustLib.instance.api.createLogStream(hint: hint);
 
 Future<List<EgSearchResult>> egSearch(
         {required int capacity,
@@ -49,8 +36,10 @@ Future<List<EgSearchResult>> egSearch(
         script: script,
         hint: hint);
 
-Future<String> getEntryJson({required int id, dynamic hint}) =>
-    RustLib.instance.api.getEntryJson(id: id, hint: hint);
+Future<void> generatePrIndices(
+        {required Romanization romanization, dynamic hint}) =>
+    RustLib.instance.api
+        .generatePrIndices(romanization: romanization, hint: hint);
 
 Future<List<String>> getEntryGroupJson({required int id, dynamic hint}) =>
     RustLib.instance.api.getEntryGroupJson(id: id, hint: hint);
@@ -59,8 +48,19 @@ Future<int?> getEntryId(
         {required String query, required Script script, dynamic hint}) =>
     RustLib.instance.api.getEntryId(query: query, script: script, hint: hint);
 
+Future<String> getEntryJson({required int id, dynamic hint}) =>
+    RustLib.instance.api.getEntryJson(id: id, hint: hint);
+
+Future<List<EntrySummary>> getEntrySummaries(
+        {required Uint32List entryIds, required Script script, dynamic hint}) =>
+    RustLib.instance.api
+        .getEntrySummaries(entryIds: entryIds, script: script, hint: hint);
+
 Future<List<String>> getJyutping({required String query, dynamic hint}) =>
     RustLib.instance.api.getJyutping(query: query, hint: hint);
+
+Future<void> initApi({dynamic hint}) =>
+    RustLib.instance.api.initApi(hint: hint);
 
 class CombinedSearchResults {
   final List<VariantSearchResult> variantResults;
@@ -118,25 +118,19 @@ class EgSearchResult {
 class EnglishSearchResult {
   final int id;
   final int defIndex;
-  final String variant;
-  final String pr;
+  final List<String> variants;
   final List<MatchedSegment> matchedEng;
 
   const EnglishSearchResult({
     required this.id,
     required this.defIndex,
-    required this.variant,
-    required this.pr,
+    required this.variants,
     required this.matchedEng,
   });
 
   @override
   int get hashCode =>
-      id.hashCode ^
-      defIndex.hashCode ^
-      variant.hashCode ^
-      pr.hashCode ^
-      matchedEng.hashCode;
+      id.hashCode ^ defIndex.hashCode ^ variants.hashCode ^ matchedEng.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -145,8 +139,7 @@ class EnglishSearchResult {
           runtimeType == other.runtimeType &&
           id == other.id &&
           defIndex == other.defIndex &&
-          variant == other.variant &&
-          pr == other.pr &&
+          variants == other.variants &&
           matchedEng == other.matchedEng;
 }
 

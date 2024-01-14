@@ -472,21 +472,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           defIndex: result.defIndex,
           (bool selected) => TextSpan(
                 children: [
-                  TextSpan(
-                      text: "${result.variant} ",
+                  WidgetSpan(
+                      child: RichText(
+                    text: TextSpan(
+                      text: "${result.variants.join(" / ")} ",
                       style: selected
                           ? textStyle.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary)
-                          : textStyle),
-                  TextSpan(
-                      text: context
-                          .read<RomanizationState>()
-                          .showPrs(result.pr.split(" ")),
-                      style: textStyle.copyWith(
-                        fontSize:
-                            Theme.of(context).textTheme.bodyMedium!.fontSize,
-                        color: selected ? lightGreyColor : greyColor,
-                      )),
+                          : textStyle,
+                    ),
+                    maxLines: 1,
+                  )),
                   const TextSpan(text: "\n"),
                   ...result.matchedEng.map((segment) => TextSpan(
                       text: segment.segment,

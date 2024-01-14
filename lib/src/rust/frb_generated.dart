@@ -421,14 +421,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   EnglishSearchResult dco_decode_english_search_result(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return EnglishSearchResult(
       id: dco_decode_u_32(arr[0]),
       defIndex: dco_decode_u_32(arr[1]),
-      variant: dco_decode_String(arr[2]),
-      pr: dco_decode_String(arr[3]),
-      matchedEng: dco_decode_list_matched_segment(arr[4]),
+      variants: dco_decode_list_String(arr[2]),
+      matchedEng: dco_decode_list_matched_segment(arr[3]),
     );
   }
 
@@ -642,14 +641,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       SseDeserializer deserializer) {
     var var_id = sse_decode_u_32(deserializer);
     var var_defIndex = sse_decode_u_32(deserializer);
-    var var_variant = sse_decode_String(deserializer);
-    var var_pr = sse_decode_String(deserializer);
+    var var_variants = sse_decode_list_String(deserializer);
     var var_matchedEng = sse_decode_list_matched_segment(deserializer);
     return EnglishSearchResult(
         id: var_id,
         defIndex: var_defIndex,
-        variant: var_variant,
-        pr: var_pr,
+        variants: var_variants,
         matchedEng: var_matchedEng);
   }
 
@@ -923,8 +920,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       EnglishSearchResult self, SseSerializer serializer) {
     sse_encode_u_32(self.id, serializer);
     sse_encode_u_32(self.defIndex, serializer);
-    sse_encode_String(self.variant, serializer);
-    sse_encode_String(self.pr, serializer);
+    sse_encode_list_String(self.variants, serializer);
     sse_encode_list_matched_segment(self.matchedEng, serializer);
   }
 

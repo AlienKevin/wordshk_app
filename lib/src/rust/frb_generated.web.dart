@@ -238,8 +238,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     return [
       cst_encode_u_32(raw.id),
       cst_encode_u_32(raw.defIndex),
-      cst_encode_String(raw.variant),
-      cst_encode_String(raw.pr),
+      cst_encode_list_String(raw.variants),
       cst_encode_list_matched_segment(raw.matchedEng)
     ];
   }

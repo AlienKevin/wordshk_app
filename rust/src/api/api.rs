@@ -71,8 +71,7 @@ pub struct VariantSearchResult {
 pub struct EnglishSearchResult {
     pub id: u32,
     pub def_index: u32,
-    pub variant: String,
-    pub pr: String,
+    pub variants: Vec<String>,
     pub matched_eng: Vec<MatchedSegment>,
 }
 
@@ -332,12 +331,12 @@ fn english_ranks_to_results(english_ranks: &mut BinaryHeap<EnglishSearchRank>, v
     let mut i = 0;
     while !english_ranks.is_empty() && i < capacity {
         let entry = english_ranks.pop().unwrap();
-        let variant = &search::pick_variants(&variants_map.get(&entry.entry_id).unwrap(), script).0[0];
+        let variants = search::pick_variants(&variants_map.get(&entry.entry_id).unwrap(), script);
+        let variants = variants.to_words();
         english_search_results.push(EnglishSearchResult {
             id: entry.entry_id as u32,
             def_index: entry.def_index as u32,
-            variant: variant.word.clone(),
-            pr: variant.prs.0[0].to_string(),
+            variants: variants.into_iter().map(|v| v.to_string()).collect(),
             matched_eng: entry.matched_eng.clone(),
         });
         i += 1;
