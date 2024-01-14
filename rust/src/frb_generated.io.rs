@@ -20,6 +20,11 @@ impl CstDecode<u32> for *mut u32 {
         unsafe { *flutter_rust_bridge::for_generated::box_from_leak_ptr(self) }
     }
 }
+impl CstDecode<usize> for *mut usize {
+    fn cst_decode(self) -> usize {
+        unsafe { *flutter_rust_bridge::for_generated::box_from_leak_ptr(self) }
+    }
+}
 impl CstDecode<crate::api::api::CombinedSearchResults> for wire_cst_combined_search_results {
     fn cst_decode(self) -> crate::api::api::CombinedSearchResults {
         crate::api::api::CombinedSearchResults {
@@ -177,6 +182,27 @@ impl CstDecode<crate::api::api::PrSearchResult> for wire_cst_pr_search_result {
         }
     }
 }
+impl CstDecode<(Option<usize>, Vec<crate::api::api::EnglishSearchResult>)>
+    for wire_cst_record_opt_box_autoadd_usize_list_english_search_result
+{
+    fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::EnglishSearchResult>) {
+        (self.field0.cst_decode(), self.field1.cst_decode())
+    }
+}
+impl CstDecode<(Option<usize>, Vec<crate::api::api::PrSearchResult>)>
+    for wire_cst_record_opt_box_autoadd_usize_list_pr_search_result
+{
+    fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::PrSearchResult>) {
+        (self.field0.cst_decode(), self.field1.cst_decode())
+    }
+}
+impl CstDecode<(Option<usize>, Vec<crate::api::api::VariantSearchResult>)>
+    for wire_cst_record_opt_box_autoadd_usize_list_variant_search_result
+{
+    fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::VariantSearchResult>) {
+        (self.field0.cst_decode(), self.field1.cst_decode())
+    }
+}
 impl CstDecode<(String, String)> for wire_cst_record_string_string {
     fn cst_decode(self) -> (String, String) {
         (self.field0.cst_decode(), self.field1.cst_decode())
@@ -204,9 +230,9 @@ impl<T> NewWithNullPtr for *mut T {
 impl NewWithNullPtr for wire_cst_combined_search_results {
     fn new_with_null_ptr() -> Self {
         Self {
-            variant_results: core::ptr::null_mut(),
-            pr_results: core::ptr::null_mut(),
-            english_results: core::ptr::null_mut(),
+            variant_results: Default::default(),
+            pr_results: Default::default(),
+            english_results: Default::default(),
         }
     }
 }
@@ -297,6 +323,45 @@ impl NewWithNullPtr for wire_cst_pr_search_result {
     }
 }
 impl Default for wire_cst_pr_search_result {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
+impl NewWithNullPtr for wire_cst_record_opt_box_autoadd_usize_list_english_search_result {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            field0: core::ptr::null_mut(),
+            field1: core::ptr::null_mut(),
+        }
+    }
+}
+impl Default for wire_cst_record_opt_box_autoadd_usize_list_english_search_result {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
+impl NewWithNullPtr for wire_cst_record_opt_box_autoadd_usize_list_pr_search_result {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            field0: core::ptr::null_mut(),
+            field1: core::ptr::null_mut(),
+        }
+    }
+}
+impl Default for wire_cst_record_opt_box_autoadd_usize_list_pr_search_result {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
+impl NewWithNullPtr for wire_cst_record_opt_box_autoadd_usize_list_variant_search_result {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            field0: core::ptr::null_mut(),
+            field1: core::ptr::null_mut(),
+        }
+    }
+}
+impl Default for wire_cst_record_opt_box_autoadd_usize_list_variant_search_result {
     fn default() -> Self {
         Self::new_with_null_ptr()
     }
@@ -424,6 +489,11 @@ pub extern "C" fn frbgen_wordshk_wire_init_utils(port_: i64) {
 
 #[no_mangle]
 pub extern "C" fn frbgen_wordshk_cst_new_box_autoadd_u_32(value: u32) -> *mut u32 {
+    flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_wordshk_cst_new_box_autoadd_usize(value: usize) -> *mut usize {
     flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
 }
 
@@ -558,9 +628,9 @@ pub extern "C" fn frbgen_wordshk_cst_new_list_variant_search_result(
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct wire_cst_combined_search_results {
-    variant_results: *mut wire_cst_list_variant_search_result,
-    pr_results: *mut wire_cst_list_pr_search_result,
-    english_results: *mut wire_cst_list_english_search_result,
+    variant_results: wire_cst_record_opt_box_autoadd_usize_list_variant_search_result,
+    pr_results: wire_cst_record_opt_box_autoadd_usize_list_pr_search_result,
+    english_results: wire_cst_record_opt_box_autoadd_usize_list_english_search_result,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -665,6 +735,24 @@ pub struct wire_cst_pr_search_result {
     matched_pr: *mut wire_cst_list_matched_segment,
     yues: *mut wire_cst_list_String,
     engs: *mut wire_cst_list_String,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_record_opt_box_autoadd_usize_list_english_search_result {
+    field0: *mut usize,
+    field1: *mut wire_cst_list_english_search_result,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_record_opt_box_autoadd_usize_list_pr_search_result {
+    field0: *mut usize,
+    field1: *mut wire_cst_list_pr_search_result,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_record_opt_box_autoadd_usize_list_variant_search_result {
+    field0: *mut usize,
+    field1: *mut wire_cst_list_variant_search_result,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]

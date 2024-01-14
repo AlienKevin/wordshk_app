@@ -344,6 +344,11 @@ impl CstDecode<u8> for u8 {
         self
     }
 }
+impl CstDecode<usize> for usize {
+    fn cst_decode(self) -> usize {
+        self
+    }
+}
 impl SseDecode for String {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <Vec<u8>>::sse_decode(deserializer);
@@ -360,10 +365,11 @@ impl SseDecode for bool {
 impl SseDecode for crate::api::api::CombinedSearchResults {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_variantResults =
-            <Vec<crate::api::api::VariantSearchResult>>::sse_decode(deserializer);
-        let mut var_prResults = <Vec<crate::api::api::PrSearchResult>>::sse_decode(deserializer);
+            <(Option<usize>, Vec<crate::api::api::VariantSearchResult>)>::sse_decode(deserializer);
+        let mut var_prResults =
+            <(Option<usize>, Vec<crate::api::api::PrSearchResult>)>::sse_decode(deserializer);
         let mut var_englishResults =
-            <Vec<crate::api::api::EnglishSearchResult>>::sse_decode(deserializer);
+            <(Option<usize>, Vec<crate::api::api::EnglishSearchResult>)>::sse_decode(deserializer);
         return crate::api::api::CombinedSearchResults {
             variant_results: var_variantResults,
             pr_results: var_prResults,
@@ -567,6 +573,16 @@ impl SseDecode for Option<u32> {
     }
 }
 
+impl SseDecode for Option<usize> {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<usize>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for crate::api::api::PrSearchResult {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <u32>::sse_decode(deserializer);
@@ -581,6 +597,30 @@ impl SseDecode for crate::api::api::PrSearchResult {
             yues: var_yues,
             engs: var_engs,
         };
+    }
+}
+
+impl SseDecode for (Option<usize>, Vec<crate::api::api::EnglishSearchResult>) {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_field0 = <Option<usize>>::sse_decode(deserializer);
+        let mut var_field1 = <Vec<crate::api::api::EnglishSearchResult>>::sse_decode(deserializer);
+        return (var_field0, var_field1);
+    }
+}
+
+impl SseDecode for (Option<usize>, Vec<crate::api::api::PrSearchResult>) {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_field0 = <Option<usize>>::sse_decode(deserializer);
+        let mut var_field1 = <Vec<crate::api::api::PrSearchResult>>::sse_decode(deserializer);
+        return (var_field0, var_field1);
+    }
+}
+
+impl SseDecode for (Option<usize>, Vec<crate::api::api::VariantSearchResult>) {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_field0 = <Option<usize>>::sse_decode(deserializer);
+        let mut var_field1 = <Vec<crate::api::api::VariantSearchResult>>::sse_decode(deserializer);
+        return (var_field0, var_field1);
     }
 }
 
@@ -628,6 +668,12 @@ impl SseDecode for u8 {
 
 impl SseDecode for () {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {}
+}
+
+impl SseDecode for usize {
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_u64::<NativeEndian>().unwrap() as _
+    }
 }
 
 impl SseDecode for crate::api::api::VariantSearchResult {
@@ -850,9 +896,18 @@ impl SseEncode for bool {
 
 impl SseEncode for crate::api::api::CombinedSearchResults {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<crate::api::api::VariantSearchResult>>::sse_encode(self.variant_results, serializer);
-        <Vec<crate::api::api::PrSearchResult>>::sse_encode(self.pr_results, serializer);
-        <Vec<crate::api::api::EnglishSearchResult>>::sse_encode(self.english_results, serializer);
+        <(Option<usize>, Vec<crate::api::api::VariantSearchResult>)>::sse_encode(
+            self.variant_results,
+            serializer,
+        );
+        <(Option<usize>, Vec<crate::api::api::PrSearchResult>)>::sse_encode(
+            self.pr_results,
+            serializer,
+        );
+        <(Option<usize>, Vec<crate::api::api::EnglishSearchResult>)>::sse_encode(
+            self.english_results,
+            serializer,
+        );
     }
 }
 
@@ -1001,6 +1056,15 @@ impl SseEncode for Option<u32> {
     }
 }
 
+impl SseEncode for Option<usize> {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <usize>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for crate::api::api::PrSearchResult {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.id, serializer);
@@ -1008,6 +1072,27 @@ impl SseEncode for crate::api::api::PrSearchResult {
         <Vec<crate::api::api::MatchedSegment>>::sse_encode(self.matched_pr, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
+    }
+}
+
+impl SseEncode for (Option<usize>, Vec<crate::api::api::EnglishSearchResult>) {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<usize>>::sse_encode(self.0, serializer);
+        <Vec<crate::api::api::EnglishSearchResult>>::sse_encode(self.1, serializer);
+    }
+}
+
+impl SseEncode for (Option<usize>, Vec<crate::api::api::PrSearchResult>) {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<usize>>::sse_encode(self.0, serializer);
+        <Vec<crate::api::api::PrSearchResult>>::sse_encode(self.1, serializer);
+    }
+}
+
+impl SseEncode for (Option<usize>, Vec<crate::api::api::VariantSearchResult>) {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<usize>>::sse_encode(self.0, serializer);
+        <Vec<crate::api::api::VariantSearchResult>>::sse_encode(self.1, serializer);
     }
 }
 
@@ -1044,6 +1129,15 @@ impl SseEncode for u8 {
 
 impl SseEncode for () {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {}
+}
+
+impl SseEncode for usize {
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer
+            .cursor
+            .write_u64::<NativeEndian>(self as _)
+            .unwrap();
+    }
 }
 
 impl SseEncode for crate::api::api::VariantSearchResult {

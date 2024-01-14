@@ -63,9 +63,9 @@ Future<void> initApi({dynamic hint}) =>
     RustLib.instance.api.initApi(hint: hint);
 
 class CombinedSearchResults {
-  final List<VariantSearchResult> variantResults;
-  final List<PrSearchResult> prResults;
-  final List<EnglishSearchResult> englishResults;
+  final (int?, List<VariantSearchResult>) variantResults;
+  final (int?, List<PrSearchResult>) prResults;
+  final (int?, List<EnglishSearchResult>) englishResults;
 
   const CombinedSearchResults({
     required this.variantResults,

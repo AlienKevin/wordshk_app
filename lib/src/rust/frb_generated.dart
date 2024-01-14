@@ -394,14 +394,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int dco_decode_box_autoadd_usize(dynamic raw) {
+    return dco_decode_usize(raw);
+  }
+
+  @protected
   CombinedSearchResults dco_decode_combined_search_results(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 3)
       throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return CombinedSearchResults(
-      variantResults: dco_decode_list_variant_search_result(arr[0]),
-      prResults: dco_decode_list_pr_search_result(arr[1]),
-      englishResults: dco_decode_list_english_search_result(arr[2]),
+      variantResults:
+          dco_decode_record_opt_box_autoadd_usize_list_variant_search_result(
+              arr[0]),
+      prResults:
+          dco_decode_record_opt_box_autoadd_usize_list_pr_search_result(arr[1]),
+      englishResults:
+          dco_decode_record_opt_box_autoadd_usize_list_english_search_result(
+              arr[2]),
     );
   }
 
@@ -530,6 +540,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int? dco_decode_opt_box_autoadd_usize(dynamic raw) {
+    return raw == null ? null : dco_decode_box_autoadd_usize(raw);
+  }
+
+  @protected
   PrSearchResult dco_decode_pr_search_result(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 5)
@@ -540,6 +555,49 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       matchedPr: dco_decode_list_matched_segment(arr[2]),
       yues: dco_decode_list_String(arr[3]),
       engs: dco_decode_list_String(arr[4]),
+    );
+  }
+
+  @protected
+  (int?, List<EnglishSearchResult>)
+      dco_decode_record_opt_box_autoadd_usize_list_english_search_result(
+          dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_opt_box_autoadd_usize(arr[0]),
+      dco_decode_list_english_search_result(arr[1]),
+    );
+  }
+
+  @protected
+  (
+    int?,
+    List<PrSearchResult>
+  ) dco_decode_record_opt_box_autoadd_usize_list_pr_search_result(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_opt_box_autoadd_usize(arr[0]),
+      dco_decode_list_pr_search_result(arr[1]),
+    );
+  }
+
+  @protected
+  (int?, List<VariantSearchResult>)
+      dco_decode_record_opt_box_autoadd_usize_list_variant_search_result(
+          dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_opt_box_autoadd_usize(arr[0]),
+      dco_decode_list_variant_search_result(arr[1]),
     );
   }
 
@@ -581,6 +639,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int dco_decode_usize(dynamic raw) {
+    return dcoDecodeI64OrU64(raw);
+  }
+
+  @protected
   VariantSearchResult dco_decode_variant_search_result(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 4)
@@ -610,13 +673,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int sse_decode_box_autoadd_usize(SseDeserializer deserializer) {
+    return (sse_decode_usize(deserializer));
+  }
+
+  @protected
   CombinedSearchResults sse_decode_combined_search_results(
       SseDeserializer deserializer) {
     var var_variantResults =
-        sse_decode_list_variant_search_result(deserializer);
-    var var_prResults = sse_decode_list_pr_search_result(deserializer);
+        sse_decode_record_opt_box_autoadd_usize_list_variant_search_result(
+            deserializer);
+    var var_prResults =
+        sse_decode_record_opt_box_autoadd_usize_list_pr_search_result(
+            deserializer);
     var var_englishResults =
-        sse_decode_list_english_search_result(deserializer);
+        sse_decode_record_opt_box_autoadd_usize_list_english_search_result(
+            deserializer);
     return CombinedSearchResults(
         variantResults: var_variantResults,
         prResults: var_prResults,
@@ -787,6 +859,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int? sse_decode_opt_box_autoadd_usize(SseDeserializer deserializer) {
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_usize(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   PrSearchResult sse_decode_pr_search_result(SseDeserializer deserializer) {
     var var_id = sse_decode_u_32(deserializer);
     var var_variants = sse_decode_list_String(deserializer);
@@ -799,6 +880,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         matchedPr: var_matchedPr,
         yues: var_yues,
         engs: var_engs);
+  }
+
+  @protected
+  (int?, List<EnglishSearchResult>)
+      sse_decode_record_opt_box_autoadd_usize_list_english_search_result(
+          SseDeserializer deserializer) {
+    var var_field0 = sse_decode_opt_box_autoadd_usize(deserializer);
+    var var_field1 = sse_decode_list_english_search_result(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  (int?, List<PrSearchResult>)
+      sse_decode_record_opt_box_autoadd_usize_list_pr_search_result(
+          SseDeserializer deserializer) {
+    var var_field0 = sse_decode_opt_box_autoadd_usize(deserializer);
+    var var_field1 = sse_decode_list_pr_search_result(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  (int?, List<VariantSearchResult>)
+      sse_decode_record_opt_box_autoadd_usize_list_variant_search_result(
+          SseDeserializer deserializer) {
+    var var_field0 = sse_decode_opt_box_autoadd_usize(deserializer);
+    var var_field1 = sse_decode_list_variant_search_result(deserializer);
+    return (var_field0, var_field1);
   }
 
   @protected
@@ -833,6 +941,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer) {}
+
+  @protected
+  int sse_decode_usize(SseDeserializer deserializer) {
+    return deserializer.buffer.getUint64();
+  }
 
   @protected
   VariantSearchResult sse_decode_variant_search_result(
@@ -884,6 +997,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int cst_encode_usize(int raw) {
+    return raw;
+  }
+
+  @protected
   void sse_encode_String(String self, SseSerializer serializer) {
     sse_encode_list_prim_u_8(utf8.encoder.convert(self), serializer);
   }
@@ -899,11 +1017,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_usize(int self, SseSerializer serializer) {
+    sse_encode_usize(self, serializer);
+  }
+
+  @protected
   void sse_encode_combined_search_results(
       CombinedSearchResults self, SseSerializer serializer) {
-    sse_encode_list_variant_search_result(self.variantResults, serializer);
-    sse_encode_list_pr_search_result(self.prResults, serializer);
-    sse_encode_list_english_search_result(self.englishResults, serializer);
+    sse_encode_record_opt_box_autoadd_usize_list_variant_search_result(
+        self.variantResults, serializer);
+    sse_encode_record_opt_box_autoadd_usize_list_pr_search_result(
+        self.prResults, serializer);
+    sse_encode_record_opt_box_autoadd_usize_list_english_search_result(
+        self.englishResults, serializer);
   }
 
   @protected
@@ -1041,6 +1167,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_usize(int? self, SseSerializer serializer) {
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_usize(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_pr_search_result(
       PrSearchResult self, SseSerializer serializer) {
     sse_encode_u_32(self.id, serializer);
@@ -1048,6 +1182,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_matched_segment(self.matchedPr, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
+  }
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_usize_list_english_search_result(
+      (int?, List<EnglishSearchResult>) self, SseSerializer serializer) {
+    sse_encode_opt_box_autoadd_usize(self.$1, serializer);
+    sse_encode_list_english_search_result(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_usize_list_pr_search_result(
+      (int?, List<PrSearchResult>) self, SseSerializer serializer) {
+    sse_encode_opt_box_autoadd_usize(self.$1, serializer);
+    sse_encode_list_pr_search_result(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_usize_list_variant_search_result(
+      (int?, List<VariantSearchResult>) self, SseSerializer serializer) {
+    sse_encode_opt_box_autoadd_usize(self.$1, serializer);
+    sse_encode_list_variant_search_result(self.$2, serializer);
   }
 
   @protected
@@ -1079,6 +1234,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer) {}
+
+  @protected
+  void sse_encode_usize(int self, SseSerializer serializer) {
+    serializer.buffer.putUint64(self);
+  }
 
   @protected
   void sse_encode_variant_search_result(

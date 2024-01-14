@@ -261,6 +261,54 @@ impl CstDecode<crate::api::api::PrSearchResult>
         }
     }
 }
+impl CstDecode<(Option<usize>, Vec<crate::api::api::EnglishSearchResult>)>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::EnglishSearchResult>) {
+        let self_ = self
+            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap();
+        assert_eq!(
+            self_.length(),
+            2,
+            "Expected 2 elements, got {}",
+            self_.length()
+        );
+        (self_.get(0).cst_decode(), self_.get(1).cst_decode())
+    }
+}
+impl CstDecode<(Option<usize>, Vec<crate::api::api::PrSearchResult>)>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::PrSearchResult>) {
+        let self_ = self
+            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap();
+        assert_eq!(
+            self_.length(),
+            2,
+            "Expected 2 elements, got {}",
+            self_.length()
+        );
+        (self_.get(0).cst_decode(), self_.get(1).cst_decode())
+    }
+}
+impl CstDecode<(Option<usize>, Vec<crate::api::api::VariantSearchResult>)>
+    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
+{
+    fn cst_decode(self) -> (Option<usize>, Vec<crate::api::api::VariantSearchResult>) {
+        let self_ = self
+            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
+            .unwrap();
+        assert_eq!(
+            self_.length(),
+            2,
+            "Expected 2 elements, got {}",
+            self_.length()
+        );
+        (self_.get(0).cst_decode(), self_.get(1).cst_decode())
+    }
+}
 impl CstDecode<(String, String)> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
     fn cst_decode(self) -> (String, String) {
         let self_ = self
@@ -346,6 +394,11 @@ impl CstDecode<u32> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValu
 }
 impl CstDecode<u8> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
     fn cst_decode(self) -> u8 {
+        self.unchecked_into_f64() as _
+    }
+}
+impl CstDecode<usize> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
+    fn cst_decode(self) -> usize {
         self.unchecked_into_f64() as _
     }
 }

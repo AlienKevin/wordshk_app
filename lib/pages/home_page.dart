@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
+  List<SearchResultType> searchResultOrder = [];
   List<EgSearchResult> egSearchResults = [];
   int lastSearchStartTime = 0;
   bool finishedSearch = false;
@@ -310,9 +311,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           .then((results) {
         if (!context.mounted) return;
         if (searchStartTime >= lastSearchStartTime) {
-          final isCombinedResultsEmpty = results.prResults.isEmpty &&
-              results.variantResults.isEmpty &&
-              results.englishResults.isEmpty;
+          final isCombinedResultsEmpty = results.prResults.$2.isEmpty &&
+              results.variantResults.$2.isEmpty &&
+              results.englishResults.$2.isEmpty;
           if (isCombinedResultsEmpty) {
             egSearch(
                     capacity: 10,
@@ -330,6 +331,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     egSearchResults =
                         results.unique((result) => result.matchedEg);
                     isSearchResultsEmpty = egSearchResults.isEmpty;
+                    searchResultOrder = [SearchResultType.eg];
                     finishedSearch = true;
                   });
                 }
@@ -339,9 +341,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           setState(() {
             isSearchResultsEmpty = isCombinedResultsEmpty;
             egSearchResults.clear();
-            prSearchResults = results.prResults;
-            variantSearchResults = results.variantResults;
-            englishSearchResults = results.englishResults;
+            prSearchResults = results.prResults.$2;
+            variantSearchResults = results.variantResults.$2;
+            englishSearchResults = results.englishResults.$2;
+
+            // Higher priority = higher number
+            getSearchResultTypePriority(SearchResultType type) =>
+                switch (type) {
+                  SearchResultType.variant => results.variantResults.$1!,
+                  SearchResultType.pr => results.prResults.$1!,
+                  SearchResultType.english => results.englishResults.$1!,
+                  SearchResultType.eg => 0, // impossible
+                };
+            searchResultOrder = [
+              if (variantSearchResults.isNotEmpty) SearchResultType.variant,
+              if (prSearchResults.isNotEmpty) SearchResultType.pr,
+              if (englishSearchResults.isNotEmpty) SearchResultType.english,
+            ].sorted((a, b) => getSearchResultTypePriority(b)
+                .compareTo(getSearchResultTypePriority(a)));
             if (!isCombinedResultsEmpty) {
               finishedSearch = true;
             }
@@ -668,69 +685,50 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final s = AppLocalizations.of(context)!;
     final romanization = context.read<RomanizationState>().romanization;
     final romanizationName = getRomanizationName(romanization, s);
-    return [
-      ...variantSearchResults.isNotEmpty
-          ? [
-              (
-                SearchResultType.variant,
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  showSearchResultCategory(
-                      s.searchResults(s.searchResultsCategoryCantonese)),
-                  ...addSeparator(
-                      showVariantSearchResults(startIndex, textStyle, embedded))
-                ])
-              )
-            ]
-          : [],
-      ...prSearchResults.isNotEmpty
-          ? [
-              (
-                SearchResultType.pr,
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  showSearchResultCategory(s.searchResults(romanizationName)),
-                  ...addSeparator(showPrSearchResults(
-                      startIndex + variantSearchResults.length,
-                      textStyle,
-                      embedded))
-                ])
-              )
-            ]
-          : [],
-      ...englishSearchResults.isNotEmpty
-          ? [
-              (
-                SearchResultType.english,
-                Column(children: [
-                  showSearchResultCategory(
-                      s.searchResults(s.searchResultsCategoryEnglish)),
-                  ...addSeparator(showEnglishSearchResults(
-                      startIndex +
-                          variantSearchResults.length +
-                          prSearchResults.length,
-                      textStyle,
-                      embedded))
-                ])
-              )
-            ]
-          : [],
-      ...egSearchResults.isNotEmpty
-          ? [
-              (
-                SearchResultType.eg,
-                Column(children: [
-                  showSearchResultCategory(
-                      s.searchResults(s.searchResultsCategoryExample)),
-                  ...addSeparator(showEgSearchResults(
-                      startIndex +
-                          variantSearchResults.length +
-                          prSearchResults.length +
-                          englishSearchResults.length,
-                      embedded)),
-                ])
-              )
-            ]
-          : [],
-    ];
+
+    showSearchResultsOfType(SearchResultType type) => (
+          type,
+        Column(mainAxisAlignment: MainAxisAlignment.start, children: switch (type) {
+            SearchResultType.variant =>
+              [
+                showSearchResultCategory(
+                    s.searchResults(s.searchResultsCategoryCantonese)),
+                ...addSeparator(
+                    showVariantSearchResults(startIndex, textStyle, embedded))
+              ],
+            SearchResultType.pr => [
+              showSearchResultCategory(s.searchResults(romanizationName)),
+              ...addSeparator(showPrSearchResults(
+                  startIndex + variantSearchResults.length,
+                  textStyle,
+                  embedded))
+            ],
+            SearchResultType.english => [
+              showSearchResultCategory(
+                  s.searchResults(s.searchResultsCategoryEnglish)),
+              ...addSeparator(showEnglishSearchResults(
+                  startIndex +
+                      variantSearchResults.length +
+                      prSearchResults.length,
+                  textStyle,
+                  embedded))
+            ],
+            SearchResultType.eg => [
+              showSearchResultCategory(
+                  s.searchResults(s.searchResultsCategoryExample)),
+              ...addSeparator(showEgSearchResults(
+                  startIndex +
+                      variantSearchResults.length +
+                      prSearchResults.length +
+                      englishSearchResults.length,
+                  embedded)),
+            ],
+          })
+        );
+
+    return searchResultOrder
+        .map((type) => showSearchResultsOfType(type))
+        .toList();
   }
 
   Widget showSearchResult(int index, int id,

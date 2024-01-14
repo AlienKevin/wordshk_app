@@ -30,6 +30,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int dco_decode_box_autoadd_u_32(dynamic raw);
 
   @protected
+  int dco_decode_box_autoadd_usize(dynamic raw);
+
+  @protected
   CombinedSearchResults dco_decode_combined_search_results(dynamic raw);
 
   @protected
@@ -84,7 +87,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
 
   @protected
+  int? dco_decode_opt_box_autoadd_usize(dynamic raw);
+
+  @protected
   PrSearchResult dco_decode_pr_search_result(dynamic raw);
+
+  @protected
+  (int?, List<EnglishSearchResult>)
+      dco_decode_record_opt_box_autoadd_usize_list_english_search_result(
+          dynamic raw);
+
+  @protected
+  (
+    int?,
+    List<PrSearchResult>
+  ) dco_decode_record_opt_box_autoadd_usize_list_pr_search_result(dynamic raw);
+
+  @protected
+  (int?, List<VariantSearchResult>)
+      dco_decode_record_opt_box_autoadd_usize_list_variant_search_result(
+          dynamic raw);
 
   @protected
   (String, String) dco_decode_record_string_string(dynamic raw);
@@ -105,6 +127,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void dco_decode_unit(dynamic raw);
 
   @protected
+  int dco_decode_usize(dynamic raw);
+
+  @protected
   VariantSearchResult dco_decode_variant_search_result(dynamic raw);
 
   @protected
@@ -115,6 +140,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+
+  @protected
+  int sse_decode_box_autoadd_usize(SseDeserializer deserializer);
 
   @protected
   CombinedSearchResults sse_decode_combined_search_results(
@@ -180,7 +208,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
+  int? sse_decode_opt_box_autoadd_usize(SseDeserializer deserializer);
+
+  @protected
   PrSearchResult sse_decode_pr_search_result(SseDeserializer deserializer);
+
+  @protected
+  (int?, List<EnglishSearchResult>)
+      sse_decode_record_opt_box_autoadd_usize_list_english_search_result(
+          SseDeserializer deserializer);
+
+  @protected
+  (int?, List<PrSearchResult>)
+      sse_decode_record_opt_box_autoadd_usize_list_pr_search_result(
+          SseDeserializer deserializer);
+
+  @protected
+  (int?, List<VariantSearchResult>)
+      sse_decode_record_opt_box_autoadd_usize_list_variant_search_result(
+          SseDeserializer deserializer);
 
   @protected
   (String, String) sse_decode_record_string_string(
@@ -202,6 +248,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_decode_unit(SseDeserializer deserializer);
 
   @protected
+  int sse_decode_usize(SseDeserializer deserializer);
+
+  @protected
   VariantSearchResult sse_decode_variant_search_result(
       SseDeserializer deserializer);
 
@@ -213,6 +262,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   ffi.Pointer<ffi.Uint32> cst_encode_box_autoadd_u_32(int raw) {
     return wire.cst_new_box_autoadd_u_32(cst_encode_u_32(raw));
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr> cst_encode_box_autoadd_usize(int raw) {
+    return wire.cst_new_box_autoadd_usize(cst_encode_usize(raw));
   }
 
   @protected
@@ -315,13 +369,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  ffi.Pointer<ffi.UintPtr> cst_encode_opt_box_autoadd_usize(int? raw) {
+    return raw == null ? ffi.nullptr : cst_encode_box_autoadd_usize(raw);
+  }
+
+  @protected
   void cst_api_fill_to_wire_combined_search_results(
       CombinedSearchResults apiObj, wire_cst_combined_search_results wireObj) {
-    wireObj.variant_results =
-        cst_encode_list_variant_search_result(apiObj.variantResults);
-    wireObj.pr_results = cst_encode_list_pr_search_result(apiObj.prResults);
-    wireObj.english_results =
-        cst_encode_list_english_search_result(apiObj.englishResults);
+    cst_api_fill_to_wire_record_opt_box_autoadd_usize_list_variant_search_result(
+        apiObj.variantResults, wireObj.variant_results);
+    cst_api_fill_to_wire_record_opt_box_autoadd_usize_list_pr_search_result(
+        apiObj.prResults, wireObj.pr_results);
+    cst_api_fill_to_wire_record_opt_box_autoadd_usize_list_english_search_result(
+        apiObj.englishResults, wireObj.english_results);
   }
 
   @protected
@@ -375,6 +435,34 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  void
+      cst_api_fill_to_wire_record_opt_box_autoadd_usize_list_english_search_result(
+          (int?, List<EnglishSearchResult>) apiObj,
+          wire_cst_record_opt_box_autoadd_usize_list_english_search_result
+              wireObj) {
+    wireObj.field0 = cst_encode_opt_box_autoadd_usize(apiObj.$1);
+    wireObj.field1 = cst_encode_list_english_search_result(apiObj.$2);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_record_opt_box_autoadd_usize_list_pr_search_result(
+      (int?, List<PrSearchResult>) apiObj,
+      wire_cst_record_opt_box_autoadd_usize_list_pr_search_result wireObj) {
+    wireObj.field0 = cst_encode_opt_box_autoadd_usize(apiObj.$1);
+    wireObj.field1 = cst_encode_list_pr_search_result(apiObj.$2);
+  }
+
+  @protected
+  void
+      cst_api_fill_to_wire_record_opt_box_autoadd_usize_list_variant_search_result(
+          (int?, List<VariantSearchResult>) apiObj,
+          wire_cst_record_opt_box_autoadd_usize_list_variant_search_result
+              wireObj) {
+    wireObj.field0 = cst_encode_opt_box_autoadd_usize(apiObj.$1);
+    wireObj.field1 = cst_encode_list_variant_search_result(apiObj.$2);
+  }
+
+  @protected
   void cst_api_fill_to_wire_record_string_string(
       (String, String) apiObj, wire_cst_record_string_string wireObj) {
     wireObj.field0 = cst_encode_String(apiObj.$1);
@@ -413,6 +501,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void cst_encode_unit(void raw);
 
   @protected
+  int cst_encode_usize(int raw);
+
+  @protected
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
@@ -420,6 +511,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_usize(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_combined_search_results(
@@ -487,8 +581,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_usize(int? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_pr_search_result(
       PrSearchResult self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_usize_list_english_search_result(
+      (int?, List<EnglishSearchResult>) self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_usize_list_pr_search_result(
+      (int?, List<PrSearchResult>) self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_usize_list_variant_search_result(
+      (int?, List<VariantSearchResult>) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_string(
@@ -508,6 +617,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_usize(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_variant_search_result(
@@ -776,6 +888,20 @@ class RustLibWire implements BaseWire {
           'frbgen_wordshk_cst_new_box_autoadd_u_32');
   late final _cst_new_box_autoadd_u_32 = _cst_new_box_autoadd_u_32Ptr
       .asFunction<ffi.Pointer<ffi.Uint32> Function(int)>();
+
+  ffi.Pointer<ffi.UintPtr> cst_new_box_autoadd_usize(
+    int value,
+  ) {
+    return _cst_new_box_autoadd_usize(
+      value,
+    );
+  }
+
+  late final _cst_new_box_autoadd_usizePtr = _lookup<
+          ffi.NativeFunction<ffi.Pointer<ffi.UintPtr> Function(ffi.UintPtr)>>(
+      'frbgen_wordshk_cst_new_box_autoadd_usize');
+  late final _cst_new_box_autoadd_usize = _cst_new_box_autoadd_usizePtr
+      .asFunction<ffi.Pointer<ffi.UintPtr> Function(int)>();
 
   ffi.Pointer<wire_cst_list_String> cst_new_list_String(
     int len,
@@ -1090,10 +1216,34 @@ final class wire_cst_list_variant_search_result extends ffi.Struct {
   external int len;
 }
 
+final class wire_cst_record_opt_box_autoadd_usize_list_variant_search_result
+    extends ffi.Struct {
+  external ffi.Pointer<ffi.UintPtr> field0;
+
+  external ffi.Pointer<wire_cst_list_variant_search_result> field1;
+}
+
+final class wire_cst_record_opt_box_autoadd_usize_list_pr_search_result
+    extends ffi.Struct {
+  external ffi.Pointer<ffi.UintPtr> field0;
+
+  external ffi.Pointer<wire_cst_list_pr_search_result> field1;
+}
+
+final class wire_cst_record_opt_box_autoadd_usize_list_english_search_result
+    extends ffi.Struct {
+  external ffi.Pointer<ffi.UintPtr> field0;
+
+  external ffi.Pointer<wire_cst_list_english_search_result> field1;
+}
+
 final class wire_cst_combined_search_results extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_variant_search_result> variant_results;
+  external wire_cst_record_opt_box_autoadd_usize_list_variant_search_result
+      variant_results;
 
-  external ffi.Pointer<wire_cst_list_pr_search_result> pr_results;
+  external wire_cst_record_opt_box_autoadd_usize_list_pr_search_result
+      pr_results;
 
-  external ffi.Pointer<wire_cst_list_english_search_result> english_results;
+  external wire_cst_record_opt_box_autoadd_usize_list_english_search_result
+      english_results;
 }

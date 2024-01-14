@@ -23,9 +23,10 @@ use wordshk_tools::unicode::is_cjk;
 use crate::frb_generated::StreamSink;
 
 pub struct CombinedSearchResults {
-    pub variant_results: Vec<VariantSearchResult>,
-    pub pr_results: Vec<PrSearchResult>,
-    pub english_results: Vec<EnglishSearchResult>,
+    // First Option<usize> is the score
+    pub variant_results: (Option<usize>, Vec<VariantSearchResult>),
+    pub pr_results: (Option<usize>, Vec<PrSearchResult>),
+    pub english_results: (Option<usize>, Vec<EnglishSearchResult>),
 }
 
 #[frb(mirror(Script))]
@@ -205,14 +206,14 @@ pub fn combined_search(capacity: u32, query: String, script: Script, romanizatio
         CombinedSearchRank::Variant(variant_ranks) =>
             CombinedSearchResults {
                 variant_results: variant_ranks_to_results(variant_ranks, &api.variants_map, dict(), script, capacity),
-                pr_results: vec![],
-                english_results: vec![]
+                pr_results: (None, vec![]),
+                english_results: (None, vec![])
             },
         CombinedSearchRank::Pr(pr_ranks) =>
             CombinedSearchResults {
-                variant_results: vec![],
+                variant_results: (None, vec![]),
                 pr_results: pr_ranks_to_results(pr_ranks, &api.variants_map,  dict(),script, capacity),
-                english_results: vec![]
+                english_results: (None, vec![])
             },
         CombinedSearchRank::All(variant_ranks, pr_ranks, english_ranks) =>
             CombinedSearchResults {
@@ -270,9 +271,13 @@ pub fn get_jyutping(query: String) -> Vec<String> {
     }
 }
 
-fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearchRank>, variants_map: &VariantsMap, dict: &ArchivedRichDict, script: Script, capacity: u32) -> Vec<VariantSearchResult> {
+fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearchRank>, variants_map: &VariantsMap, dict: &ArchivedRichDict, script: Script, capacity: u32) -> (Option<usize>, Vec<VariantSearchResult>) {
     let mut variant_search_results = vec![];
     let mut i = 0;
+    let max_score = variant_ranks.peek().map(|rank| {
+        let m = &rank.matched_variant;
+        100 - m.prefix.chars().count() - m.suffix.chars().count()
+    });
     while !variant_ranks.is_empty() && i < capacity {
         let search::VariantSearchRank {
             id, matched_variant, ..
@@ -287,15 +292,18 @@ fn variant_ranks_to_results(variant_ranks: &mut BinaryHeap<search::VariantSearch
         });
         i += 1;
     }
-    variant_search_results
+    (max_score, variant_search_results)
 }
 
-fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants_map: &VariantsMap, dict: &ArchivedRichDict, script: Script, capacity: u32) -> Vec<PrSearchResult> {
+fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants_map: &VariantsMap, dict: &ArchivedRichDict, script: Script, capacity: u32) -> (Option<usize>, Vec<PrSearchResult>) {
     let mut pr_search_results = vec![];
     let mut i = 0;
+    let max_score = pr_ranks.peek().map(|rank| {
+       rank.score
+    });
     while !pr_ranks.is_empty() && i < capacity {
         let search::PrSearchRank {
-            id, variants, matched_pr,  ..
+            id, variants, matched_pr, ..
         } = pr_ranks.pop().unwrap();
         let defs = get_entry_defs(id, dict, script);
         let (yues, engs) = defs.into_iter().unzip();
@@ -308,7 +316,7 @@ fn pr_ranks_to_results(pr_ranks: &mut BinaryHeap<search::PrSearchRank>, variants
         });
         i += 1;
     }
-    pr_search_results
+    (max_score, pr_search_results)
 }
 
 fn get_entry_defs(id: EntryId, dict: &ArchivedRichDict, script: Script) -> Vec<(String, String)> {
@@ -326,9 +334,17 @@ fn get_entry_defs(id: EntryId, dict: &ArchivedRichDict, script: Script) -> Vec<(
         )).collect()
 }
 
-fn english_ranks_to_results(english_ranks: &mut BinaryHeap<EnglishSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> Vec<EnglishSearchResult> {
+fn english_ranks_to_results(english_ranks: &mut BinaryHeap<EnglishSearchRank>, variants_map: &VariantsMap, script: Script, capacity: u32) -> (Option<usize>, Vec<EnglishSearchResult>) {
     let mut english_search_results = vec![];
     let mut i = 0;
+    let max_score = english_ranks.peek().map(|rank| {
+        // If the query appears in the English definition, give it a score of 100
+        if rank.matched_eng.iter().any(|segment| segment.matched) {
+            100
+        } else {
+            rank.score
+        }
+    });
     while !english_ranks.is_empty() && i < capacity {
         let entry = english_ranks.pop().unwrap();
         let variants = search::pick_variants(&variants_map.get(&entry.entry_id).unwrap(), script);
@@ -341,5 +357,5 @@ fn english_ranks_to_results(english_ranks: &mut BinaryHeap<EnglishSearchRank>, v
         });
         i += 1;
     }
-    english_search_results
+    (max_score, english_search_results)
 }
