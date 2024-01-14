@@ -190,7 +190,7 @@
     "discard": "丢弃",
     "submit": "提交",
     "feedbackSubmitted": "反馈发送成功",
-    "feedbackFailedToSend": "反馈发送失败，请等一阵再试一次",
+    "feedbackFailedToSend": "由于网络问题反馈发送失败，请等一阵再试一次，或者直接电邮我们：kevinli020508@gmail.com",
 
     "aboutWordshkIntroductionTitle": "简介",
     "aboutWordshkIntroductionText": "《粤典》是一个大型的粤语辞典计划。我们用Crowd-sourcing的方法，制作一本大型、可持续发展的粤语辞典。我们的字典用香港粤语（广东话）做中心，编写解释和例句时都会考虑香港的用法；部份例句会从本土的文章中节选出来，务求反映真实的语言现状。",

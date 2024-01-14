@@ -109,8 +109,9 @@ class _ShareFeedbackPageState extends State<ShareFeedbackPage> {
                           _formKey.currentState!.save();
 
                           try {
-                            SentryId sentryId =
-                                await Sentry.captureMessage("User Feedback");
+                            SentryId sentryId = await Sentry.captureMessage(
+                              "[USER FEEDBACK]\nEmail: ${(_userEmail?.isEmpty ?? true) ? "None" : _userEmail!}\n$_userFeedback",
+                            );
 
                             final userFeedback = SentryUserFeedback(
                               eventId: sentryId,
@@ -119,7 +120,7 @@ class _ShareFeedbackPageState extends State<ShareFeedbackPage> {
                               name: null,
                             );
 
-                            Sentry.captureUserFeedback(userFeedback);
+                            await Sentry.captureUserFeedback(userFeedback);
 
                             if (!mounted) return;
 
@@ -135,11 +136,11 @@ class _ShareFeedbackPageState extends State<ShareFeedbackPage> {
 
                             // Show error message
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
+                              content: SelectableText(
                                 AppLocalizations.of(context)!
                                     .feedbackFailedToSend,
                               ),
-                              duration: const Duration(seconds: 2),
+                              duration: const Duration(seconds: 15),
                             ));
                           }
                         }

@@ -192,7 +192,7 @@
     "discard": "抌",
     "submit": "提交",
     "feedbackSubmitted": "反饋發送成功",
-    "feedbackFailedToSend": "反饋發送失敗，請等陣再試多次",
+    "feedbackFailedToSend": "由於網絡問題反饋發送失敗，請等陣再試多次，或者直接電郵我哋：kevinli020508@gmail.com",
 
     "aboutWordshkIntroductionTitle": "簡介",
     "aboutWordshkIntroductionText": "《粵典》係一個大型嘅粵語辭典計劃。我哋會用Crowd-sourcing嘅方法，整一本大型、可持續發展嘅粵語辭典。我哋嘅字典用香港粵語（廣東話）做中心，編寫解釋同例句都會考慮香港嘅用法；部份例句會由本土嘅文章抽出嚟，務求反映真實嘅語言現狀。",

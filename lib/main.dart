@@ -82,7 +82,7 @@ bool sentryEnabled = true;
 class CustomSentryEventProcessor implements EventProcessor {
   @override
   FutureOr<SentryEvent?> apply(SentryEvent event, {dynamic hint}) {
-    if (sentryEnabled) {
+    if (sentryEnabled || (event.message?.formatted.contains("[USER FEEDBACK]") ?? false)) {
       return event;
     }
     // Returning null will discard the event, effectively stopping reporting

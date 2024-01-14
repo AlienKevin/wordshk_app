@@ -203,7 +203,7 @@
     "discard": "Discard",
     "submit": "Submit",
     "feedbackSubmitted": "Feedback submitted successfully",
-    "feedbackFailedToSend": "Feedback failed to send. Please try again later.",
+    "feedbackFailedToSend": "Feedback failed to send due to network issues. Please try again later or send us an email: kevinli020508@gmail.com",
 
     "aboutWordshkIntroductionTitle": "Introduction",
     "aboutWordshkIntroductionText": "We use crowd-sourcing methods to sustainably develop a comprehensive Cantonese dictionary that will be useful for both beginners and advanced users. We aim to provide complete explanations and illustrative example sentences.",
