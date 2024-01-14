@@ -190,10 +190,12 @@ class _EntryItemsState<T extends EntryItemState>
                     final embedded = constraints.maxWidth > wideScreenThreshold
                         ? Embedded.embedded
                         : Embedded.topLevel;
+                    // TODO: Fix keyboard automatically unfocused when selectedEntryId is set.
+                    //       For now, have to disable default selection.
                     // Select the first item by default
-                    if (selectedEntryId == null && s.items.isNotEmpty) {
-                      selectedEntryId = s.items.first;
-                    }
+                    // if (selectedEntryId == null && s.items.isNotEmpty) {
+                    //   selectedEntryId = s.items.first;
+                    // }
                     return embedded == Embedded.embedded
                         ? Row(
                             children: [
