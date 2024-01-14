@@ -54,7 +54,9 @@ class EntryLabels extends StatelessWidget {
                                             Brightness.dark
                                         ? Colors.white
                                         : Colors.black),
-                        backgroundColor: label == Label.vulgar
+                        backgroundColor: label ==
+                                translateLabel(
+                                    Label.vulgar, AppLocalizations.of(context)!)
                             ? redColor
                             : Theme.of(context).splashColor,
                         label: Text(label))),
