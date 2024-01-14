@@ -688,42 +688,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     showSearchResultsOfType(SearchResultType type) => (
           type,
-        Column(mainAxisAlignment: MainAxisAlignment.start, children: switch (type) {
-            SearchResultType.variant =>
-              [
-                showSearchResultCategory(
-                    s.searchResults(s.searchResultsCategoryCantonese)),
-                ...addSeparator(
-                    showVariantSearchResults(startIndex, textStyle, embedded))
-              ],
-            SearchResultType.pr => [
-              showSearchResultCategory(s.searchResults(romanizationName)),
-              ...addSeparator(showPrSearchResults(
-                  startIndex + variantSearchResults.length,
-                  textStyle,
-                  embedded))
-            ],
-            SearchResultType.english => [
-              showSearchResultCategory(
-                  s.searchResults(s.searchResultsCategoryEnglish)),
-              ...addSeparator(showEnglishSearchResults(
-                  startIndex +
-                      variantSearchResults.length +
-                      prSearchResults.length,
-                  textStyle,
-                  embedded))
-            ],
-            SearchResultType.eg => [
-              showSearchResultCategory(
-                  s.searchResults(s.searchResultsCategoryExample)),
-              ...addSeparator(showEgSearchResults(
-                  startIndex +
-                      variantSearchResults.length +
-                      prSearchResults.length +
-                      englishSearchResults.length,
-                  embedded)),
-            ],
-          })
+          Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: switch (type) {
+                SearchResultType.variant => [
+                    showSearchResultCategory(
+                        s.searchResults(s.searchResultsCategoryCantonese)),
+                    ...addSeparator(showVariantSearchResults(
+                        startIndex, textStyle, embedded))
+                  ],
+                SearchResultType.pr => [
+                    showSearchResultCategory(s.searchResults(romanizationName)),
+                    ...addSeparator(showPrSearchResults(
+                        startIndex + variantSearchResults.length,
+                        textStyle,
+                        embedded))
+                  ],
+                SearchResultType.english => [
+                    showSearchResultCategory(
+                        s.searchResults(s.searchResultsCategoryEnglish)),
+                    ...addSeparator(showEnglishSearchResults(
+                        startIndex +
+                            variantSearchResults.length +
+                            prSearchResults.length,
+                        textStyle,
+                        embedded))
+                  ],
+                SearchResultType.eg => [
+                    showSearchResultCategory(
+                        s.searchResults(s.searchResultsCategoryExample)),
+                    ...addSeparator(showEgSearchResults(
+                        startIndex +
+                            variantSearchResults.length +
+                            prSearchResults.length +
+                            englishSearchResults.length,
+                        embedded)),
+                  ],
+              })
         );
 
     return searchResultOrder
