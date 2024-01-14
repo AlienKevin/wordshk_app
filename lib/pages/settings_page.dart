@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:wordshk/pages/share_feedback_page.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
+import '../device_info.dart';
 import '../states/entry_language_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
@@ -166,13 +167,18 @@ class SettingsPage extends StatelessWidget {
               SettingsSection(
                 tiles: [
                   SettingsTile.navigation(
-                    onPressed: (context) {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        useSafeArea: true,
-                        builder: (context) => const ShareFeedbackPage(),
-                      );
+                    onPressed: (context) async {
+                      final subject =
+                      Uri.encodeComponent(AppLocalizations.of(context)!.wordshkFeedback);
+                      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+                      String version = packageInfo.version;
+                      String buildNumber = packageInfo.buildNumber;
+                      final body = Uri.encodeComponent(
+                          "\n\n------------------\n"
+                              "App version: $version+$buildNumber\n"
+                              "Device info:\n${await getDeviceInfo()}");
+                      openLink(
+                      "mailto:kevinli020508@gmail.com?subject=$subject&body=$body");
                     },
                     title: Text(s.shareFeedback),
                   ),
