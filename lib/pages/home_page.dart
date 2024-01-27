@@ -160,6 +160,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   Container(
                     color: Theme.of(context).appBarTheme.backgroundColor ??
                         Theme.of(context).colorScheme.surface,
+                    width: double.maxFinite,
                     child: Padding(
                         padding: const EdgeInsets.only(
                             left: 14, right: 10, top: 10, bottom: 10),
@@ -170,18 +171,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ...inputMode == InputMode.ink
               ? [
                   DigitalInkView(
-                      typeCharacter: (character) {
-                        context
-                            .read<SearchQueryState>()
-                            .typeCharacter(character);
-                      },
-                      backspace: () {
-                        context.read<SearchQueryState>().backspace();
-                      },
-                      moveToEndOfSelection: () {
-                        context.read<SearchQueryState>().moveToEndOfSelection();
-                      },
-                    ),
+                    typeCharacter: (character) {
+                      context.read<SearchQueryState>().typeCharacter(character);
+                    },
+                    backspace: () {
+                      context.read<SearchQueryState>().backspace();
+                    },
+                    moveToEndOfSelection: () {
+                      context.read<SearchQueryState>().moveToEndOfSelection();
+                    },
+                  ),
                 ]
               : [],
         ]),
