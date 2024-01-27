@@ -164,15 +164,15 @@ class IsSearching extends State<SearchBar> {
   }
 
   void typeDiacritic(String diacritic) {
-    // Defensive programming to prevent mysterious RangeError:
-    // RangeError (end): Invalid value: Only valid value is 0: -1
-    final baseOffset = controller.selection.baseOffset < 0
-        ? 0
-        : controller.selection.baseOffset;
-    final extentOffset = controller.selection.extentOffset < 0
-        ? 0
-        : controller.selection.extentOffset;
     final query = controller.text;
+
+    // Focus the textField if not already
+    if (controller.selection.baseOffset == -1) {
+      focusNode.requestFocus();
+      controller.selection = TextSelection.collapsed(offset: query.length);
+    }
+    final baseOffset = controller.selection.baseOffset;
+    final extentOffset = controller.selection.extentOffset;
     // delete selection and add character in place of selection
     final start = query.substring(0, baseOffset);
     final startWithDiacritic = switch (start) {
@@ -193,46 +193,17 @@ class IsSearching extends State<SearchBar> {
     }
   }
 
-  void typeDigit(int digit) {
-    final baseOffset = controller.selection.baseOffset;
-    final extentOffset = controller.selection.extentOffset;
-    final query = controller.text;
-    // delete selection and add character in place of selection
-    final newQuery = query.substring(0, baseOffset) +
-        digit.toString() +
-        query.substring(extentOffset);
-    controller.value = TextEditingValue(
-        text: newQuery,
-        selection: TextSelection.collapsed(offset: baseOffset + 1));
-    context.read<SearchQueryState>().updateSearchQuery(newQuery);
-    if (widget.onChanged != null) {
-      widget.onChanged!(newQuery);
-    }
-  }
-
-  void typeCharacters(String characters) {
-    final baseOffset = controller.selection.baseOffset;
-    final extentOffset = controller.selection.extentOffset;
-    final query = controller.text;
-    // delete selection and add character in place of selection
-    final newQuery = query.substring(0, baseOffset) +
-        characters +
-        query.substring(extentOffset);
-    controller.value = TextEditingValue(
-        text: newQuery,
-        selection: TextSelection(
-            baseOffset: baseOffset,
-            extentOffset: baseOffset + characters.length));
-    context.read<SearchQueryState>().updateSearchQuery(newQuery);
-    if (widget.onChanged != null) {
-      widget.onChanged!(newQuery);
-    }
-  }
-
   void typeCharacter(String character) {
-    final baseOffset = controller.selection.baseOffset;
-    final extentOffset = controller.selection.extentOffset;
     final query = controller.text;
+
+    // Focus the textField if not already
+    if (controller.selection.baseOffset == -1) {
+      focusNode.requestFocus();
+      controller.selection = TextSelection.collapsed(offset: query.length);
+    }
+
+    final baseOffset = max(controller.selection.baseOffset, 0);
+    final extentOffset = max(controller.selection.extentOffset, 0);
     // delete selection and add character in place of selection
     final newQuery = query.substring(0, baseOffset) +
         character +
