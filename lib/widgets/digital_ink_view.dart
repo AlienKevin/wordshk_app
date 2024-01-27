@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Ink;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,7 +8,6 @@ import 'package:wordshk/constants.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 
 import '../models/input_mode.dart';
-import '../utils.dart';
 import 'text_scale_factor_clamper.dart';
 
 class DigitalInkView extends StatefulWidget {
@@ -118,83 +115,11 @@ class DigitalInkViewState extends State<DigitalInkView> {
             : whiteColor);
 
     final showSketchPad = Column(children: [
-      Expanded(
-        child: GestureDetector(
-          onPanStart: (DragStartDetails details) {
-            _ink.strokes.add(Stroke());
-          },
-          onPanUpdate: (DragUpdateDetails details) {
-            setState(() {
-              final localPosition = details.localPosition;
-              _points = List.from(_points)
-                ..add(StrokePoint(
-                  x: localPosition.dx,
-                  y: localPosition.dy,
-                  t: DateTime.now().millisecondsSinceEpoch,
-                ));
-              if (_ink.strokes.isNotEmpty) {
-                _ink.strokes.last.points = _points.toList();
-              }
-            });
-          },
-          onPanEnd: (DragEndDetails details) {
-            _points.clear();
-            _recognizeCharacter();
-            setState(() {});
-          },
-          child: CustomPaint(
-            painter: Signature(
-                ink: _ink,
-                brightness: MediaQuery.of(context).platformBrightness),
-            size: Size.infinite,
-          ),
-        ),
-      ),
+      const Spacer(),
       Container(
         color: Theme.of(context).canvasColor,
         child: Column(
           children: [
-            TextScaleFactorClamper(
-                maxScaleFactor: 1.2,
-                child: Center(
-                  child: SizedBox(
-                    height: candidatesFont.fontSize! *
-                            1.2 *
-                            MediaQuery.of(context).textScaleFactor +
-                        2,
-                    child: Wrap(
-                        children: _recognizedCharacters
-                            .map((character) => Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 6),
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      widget.typeCharacter(character);
-                                      _clearPad();
-                                      widget.moveToEndOfSelection();
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      minimumSize: Size(
-                                          candidatesFont.fontSize! * 1.2,
-                                          candidatesFont.fontSize! * 1.2),
-                                      padding: EdgeInsets.zero,
-                                      side: BorderSide(
-                                          width: 1.5,
-                                          color:
-                                              Theme.of(context).dividerColor),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
-                                      ),
-                                    ),
-                                    child:
-                                        Text(character, style: candidatesFont),
-                                  ),
-                                ))
-                            .toList()),
-                  ),
-                )),
-            const SizedBox(height: 15.0),
             Row(children: [
               const SizedBox(width: 15),
               IconButton(
@@ -237,9 +162,94 @@ class DigitalInkViewState extends State<DigitalInkView> {
                   child: Text(AppLocalizations.of(context)!.done)),
               const SizedBox(width: 20),
             ]),
-            const SizedBox(height: 15.0),
+            const Divider(height: 20),
           ],
         ),
+      ),
+      SizedBox(
+        height: 250,
+        child: Stack(
+            children: [
+          Positioned.fill(
+              child: GestureDetector(
+              onPanStart: (DragStartDetails details) {
+                _ink.strokes.add(Stroke());
+              },
+              onPanUpdate: (DragUpdateDetails details) {
+                setState(() {
+                  final localPosition = details.localPosition;
+                  _points = List.from(_points)
+                    ..add(StrokePoint(
+                      x: localPosition.dx,
+                      y: localPosition.dy,
+                      t: DateTime.now().millisecondsSinceEpoch,
+                    ));
+                  if (_ink.strokes.isNotEmpty) {
+                    _ink.strokes.last.points = _points.toList();
+                  }
+                });
+              },
+              onPanEnd: (DragEndDetails details) {
+                _points.clear();
+                _recognizeCharacter();
+                setState(() {});
+              },
+              child: CustomPaint(
+                painter: Signature(
+                    ink: _ink,
+                    brightness: MediaQuery.of(context).platformBrightness),
+                size: Size.infinite,
+              ),
+            ),
+          ),
+          ...(_recognizedCharacters.isNotEmpty
+              ? [
+                  Positioned(
+                    top: 0,
+                    child: TextScaleFactorClamper(
+                        maxScaleFactor: 1.2,
+                        child: Center(
+                          child: SizedBox(
+                            height: candidatesFont.fontSize! *
+                                    1.2 *
+                                    MediaQuery.of(context).textScaleFactor +
+                                2,
+                            child: Wrap(
+                                children: _recognizedCharacters
+                                    .map((character) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6),
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              widget.typeCharacter(character);
+                                              _clearPad();
+                                              widget.moveToEndOfSelection();
+                                            },
+                                            style: OutlinedButton.styleFrom(
+                                              minimumSize: Size(
+                                                  candidatesFont.fontSize! * 1.2,
+                                                  candidatesFont.fontSize! * 1.2),
+                                              padding: EdgeInsets.zero,
+                                              side: BorderSide(
+                                                  width: 1.5,
+                                                  color: Theme.of(context)
+                                                      .dividerColor),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(4.0),
+                                              ),
+                                            ),
+                                            child: Text(character,
+                                                style: candidatesFont),
+                                          ),
+                                        ))
+                                    .toList()),
+                          ),
+                        )),
+                  )
+                ]
+              : []),
+        ]),
       ),
     ]);
 
@@ -314,45 +324,30 @@ class Signature extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint backgroundPaint = Paint()
-      ..color = brightness == Brightness.light ? lightGreyColor : darkGreyColor;
+    // Draw background
+    final Gradient backgroundGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [brightness == Brightness.light ? whiteColor : blackColor, brightness == Brightness.light ? lightGreyColor : darkGreyColor],
+    );
+    final Shader backgroundShader = backgroundGradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    final Paint backgroundPaint = Paint()..shader = backgroundShader;
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
 
-    final Paint borderPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = brightness == Brightness.light ? darkGreyColor : lightGreyColor
-      ..strokeWidth = 2;
+    final strokeColor = brightness == Brightness.light ? blackColor : lightGreyColor;
 
-    canvas.drawRect(
-        ui.Rect.fromCenter(
-            center: Offset(size.width / 2, size.height / 2),
-            width: 300,
-            height: 300),
-        backgroundPaint);
+    final Gradient gradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [brightness == Brightness.light ? lightGreyColor : darkGreyColor, strokeColor], // Define your gradient colors here
+    );
 
-    canvas.drawRect(
-        ui.Rect.fromCenter(
-            center: Offset(size.width / 2, size.height / 2),
-            width: 300,
-            height: 300),
-        borderPaint);
-
-    drawDashedLine(
-        canvas: canvas,
-        p1: Offset(size.width / 2 - 150, size.height / 2),
-        p2: Offset(size.width / 2 + 150, size.height / 2),
-        dashWidth: 6,
-        dashSpace: 4,
-        paint: borderPaint..strokeWidth = 1);
-    drawDashedLine(
-        canvas: canvas,
-        p1: Offset(size.width / 2, size.height / 2 - 150),
-        p2: Offset(size.width / 2, size.height / 2 + 150),
-        dashWidth: 6,
-        dashSpace: 4,
-        paint: borderPaint..strokeWidth = 1);
+    // Draw strokes
+    final Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height / 3));
 
     final Paint paint = Paint()
-      ..color = brightness == Brightness.light ? blackColor : lightGreyColor
+      ..color = strokeColor
+      ..shader = shader
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 4.0;
 
