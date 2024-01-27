@@ -153,10 +153,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     return KeyboardVisibilityProvider(
       child: Scaffold(
-        bottomNavigationBar:
-            context.watch<SearchBarPositionState>().getSearchBarPosition() ==
-                    SearchBarPosition.bottom
-                ? Container(
+        bottomNavigationBar: Column(mainAxisSize: MainAxisSize.min, children: [
+          ...context.watch<SearchBarPositionState>().getSearchBarPosition() ==
+                  SearchBarPosition.bottom
+              ? [
+                  Container(
                     color: Theme.of(context).appBarTheme.backgroundColor ??
                         Theme.of(context).colorScheme.surface,
                     child: Padding(
@@ -164,7 +165,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             left: 14, right: 10, top: 10, bottom: 10),
                         child: searchBar),
                   )
-                : null,
+                ]
+              : [],
+          ...inputMode == InputMode.ink
+              ? [
+                  DigitalInkView(
+                      typeCharacter: (character) {
+                        context
+                            .read<SearchQueryState>()
+                            .typeCharacter(character);
+                      },
+                      backspace: () {
+                        context.read<SearchQueryState>().backspace();
+                      },
+                      moveToEndOfSelection: () {
+                        context.read<SearchQueryState>().moveToEndOfSelection();
+                      },
+                    ),
+                ]
+              : [],
+        ]),
         appBar:
             context.watch<SearchBarPositionState>().getSearchBarPosition() ==
                     SearchBarPosition.top
@@ -177,24 +197,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             : appBarHeight,
                   )
                 : null,
-        body: inputMode == InputMode.ink
-            ? DigitalInkView(
-                typeCharacter: (character) {
-                  context.read<SearchQueryState>().typeCharacter(character);
-                },
-                backspace: () {
-                  context.read<SearchQueryState>().backspace();
-                },
-                moveToEndOfSelection: () {
-                  context.read<SearchQueryState>().moveToEndOfSelection();
-                },
-              )
-            : SafeArea(
-                child: (finishedSearch && isSearchResultsEmpty)
-                    ? showResultsNotFound()
-                    : (queryEmptied
-                        ? showHistoryAndBookmarks()
-                        : showSearchResults(selectedSearchResultEntryPage))),
+        body: SafeArea(
+            child: (finishedSearch && isSearchResultsEmpty)
+                ? showResultsNotFound()
+                : (queryEmptied
+                    ? showHistoryAndBookmarks()
+                    : showSearchResults(selectedSearchResultEntryPage))),
       ),
     );
   }

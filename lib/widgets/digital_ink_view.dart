@@ -115,7 +115,6 @@ class DigitalInkViewState extends State<DigitalInkView> {
             : whiteColor);
 
     final showSketchPad = Column(children: [
-      const Spacer(),
       Container(
         color: Theme.of(context).canvasColor,
         child: Column(
