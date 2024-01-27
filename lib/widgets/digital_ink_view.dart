@@ -168,28 +168,26 @@ class DigitalInkViewState extends State<DigitalInkView> {
                   child: Center(
                       child: SizedBox(
                     height: candidatesFont.fontSize!,
+                    width: MediaQuery.of(context).size.width -
+                        50, // leave room on the right for the delete button
                     child: Wrap(
                         children: _recognizedCharacters
-                            .map((character) => Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      widget.typeCharacter(character);
-                                      _clearPad();
-                                      widget.moveToEndOfSelection();
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      minimumSize: Size(
-                                          candidatesFont.fontSize!,
-                                          candidatesFont.fontSize!),
-                                      padding: EdgeInsets.zero,
-                                      side: BorderSide.none,
-                                    ),
-                                    child:
-                                        Text(character, style: candidatesFont),
-                                  ),
-                                ))
+                            .map(
+                              (character) => OutlinedButton(
+                                onPressed: () {
+                                  widget.typeCharacter(character);
+                                  _clearPad();
+                                  widget.moveToEndOfSelection();
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: Size(candidatesFont.fontSize!,
+                                      candidatesFont.fontSize!),
+                                  padding: EdgeInsets.zero,
+                                  side: BorderSide.none,
+                                ),
+                                child: Text(character, style: candidatesFont),
+                              ),
+                            )
                             .toList()),
                   )),
                 )
@@ -224,17 +222,6 @@ class DigitalInkViewState extends State<DigitalInkView> {
       _points.clear();
       _recognizedCharacters.clear();
     });
-  }
-
-  void _undoStroke() {
-    if (_ink.strokes.isNotEmpty) {
-      setState(() {
-        _ink.strokes.removeLast();
-      });
-      if (_ink.strokes.isNotEmpty) {
-        _recognizeCharacter();
-      }
-    }
   }
 
   Future<void> _recognizeCharacter() async {
