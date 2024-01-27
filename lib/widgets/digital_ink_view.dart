@@ -8,7 +8,6 @@ import 'package:wordshk/constants.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 
 import '../models/input_mode.dart';
-import 'text_scale_factor_clamper.dart';
 
 class DigitalInkView extends StatefulWidget {
   final void Function(String) typeCharacter;
@@ -114,143 +113,90 @@ class DigitalInkViewState extends State<DigitalInkView> {
             ? blackColor
             : whiteColor);
 
-    final showSketchPad = Column(children: [
-      Container(
-        color: Theme.of(context).canvasColor,
-        child: Column(
-          children: [
-            Row(children: [
-              const SizedBox(width: 15),
-              IconButton(
-                  onPressed: () {
-                    context
-                        .read<InputModeState>()
-                        .updateInputMode(InputMode.keyboard);
-                  },
-                  icon: Icon(isMaterial(context)
-                      ? Icons.keyboard
-                      : CupertinoIcons.keyboard),
-                  color: Theme.of(context).colorScheme.secondary),
-              const Spacer(),
-              IconButton(
-                  onPressed: _undoStroke,
-                  icon: Icon(isMaterial(context)
-                      ? Icons.undo
-                      : CupertinoIcons.arrow_uturn_left),
-                  color: Theme.of(context).colorScheme.secondary),
-              IconButton(
-                  onPressed: () {
-                    _clearPad();
-                    widget.backspace();
-                  },
-                  icon: Icon(isMaterial(context)
-                      ? Icons.backspace
-                      : CupertinoIcons.delete_left_fill),
-                  color: Theme.of(context).colorScheme.secondary),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    context
-                        .read<InputModeState>()
-                        .updateInputMode(InputMode.done);
-                  },
-                  style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 15.0))),
-                  child: Text(AppLocalizations.of(context)!.done)),
-              const SizedBox(width: 20),
-            ]),
-            const Divider(height: 20),
-          ],
-        ),
-      ),
-      SizedBox(
-        height: 250,
-        child: Stack(
-            children: [
-          Positioned.fill(
-              child: GestureDetector(
-              onPanStart: (DragStartDetails details) {
-                _ink.strokes.add(Stroke());
-              },
-              onPanUpdate: (DragUpdateDetails details) {
-                setState(() {
-                  final localPosition = details.localPosition;
-                  _points = List.from(_points)
-                    ..add(StrokePoint(
-                      x: localPosition.dx,
-                      y: localPosition.dy,
-                      t: DateTime.now().millisecondsSinceEpoch,
-                    ));
-                  if (_ink.strokes.isNotEmpty) {
-                    _ink.strokes.last.points = _points.toList();
-                  }
-                });
-              },
-              onPanEnd: (DragEndDetails details) {
-                _points.clear();
-                _recognizeCharacter();
-                setState(() {});
-              },
-              child: CustomPaint(
-                painter: Signature(
-                    ink: _ink,
-                    brightness: MediaQuery.of(context).platformBrightness),
-                size: Size.infinite,
-              ),
+    final showSketchPad = SizedBox(
+      height: 250,
+      child: Stack(children: [
+        Positioned.fill(
+          child: GestureDetector(
+            onPanStart: (DragStartDetails details) {
+              _ink.strokes.add(Stroke());
+            },
+            onPanUpdate: (DragUpdateDetails details) {
+              setState(() {
+                final localPosition = details.localPosition;
+                _points = List.from(_points)
+                  ..add(StrokePoint(
+                    x: localPosition.dx,
+                    y: localPosition.dy,
+                    t: DateTime.now().millisecondsSinceEpoch,
+                  ));
+                if (_ink.strokes.isNotEmpty) {
+                  _ink.strokes.last.points = _points.toList();
+                }
+              });
+            },
+            onPanEnd: (DragEndDetails details) {
+              _points.clear();
+              _recognizeCharacter();
+              setState(() {});
+            },
+            child: CustomPaint(
+              painter: Signature(
+                  ink: _ink,
+                  brightness: MediaQuery.of(context).platformBrightness),
+              size: Size.infinite,
             ),
           ),
-          ...(_recognizedCharacters.isNotEmpty
-              ? [
-                  Positioned(
-                    top: 0,
-                    child: TextScaleFactorClamper(
-                        maxScaleFactor: 1.2,
-                        child: Center(
-                          child: SizedBox(
-                            height: candidatesFont.fontSize! *
-                                    1.2 *
-                                    MediaQuery.of(context).textScaleFactor +
-                                2,
-                            child: Wrap(
-                                children: _recognizedCharacters
-                                    .map((character) => Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 6),
-                                          child: OutlinedButton(
-                                            onPressed: () {
-                                              widget.typeCharacter(character);
-                                              _clearPad();
-                                              widget.moveToEndOfSelection();
-                                            },
-                                            style: OutlinedButton.styleFrom(
-                                              minimumSize: Size(
-                                                  candidatesFont.fontSize! * 1.2,
-                                                  candidatesFont.fontSize! * 1.2),
-                                              padding: EdgeInsets.zero,
-                                              side: BorderSide(
-                                                  width: 1.5,
-                                                  color: Theme.of(context)
-                                                      .dividerColor),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(4.0),
-                                              ),
-                                            ),
-                                            child: Text(character,
-                                                style: candidatesFont),
-                                          ),
-                                        ))
-                                    .toList()),
-                          ),
-                        )),
-                  )
-                ]
-              : []),
-        ]),
-      ),
-    ]);
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: IconButton(
+              onPressed: () {
+                _clearPad();
+                widget.backspace();
+              },
+              icon: Icon(isMaterial(context)
+                  ? Icons.backspace
+                  : CupertinoIcons.delete_left_fill),
+              color: Theme.of(context).colorScheme.secondary),
+        ),
+        ...(_recognizedCharacters.isNotEmpty
+            ? [
+                Positioned(
+                  top: 0,
+                  child: Center(
+                      child: SizedBox(
+                    height: candidatesFont.fontSize!,
+                    child: Wrap(
+                        children: _recognizedCharacters
+                            .map((character) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      widget.typeCharacter(character);
+                                      _clearPad();
+                                      widget.moveToEndOfSelection();
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      minimumSize: Size(
+                                          candidatesFont.fontSize!,
+                                          candidatesFont.fontSize!),
+                                      padding: EdgeInsets.zero,
+                                      side: BorderSide.none,
+                                    ),
+                                    child:
+                                        Text(character, style: candidatesFont),
+                                  ),
+                                ))
+                            .toList()),
+                  )),
+                )
+              ]
+            : []),
+      ]),
+    );
 
     return FutureBuilder<DownloadEndStatus>(
         future: _modelManager.isModelDownloaded(_language).then((isDownloaded) {
@@ -327,22 +273,32 @@ class Signature extends CustomPainter {
     final Gradient backgroundGradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [brightness == Brightness.light ? whiteColor : blackColor, brightness == Brightness.light ? lightGreyColor : darkGreyColor],
+      colors: [
+        brightness == Brightness.light ? whiteColor : blackColor,
+        brightness == Brightness.light ? lightGreyColor : darkGreyColor
+      ],
     );
-    final Shader backgroundShader = backgroundGradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    final Shader backgroundShader = backgroundGradient
+        .createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     final Paint backgroundPaint = Paint()..shader = backgroundShader;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
 
-    final strokeColor = brightness == Brightness.light ? blackColor : lightGreyColor;
+    final strokeColor =
+        brightness == Brightness.light ? blackColor : lightGreyColor;
 
     final Gradient gradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [brightness == Brightness.light ? lightGreyColor : darkGreyColor, strokeColor], // Define your gradient colors here
+      colors: [
+        brightness == Brightness.light ? lightGreyColor : darkGreyColor,
+        strokeColor
+      ], // Define your gradient colors here
     );
 
     // Draw strokes
-    final Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height / 3));
+    final Shader shader =
+        gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height / 3));
 
     final Paint paint = Paint()
       ..color = strokeColor

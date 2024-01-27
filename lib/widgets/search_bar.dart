@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -339,11 +340,20 @@ class IsSearching extends State<SearchBar> {
                 suffixIcon: // Show an icon if clear is not active, so there's no ripple on tap
                     Wrap(children: [
                   IconButton(
-                      icon: const Icon(Icons.brush),
+                      icon: switch (context.watch<InputModeState>().mode) {
+                        InputMode.keyboard => const Icon(Icons.brush),
+                        InputMode.ink => Icon(isMaterial(context)
+                      ? Icons.keyboard
+                          : CupertinoIcons.keyboard),
+                        InputMode.done => const Icon(Icons.brush)
+                      },
                       onPressed: () {
-                        context
-                            .read<InputModeState>()
-                            .updateInputMode(InputMode.ink);
+                        context.read<InputModeState>().updateInputMode(
+                                switch (context.read<InputModeState>().mode) {
+                              InputMode.keyboard => InputMode.ink,
+                              InputMode.ink => InputMode.keyboard,
+                              InputMode.done => InputMode.ink,
+                            });
                       }),
                   ...(showClearButton && _clearActive
                       ? [
