@@ -18,13 +18,15 @@ enum QueryType {
 class ResultNotFound {
   QueryType queryType;
   int queryLength;
+  int tokenCount; // space-separated tokens
 
   ResultNotFound(String query):
-      queryType = QueryType.fromQuery(query), queryLength = query.runes.length;
+      queryType = QueryType.fromQuery(query), queryLength = query.runes.length, tokenCount = query.split(RegExp(r'\s+')).length;
 
   Map<String, dynamic> toJson() => {
       'queryType': queryType.toJson(),
       'queryLength': queryLength,
+      'tokenCount': tokenCount,
     };
 }
 
@@ -40,6 +42,7 @@ class AnalyticsState {
 
   void addResultNotFound(ResultNotFound notFound) {
     resultNotFounds.add(notFound);
+    print("Added result not found: ${notFound.toJson()}");
   }
 
   List _compressEnumList<T extends Enum>(List<T> list) {
