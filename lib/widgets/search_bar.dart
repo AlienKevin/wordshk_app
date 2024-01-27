@@ -163,8 +163,14 @@ class IsSearching extends State<SearchBar> {
   }
 
   void typeDiacritic(String diacritic) {
-    final baseOffset = controller.selection.baseOffset;
-    final extentOffset = controller.selection.extentOffset;
+    // Defensive programming to prevent mysterious RangeError:
+    // RangeError (end): Invalid value: Only valid value is 0: -1
+    final baseOffset = controller.selection.baseOffset < 0
+        ? 0
+        : controller.selection.baseOffset;
+    final extentOffset = controller.selection.extentOffset < 0
+        ? 0
+        : controller.selection.extentOffset;
     final query = controller.text;
     // delete selection and add character in place of selection
     final start = query.substring(0, baseOffset);
