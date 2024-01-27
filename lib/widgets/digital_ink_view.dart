@@ -48,65 +48,69 @@ class DigitalInkViewState extends State<DigitalInkView> {
 
   @override
   Widget build(BuildContext context) {
-    final showFailedToDownloadModel = Card(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
-        child: Column(children: [
-          Row(children: [
-            const SizedBox(width: 6),
-            Icon(Icons.warning_amber_outlined,
-                color: Theme.of(context).textTheme.bodySmall!.color),
-            const SizedBox(width: 16),
-            Expanded(
-                child: Text(
-                    AppLocalizations.of(context)!.inkModelFailedToDownload,
-                    style: Theme.of(context).textTheme.bodySmall!))
+    final showFailedToDownloadModel = SizedBox(
+      height: 250,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
+          child: Column(children: [
+            Row(children: [
+              const SizedBox(width: 6),
+              Icon(Icons.warning_amber_outlined,
+                  color: Theme.of(context).textTheme.bodySmall!.color),
+              const SizedBox(width: 16),
+              Expanded(
+                  child: Text(
+                      AppLocalizations.of(context)!.inkModelFailedToDownload,
+                      style: Theme.of(context).textTheme.bodySmall!))
+            ]),
+            Container(
+              alignment: AlignmentDirectional.centerEnd,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: OverflowBar(
+                overflowAlignment: OverflowBarAlignment.end,
+                spacing: 8,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      // rebuild FutureBuilder<DownloadEndStatus>
+                      setState(() {});
+                    },
+                    child: Text(AppLocalizations.of(context)!.tryAgain,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.secondary)),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context
+                          .read<InputModeState>()
+                          .updateInputMode(InputMode.done);
+                    },
+                    child: Text(AppLocalizations.of(context)!.dismiss,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.secondary)),
+                  )
+                ],
+              ),
+            )
           ]),
-          Container(
-            alignment: AlignmentDirectional.centerEnd,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: OverflowBar(
-              overflowAlignment: OverflowBarAlignment.end,
-              spacing: 8,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    // rebuild FutureBuilder<DownloadEndStatus>
-                    setState(() {});
-                  },
-                  child: Text(AppLocalizations.of(context)!.tryAgain,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.secondary)),
-                ),
-                TextButton(
-                  onPressed: () {
-                    context
-                        .read<InputModeState>()
-                        .updateInputMode(InputMode.done);
-                  },
-                  child: Text(AppLocalizations.of(context)!.dismiss,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.secondary)),
-                )
-              ],
-            ),
-          )
-        ]),
+        ),
       ),
     );
 
-    final showDownloadingModel = Center(
-        child: Padding(
-      padding:
-          const EdgeInsets.symmetric(vertical: appBarHeight, horizontal: 20),
-      child: Column(children: [
-        const CircularProgressIndicator(),
-        const SizedBox(height: 20),
-        SizedBox(
-            width: 250,
-            child: Text(AppLocalizations.of(context)!.inkModelDownloading))
-      ]),
-    ));
+    final showDownloadingModel = SizedBox(
+      height: 250,
+      child: Center(
+          child: Padding(
+        padding:
+            const EdgeInsets.symmetric(vertical: appBarHeight, horizontal: 20),
+        child: Column(children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 20),
+          Text(AppLocalizations.of(context)!.inkModelDownloading)
+        ]),
+      )),
+    );
 
     final candidatesFont = Theme.of(context).textTheme.headlineMedium!.copyWith(
         color: MediaQuery.of(context).platformBrightness == Brightness.light
