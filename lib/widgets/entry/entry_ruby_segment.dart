@@ -112,10 +112,13 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
           )
         : Column(children: [
             SelectionContainer.disabled(
-                child: Text.rich(TextSpan(
-                    text: prs,
-                    style: TextStyle(
-                        fontSize: rubySize * 0.5, color: textColor)))),
+                child: Padding(
+                  padding: EdgeInsets.only(right: rubySize * 0.1),
+                  child: Text.rich(TextSpan(
+                      text: prs,
+                      style: TextStyle(
+                          fontSize: rubySize * 0.5, color: textColor))),
+                )),
             text
           ])
   ];
