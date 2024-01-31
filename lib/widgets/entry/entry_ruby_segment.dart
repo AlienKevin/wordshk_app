@@ -9,17 +9,10 @@ import '../../models/entry.dart';
 import '../../states/romanization_state.dart';
 import 'entry_word.dart';
 
-List<Widget> showRubySegment(
-    RubySegment segment,
-    Color textColor,
-    Color linkColor,
-    double rubySize,
-    double textScaleFactor,
-    OnTapLink onTapLink,
-    BuildContext context,
+List<Widget> showRubySegment(RubySegment segment, Color textColor,
+    Color linkColor, double rubySize, OnTapLink onTapLink, BuildContext context,
     {isLinked = false}) {
   final textColor_ = isLinked ? linkColor : textColor;
-  final double rubyYPos = rubySize * textScaleFactor;
   late final Widget text;
   late final String prs;
   late final List<int?> prsTones;
@@ -45,7 +38,6 @@ List<Widget> showRubySegment(
                 textColor,
                 linkColor,
                 rubySize,
-                textScaleFactor,
                 onTapLink,
                 context,
                 isLinked: true,
@@ -59,29 +51,24 @@ List<Widget> showRubySegment(
   }
   final isJumpy = context.watch<EntryEgJumpyPrsState>().isJumpy;
   return [
-    Stack(alignment: Alignment.center, children: [
-      ...(isJumpy
-          // jumpy version
-          ? [
+    isJumpy
+        ? Stack(
+            children: [
               Positioned.fill(
-                  bottom: 0,
-                  child: Transform(
-                      transform:
-                          Matrix4.translationValues(0, -rubyYPos * 1.3, 0),
-                      child: Container(
-                        color: Theme.of(context).dividerColor,
-                        height: rubyYPos,
-                      ))),
+                  bottom: rubySize * 2,
+                  child: Container(
+                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                  )),
               Positioned.fill(
-                  bottom: 0,
-                  child: Transform(
-                      transform:
-                          Matrix4.translationValues(0, -rubyYPos * 1.15 * 2, 0),
-                      child: Container(
-                        color: Theme.of(context).dividerColor.withOpacity(0.5),
-                        height: rubyYPos,
-                      ))),
-              SelectionContainer.disabled(
+                  top: rubySize,
+                  bottom: MediaQuery.of(context).textScaler.scale(rubySize) + 5,
+                  child: Container(
+                    color: Theme.of(context).dividerColor,
+                  )),
+              Column(children: [
+                SelectionContainer.disabled(
+                    child: SizedBox(
+                  height: rubySize * 2,
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children:
@@ -89,56 +76,47 @@ List<Widget> showRubySegment(
                         final pr = pair[0] as String;
                         final tone = (pair[1] as int?) ?? 1;
                         final double yPos = ((tone == 1)
-                                ? 2.4
-                                : tone == 2
-                                    ? 2.1
-                                    : tone == 3
-                                        ? 1.75
-                                        : tone == 5
-                                            ? 1.4
-                                            : tone == 4
-                                                ? 1.0
-                                                : 1.2) *
-                            -rubyYPos *
-                            1.15;
+                            ? -0.125
+                            : tone == 2
+                                ? 0.1
+                                : tone == 3
+                                    ? 0.375
+                                    : tone == 5
+                                        ? 0.75
+                                        : tone == 4
+                                            ? 0.9
+                                            : 0.875);
                         final double angle =
                             (tone == 1 || tone == 3 || tone == 6)
                                 ? 0
                                 : tone == 2
                                     ? -pi / 6.0
                                     : (tone == 5 ? -pi / 7.0 : pi / 7.0);
-                        return Container(
-                            alignment: Alignment.bottomCenter,
-                            child: Center(
-                                child: Transform(
-                                    alignment: Alignment.center,
-                                    transform:
-                                        Matrix4.translationValues(0, yPos, 0)
-                                          ..rotateZ(angle),
-                                    child: Text.rich(TextSpan(
-                                        text: pr,
-                                        style: TextStyle(
-                                            fontSize: rubySize * 0.5,
-                                            color: textColor))))));
-                      }).toList()))
-            ]
-          // normal non-jumpy version
-          : [
-              SelectionContainer.disabled(
-                  child: Container(
-                      alignment: Alignment.bottomCenter,
-                      child: Center(
-                          child: Transform(
-                              alignment: Alignment.center,
-                              transform: Matrix4.translationValues(
-                                  0, -rubySize * 0.8, 0),
-                              child: Text.rich(TextSpan(
-                                  text: prs,
-                                  style: TextStyle(
-                                      fontSize: rubySize * 0.5,
-                                      color: textColor)))))))
-            ]),
-      text
-    ])
+                        return Align(
+                            alignment: FractionalOffset(0.5, yPos),
+                            child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.rotationZ(
+                                    angle), // Convert degrees to radians
+                                child: Text.rich(TextSpan(
+                                    text: pr,
+                                    style: TextStyle(
+                                        fontSize: rubySize * 0.5,
+                                        color: textColor)))));
+                      }).toList()),
+                )),
+                const SizedBox(height: 5),
+                text
+              ])
+            ],
+          )
+        : Column(children: [
+            SelectionContainer.disabled(
+                child: Text.rich(TextSpan(
+                    text: prs,
+                    style: TextStyle(
+                        fontSize: rubySize * 0.5, color: textColor)))),
+            text
+          ])
   ];
 }

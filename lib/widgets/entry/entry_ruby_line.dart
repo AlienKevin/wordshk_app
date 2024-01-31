@@ -28,59 +28,44 @@ class EntryRubyLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
-        final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-        final isJumpy = context.watch<EntryEgJumpyPrsState>().isJumpy;
-        final topPaddingFactor = isJumpy ? 3.5 : 1.0;
-        final wrapRunSpacingFactor = isJumpy ? 3 : 1;
-        return Padding(
-          padding: EdgeInsets.only(
-              top: rubyFontSize * topPaddingFactor * textScaleFactor / 1.5),
-          child: Wrap(
-              runSpacing:
-                  rubyFontSize * wrapRunSpacingFactor * textScaleFactor * 0.85,
-              children: [
-                ...line.segments
-                    .map((segment) => showRubySegment(
-                        segment,
-                        textColor,
-                        linkColor,
-                        rubyFontSize,
-                        textScaleFactor,
-                        onTapLink,
-                        context))
-                    .expand((i) => i)
-                    .toList(),
-                Consumer<PronunciationMethodState>(
-                    builder: (context, pronunciationMethodState, child) =>
-                        pronunciationMethodState.entryEgMethod ==
-                                PronunciationMethod.tts
-                            ? TtsPronunciationButton(
-                                text: Platform.isIOS
-                                    ? line.toPrs()
-                                    : line.toString(),
-                                alignment: Alignment.topCenter,
-                                atHeader: false,
-                              )
-                            : SyllablePronunciationButton(
-                                prs: line
-                                    .toPrs()
-                                    .split(RegExp(
-                                        r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
-                                    .where((segment) => segment.isNotEmpty)
-                                    .map((segment) =>
-                                        segment.split(RegExp(r"\s+")))
-                                    .toList(),
-                                alignment: Alignment.topCenter,
-                                atHeader: false,
-                              )),
-              ]
-                  .map((e) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        textBaseline: TextBaseline.alphabetic,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [e],
-                      ))
-                  .toList()),
-        );
+        return Wrap(
+            runSpacing: context.watch<EntryEgJumpyPrsState>().isJumpy ? 10 : 0,
+            crossAxisAlignment: WrapCrossAlignment.end,
+            children: [
+              ...line.segments
+                  .map((segment) => showRubySegment(segment, textColor,
+                      linkColor, rubyFontSize, onTapLink, context))
+                  .expand((i) => i),
+              Consumer<PronunciationMethodState>(
+                  builder: (context, pronunciationMethodState, child) =>
+                      pronunciationMethodState.entryEgMethod ==
+                              PronunciationMethod.tts
+                          ? TtsPronunciationButton(
+                              text: Platform.isIOS
+                                  ? line.toPrs()
+                                  : line.toString(),
+                              alignment: Alignment.topCenter,
+                              atHeader: false,
+                            )
+                          : SyllablePronunciationButton(
+                              prs: line
+                                  .toPrs()
+                                  .split(RegExp(
+                                      r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
+                                  .where((segment) => segment.isNotEmpty)
+                                  .map((segment) =>
+                                      segment.split(RegExp(r"\s+")))
+                                  .toList(),
+                              alignment: Alignment.topCenter,
+                              atHeader: false,
+                            )),
+            ]
+                .map((e) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      textBaseline: TextBaseline.alphabetic,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [e],
+                    ))
+                .toList());
       });
 }
