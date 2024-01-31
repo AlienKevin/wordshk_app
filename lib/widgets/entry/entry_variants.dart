@@ -1,8 +1,5 @@
-import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:wordshk/src/rust/api/api.dart' show Script;
 
 import '../../models/entry.dart';
@@ -34,29 +31,21 @@ class EntryVariants extends StatelessWidget {
           variantTextStyle: variantTextStyle,
           prTextStyle: prTextStyle,
         )
-      : ExpandableNotifier(
-          child: applyExpandableTheme(Expandable(
-              collapsed: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    EntryVariant(
-                      variant: script == Script.simplified
-                          ? variantsSimp[0]
-                          : variants[0],
-                      variantTextStyle: variantTextStyle,
-                      prTextStyle: prTextStyle,
-                    ),
-                    Builder(builder: (context) {
-                      return expandButton(
-                          AppLocalizations.of(context)!.entryMoreVariants,
-                          isMaterial(context)
-                              ? Icons.expand_more
-                              : CupertinoIcons.chevron_down,
-                          lineTextStyle.copyWith(
-                              color: Theme.of(context).colorScheme.secondary));
-                    })
-                  ]),
-              expanded: Column(
+      : Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+          EntryVariant(
+            variant:
+                script == Script.simplified ? variantsSimp[0] : variants[0],
+            variantTextStyle: variantTextStyle,
+            prTextStyle: prTextStyle,
+          ),
+          MyExpandable(
+              lineTextStyle: lineTextStyle.copyWith(
+                  color: Theme.of(context).colorScheme.secondary),
+              expandText: AppLocalizations.of(context)!.entryMoreVariants,
+              collapseText: AppLocalizations.of(context)!.entryCollapseVariants,
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
@@ -64,6 +53,7 @@ class EntryVariants extends StatelessWidget {
                         children: variants
                             .asMap()
                             .entries
+                            .skip(1)
                             .map((variant) => EntryVariant(
                                   variant: script == Script.simplified
                                       ? variantsSimp[variant.key]
@@ -72,14 +62,6 @@ class EntryVariants extends StatelessWidget {
                                   prTextStyle: prTextStyle,
                                 ))
                             .toList()),
-                    Builder(builder: (context) {
-                      return expandButton(
-                          AppLocalizations.of(context)!.entryCollapseVariants,
-                          isMaterial(context)
-                              ? Icons.expand_less
-                              : CupertinoIcons.chevron_up,
-                          lineTextStyle.copyWith(
-                              color: Theme.of(context).colorScheme.secondary));
-                    })
-                  ]))));
+                  ]))
+        ]);
 }

@@ -81,57 +81,62 @@ List<Widget> showRubySegment(
                         color: Theme.of(context).dividerColor.withOpacity(0.5),
                         height: rubyYPos,
                       ))),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: IterableZip([prs.split(" "), prsTones]).map((pair) {
-                    final pr = pair[0] as String;
-                    final tone = (pair[1] as int?) ?? 1;
-                    final double yPos = ((tone == 1)
-                            ? 2.4
-                            : tone == 2
-                                ? 2.1
-                                : tone == 3
-                                    ? 1.75
-                                    : tone == 5
-                                        ? 1.4
-                                        : tone == 4
-                                            ? 1.0
-                                            : 1.2) *
-                        -rubyYPos *
-                        1.15;
-                    final double angle = (tone == 1 || tone == 3 || tone == 6)
-                        ? 0
-                        : tone == 2
-                            ? -pi / 6.0
-                            : (tone == 5 ? -pi / 7.0 : pi / 7.0);
-                    return Container(
-                        alignment: Alignment.bottomCenter,
-                        child: Center(
-                            child: Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.translationValues(0, yPos, 0)
-                                  ..rotateZ(angle),
-                                child: Text.rich(TextSpan(
-                                    text: pr,
-                                    style: TextStyle(
-                                        fontSize: rubySize * 0.5,
-                                        color: textColor))))));
-                  }).toList())
+              SelectionContainer.disabled(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children:
+                          IterableZip([prs.split(" "), prsTones]).map((pair) {
+                        final pr = pair[0] as String;
+                        final tone = (pair[1] as int?) ?? 1;
+                        final double yPos = ((tone == 1)
+                                ? 2.4
+                                : tone == 2
+                                    ? 2.1
+                                    : tone == 3
+                                        ? 1.75
+                                        : tone == 5
+                                            ? 1.4
+                                            : tone == 4
+                                                ? 1.0
+                                                : 1.2) *
+                            -rubyYPos *
+                            1.15;
+                        final double angle =
+                            (tone == 1 || tone == 3 || tone == 6)
+                                ? 0
+                                : tone == 2
+                                    ? -pi / 6.0
+                                    : (tone == 5 ? -pi / 7.0 : pi / 7.0);
+                        return Container(
+                            alignment: Alignment.bottomCenter,
+                            child: Center(
+                                child: Transform(
+                                    alignment: Alignment.center,
+                                    transform:
+                                        Matrix4.translationValues(0, yPos, 0)
+                                          ..rotateZ(angle),
+                                    child: Text.rich(TextSpan(
+                                        text: pr,
+                                        style: TextStyle(
+                                            fontSize: rubySize * 0.5,
+                                            color: textColor))))));
+                      }).toList()))
             ]
           // normal non-jumpy version
           : [
-              Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Center(
-                      child: Transform(
-                          alignment: Alignment.center,
-                          transform:
-                              Matrix4.translationValues(0, -rubySize * 0.8, 0),
-                          child: Text.rich(TextSpan(
-                              text: prs,
-                              style: TextStyle(
-                                  fontSize: rubySize * 0.5,
-                                  color: textColor))))))
+              SelectionContainer.disabled(
+                  child: Container(
+                      alignment: Alignment.bottomCenter,
+                      child: Center(
+                          child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.translationValues(
+                                  0, -rubySize * 0.8, 0),
+                              child: Text.rich(TextSpan(
+                                  text: prs,
+                                  style: TextStyle(
+                                      fontSize: rubySize * 0.5,
+                                      color: textColor)))))))
             ]),
       text
     ])

@@ -1,8 +1,5 @@
-import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:wordshk/src/rust/api/api.dart' show Script;
 
 import '../../models/entry.dart';
@@ -61,37 +58,29 @@ class EntryEgs extends StatelessWidget {
                   ))
               .toList());
     } else {
-      return ExpandableNotifier(
-          child: applyExpandableTheme(Column(
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expandable(
-              collapsed: Column(
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            EntryEg(
+              eg: egs[0],
+              entryLanguage: entryLanguage,
+              script: script,
+              lineTextStyle: lineTextStyle,
+              linkColor: linkColor,
+              rubyFontSize: rubyFontSize,
+              onTapLink: onTapLink,
+            ),
+          ]),
+          MyExpandable(
+              expandText: AppLocalizations.of(context)!.entryMoreExamples,
+              collapseText: AppLocalizations.of(context)!.entryCollapseExamples,
+              lineTextStyle: lineTextStyle.copyWith(
+                  color: Theme.of(context).colorScheme.secondary),
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    EntryEg(
-                      eg: egs[0],
-                      entryLanguage: entryLanguage,
-                      script: script,
-                      lineTextStyle: lineTextStyle,
-                      linkColor: linkColor,
-                      rubyFontSize: rubyFontSize,
-                      onTapLink: onTapLink,
-                    ),
-                    Builder(builder: (context) {
-                      return expandButton(
-                          AppLocalizations.of(context)!.entryMoreExamples,
-                          isMaterial(context)
-                              ? Icons.expand_more
-                              : CupertinoIcons.chevron_down,
-                          lineTextStyle.copyWith(
-                              color: Theme.of(context).colorScheme.secondary));
-                    })
-                  ]),
-              expanded: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ...egs.map((eg) => EntryEg(
+                    ...egs.skip(1).map((eg) => EntryEg(
                           eg: eg,
                           entryLanguage: entryLanguage,
                           script: script,
@@ -100,18 +89,9 @@ class EntryEgs extends StatelessWidget {
                           rubyFontSize: rubyFontSize,
                           onTapLink: onTapLink,
                         )),
-                    Builder(builder: (context) {
-                      return expandButton(
-                          AppLocalizations.of(context)!.entryCollapseExamples,
-                          isMaterial(context)
-                              ? Icons.expand_less
-                              : CupertinoIcons.chevron_up,
-                          lineTextStyle.copyWith(
-                              color: Theme.of(context).colorScheme.secondary));
-                    })
-                  ])),
+                  ]))
         ],
-      )));
+      );
     }
   }
 }
