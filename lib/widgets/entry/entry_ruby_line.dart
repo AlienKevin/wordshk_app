@@ -34,7 +34,10 @@ class EntryRubyLine extends StatelessWidget {
             children: [
               ...line.segments
                   .map((segment) => showRubySegment(segment, textColor,
-                      linkColor, rubyFontSize, onTapLink, context))
+                      linkColor, rubyFontSize, onTapLink, context,
+                      isEndingPunctuation:
+                          segment.type == RubySegmentType.punc &&
+                              line.segments.last == segment))
                   .expand((i) => i),
               Consumer<PronunciationMethodState>(
                   builder: (context, pronunciationMethodState, child) =>

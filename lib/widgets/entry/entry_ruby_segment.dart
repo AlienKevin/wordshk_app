@@ -11,7 +11,7 @@ import 'entry_word.dart';
 
 List<Widget> showRubySegment(RubySegment segment, Color textColor,
     Color linkColor, double rubySize, OnTapLink onTapLink, BuildContext context,
-    {isLinked = false}) {
+    {isLinked = false, isEndingPunctuation = false}) {
   final textColor_ = isLinked ? linkColor : textColor;
   late final Widget text;
   late final String prs;
@@ -54,7 +54,7 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
     isJumpy
         ? Stack(
             children: [
-              ...(segment.type != RubySegmentType.punc
+              ...(!isEndingPunctuation
                   ? [
                       Positioned.fill(
                           bottom: rubySize * 2,
@@ -74,7 +74,7 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
                     ]
                   : []),
               Column(children: [
-                ...segment.type != RubySegmentType.punc
+                ...!isEndingPunctuation
                     ? [
                         SelectionContainer.disabled(
                             child: SizedBox(
@@ -124,7 +124,7 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
             ],
           )
         : Column(children: [
-            ...segment.type != RubySegmentType.punc
+            ...!isEndingPunctuation
                 ? [
                     SelectionContainer.disabled(
                         child: Padding(
