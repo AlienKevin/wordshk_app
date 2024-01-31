@@ -54,71 +54,88 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
     isJumpy
         ? Stack(
             children: [
-              Positioned.fill(
-                  bottom: rubySize * 2,
-                  child: Container(
-                    color: Theme.of(context).dividerColor.withOpacity(0.5),
-                  )),
-              Positioned.fill(
-                  top: rubySize,
-                  bottom: MediaQuery.of(context).textScaler.scale(rubySize) + 5,
-                  child: Container(
-                    color: Theme.of(context).dividerColor,
-                  )),
+              ...(segment.type != RubySegmentType.punc
+                  ? [
+                      Positioned.fill(
+                          bottom: rubySize * 2,
+                          child: Container(
+                            color:
+                                Theme.of(context).dividerColor.withOpacity(0.5),
+                          )),
+                      Positioned.fill(
+                          top: rubySize,
+                          bottom: MediaQuery.of(context)
+                                  .textScaler
+                                  .scale(rubySize) +
+                              5,
+                          child: Container(
+                            color: Theme.of(context).dividerColor,
+                          ))
+                    ]
+                  : []),
               Column(children: [
-                SelectionContainer.disabled(
-                    child: SizedBox(
-                  height: rubySize * 2,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:
-                          IterableZip([prs.split(" "), prsTones]).map((pair) {
-                        final pr = pair[0] as String;
-                        final tone = (pair[1] as int?) ?? 1;
-                        final double yPos = ((tone == 1)
-                            ? -0.125
-                            : tone == 2
-                                ? 0.1
-                                : tone == 3
-                                    ? 0.375
-                                    : tone == 5
-                                        ? 0.75
-                                        : tone == 4
-                                            ? 0.9
-                                            : 0.875);
-                        final double angle =
-                            (tone == 1 || tone == 3 || tone == 6)
-                                ? 0
-                                : tone == 2
-                                    ? -pi / 6.0
-                                    : (tone == 5 ? -pi / 7.0 : pi / 7.0);
-                        return Align(
-                            alignment: FractionalOffset(0.5, yPos),
-                            child: Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.rotationZ(
-                                    angle), // Convert degrees to radians
-                                child: Text.rich(TextSpan(
-                                    text: pr,
-                                    style: TextStyle(
-                                        fontSize: rubySize * 0.5,
-                                        color: textColor)))));
-                      }).toList()),
-                )),
-                const SizedBox(height: 5),
+                ...segment.type != RubySegmentType.punc
+                    ? [
+                        SelectionContainer.disabled(
+                            child: SizedBox(
+                          height: rubySize * 2,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: IterableZip([prs.split(" "), prsTones])
+                                  .map((pair) {
+                                final pr = pair[0] as String;
+                                final tone = (pair[1] as int?) ?? 1;
+                                final double yPos = ((tone == 1)
+                                    ? -0.125
+                                    : tone == 2
+                                        ? 0.1
+                                        : tone == 3
+                                            ? 0.375
+                                            : tone == 5
+                                                ? 0.75
+                                                : tone == 4
+                                                    ? 0.9
+                                                    : 0.875);
+                                final double angle = (tone == 1 ||
+                                        tone == 3 ||
+                                        tone == 6)
+                                    ? 0
+                                    : tone == 2
+                                        ? -pi / 6.0
+                                        : (tone == 5 ? -pi / 7.0 : pi / 7.0);
+                                return Align(
+                                    alignment: FractionalOffset(0.5, yPos),
+                                    child: Transform(
+                                        alignment: Alignment.center,
+                                        transform: Matrix4.rotationZ(
+                                            angle), // Convert degrees to radians
+                                        child: Text.rich(TextSpan(
+                                            text: pr,
+                                            style: TextStyle(
+                                                fontSize: rubySize * 0.5,
+                                                color: textColor)))));
+                              }).toList()),
+                        )),
+                        const SizedBox(height: 5),
+                      ]
+                    : [],
                 text
               ])
             ],
           )
         : Column(children: [
-            SelectionContainer.disabled(
-                child: Padding(
-                  padding: EdgeInsets.only(right: rubySize * 0.1),
-                  child: Text.rich(TextSpan(
-                      text: prs,
-                      style: TextStyle(
-                          fontSize: rubySize * 0.5, color: textColor))),
-                )),
+            ...segment.type != RubySegmentType.punc
+                ? [
+                    SelectionContainer.disabled(
+                        child: Padding(
+                      padding: EdgeInsets.only(right: rubySize * 0.1),
+                      child: Text.rich(TextSpan(
+                          text: prs,
+                          style: TextStyle(
+                              fontSize: rubySize * 0.5, color: textColor))),
+                    ))
+                  ]
+                : [],
             text
           ])
   ];
