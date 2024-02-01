@@ -25,12 +25,11 @@ class EntrySimsOrAnts extends StatelessWidget {
       visible: simsOrAnts.isNotEmpty,
       child: Text.rich(TextSpan(children: [
         TextSpan(
-            text: label,
+            text: "$label ⁠", // Use Word Joiner to mark this segment as non-splittable during selection
             style: Theme.of(context)
                 .textTheme
                 .bodySmall!
                 .copyWith(fontWeight: FontWeight.w600)),
-        const WidgetSpan(child: SizedBox(width: 5)),
         ...(script == Script.traditional
                 ? simsOrAnts
                 : simsOrAnts

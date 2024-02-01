@@ -19,7 +19,7 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
   switch (segment.type) {
     case RubySegmentType.punc:
       text = Text.rich(TextSpan(
-          text: segment.segment as String,
+          text: '${segment.segment}⁠', // Use Word Joiner to mark this segment as non-splittable during selection
           style: TextStyle(fontSize: rubySize, height: 1, color: textColor_)));
       prs = "";
       prsTones = [6]; // empty pr defaults to 6 tones (this is arbitrary)

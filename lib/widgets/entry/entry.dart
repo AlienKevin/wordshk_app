@@ -12,6 +12,7 @@ import 'package:wordshk/states/language_state.dart';
 import '../../constants.dart';
 import '../../models/entry.dart';
 import '../../states/entry_language_state.dart';
+import '../selection_transformer.dart';
 import 'entry_def.dart';
 import 'entry_labels.dart';
 import 'entry_sims_or_ants.dart';
@@ -215,7 +216,8 @@ class _EntryWidgetState extends State<EntryWidget>
                       }
                     },
                     child: SelectionArea(
-                      child: ListView.separated(
+                      child: SelectionTransformer.separated(
+                          child: ListView.separated(
                         controller: _scrollController,
                         padding: const EdgeInsets.all(10),
                         itemCount: items.length,
@@ -231,7 +233,7 @@ class _EntryWidgetState extends State<EntryWidget>
                               : 10,
                         ),
                         itemBuilder: (context, index) => items[index],
-                      ),
+                      )),
                     )))),
         Row(children: [
           Visibility(

@@ -34,7 +34,7 @@ class EntryDef extends StatelessWidget {
   Widget build(BuildContext context) => Builder(builder: (context) {
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${defIndex + 1} ",
+            Text("${defIndex + 1} ⁠", // Use Word Joiner to mark this segment as non-splittable during selection
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!

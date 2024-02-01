@@ -24,16 +24,21 @@ class EntryVariant extends StatelessWidget {
     return Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
       Text.rich(
         TextSpan(
-          text: variant.word,
+          text: variant.word +
+              (prs.isNotEmpty
+                  ? " ⁠" // Use Word Joiner to mark this segment as non-splittable during selection
+                  : ""),
           style: variantTextStyle,
         ),
       ),
-      const SizedBox(width: 10),
       ...prs.indexed.map((item) => Text.rich(
             TextSpan(
                 text: context
-                    .read<RomanizationState>()
-                    .showPrs(item.$2.split(" ")),
+                        .read<RomanizationState>()
+                        .showPrs(item.$2.split(" ")) +
+                    ((item.$1 < prs.length - 1)
+                        ? "⁠" // Use Word Joiner to mark this segment as non-splittable during selection
+                        : ""),
                 style: prTextStyle,
                 children: [
                   WidgetSpan(
@@ -45,7 +50,9 @@ class EntryVariant extends StatelessWidget {
                     alignment: PlaceholderAlignment.middle,
                   ),
                   ...(item.$1 < prs.length - 1
-                      ? [const TextSpan(text: "  ")]
+                      ? [
+                          const TextSpan(text: "  ⁠")
+                        ] // Use Word Joiner to mark this segment as non-splittable during selection
                       : []),
                 ]),
           ))
