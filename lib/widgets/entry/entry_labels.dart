@@ -50,7 +50,7 @@ class EntryLabels extends StatelessWidget {
                             .bodySmall!
                             .copyWith(
                                 color:
-                                    MediaQuery.of(context).platformBrightness ==
+                                    Theme.of(context).brightness ==
                                             Brightness.dark
                                         ? Colors.white
                                         : Colors.black),

@@ -16,6 +16,7 @@ class EntryDef extends StatelessWidget {
   final double rubyFontSize;
   final bool isSingleDef;
   final OnTapLink onTapLink;
+  final bool showEgs;
 
   const EntryDef({
     Key? key,
@@ -28,13 +29,15 @@ class EntryDef extends StatelessWidget {
     required this.rubyFontSize,
     required this.isSingleDef,
     required this.onTapLink,
+    required this.showEgs,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${defIndex + 1} ⁠", // Use Word Joiner to mark this segment as non-splittable during selection
+            Text(
+                "${defIndex + 1} ⁠", // Use Word Joiner to mark this segment as non-splittable during selection
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -71,16 +74,20 @@ class EntryDef extends StatelessWidget {
               ),
             ),
           ]),
-          EntryEgs(
-            egs: def.egs,
-            entryLanguage: entryLanguage,
-            script: script,
-            lineTextStyle: lineTextStyle,
-            linkColor: linkColor,
-            rubyFontSize: rubyFontSize,
-            isSingleDef: isSingleDef,
-            onTapLink: onTapLink,
-          )
+          ...showEgs
+              ? [
+                  EntryEgs(
+                    egs: def.egs,
+                    entryLanguage: entryLanguage,
+                    script: script,
+                    lineTextStyle: lineTextStyle,
+                    linkColor: linkColor,
+                    rubyFontSize: rubyFontSize,
+                    isSingleDef: isSingleDef,
+                    onTapLink: onTapLink,
+                  )
+                ]
+              : []
         ]);
       });
 }

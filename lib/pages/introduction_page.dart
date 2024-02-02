@@ -63,7 +63,7 @@ class IntroductionPage extends StatelessWidget {
                     const SizedBox(height: 40),
                     Image(
                         width: 200,
-                        image: MediaQuery.of(context).platformBrightness ==
+                        image: Theme.of(context).brightness ==
                                 Brightness.light
                             ? const AssetImage('assets/icon.png')
                             : const AssetImage('assets/icon_grey.png'))

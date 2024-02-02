@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,12 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
+import 'package:wordshk/main.dart';
 import 'package:wordshk/states/language_state.dart';
 
 import '../../constants.dart';
 import '../../models/entry.dart';
+import '../../src/rust/api/api.dart' show getEntryGroupJson;
 import '../../states/entry_language_state.dart';
 import '../../states/entry_state.dart';
 import '../selection_transformer.dart';
@@ -24,6 +29,9 @@ class EntryWidget extends StatefulWidget {
   final int initialEntryIndex;
   final int? initialDefIndex;
   final OnTapLink onTapLink;
+  final bool showEgs;
+  final bool allowLookup;
+  final bool showBottomNavigation;
 
   const EntryWidget({
     Key? key,
@@ -31,6 +39,9 @@ class EntryWidget extends StatefulWidget {
     required this.initialEntryIndex,
     required this.initialDefIndex,
     required this.onTapLink,
+    this.showEgs = true,
+    this.allowLookup = true,
+    this.showBottomNavigation = true,
   }) : super(key: key);
 
   @override
@@ -45,6 +56,7 @@ class _EntryWidgetState extends State<EntryWidget>
   late ListObserverController _observerController;
   bool isScrollingToTarget = false;
   late final List<(int, int)> defIndexRanges;
+  int? selectedEntryId;
 
   int getStartDefIndex(int entryIndex) => defIndexRanges[entryIndex].$1;
 
@@ -110,6 +122,53 @@ class _EntryWidgetState extends State<EntryWidget>
     super.dispose();
   }
 
+  Widget showOverlay() {
+    final overlayTheme =
+        MediaQuery.of(context).platformBrightness == Brightness.light
+            ? darkTheme
+            : lightTheme;
+    return Theme(
+        data: overlayTheme,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.3,
+          width: MediaQuery.of(context).size.width * 0.9,
+          color: overlayTheme.canvasColor,
+          child: FutureBuilder<List<Entry>>(
+              future: getEntryGroupJson(id: selectedEntryId!).then((json) =>
+                  json
+                      .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
+                      .toList()),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return EntryWidget(
+                    entryGroup: snapshot.data!,
+                    initialEntryIndex: 0,
+                    initialDefIndex: 0,
+                    onTapLink: (_) {},
+                    showEgs: false,
+                    allowLookup: false,
+                    showBottomNavigation: false,
+                  );
+                } else if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(children: [
+                      Text(AppLocalizations.of(context)!.entryFailedToLoad),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                          onPressed: () {
+                            context.go("/");
+                          },
+                          child:
+                              Text(AppLocalizations.of(context)!.backToSearch))
+                    ]),
+                  );
+                }
+                return const CircularProgressIndicator();
+              }),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     double rubyFontSize = Theme.of(context).textTheme.headlineSmall!.fontSize!;
@@ -133,7 +192,8 @@ class _EntryWidgetState extends State<EntryWidget>
     return Column(
       children: [
         Expanded(
-            child: Padding(
+          child: Stack(children: [
+            Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: ListViewObserver(
                     controller: _observerController,
@@ -217,35 +277,47 @@ class _EntryWidgetState extends State<EntryWidget>
                       }
                     },
                     child: SelectionArea(
-                      contextMenuBuilder: (
-                        BuildContext context,
-                        SelectableRegionState selectableRegionState,
-                      ) {
-                        return AdaptiveTextSelectionToolbar.buttonItems(
-                          anchors: selectableRegionState.contextMenuAnchors,
-                          buttonItems: [
-                            ...context.watch<EntryState>().entryId != null
-                                ? [
-                                    ContextMenuButtonItem(
-                                      onPressed: () {
-                                        ContextMenuController.removeAny();
-                                        print(context
-                                            .read<EntryState>()
-                                            .selectedContent);
-                                      },
-                                      label: 'Lookup',
-                                    )
-                                  ]
-                                : [],
-                            ...selectableRegionState.contextMenuButtonItems,
-                          ],
-                        );
-                      },
+                      contextMenuBuilder: !widget.allowLookup
+                          ? null
+                          : (
+                              BuildContext context,
+                              SelectableRegionState selectableRegionState,
+                            ) {
+                              return AdaptiveTextSelectionToolbar.buttonItems(
+                                anchors:
+                                    selectableRegionState.contextMenuAnchors,
+                                buttonItems: <ContextMenuButtonItem>[
+                                  ...(context.watch<EntryState>().entryId !=
+                                          null
+                                      ? [
+                                          ContextMenuButtonItem(
+                                            onPressed: () async {
+                                              ContextMenuController.removeAny();
+                                              print(context
+                                                  .read<EntryState>()
+                                                  .selectedContent);
+                                              setState(() {
+                                                selectedEntryId = context
+                                                    .read<EntryState>()
+                                                    .entryId;
+                                              });
+                                            },
+                                            label: 'Lookup',
+                                          )
+                                        ]
+                                      : []),
+                                  ...selectableRegionState
+                                      .contextMenuButtonItems,
+                                ],
+                              );
+                            },
                       child: SelectionTransformer.separated(
                           onSelectionChange: (String? selectedText) {
-                            context
-                                .read<EntryState>()
-                                .setSelectedContent(selectedText, context);
+                            if (widget.allowLookup) {
+                              context
+                                  .read<EntryState>()
+                                  .setSelectedContent(selectedText, context);
+                            }
                           },
                           child: ListView.separated(
                             controller: _scrollController,
@@ -264,74 +336,91 @@ class _EntryWidgetState extends State<EntryWidget>
                             ),
                             itemBuilder: (context, index) => items[index],
                           )),
-                    )))),
-        Row(children: [
-          Visibility(
-            visible: Navigator.of(context).canPop(),
-            child: IconButton(
-              icon: Icon(
-                  isMaterial(context)
-                      ? Icons.arrow_back
-                      : CupertinoIcons.chevron_left,
-                  color: Theme.of(context).textTheme.bodyMedium!.color!),
-              onPressed: () {
-                if (Navigator.of(context).canPop()) {
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ),
-          Expanded(
-              child: Align(
-            alignment: Alignment.centerLeft,
-            child: Material(
-              elevation: 2,
-              child: TabBar(
-                controller: _tabController,
-                onTap: (newIndex) async {
-                  if (newIndex != entryIndex) {
-                    // context.read<PlayerState>().stop();
-                    setState(() {
-                      entryIndex = newIndex;
-                      isScrollingToTarget = true;
-                    });
-                    final targetDefIndex = getStartDefIndex(newIndex);
-                    await _observerController.animateTo(
-                      index: targetDefIndex,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeIn,
-                    );
-                    setState(() {
-                      isScrollingToTarget = false;
-                    });
-                  }
-                },
-                isScrollable: true,
-                // Required
-                labelColor: lineTextStyle.color,
-                unselectedLabelColor: lineTextStyle.color,
-                // Other tabs color
-                labelPadding: const EdgeInsets.symmetric(horizontal: 30),
-                // Space between tabs
-                indicator: BubbleTabIndicator(
-                  indicatorHeight:
-                      Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
-                  indicatorColor: Theme.of(context).splashColor,
-                  tabBarIndicatorSize: TabBarIndicatorSize.label,
-                ),
-                tabAlignment: TabAlignment.start,
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                tabs: widget.entryGroup
-                    .asMap()
-                    .entries
-                    .map((entry) => Tab(
-                        text:
-                            "${entry.key + 1} ${entry.value.poses.map((pos) => translatePos(pos, localizationContext)).join("/")}"))
-                    .toList(),
-              ),
-            ),
-          )),
-        ]),
+                    ))),
+            ...selectedEntryId != null
+                ? [
+                    Align(
+                        alignment: Alignment.bottomCenter, child: showOverlay())
+                  ]
+                : []
+          ]),
+        ),
+        ...widget.showBottomNavigation
+            ? [
+                Row(children: [
+                  Visibility(
+                    visible: Navigator.of(context).canPop(),
+                    child: IconButton(
+                      icon: Icon(
+                          isMaterial(context)
+                              ? Icons.arrow_back
+                              : CupertinoIcons.chevron_left,
+                          color:
+                              Theme.of(context).textTheme.bodyMedium!.color!),
+                      onPressed: () {
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ),
+                  Expanded(
+                      child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Material(
+                      elevation: 2,
+                      child: TabBar(
+                        controller: _tabController,
+                        onTap: (newIndex) async {
+                          if (newIndex != entryIndex) {
+                            // context.read<PlayerState>().stop();
+                            setState(() {
+                              entryIndex = newIndex;
+                              isScrollingToTarget = true;
+                            });
+                            final targetDefIndex = getStartDefIndex(newIndex);
+                            await _observerController.animateTo(
+                              index: targetDefIndex,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeIn,
+                            );
+                            setState(() {
+                              isScrollingToTarget = false;
+                            });
+                          }
+                        },
+                        isScrollable: true,
+                        // Required
+                        labelColor: lineTextStyle.color,
+                        unselectedLabelColor: lineTextStyle.color,
+                        // Other tabs color
+                        labelPadding:
+                            const EdgeInsets.symmetric(horizontal: 30),
+                        // Space between tabs
+                        indicator: BubbleTabIndicator(
+                          indicatorHeight: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .fontSize! *
+                              1.5,
+                          indicatorColor: Theme.of(context).splashColor,
+                          tabBarIndicatorSize: TabBarIndicatorSize.label,
+                        ),
+                        tabAlignment: TabAlignment.start,
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        tabs: widget.entryGroup
+                            .asMap()
+                            .entries
+                            .map((entry) => Tab(
+                                text:
+                                    "${entry.key + 1} ${entry.value.poses.map((pos) => translatePos(pos, localizationContext)).join("/")}"))
+                            .toList(),
+                      ),
+                    ),
+                  )),
+                ])
+              ]
+            : [],
       ],
     );
   }
@@ -348,6 +437,7 @@ class _EntryWidgetState extends State<EntryWidget>
       rubyFontSize: rubyFontSize,
       isSingleDef: entry.defs.length == 1 && widget.entryGroup.length == 1,
       onTapLink: widget.onTapLink,
+      showEgs: widget.showEgs,
     );
   }
 

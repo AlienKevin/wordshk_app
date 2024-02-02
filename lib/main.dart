@@ -69,6 +69,8 @@ import 'states/player_state.dart';
 late final Future<Database> bookmarkDatabase;
 late final Future<Database> historyDatabase;
 late final GoRouter router;
+late final ThemeData lightTheme;
+late final ThemeData darkTheme;
 
 late final bool isPhone;
 
@@ -381,18 +383,17 @@ class _MyAppState extends State<MyApp> {
     900: blueColor,
   };
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     final blueSwatch = MaterialColor(blueColor.value, blueColorMap);
     accentColor(Brightness brightness) =>
         brightness == Brightness.light ? blueColor : lightBlueColor;
     const headlineLarge =
-        TextStyle(fontSize: 46.0, fontWeight: FontWeight.w600);
+    TextStyle(fontSize: 46.0, fontWeight: FontWeight.w600);
     const headlineMedium =
-        TextStyle(fontSize: 36.0, fontWeight: FontWeight.w600);
+    TextStyle(fontSize: 36.0, fontWeight: FontWeight.w600);
     const headlineSmall =
-        TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600);
+    TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600);
     const titleLarge = TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600);
     const titleMedium = TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600);
     const titleSmall = TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600);
@@ -410,25 +411,25 @@ class _MyAppState extends State<MyApp> {
       bodyMedium: bodyMedium,
     );
     appBarTheme(Brightness brightness) => AppBarTheme.of(context).copyWith(
-          backgroundColor:
-              brightness == Brightness.light ? lightGreyColor : null,
-          centerTitle: true,
-        );
+      backgroundColor:
+      brightness == Brightness.light ? lightGreyColor : null,
+      centerTitle: true,
+    );
     textSelectionTheme(Brightness brightness) => TextSelectionThemeData(
         selectionColor: lightBlueColor.withAlpha(50),
         selectionHandleColor:
-            brightness == Brightness.light ? blueColor : lightBlueColor,
+        brightness == Brightness.light ? blueColor : lightBlueColor,
         cursorColor:
-            brightness == Brightness.light ? blueColor : lightBlueColor);
+        brightness == Brightness.light ? blueColor : lightBlueColor);
     textButtonTheme(Brightness brightness) => TextButtonThemeData(
-            style: ButtonStyle(
+        style: ButtonStyle(
           textStyle: MaterialStateProperty.all(
               bodyLarge.copyWith(color: accentColor(brightness))),
           foregroundColor:
-              MaterialStateProperty.resolveWith((_) => accentColor(brightness)),
+          MaterialStateProperty.resolveWith((_) => accentColor(brightness)),
         ));
     elevatedButtonTheme(Brightness brightness) => ElevatedButtonThemeData(
-            style: ButtonStyle(
+        style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(blueColor),
           textStyle: MaterialStateProperty.all(
               bodyLarge.copyWith(color: Colors.white)),
@@ -444,7 +445,7 @@ class _MyAppState extends State<MyApp> {
     const lightThemeAccentColor = blueColor;
     const darkThemeAccentColor = lightBlueColor;
 
-    var lightTheme = ThemeData(
+    lightTheme = ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSwatch(
@@ -465,7 +466,7 @@ class _MyAppState extends State<MyApp> {
       dividerColor: dividerColor(Brightness.light),
       dividerTheme: dividerTheme(Brightness.light),
     );
-    var darkTheme = ThemeData(
+    darkTheme = ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSwatch(
@@ -489,6 +490,12 @@ class _MyAppState extends State<MyApp> {
       dividerTheme: dividerTheme(Brightness.dark),
     );
 
+    super.initState();
+  }
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
     return FGBGNotifier(
       onEvent: (event) async {
         if (event == FGBGType.background &&

@@ -113,7 +113,7 @@ class DigitalInkViewState extends State<DigitalInkView> {
     );
 
     final candidatesFont = Theme.of(context).textTheme.headlineMedium!.copyWith(
-        color: MediaQuery.of(context).platformBrightness == Brightness.light
+        color: Theme.of(context).brightness == Brightness.light
             ? blackColor
             : whiteColor);
 
@@ -147,7 +147,7 @@ class DigitalInkViewState extends State<DigitalInkView> {
             child: CustomPaint(
               painter: Signature(
                   ink: _ink,
-                  brightness: MediaQuery.of(context).platformBrightness),
+                  brightness: Theme.of(context).brightness),
               size: Size.infinite,
             ),
           ),
