@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 typedef SelectionTransform = String Function(Iterable<String>);
+typedef OnSelectionChange = void Function(String?);
 
 /// A widget that transforms the text selection when copied.
 ///
@@ -26,6 +27,7 @@ typedef SelectionTransform = String Function(Iterable<String>);
 class SelectionTransformer extends StatefulWidget {
   const SelectionTransformer({
     super.key,
+    required this.onSelectionChange,
     required this.transform,
     required this.child,
   });
@@ -33,6 +35,7 @@ class SelectionTransformer extends StatefulWidget {
   /// A [SelectionTransformer] that adds a separator string between each child selections.
   SelectionTransformer.separated({
     super.key,
+    required this.onSelectionChange,
     String separator = '\n',
     required this.child,
   }) : transform = _separatedSelectionTransform(separator);
@@ -52,6 +55,7 @@ class SelectionTransformer extends StatefulWidget {
   ///
   SelectionTransformer.tabular({
     super.key,
+    required this.onSelectionChange,
     required int columns,
     required this.child,
   }) : transform = _tabularSelectionTransform(columns);
@@ -85,6 +89,7 @@ class SelectionTransformer extends StatefulWidget {
       };
 
   final SelectionTransform transform;
+  final OnSelectionChange onSelectionChange;
   final Widget child;
 
   @override
@@ -92,7 +97,7 @@ class SelectionTransformer extends StatefulWidget {
 }
 
 class SelectionTransformerState extends State<SelectionTransformer> {
-  late final delegate = SeparatedSelectionContainerDelegate(transform);
+  late final delegate = SeparatedSelectionContainerDelegate(transform, widget.onSelectionChange);
 
   String transform(Iterable<String> selections) {
     return widget.transform(selections);
@@ -115,9 +120,10 @@ class SelectionTransformerState extends State<SelectionTransformer> {
 
 class SeparatedSelectionContainerDelegate
     extends MultiSelectableSelectionContainerDelegate {
-  SeparatedSelectionContainerDelegate(this.transform);
+  SeparatedSelectionContainerDelegate(this.transform, this.onSelectionChange);
 
   final SelectionTransform transform;
+  final OnSelectionChange onSelectionChange;
 
   @override
   SelectedContent? getSelectedContent() {
@@ -200,6 +206,8 @@ class SeparatedSelectionContainerDelegate
     }
     // Synthesize last update event so the edge updates continue to work.
     _updateLastEdgeEventsFromGeometries();
+
+    onSelectionChange(getSelectedContent()?.plainText);
     return result;
   }
 
@@ -215,6 +223,8 @@ class SeparatedSelectionContainerDelegate
       _hasReceivedEndEvent.add(selectables[currentSelectionEndIndex]);
     }
     _updateLastEdgeEventsFromGeometries();
+
+    onSelectionChange(getSelectedContent()?.plainText);
     return result;
   }
 
@@ -225,6 +235,8 @@ class SeparatedSelectionContainerDelegate
     _hasReceivedEndEvent.clear();
     _lastStartEdgeUpdateGlobalPosition = null;
     _lastEndEdgeUpdateGlobalPosition = null;
+
+    onSelectionChange(getSelectedContent()?.plainText);
     return result;
   }
 
@@ -235,7 +247,9 @@ class SeparatedSelectionContainerDelegate
     } else {
       _lastStartEdgeUpdateGlobalPosition = event.globalPosition;
     }
-    return super.handleSelectionEdgeUpdate(event);
+    final selectionResult = super.handleSelectionEdgeUpdate(event);
+    onSelectionChange(getSelectedContent()?.plainText);
+    return selectionResult;
   }
 
   @override
