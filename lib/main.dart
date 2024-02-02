@@ -47,6 +47,7 @@ import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/entry_item_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
+import 'package:wordshk/states/entry_state.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
@@ -188,7 +189,9 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
                   tableName: "history", getDatabase: () => historyDatabase),
               lazy: false),
           ChangeNotifierProvider<ExerciseIntroductionState>(
-              create: (_) => ExerciseIntroductionState(prefs))
+              create: (_) => ExerciseIntroductionState(prefs)),
+          ChangeNotifierProvider<EntryState>(
+              create: (_) => EntryState()),
         ],
         child: MyApp(firstTimeUser: firstTimeUser_, prefs: prefs),
       ),
