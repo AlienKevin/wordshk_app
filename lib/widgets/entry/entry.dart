@@ -161,7 +161,7 @@ class _EntryWidgetState extends State<EntryWidget>
                                           return EntryWidget(
                                             entryGroup: snapshot.data!,
                                             initialEntryIndex: 0,
-                                            initialDefIndex: 0,
+                                            initialDefIndex: null,
                                             onTapLink: (_) {},
                                             showEgs: false,
                                             allowLookup: false,
