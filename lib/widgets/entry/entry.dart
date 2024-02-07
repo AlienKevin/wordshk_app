@@ -338,6 +338,11 @@ class _EntryWidgetState extends State<EntryWidget>
                                                   .read<EntryState>()
                                                   .selectedContent);
                                               setState(() {
+                                                // Remove previous overlay
+                                                overlayEntry?.remove();
+                                                overlayEntry?.dispose();
+                                                overlayEntry = null;
+
                                                 overlayEntry = showOverlay(
                                                     context
                                                         .read<EntryState>()
