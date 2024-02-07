@@ -8,7 +8,7 @@ class EntryLine extends StatelessWidget {
   final Line line;
   final String? tag;
   final TextStyle lineTextStyle;
-  final OnTapLink onTapLink;
+  final OnTapLink? onTapLink;
   final bool isCantonese;
   const EntryLine(
       {Key? key,

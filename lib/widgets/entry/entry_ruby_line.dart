@@ -16,7 +16,7 @@ class EntryRubyLine extends StatelessWidget {
   final Color textColor;
   final Color linkColor;
   final double rubyFontSize;
-  final OnTapLink onTapLink;
+  final OnTapLink? onTapLink;
   const EntryRubyLine({
     Key? key,
     required this.line,

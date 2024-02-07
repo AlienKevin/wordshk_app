@@ -9,7 +9,7 @@ class EntrySimsOrAnts extends StatelessWidget {
   final List<Segment> simsOrAnts;
   final List<String> simsOrAntsSimp;
   final Script script;
-  final OnTapLink onTapLink;
+  final OnTapLink? onTapLink;
 
   const EntrySimsOrAnts(
       {Key? key,
@@ -25,7 +25,8 @@ class EntrySimsOrAnts extends StatelessWidget {
       visible: simsOrAnts.isNotEmpty,
       child: Text.rich(TextSpan(children: [
         TextSpan(
-            text: "$label ⁠", // Use Word Joiner to mark this segment as non-splittable during selection
+            text:
+                "$label ⁠", // Use Word Joiner to mark this segment as non-splittable during selection
             style: Theme.of(context)
                 .textTheme
                 .bodySmall!
@@ -47,9 +48,13 @@ class EntrySimsOrAnts extends StatelessWidget {
                 ? TextSpan(
                     text: seg.segment,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.secondary),
+                        color: onTapLink == null
+                            ? null
+                            : Theme.of(context).colorScheme.secondary),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () => onTapLink(seg.segment))
+                      ..onTap = onTapLink == null
+                          ? null
+                          : () => onTapLink!(seg.segment))
                 : TextSpan(text: seg.segment),
             TextSpan(text: sim.key == simsOrAnts.length - 1 ? "" : " · ")
           ]);

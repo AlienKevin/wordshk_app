@@ -14,7 +14,7 @@ class EntryEg extends StatelessWidget {
   final TextStyle lineTextStyle;
   final Color linkColor;
   final double rubyFontSize;
-  final OnTapLink onTapLink;
+  final OnTapLink? onTapLink;
 
   const EntryEg({
     Key? key,

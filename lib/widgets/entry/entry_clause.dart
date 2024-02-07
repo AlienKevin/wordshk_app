@@ -7,7 +7,7 @@ class EntryClause extends StatelessWidget {
   final Clause clause;
   final String? tag;
   final TextStyle lineTextStyle;
-  final OnTapLink onTapLink;
+  final OnTapLink? onTapLink;
   final bool isCantonese;
   const EntryClause(
       {Key? key,

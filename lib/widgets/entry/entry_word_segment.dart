@@ -4,7 +4,7 @@ import '../../models/entry.dart';
 import 'entry_word.dart';
 
 InlineSpan showWordSegment(WordSegment segment, Color linkColor,
-    double fontSize, OnTapLink onTapLink) {
+    double fontSize, OnTapLink? onTapLink) {
   switch (segment.type) {
     case SegmentType.text:
       return WidgetSpan(
@@ -15,10 +15,13 @@ InlineSpan showWordSegment(WordSegment segment, Color linkColor,
     case SegmentType.link:
       return WidgetSpan(
           child: GestureDetector(
-        onTap: () => onTapLink(segment.word.toString()),
+        onTap:
+            onTapLink == null ? null : () => onTapLink(segment.word.toString()),
         child: Text.rich(TextSpan(
             children: showWord(segment.word),
-            style: TextStyle(color: linkColor, fontSize: fontSize))),
+            style: TextStyle(
+                color: onTapLink == null ? null : linkColor,
+                fontSize: fontSize))),
       ));
   }
 }

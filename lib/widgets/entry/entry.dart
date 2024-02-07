@@ -15,7 +15,7 @@ import 'package:wordshk/states/language_state.dart';
 
 import '../../constants.dart';
 import '../../models/entry.dart';
-import '../../src/rust/api/api.dart' show getEntryGroupJson;
+import '../../src/rust/api/api.dart' show Script, getEntryGroupJson;
 import '../../states/entry_language_state.dart';
 import '../../states/entry_state.dart';
 import '../selection_transformer.dart';
@@ -28,7 +28,7 @@ class EntryWidget extends StatefulWidget {
   final List<Entry> entryGroup;
   final int initialEntryIndex;
   final int? initialDefIndex;
-  final OnTapLink onTapLink;
+  final OnTapLink? onTapLink;
   final bool showEgs;
   final bool allowLookup;
   final bool showBottomNavigation;
@@ -130,11 +130,13 @@ class _EntryWidgetState extends State<EntryWidget>
             ? darkTheme
             : lightTheme;
     final entryWidgetKeyContext = entryWidgetKey.currentContext!;
-    final entryWidgetBox = entryWidgetKeyContext.findRenderObject() as RenderBox;
+    final entryWidgetBox =
+        entryWidgetKeyContext.findRenderObject() as RenderBox;
     return OverlayEntry(
         builder: (context) => Positioned(
               bottom: MediaQuery.of(context).size.width * 0.05,
-              left: MediaQuery.of(context).size.width - entryWidgetBox.size.width * 0.95,
+              left: MediaQuery.of(context).size.width -
+                  entryWidgetBox.size.width * 0.95,
               width: entryWidgetBox.size.width * 0.9,
               child: Card(
                 child: Column(
@@ -167,7 +169,7 @@ class _EntryWidgetState extends State<EntryWidget>
                                             entryGroup: snapshot.data!,
                                             initialEntryIndex: 0,
                                             initialDefIndex: null,
-                                            onTapLink: (_) {},
+                                            onTapLink: null,
                                             showEgs: false,
                                             allowLookup: false,
                                             showBottomNavigation: false,
@@ -476,7 +478,7 @@ class _EntryWidgetState extends State<EntryWidget>
     );
   }
 
-  showDef(int entryIndex, int index, lineTextStyle, linkColor, rubyFontSize) {
+  showDef(int entryIndex, int index, TextStyle lineTextStyle, Color linkColor, double rubyFontSize) {
     final entry = widget.entryGroup[entryIndex];
     return EntryDef(
       def: entry.defs[index - 1],
@@ -494,13 +496,13 @@ class _EntryWidgetState extends State<EntryWidget>
 
   List<Widget> showDefs(
       {required entryIndex,
-      required script,
-      required onTapLink,
-      required variantTextStyle,
-      required prTextStyle,
-      required lineTextStyle,
-      required linkColor,
-      required rubyFontSize}) {
+      required Script script,
+      required OnTapLink? onTapLink,
+      required TextStyle variantTextStyle,
+      required TextStyle prTextStyle,
+      required TextStyle lineTextStyle,
+      required Color linkColor,
+      required double rubyFontSize}) {
     final entry = widget.entryGroup[entryIndex];
     return [
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

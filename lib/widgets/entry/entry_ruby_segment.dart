@@ -9,17 +9,24 @@ import '../../models/entry.dart';
 import '../../states/romanization_state.dart';
 import 'entry_word.dart';
 
-List<Widget> showRubySegment(RubySegment segment, Color textColor,
-    Color linkColor, double rubySize, OnTapLink onTapLink, BuildContext context,
-    {isLinked = false, isEndingPunctuation = false}) {
-  final textColor_ = isLinked ? linkColor : textColor;
+List<Widget> showRubySegment(
+    RubySegment segment,
+    Color textColor,
+    Color linkColor,
+    double rubySize,
+    OnTapLink? onTapLink,
+    BuildContext context,
+    {isLinked = false,
+    isEndingPunctuation = false}) {
+  final textColor_ = (isLinked && onTapLink != null) ? linkColor : textColor;
   late final Widget text;
   late final String prs;
   late final List<int?> prsTones;
   switch (segment.type) {
     case RubySegmentType.punc:
       text = Text.rich(TextSpan(
-          text: '${segment.segment}⁠', // Use Word Joiner to mark this segment as non-splittable during selection
+          text:
+              '${segment.segment}⁠', // Use Word Joiner to mark this segment as non-splittable during selection
           style: TextStyle(fontSize: rubySize, height: 1, color: textColor_)));
       prs = "";
       prsTones = [6]; // empty pr defaults to 6 tones (this is arbitrary)
@@ -40,13 +47,15 @@ List<Widget> showRubySegment(RubySegment segment, Color textColor,
                 rubySize,
                 onTapLink,
                 context,
-                isLinked: true,
+                isLinked: onTapLink != null,
               ))
           .expand((i) => i)
-          .map((seg) => GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () => onTapLink(segment.segment.toString()),
-              child: seg))
+          .map((seg) => onTapLink == null
+              ? seg
+              : GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => onTapLink(segment.segment.toString()),
+                  child: seg))
           .toList();
   }
   final isJumpy = context.watch<EntryEgJumpyPrsState>().isJumpy;

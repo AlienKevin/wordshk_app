@@ -12,7 +12,7 @@ class EntryRichLine extends StatelessWidget {
   final TextStyle lineTextStyle;
   final Color linkColor;
   final double rubyFontSize;
-  final OnTapLink onTapLink;
+  final OnTapLink? onTapLink;
 
   const EntryRichLine({
     Key? key,
