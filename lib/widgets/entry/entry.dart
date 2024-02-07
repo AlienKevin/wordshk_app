@@ -134,7 +134,7 @@ class _EntryWidgetState extends State<EntryWidget>
         entryWidgetKeyContext.findRenderObject() as RenderBox;
     return OverlayEntry(
         builder: (context) => Positioned(
-              bottom: MediaQuery.of(context).size.width * 0.05,
+              bottom: MediaQuery.of(context).padding.bottom,
               left: MediaQuery.of(context).size.width -
                   entryWidgetBox.size.width * 0.95,
               width: entryWidgetBox.size.width * 0.9,
@@ -188,8 +188,7 @@ class _EntryWidgetState extends State<EntryWidget>
                                     }
                                     return const Align(
                                         alignment: Alignment.center,
-                                        child:
-                                            CircularProgressIndicator());
+                                        child: CircularProgressIndicator());
                                   }),
                               Align(
                                   alignment: Alignment.topRight,
