@@ -151,65 +151,62 @@ class _EntryWidgetState extends State<EntryWidget>
                               color: overlayTheme.canvasColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Stack(
-                                alignment: Alignment
-                                    .topRight, // Aligns the close button to the top right
-                                children: [
-                                  FutureBuilder<List<Entry>>(
-                                      future: getEntryGroupJson(
-                                              id: selectedEntryId)
-                                          .then((json) => json
-                                              .map((entryJson) =>
-                                                  Entry.fromJson(
-                                                      jsonDecode(entryJson)))
-                                              .toList()),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return EntryWidget(
-                                            entryGroup: snapshot.data!,
-                                            initialEntryIndex: 0,
-                                            initialDefIndex: null,
-                                            onTapLink: null,
-                                            showEgs: false,
-                                            allowLookup: false,
-                                            showBottomNavigation: false,
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Column(children: [
-                                              Text(AppLocalizations.of(context)!
-                                                  .entryFailedToLoad),
-                                              const SizedBox(height: 20),
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    context.go("/");
-                                                  },
-                                                  child: Text(
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .backToSearch))
-                                            ]),
-                                          );
-                                        }
-                                        return const CircularProgressIndicator();
-                                      }),
-                                  Align(
-                                      alignment: Alignment.topRight,
-                                      child: IconButton(
-                                        icon: Icon(
-                                            isMaterial(context)
-                                                ? Icons.close
-                                                : CupertinoIcons.clear,
-                                            color: overlayTheme
-                                                .textTheme.bodyMedium!.color!),
-                                        onPressed: () {
-                                          setState(() {
-                                            removeOverlay();
-                                          });
-                                        },
-                                      ))
-                                ])))
+                            child: Stack(children: [
+                              FutureBuilder<List<Entry>>(
+                                  future: getEntryGroupJson(id: selectedEntryId)
+                                      .then((json) => json
+                                          .map((entryJson) => Entry.fromJson(
+                                              jsonDecode(entryJson)))
+                                          .toList()),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return EntryWidget(
+                                        entryGroup: snapshot.data!,
+                                        initialEntryIndex: 0,
+                                        initialDefIndex: null,
+                                        onTapLink: null,
+                                        showEgs: false,
+                                        allowLookup: false,
+                                        showBottomNavigation: false,
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Column(children: [
+                                          Text(AppLocalizations.of(context)!
+                                              .entryFailedToLoad),
+                                          const SizedBox(height: 20),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                context.go("/");
+                                              },
+                                              child: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .backToSearch))
+                                        ]),
+                                      );
+                                    }
+                                    return const Align(
+                                        alignment: Alignment.center,
+                                        child:
+                                            CircularProgressIndicator());
+                                  }),
+                              Align(
+                                  alignment: Alignment.topRight,
+                                  child: IconButton(
+                                    icon: Icon(
+                                        isMaterial(context)
+                                            ? Icons.close
+                                            : CupertinoIcons.clear,
+                                        color: overlayTheme
+                                            .textTheme.bodyMedium!.color!),
+                                    onPressed: () {
+                                      setState(() {
+                                        removeOverlay();
+                                      });
+                                    },
+                                  ))
+                            ])))
                   ],
                 ),
               ),
@@ -478,7 +475,8 @@ class _EntryWidgetState extends State<EntryWidget>
     );
   }
 
-  showDef(int entryIndex, int index, TextStyle lineTextStyle, Color linkColor, double rubyFontSize) {
+  showDef(int entryIndex, int index, TextStyle lineTextStyle, Color linkColor,
+      double rubyFontSize) {
     final entry = widget.entryGroup[entryIndex];
     return EntryDef(
       def: entry.defs[index - 1],
