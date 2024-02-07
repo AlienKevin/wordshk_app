@@ -35,6 +35,8 @@
     "entryCollapseExamples": "Collapse Examples",
     "entryFailedToLoad": "Entry Failed to Load. An anonymous bug report has been sent to the developer. We will fix this soon.",
     "backToSearch": "Back to Search",
+    "readMore": "Read More",
+    "close": "Close",
 
     "posNoun": "noun",
     "posVerb": "verb",

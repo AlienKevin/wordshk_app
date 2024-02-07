@@ -138,76 +138,78 @@ class _EntryWidgetState extends State<EntryWidget>
               left: MediaQuery.of(context).size.width -
                   entryWidgetBox.size.width * 0.95,
               width: entryWidgetBox.size.width * 0.9,
-              child: Card(
-                child: Column(
+              child: Theme(
+                data: overlayTheme,
+                child: Card(
+                    child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Theme(
-                        data: overlayTheme,
-                        child: Container(
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            decoration: BoxDecoration(
-                              color: overlayTheme.canvasColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Stack(children: [
-                              FutureBuilder<List<Entry>>(
-                                  future: getEntryGroupJson(id: selectedEntryId)
-                                      .then((json) => json
-                                          .map((entryJson) => Entry.fromJson(
-                                              jsonDecode(entryJson)))
-                                          .toList()),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      return EntryWidget(
-                                        entryGroup: snapshot.data!,
-                                        initialEntryIndex: 0,
-                                        initialDefIndex: null,
-                                        onTapLink: null,
-                                        showEgs: false,
-                                        allowLookup: false,
-                                        showBottomNavigation: false,
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(20.0),
-                                        child: Column(children: [
-                                          Text(AppLocalizations.of(context)!
-                                              .entryFailedToLoad),
-                                          const SizedBox(height: 20),
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                context.go("/");
-                                              },
-                                              child: Text(
-                                                  AppLocalizations.of(context)!
-                                                      .backToSearch))
-                                        ]),
-                                      );
-                                    }
-                                    return const Align(
-                                        alignment: Alignment.center,
-                                        child: CircularProgressIndicator());
-                                  }),
-                              Align(
-                                  alignment: Alignment.topRight,
-                                  child: IconButton(
-                                    icon: Icon(
-                                        isMaterial(context)
-                                            ? Icons.close
-                                            : CupertinoIcons.clear,
-                                        color: overlayTheme
-                                            .textTheme.bodyMedium!.color!),
-                                    onPressed: () {
-                                      setState(() {
-                                        removeOverlay();
-                                      });
-                                    },
-                                  ))
-                            ])))
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      decoration: BoxDecoration(
+                        color: overlayTheme.canvasColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: FutureBuilder<List<Entry>>(
+                          future: getEntryGroupJson(id: selectedEntryId).then(
+                              (json) => json
+                                  .map((entryJson) =>
+                                      Entry.fromJson(jsonDecode(entryJson)))
+                                  .toList()),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return EntryWidget(
+                                entryGroup: snapshot.data!,
+                                initialEntryIndex: 0,
+                                initialDefIndex: null,
+                                onTapLink: null,
+                                showEgs: false,
+                                allowLookup: false,
+                                showBottomNavigation: false,
+                              );
+                            } else if (snapshot.hasError) {
+                              return Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(children: [
+                                  Text(AppLocalizations.of(context)!
+                                      .entryFailedToLoad),
+                                  const SizedBox(height: 20),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        context.go("/");
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .backToSearch))
+                                ]),
+                              );
+                            }
+                            return const Align(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator());
+                          }),
+                    ),
+                    OverflowBar(
+                      alignment:
+                          MainAxisAlignment.spaceAround, // Optional: align buttons
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            context.push("/entry/id/$selectedEntryId");
+                            removeOverlay();
+                          },
+                          child: Text(AppLocalizations.of(context)!.readMore),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            removeOverlay();
+                          },
+                          child: Text(AppLocalizations.of(context)!.close),
+                        ),
+                      ],
+                    ),
                   ],
-                ),
+                )),
               ),
             ));
   }
