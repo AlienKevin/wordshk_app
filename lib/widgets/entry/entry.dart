@@ -57,6 +57,7 @@ class _EntryWidgetState extends State<EntryWidget>
   bool isScrollingToTarget = false;
   late final List<(int, int)> defIndexRanges;
   OverlayEntry? overlayEntry;
+  GlobalKey entryWidgetKey = GlobalKey();
 
   int getStartDefIndex(int entryIndex) => defIndexRanges[entryIndex].$1;
 
@@ -128,10 +129,13 @@ class _EntryWidgetState extends State<EntryWidget>
         MediaQuery.of(context).platformBrightness == Brightness.light
             ? darkTheme
             : lightTheme;
+    final entryWidgetKeyContext = entryWidgetKey.currentContext!;
+    final entryWidgetBox = entryWidgetKeyContext.findRenderObject() as RenderBox;
     return OverlayEntry(
         builder: (context) => Positioned(
               bottom: MediaQuery.of(context).size.width * 0.05,
-              left: MediaQuery.of(context).size.width * 0.05,
+              left: MediaQuery.of(context).size.width - entryWidgetBox.size.width * 0.95,
+              width: entryWidgetBox.size.width * 0.9,
               child: Card(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -237,6 +241,7 @@ class _EntryWidgetState extends State<EntryWidget>
         .toList();
 
     return Column(
+      key: entryWidgetKey,
       children: [
         Expanded(
             child: Padding(
