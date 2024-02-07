@@ -56,7 +56,7 @@ class _EntryWidgetState extends State<EntryWidget>
   late ListObserverController _observerController;
   bool isScrollingToTarget = false;
   late final List<(int, int)> defIndexRanges;
-  int? selectedEntryId;
+  OverlayEntry? overlayEntry;
 
   int getStartDefIndex(int entryIndex) => defIndexRanges[entryIndex].$1;
 
@@ -122,72 +122,93 @@ class _EntryWidgetState extends State<EntryWidget>
     super.dispose();
   }
 
-  Widget showOverlay() {
+  OverlayEntry showOverlay(int selectedEntryId) {
     final overlayTheme =
         MediaQuery.of(context).platformBrightness == Brightness.light
             ? darkTheme
             : lightTheme;
-    return Theme(
-        data: overlayTheme,
-        child: Container(
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width * 0.9,
-            decoration: BoxDecoration(
-              color: overlayTheme.canvasColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Stack(
-                alignment: Alignment
-                    .topRight, // Aligns the close button to the top right
-                children: [
-                  FutureBuilder<List<Entry>>(
-                      future: getEntryGroupJson(id: selectedEntryId!).then(
-                          (json) => json
-                              .map((entryJson) =>
-                                  Entry.fromJson(jsonDecode(entryJson)))
-                              .toList()),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return EntryWidget(
-                            entryGroup: snapshot.data!,
-                            initialEntryIndex: 0,
-                            initialDefIndex: 0,
-                            onTapLink: (_) {},
-                            showEgs: false,
-                            allowLookup: false,
-                            showBottomNavigation: false,
-                          );
-                        } else if (snapshot.hasError) {
-                          return Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(children: [
-                              Text(AppLocalizations.of(context)!
-                                  .entryFailedToLoad),
-                              const SizedBox(height: 20),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    context.go("/");
-                                  },
-                                  child: Text(AppLocalizations.of(context)!
-                                      .backToSearch))
-                            ]),
-                          );
-                        }
-                        return const CircularProgressIndicator();
-                      }),
-                  Align(alignment: Alignment.topRight, child: IconButton(
-                    icon: Icon(
-                        isMaterial(context)
-                            ? Icons.close
-                            : CupertinoIcons.clear,
-                        color: overlayTheme.textTheme.bodyMedium!.color!),
-                    onPressed: () {
-                      setState(() {
-                        selectedEntryId = null;
-                      });
-                    },
-                  ))
-                ])));
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              bottom: MediaQuery.of(context).size.width * 0.05,
+              left: MediaQuery.of(context).size.width * 0.05,
+              child: Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Theme(
+                        data: overlayTheme,
+                        child: Container(
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            decoration: BoxDecoration(
+                              color: overlayTheme.canvasColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Stack(
+                                alignment: Alignment
+                                    .topRight, // Aligns the close button to the top right
+                                children: [
+                                  FutureBuilder<List<Entry>>(
+                                      future: getEntryGroupJson(
+                                              id: selectedEntryId)
+                                          .then((json) => json
+                                              .map((entryJson) =>
+                                                  Entry.fromJson(
+                                                      jsonDecode(entryJson)))
+                                              .toList()),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return EntryWidget(
+                                            entryGroup: snapshot.data!,
+                                            initialEntryIndex: 0,
+                                            initialDefIndex: 0,
+                                            onTapLink: (_) {},
+                                            showEgs: false,
+                                            allowLookup: false,
+                                            showBottomNavigation: false,
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(20.0),
+                                            child: Column(children: [
+                                              Text(AppLocalizations.of(context)!
+                                                  .entryFailedToLoad),
+                                              const SizedBox(height: 20),
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    context.go("/");
+                                                  },
+                                                  child: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .backToSearch))
+                                            ]),
+                                          );
+                                        }
+                                        return const CircularProgressIndicator();
+                                      }),
+                                  Align(
+                                      alignment: Alignment.topRight,
+                                      child: IconButton(
+                                        icon: Icon(
+                                            isMaterial(context)
+                                                ? Icons.close
+                                                : CupertinoIcons.clear,
+                                            color: overlayTheme
+                                                .textTheme.bodyMedium!.color!),
+                                        onPressed: () {
+                                          setState(() {
+                                            overlayEntry?.remove();
+                                            overlayEntry?.dispose();
+                                            overlayEntry = null;
+                                          });
+                                        },
+                                      ))
+                                ])))
+                  ],
+                ),
+              ),
+            ));
   }
 
   @override
@@ -213,8 +234,7 @@ class _EntryWidgetState extends State<EntryWidget>
     return Column(
       children: [
         Expanded(
-          child: Stack(children: [
-            Padding(
+            child: Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: ListViewObserver(
                     controller: _observerController,
@@ -318,9 +338,14 @@ class _EntryWidgetState extends State<EntryWidget>
                                                   .read<EntryState>()
                                                   .selectedContent);
                                               setState(() {
-                                                selectedEntryId = context
-                                                    .read<EntryState>()
-                                                    .entryId;
+                                                overlayEntry = showOverlay(
+                                                    context
+                                                        .read<EntryState>()
+                                                        .entryId!);
+                                                Overlay.of(context,
+                                                        debugRequiredFor:
+                                                            widget)
+                                                    .insert(overlayEntry!);
                                               });
                                             },
                                             label: 'Lookup',
@@ -357,15 +382,7 @@ class _EntryWidgetState extends State<EntryWidget>
                             ),
                             itemBuilder: (context, index) => items[index],
                           )),
-                    ))),
-            ...selectedEntryId != null
-                ? [
-                    Align(
-                        alignment: Alignment.bottomCenter, child: showOverlay())
-                  ]
-                : []
-          ]),
-        ),
+                    )))),
         ...widget.showBottomNavigation
             ? [
                 Row(children: [
