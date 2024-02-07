@@ -119,6 +119,7 @@ class _EntryWidgetState extends State<EntryWidget>
   void dispose() {
     _scrollController.dispose();
     _tabController.dispose();
+    removeOverlay();
     super.dispose();
   }
 
@@ -198,9 +199,7 @@ class _EntryWidgetState extends State<EntryWidget>
                                                 .textTheme.bodyMedium!.color!),
                                         onPressed: () {
                                           setState(() {
-                                            overlayEntry?.remove();
-                                            overlayEntry?.dispose();
-                                            overlayEntry = null;
+                                            removeOverlay();
                                           });
                                         },
                                       ))
@@ -209,6 +208,12 @@ class _EntryWidgetState extends State<EntryWidget>
                 ),
               ),
             ));
+  }
+
+  removeOverlay() {
+    overlayEntry?.remove();
+    overlayEntry?.dispose();
+    overlayEntry = null;
   }
 
   @override
@@ -339,9 +344,7 @@ class _EntryWidgetState extends State<EntryWidget>
                                                   .selectedContent);
                                               setState(() {
                                                 // Remove previous overlay
-                                                overlayEntry?.remove();
-                                                overlayEntry?.dispose();
-                                                overlayEntry = null;
+                                                removeOverlay();
 
                                                 overlayEntry = showOverlay(
                                                     context
