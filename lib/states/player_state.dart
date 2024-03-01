@@ -54,7 +54,7 @@ class PlayerState with ChangeNotifier {
       await ttsPlayerValue.setSharedInstance(true);
       await ttsPlayerValue.setLanguage("zh-HK");
       await ttsPlayerValue.setSpeechRate(0.5);
-      await ttsPlayerValue.setVolume(Platform.isIOS ? 0.3 : 1.0);
+      await ttsPlayerValue.setVolume(1.0);
       await ttsPlayerValue.setPitch(1.0);
       await ttsPlayerValue.isLanguageAvailable("zh-HK");
       ttsPlayerValue.setCompletionHandler(() {
@@ -154,7 +154,7 @@ class PlayerState with ChangeNotifier {
         : rate == SpeechRate.slow
             ? 1.2
             : 1.5;
-    final volume = Platform.isIOS ? 0.1 : 1.0;
+    final volume = Platform.isIOS ? 0.6 : 1.0;
 
     final player_ = await syllablesPlayer.future;
     await player_.setSpeed(speed);
