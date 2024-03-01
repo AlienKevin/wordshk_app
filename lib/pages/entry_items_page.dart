@@ -136,6 +136,10 @@ class _EntryItemsState<T extends EntryItemState>
 
     _isLoading = true;
     _fetchMoreEntryItems(10).then((newEntryItems) {
+      // Issue: https://kevin-li-f0196b65e.sentry.io/issues/4927414021/events/956194d0a1c0447fb78de8da4ac596e0/?project=4505785578487808
+      // ?Fix: Check if the widget is still mounted
+      if (!mounted) return;
+
       if (newEntryItems.isEmpty) {
         setState(() {
           _isLoading = false;
