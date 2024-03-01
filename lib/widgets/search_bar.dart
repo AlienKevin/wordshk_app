@@ -95,7 +95,7 @@ class IsSearching extends State<SearchBar> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InputModeState>().setSearchFieldFocusNode(focusNode);
       context.read<SearchQueryState>().setSearchBarCallbacks(
-          typeCharacter, backspace, moveToEndOfSelection);
+          typeString, backspace, moveToEndOfSelection);
 
       controller.addListener(() {
         if (controller.text.isEmpty) {
@@ -193,7 +193,7 @@ class IsSearching extends State<SearchBar> {
     }
   }
 
-  void typeCharacter(String character) {
+  void typeString(String string) {
     final query = controller.text;
 
     // Focus the textField if not already
@@ -206,12 +206,12 @@ class IsSearching extends State<SearchBar> {
     final extentOffset = max(controller.selection.extentOffset, 0);
     // delete selection and add character in place of selection
     final newQuery = query.substring(0, baseOffset) +
-        character +
+        string +
         query.substring(extentOffset);
     controller.value = TextEditingValue(
         text: newQuery,
         selection: TextSelection(
-            baseOffset: baseOffset, extentOffset: baseOffset + 1));
+            baseOffset: baseOffset, extentOffset: baseOffset + string.characters.length));
     context.read<SearchQueryState>().updateSearchQuery(newQuery);
     if (widget.onChanged != null) {
       widget.onChanged!(newQuery);
@@ -241,6 +241,7 @@ class IsSearching extends State<SearchBar> {
     } else {
       return;
     }
+    context.read<SearchQueryState>().updateSearchQuery(newQuery);
     if (widget.onChanged != null) {
       widget.onChanged!(newQuery);
     }

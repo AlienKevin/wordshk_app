@@ -1,6 +1,8 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide SearchBar, NavigationDrawer;
+import 'package:flutter/services.dart';
+import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:go_router/go_router.dart';
@@ -151,57 +153,83 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       },
     );
 
-    return KeyboardVisibilityProvider(
-      child: Scaffold(
-        bottomNavigationBar: Column(mainAxisSize: MainAxisSize.min, children: [
-          ...context.watch<SearchBarPositionState>().getSearchBarPosition() ==
-                  SearchBarPosition.bottom
-              ? [
-                  Container(
-                    color: Theme.of(context).appBarTheme.backgroundColor ??
-                        Theme.of(context).colorScheme.surface,
-                    width: double.maxFinite,
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 14, right: 10, top: 10, bottom: 10),
-                        child: searchBar),
-                  )
-                ]
-              : [],
-          ...inputMode == InputMode.ink
-              ? [
-                  DigitalInkView(
-                    typeCharacter: (character) {
-                      context.read<SearchQueryState>().typeCharacter(character);
-                    },
-                    backspace: () {
-                      context.read<SearchQueryState>().backspace();
-                    },
-                    moveToEndOfSelection: () {
-                      context.read<SearchQueryState>().moveToEndOfSelection();
-                    },
-                  ),
-                ]
-              : [],
-        ]),
-        appBar:
-            context.watch<SearchBarPositionState>().getSearchBarPosition() ==
-                    SearchBarPosition.top
-                ? AppBar(
-                    title: searchBar,
-                    toolbarHeight:
-                        context.watch<RomanizationState>().romanization ==
-                                Romanization.yale
-                            ? 110
-                            : appBarHeight,
-                  )
-                : null,
-        body: SafeArea(
-            child: (finishedSearch && isSearchResultsEmpty)
-                ? showResultsNotFound()
-                : (queryEmptied
-                    ? showHistoryAndBookmarks()
-                    : showSearchResults(selectedSearchResultEntryPage))),
+    return FGBGNotifier(
+      onEvent: (FGBGType value) async {
+        if (value == FGBGType.foreground) {
+          // print("App is in the foreground");
+          if (await Clipboard.hasStrings()) {
+            debugPrint("Clipboard has strings");
+            if (!mounted) return;
+
+            Clipboard.getData("text/plain").then((value) {
+              debugPrint("Clipboard text: ${value?.text}");
+              if (value != null && value.text != null) {
+                debugPrint("query text: ${context.read<SearchQueryState>().query}");
+                if (context.read<SearchQueryState>().query.isEmpty) {
+                  context.read<SearchQueryState>().typeString(value.text!);
+                }
+              }
+            });
+          } else {
+            debugPrint("Clipboard does not have strings");
+          }
+        }
+      },
+      child: KeyboardVisibilityProvider(
+        child: Scaffold(
+          bottomNavigationBar:
+              Column(mainAxisSize: MainAxisSize.min, children: [
+            ...context.watch<SearchBarPositionState>().getSearchBarPosition() ==
+                    SearchBarPosition.bottom
+                ? [
+                    Container(
+                      color: Theme.of(context).appBarTheme.backgroundColor ??
+                          Theme.of(context).colorScheme.surface,
+                      width: double.maxFinite,
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 14, right: 10, top: 10, bottom: 10),
+                          child: searchBar),
+                    )
+                  ]
+                : [],
+            ...inputMode == InputMode.ink
+                ? [
+                    DigitalInkView(
+                      typeCharacter: (character) {
+                        context
+                            .read<SearchQueryState>()
+                            .typeString(character);
+                      },
+                      backspace: () {
+                        context.read<SearchQueryState>().backspace();
+                      },
+                      moveToEndOfSelection: () {
+                        context.read<SearchQueryState>().moveToEndOfSelection();
+                      },
+                    ),
+                  ]
+                : [],
+          ]),
+          appBar:
+              context.watch<SearchBarPositionState>().getSearchBarPosition() ==
+                      SearchBarPosition.top
+                  ? AppBar(
+                      title: searchBar,
+                      toolbarHeight:
+                          context.watch<RomanizationState>().romanization ==
+                                  Romanization.yale
+                              ? 110
+                              : appBarHeight,
+                    )
+                  : null,
+          body: SafeArea(
+              child: (finishedSearch && isSearchResultsEmpty)
+                  ? showResultsNotFound()
+                  : (queryEmptied
+                      ? showHistoryAndBookmarks()
+                      : showSearchResults(selectedSearchResultEntryPage))),
+        ),
       ),
     );
   }
