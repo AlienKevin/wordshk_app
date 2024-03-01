@@ -361,7 +361,7 @@ class _EntryWidgetState extends State<EntryWidget>
                                                     .insert(overlayEntry!);
                                               });
                                             },
-                                            label: 'Lookup',
+                                            label: AppLocalizations.of(context)!.lookUp,
                                           )
                                         ]
                                       : []),
