@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -38,7 +40,7 @@ class IntroductionPage extends StatelessWidget {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: wideScreenThreshold,
-            maxHeight: isWideScreen ? wideScreenThreshold : double.maxFinite,
+            maxHeight: isWideScreen ? wideScreenThreshold / min(MediaQuery.of(context).size.aspectRatio, 0.8) : double.maxFinite,
           ),
           child: IntroductionScreen(
               safeAreaList: const [false, false, true, true],
