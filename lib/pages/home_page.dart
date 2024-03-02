@@ -164,9 +164,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               debugPrint("Clipboard text: ${value?.text}");
               if (value != null && value.text != null) {
                 debugPrint("query text: ${context.read<SearchQueryState>().query}");
-                if (context.read<SearchQueryState>().query.isEmpty) {
-                  context.read<SearchQueryState>().typeString(value.text!);
-                }
+                context.read<SearchQueryState>().clear();
+                context.read<SearchQueryState>().typeString(value.text!);
               }
             });
           } else {

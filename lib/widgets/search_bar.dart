@@ -95,7 +95,7 @@ class IsSearching extends State<SearchBar> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InputModeState>().setSearchFieldFocusNode(focusNode);
       context.read<SearchQueryState>().setSearchBarCallbacks(
-          typeString, backspace, moveToEndOfSelection);
+          typeString, backspace, moveToEndOfSelection, clear);
 
       controller.addListener(() {
         if (controller.text.isEmpty) {
@@ -250,6 +250,14 @@ class IsSearching extends State<SearchBar> {
   void moveToEndOfSelection() {
     final extentOffset = controller.selection.extentOffset;
     controller.selection = TextSelection.collapsed(offset: extentOffset);
+  }
+
+  void clear() {
+    controller.clear();
+    context.read<SearchQueryState>().updateSearchQuery("");
+    if (widget.onChanged != null) {
+      widget.onChanged!("");
+    }
   }
 
   Widget diacriticButton(String diacritic) => Expanded(
