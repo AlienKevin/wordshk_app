@@ -33,14 +33,21 @@ class IntroductionPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           color: isWideScreen
-              ? Theme.of(context).canvasColor.withOpacity(0.9)
-              : Theme.of(context).colorScheme.background),
+              ? Theme.of(context).brightness == Brightness.dark
+                  ? darkGreyColor
+                  : Theme.of(context).canvasColor.withOpacity(0.9)
+              : (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black
+                  : Colors.white)),
       child: Align(
         alignment: Alignment.center,
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: wideScreenThreshold,
-            maxHeight: isWideScreen ? wideScreenThreshold / min(MediaQuery.of(context).size.aspectRatio, 0.8) : double.maxFinite,
+            maxHeight: isWideScreen
+                ? wideScreenThreshold /
+                    min(MediaQuery.of(context).size.aspectRatio, 0.8)
+                : double.maxFinite,
           ),
           child: IntroductionScreen(
               safeAreaList: const [false, false, true, true],
@@ -48,7 +55,10 @@ class IntroductionPage extends StatelessWidget {
                 context.go('/');
                 prefs.setBool("firstTimeUser", false);
               },
-              globalBackgroundColor: Theme.of(context).cardColor,
+              globalBackgroundColor:
+                  (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black
+                      : Colors.white),
               showSkipButton: false,
               skipOrBackFlex: 0,
               nextFlex: 0,
