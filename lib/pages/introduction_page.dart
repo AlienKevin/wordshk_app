@@ -8,6 +8,7 @@ import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/widgets/settings/title.dart';
 
 import '../constants.dart';
+import '../widgets/settings/eg_jumpy_prs_radio_list_tiles.dart';
 import '../widgets/settings/language_radio_list_tiles.dart';
 import '../widgets/settings/radio_list_tile.dart';
 import '../widgets/settings/romanization_radio_list_tiles.dart';
@@ -20,20 +21,24 @@ class IntroductionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
+    final isWideScreen =
+        MediaQuery.of(context).size.width > wideScreenThreshold;
 
     const pageDecoration = PageDecoration(
       titlePadding: EdgeInsets.only(top: 0.0, bottom: 24.0),
       contentMargin: EdgeInsets.all(32.0),
     );
     return Container(
-      decoration:
-          BoxDecoration(color: Theme.of(context).canvasColor.withOpacity(0.9)),
+      decoration: BoxDecoration(
+          color: isWideScreen
+              ? Theme.of(context).canvasColor.withOpacity(0.9)
+              : Theme.of(context).colorScheme.background),
       child: Align(
         alignment: Alignment.center,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
+          constraints: BoxConstraints(
             maxWidth: wideScreenThreshold,
-            maxHeight: wideScreenThreshold,
+            maxHeight: isWideScreen ? wideScreenThreshold : double.maxFinite,
           ),
           child: IntroductionScreen(
               safeAreaList: const [false, false, true, true],
@@ -63,8 +68,7 @@ class IntroductionPage extends StatelessWidget {
                     const SizedBox(height: 40),
                     Image(
                         width: 200,
-                        image: Theme.of(context).brightness ==
-                                Brightness.light
+                        image: Theme.of(context).brightness == Brightness.light
                             ? const AssetImage('assets/icon.png')
                             : const AssetImage('assets/icon_grey.png'))
                   ]),
@@ -81,8 +85,14 @@ class IntroductionPage extends StatelessWidget {
                   titleWidget: Align(
                       alignment: Alignment.centerLeft,
                       child: SettingsTitle(title: s.introductionRomanization)),
-                  bodyWidget: const RomanizationRadioListTiles(
-                      syncEntryRomanization: true),
+                  bodyWidget: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RomanizationRadioListTiles(syncEntryRomanization: true),
+                      SizedBox(height: 15),
+                      EgIsJumpyPrsRadioListTiles(),
+                    ],
+                  ),
                   decoration: pageDecoration,
                 ),
                 PageViewModel(

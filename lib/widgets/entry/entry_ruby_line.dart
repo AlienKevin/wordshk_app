@@ -17,6 +17,7 @@ class EntryRubyLine extends StatelessWidget {
   final Color linkColor;
   final double rubyFontSize;
   final OnTapLink? onTapLink;
+  final bool showPrsButton;
   const EntryRubyLine({
     Key? key,
     required this.line,
@@ -24,6 +25,7 @@ class EntryRubyLine extends StatelessWidget {
     required this.linkColor,
     required this.rubyFontSize,
     required this.onTapLink,
+    this.showPrsButton = true,
   }) : super(key: key);
 
   @override
@@ -39,7 +41,7 @@ class EntryRubyLine extends StatelessWidget {
                           segment.type == RubySegmentType.punc &&
                               line.segments.last == segment))
                   .expand((i) => i),
-              Consumer<PronunciationMethodState>(
+              ...showPrsButton ? [Consumer<PronunciationMethodState>(
                   builder: (context, pronunciationMethodState, child) =>
                       pronunciationMethodState.entryEgMethod ==
                               PronunciationMethod.tts
@@ -61,7 +63,7 @@ class EntryRubyLine extends StatelessWidget {
                                   .toList(),
                               alignment: Alignment.topCenter,
                               atHeader: false,
-                            )),
+                            ))]: [],
             ]
                 .map((e) => Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
