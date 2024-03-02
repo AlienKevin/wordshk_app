@@ -35,7 +35,7 @@ List<Widget> showRubySegment(
       text = Text.rich(TextSpan(
           children: showWord(segment.segment.word as EntryWord),
           style: TextStyle(fontSize: rubySize, height: 1, color: textColor_)));
-      prs = context.read<RomanizationState>().showPrs(segment.segment.prs);
+      prs = context.watch<RomanizationState>().showPrs(segment.segment.prs);
       prsTones = segment.segment.prsTones;
       break;
     case RubySegmentType.linkedWord:
