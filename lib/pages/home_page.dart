@@ -23,7 +23,6 @@ import '../main.dart';
 import '../models/input_mode.dart';
 import '../models/search_result_type.dart';
 import '../models/summary_def_language.dart';
-import '../states/analytics_state.dart' show ResultNotFound;
 import '../states/bookmark_state.dart';
 import '../states/language_state.dart';
 import '../states/romanization_state.dart';
@@ -370,9 +369,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     searchResultOrder = [SearchResultType.eg];
                     finishedSearch = true;
                   });
-                  if (isSearchResultsEmpty) {
-                    analyticsState.addResultNotFound(ResultNotFound(query));
-                  }
+                  // if (isSearchResultsEmpty) {
+                  //   analyticsState.addResultNotFound(ResultNotFound(query));
+                  // }
                 }
               }
             });
