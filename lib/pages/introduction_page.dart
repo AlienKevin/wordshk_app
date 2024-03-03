@@ -65,7 +65,9 @@ class IntroductionPage extends StatelessWidget {
               showBackButton: true,
               //rtl: true, // Display as right-to-left
               back: const Icon(Icons.arrow_back),
+              backSemantic: MaterialLocalizations.of(context).previousPageTooltip,
               next: const Icon(Icons.arrow_forward),
+              nextSemantic: MaterialLocalizations.of(context).nextPageTooltip,
               done: Text(s.done,
                   style: const TextStyle(fontWeight: FontWeight.w600)),
               pages: [

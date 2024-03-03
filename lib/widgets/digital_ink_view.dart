@@ -163,7 +163,9 @@ class DigitalInkViewState extends State<DigitalInkView> {
               icon: Icon(isMaterial(context)
                   ? Icons.backspace
                   : CupertinoIcons.delete_left_fill),
-              color: Theme.of(context).colorScheme.secondary),
+              color: Theme.of(context).colorScheme.secondary,
+              tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+          ),
         ),
         ...(_recognizedCharacters.isNotEmpty
             ? [

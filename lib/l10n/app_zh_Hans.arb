@@ -17,6 +17,8 @@
 
     "searchDictionaryHint": "粤语/{romanization}/英语",
 
+    "switchToHandwriting": "切换到手写",
+    "switchToKeyboard": "切换到键盘",
     "inkModelDownloading": "正在下载手写识别模型...",
     "inkModelFailedToDownload": "无法下载手写识别模型。请检查您的网络链接后重试。",
     "tryAgain": "重试",

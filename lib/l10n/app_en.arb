@@ -23,6 +23,8 @@
 
     "searchDictionaryHint": "Cantonese/English/{romanization}",
 
+    "switchToHandwriting": "Switch to Handwriting",
+    "switchToKeyboard": "Switch to Keyboard",
     "inkModelDownloading": "Downloading ink recognition model...",
     "inkModelFailedToDownload": "Failed to download ink recognition model. Please check your internet connection and try again.",
     "tryAgain": "Try Again",

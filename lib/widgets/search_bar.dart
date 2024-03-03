@@ -327,6 +327,11 @@ class IsSearching extends State<SearchBar> {
                           : CupertinoIcons.keyboard),
                         InputMode.done => const Icon(Icons.brush)
                       },
+                      tooltip: switch (context.watch<InputModeState>().mode) {
+                        InputMode.keyboard => s.switchToHandwriting,
+                        InputMode.ink => s.switchToKeyboard,
+                        InputMode.done => s.switchToHandwriting,
+                      },
                       onPressed: () {
                         context.read<InputModeState>().updateInputMode(
                                 switch (context.read<InputModeState>().mode) {
