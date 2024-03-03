@@ -109,6 +109,7 @@
     "learnMore": "Learn More",
     "dismiss": "Dismiss",
 
+    "addToBookmarks": "Bookmark",
     "bookmarks": "Bookmarks",
     "noBookmarks": "No bookmarks yet",
     "bookmarkDeleteConfirmation": "Are you sure you want to delete those bookmarks?",
@@ -158,6 +159,7 @@
     "pronunciationMethodTts": "System Text-to-Speech",
     "pronunciationMethodSyllableRecordingsShort": "Recording",
     "pronunciationMethodTtsShort": "TTS",
+    "pronunciation": "Pronunciation",
     "entryEgSpeechRate": "Example Speech Rate",
 
     "speechRateVerySlow": "Very Slow",

@@ -82,7 +82,9 @@ class EntryLabels extends StatelessWidget {
                                   .watch<BookmarkState>()
                                   .isItemInStore(entryId)
                               ? Icon(PlatformIcons(context).bookmarkSolid)
-                              : Icon(PlatformIcons(context).bookmarkOutline)),
+                              : Icon(PlatformIcons(context).bookmarkOutline),
+                        tooltip: AppLocalizations.of(context)!.addToBookmarks,
+                      ),
                     ),
                   ],
                 ))),

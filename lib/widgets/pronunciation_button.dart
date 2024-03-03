@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
@@ -76,7 +77,7 @@ class PronunciationButtonState extends State<PronunciationButton> {
                 iconSize:
                     Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
                 visualDensity: VisualDensity.compact,
-                tooltip: "Pronunciation",
+                tooltip: AppLocalizations.of(context)!.pronunciation,
                 alignment: widget.alignment,
                 icon: icon(),
                 color: Theme.of(context).colorScheme.secondary,

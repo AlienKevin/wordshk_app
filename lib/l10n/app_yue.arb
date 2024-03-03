@@ -100,6 +100,7 @@
     "learnMore": "知多啲",
     "dismiss": "關閉",
 
+    "addToBookmarks": "收藏",
     "bookmarks": "收藏",
     "noBookmarks": "未有收藏",
     "bookmarkDeleteConfirmation": "請問你係咪確定要刪除呢啲收藏？",
@@ -147,6 +148,7 @@
     "entryEgPronunciationMethod": "注音例句發音方式",
     "pronunciationMethodSyllableRecordings": "音節錄音",
     "pronunciationMethodTts": "系統語音合成",
+    "pronunciation": "發音",
     "entryEgSpeechRate": "例句發音速度",
 
     "speechRateVerySlow": "極慢",

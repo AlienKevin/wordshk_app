@@ -98,6 +98,7 @@
     "learnMore": "了解更多",
     "dismiss": "关闭",
 
+    "addToBookmarks": "收藏",
     "bookmarks": "收藏",
     "noBookmarks": "尚无收藏",
     "bookmarkDeleteConfirmation": "请问你是否确定要刪除这些收藏？",
@@ -145,6 +146,7 @@
     "entryEgPronunciationMethod": "注音例句发音方式",
     "pronunciationMethodSyllableRecordings": "音节录音",
     "pronunciationMethodTts": "系统语音合成",
+    "pronunciation": "发音",
     "entryEgSpeechRate": "例句发音速度",
 
     "speechRateVerySlow": "非常慢",
