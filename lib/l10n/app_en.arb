@@ -25,6 +25,7 @@
 
     "switchToHandwriting": "Switch to Handwriting",
     "switchToKeyboard": "Switch to Keyboard",
+    "clear": "Clear",
     "inkModelDownloading": "Downloading ink recognition model...",
     "inkModelFailedToDownload": "Failed to download ink recognition model. Please check your internet connection and try again.",
     "tryAgain": "Try Again",

@@ -19,6 +19,7 @@
 
     "switchToHandwriting": "切換到手寫",
     "switchToKeyboard": "切換到鍵盤",
+    "clear": "清除",
     "inkModelDownloading": "正在下載手寫識別模型...",
     "inkModelFailedToDownload": "無法下載手寫識別模型。請檢查您的網路連結後重試。",
     "tryAgain": "重試",

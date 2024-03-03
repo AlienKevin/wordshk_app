@@ -345,7 +345,7 @@ class IsSearching extends State<SearchBar> {
                           IconButton(
                               icon: Icon(
                                   PlatformIcons(context).clearThickCircled,
-                                  semanticLabel: "Clear"),
+                                  semanticLabel: s.clear),
                               color: buttonColor,
                               disabledColor: theme.disabledColor.withOpacity(0),
                               onPressed: !_clearActive
