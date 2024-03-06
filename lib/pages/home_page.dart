@@ -1,5 +1,6 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide SearchBar, NavigationDrawer;
 import 'package:flutter/services.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
@@ -161,7 +162,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             if (!mounted) return;
 
             Clipboard.getData("text/plain").then((value) {
-              debugPrint("Clipboard text: ${value?.text}");
+              if (kDebugMode) {
+                debugPrint("Clipboard text: ${value?.text}");
+              }
               if (value != null && value.text != null) {
                 debugPrint("query text: ${context.read<SearchQueryState>().query}");
                 context.read<SearchQueryState>().clear();
