@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // The EntryPage corresponding to the select search result (used in wide screens)
   EntryPage? selectedSearchResultEntryPage;
   late final TabController _historyAndBookmarksTabController;
-
+  String? previousClipboardText;
   late TabController _searchResultTabController;
   late final ScrollController _searchResultScrollController;
   late final ListObserverController _observerController;
@@ -177,13 +177,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 }
                 context.read<SearchQueryState>().clear();
                 context.read<SearchQueryState>().typeString(text);
-              } else if (Platform.isIOS) {
+              } else if (Platform.isIOS && text != previousClipboardText) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
                       AppLocalizations.of(context)!.textTooLongNotPasted),
                   duration: const Duration(seconds: 2),
                 ));
               }
+              previousClipboardText = text;
             }
           });
         }
