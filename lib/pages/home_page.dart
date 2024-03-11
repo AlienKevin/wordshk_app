@@ -146,10 +146,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       },
       onCleared: () {
         setState(() {
-          // TODO: hide search results
           queryEmptied = true;
           selectedSearchResultEntryPage = null;
         });
+        _clearSearchResults();
       },
       onSubmitted: (query) {
         onSearchSubmitted(query, getEmbedded());
