@@ -94,6 +94,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             context.read<SearchQueryState>().query, getEmbedded());
       });
     });
+
+    if (context.read<AutoPasteSearchState>().autoPasteSearch) {
+      autoPasteSearch();
+    }
   }
 
   onSearchSubmitted(String query, Embedded embedded) {
@@ -122,6 +126,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
       }
     }
+  }
+
+  autoPasteSearch() {
+    Clipboard.getData("text/plain").then((value) {
+      if (kDebugMode) {
+        debugPrint("Clipboard text: ${value?.text}");
+      }
+      if (value != null && value.text != null) {
+        final text = value.text!.replaceAll('\n', '');
+        final tokenCounts = countTokens(text);
+        final totalCount = tokenCounts.total;
+        if (totalCount < 12 && tokenCounts.english <= 5) {
+          if (kDebugMode) {
+            debugPrint(
+                "Replacing query text: ${context.read<SearchQueryState>().query}");
+          }
+          context.read<SearchQueryState>().clear();
+          context.read<SearchQueryState>().typeString(text);
+        } else if (Platform.isIOS && text != previousClipboardText) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                AppLocalizations.of(context)!.textTooLongNotPasted),
+            duration: const Duration(seconds: 2),
+          ));
+        }
+        previousClipboardText = text;
+      }
+    });
   }
 
   @override
@@ -160,33 +192,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       onEvent: (FGBGType value) async {
         if (value == FGBGType.foreground &&
             context.read<AutoPasteSearchState>().autoPasteSearch) {
-          // print("App is in the foreground");
-
-          Clipboard.getData("text/plain").then((value) {
-            if (kDebugMode) {
-              debugPrint("Clipboard text: ${value?.text}");
-            }
-            if (value != null && value.text != null) {
-              final text = value.text!.replaceAll('\n', '');
-              final tokenCounts = countTokens(text);
-              final totalCount = tokenCounts.total;
-              if (totalCount < 12 && tokenCounts.english <= 5) {
-                if (kDebugMode) {
-                  debugPrint(
-                      "Replacing query text: ${context.read<SearchQueryState>().query}");
-                }
-                context.read<SearchQueryState>().clear();
-                context.read<SearchQueryState>().typeString(text);
-              } else if (Platform.isIOS && text != previousClipboardText) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.textTooLongNotPasted),
-                  duration: const Duration(seconds: 2),
-                ));
-              }
-              previousClipboardText = text;
-            }
-          });
+          debugPrint("App is in the foreground");
+          autoPasteSearch();
         }
       },
       child: KeyboardVisibilityProvider(
