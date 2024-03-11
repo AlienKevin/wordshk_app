@@ -193,7 +193,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         if (value == FGBGType.foreground &&
             context.read<AutoPasteSearchState>().autoPasteSearch) {
           debugPrint("App is in the foreground");
-          autoPasteSearch();
+          // Your app cannot access clipboard data on Android 10 or higher unless it currently has focus.
+          // So we have to wait until the widget is rendered to access the clipboard data.
+          // https://stackoverflow.com/questions/65465361/null-from-clipboard
+          // https://developer.android.com/about/versions/10/privacy/changes#clipboard-data
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            autoPasteSearch();
+          });
         }
       },
       child: KeyboardVisibilityProvider(
