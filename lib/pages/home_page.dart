@@ -84,6 +84,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.read<AutoPasteSearchState>().autoPasteSearch) {
+        autoPasteSearch();
+      }
+
       final query = context.read<SearchQueryState>().query;
       if (query.isNotEmpty) {
         queryEmptied = false;
@@ -94,10 +98,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             context.read<SearchQueryState>().query, getEmbedded());
       });
     });
-
-    if (context.read<AutoPasteSearchState>().autoPasteSearch) {
-      autoPasteSearch();
-    }
   }
 
   onSearchSubmitted(String query, Embedded embedded) {
