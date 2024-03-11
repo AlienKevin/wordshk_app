@@ -136,8 +136,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (value != null && value.text != null) {
         final text = value.text!.replaceAll('\n', '');
         final tokenCounts = countTokens(text);
-        final totalCount = tokenCounts.total;
-        if (totalCount < 12 && tokenCounts.english <= 5) {
+        if (tokenCounts.total < 12 && tokenCounts.english <= 5 && text.characters.length <= 30) {
           if (kDebugMode) {
             debugPrint(
                 "Replacing query text: ${context.read<SearchQueryState>().query}");
