@@ -42,6 +42,7 @@ import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/src/rust/frb_generated.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/analytics_state.dart';
+import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
@@ -161,6 +162,7 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
         providers: [
           ChangeNotifierProvider<AnalyticsSettingsState>(
               create: (_) => AnalyticsSettingsState(prefs)),
+          ChangeNotifierProvider<AutoPasteSearchState>(create: (_) => AutoPasteSearchState(prefs)),
           ChangeNotifierProvider<SearchQueryState>(
               create: (_) => SearchQueryState()),
           ChangeNotifierProvider<SearchBarPositionState>(

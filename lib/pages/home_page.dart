@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +14,7 @@ import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/models/embedded.dart';
 import 'package:wordshk/models/search_bar_position.dart';
 import 'package:wordshk/src/rust/api/api.dart';
+import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/search_bar_position_state.dart';
@@ -155,25 +158,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     return FGBGNotifier(
       onEvent: (FGBGType value) async {
-        if (value == FGBGType.foreground) {
+        if (value == FGBGType.foreground &&
+            context.read<AutoPasteSearchState>().autoPasteSearch) {
           // print("App is in the foreground");
-          if (await Clipboard.hasStrings()) {
-            debugPrint("Clipboard has strings");
-            if (!mounted) return;
 
-            Clipboard.getData("text/plain").then((value) {
-              if (kDebugMode) {
-                debugPrint("Clipboard text: ${value?.text}");
-              }
-              if (value != null && value.text != null) {
-                debugPrint("query text: ${context.read<SearchQueryState>().query}");
+          Clipboard.getData("text/plain").then((value) {
+            if (kDebugMode) {
+              debugPrint("Clipboard text: ${value?.text}");
+            }
+            if (value != null && value.text != null) {
+              final text = value.text!.replaceAll('\n', '');
+              final tokenCounts = countTokens(text);
+              final totalCount = tokenCounts.total;
+              if (totalCount < 12 && tokenCounts.english <= 5) {
+                if (kDebugMode) {
+                  debugPrint(
+                      "Replacing query text: ${context.read<SearchQueryState>().query}");
+                }
                 context.read<SearchQueryState>().clear();
-                context.read<SearchQueryState>().typeString(value.text!);
+                context.read<SearchQueryState>().typeString(text);
+              } else if (Platform.isIOS) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.textTooLongNotPasted),
+                  duration: const Duration(seconds: 2),
+                ));
               }
-            });
-          } else {
-            debugPrint("Clipboard does not have strings");
-          }
+            }
+          });
         }
       },
       child: KeyboardVisibilityProvider(
@@ -198,9 +210,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ? [
                     DigitalInkView(
                       typeCharacter: (character) {
-                        context
-                            .read<SearchQueryState>()
-                            .typeString(character);
+                        context.read<SearchQueryState>().typeString(character);
                       },
                       backspace: () {
                         context.read<SearchQueryState>().backspace();

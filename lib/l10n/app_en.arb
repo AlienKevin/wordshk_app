@@ -188,6 +188,8 @@
     "bottom": "Bottom",
     "clearHistory": "Clear Search History",
     "historyClearConfirmation": "Are you sure you want to clear the search history?",
+    "autoPasteIntoSearchBar": "Auto Paste into Search Bar",
+    "textTooLongNotPasted": "Text too long, not pasted",
 
     "privacy": "Privacy",
     "privacyPolicy": "Privacy Policy",

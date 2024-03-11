@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
+import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
@@ -141,6 +142,15 @@ class SettingsPage extends StatelessWidget {
                     },
                     title: Text(s.clearHistory),
                   ),
+                  SettingsTile.switchTile(
+                      initialValue:
+                      context.watch<AutoPasteSearchState>().autoPasteSearch,
+                      onToggle: (newAutoPasteSearch) {
+                        context
+                            .read<AutoPasteSearchState>()
+                            .updateAutoPasteSearch(newAutoPasteSearch);
+                      },
+                      title: Text(s.autoPasteIntoSearchBar)),
                 ],
               ),
               SettingsSection(

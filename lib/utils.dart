@@ -240,3 +240,47 @@ Future<bool> getIsPhone() async {
     return false;
   }
 }
+
+class TokenCounts {
+  int chinese;
+  int english;
+  int punctuation;
+
+  TokenCounts({this.chinese = 0, this.english = 0, this.punctuation = 0});
+
+  int get total => chinese + english + punctuation;
+
+  @override
+  String toString() {
+    return 'TokenCounts{chinese: $chinese, english: $english, punctuation: $punctuation}';
+  }
+}
+
+TokenCounts countTokens(String text) {
+  final TokenCounts counts = TokenCounts();
+
+  // Regular expressions for matching Chinese characters, English words, and punctuations
+  final RegExp regexChinese = RegExp(r'[\u4e00-\u9fff]');
+  final RegExp regexEnglish = RegExp(r"\b[a-zA-Z']+\b");
+  final RegExp regexPunctuation = RegExp(r'[.,/#!$%^&*;:{}=\-_`~()]');
+
+  // Split text into potential tokens
+  var tokens = text.split(' ');
+
+  for (var token in tokens) {
+    // Count Chinese characters
+    var matchesChinese = regexChinese.allMatches(token);
+    counts.chinese += matchesChinese.length;
+
+    // Count English words
+    if (regexEnglish.hasMatch(token)) {
+      counts.english++;
+    }
+
+    // Count punctuations
+    var matchesPunctuation = regexPunctuation.allMatches(token);
+    counts.punctuation += matchesPunctuation.length;
+  }
+
+  return counts;
+}

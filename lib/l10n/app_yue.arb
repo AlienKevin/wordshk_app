@@ -177,6 +177,8 @@
     "bottom": "底部",
     "clearHistory": "清除搜尋紀錄",
     "historyClearConfirmation": "請問你係咪確定要清除所有搜尋紀錄？",
+    "autoPasteIntoSearchBar": "自動貼上到搜尋欄",
+    "textTooLongNotPasted": "文字太長，停止貼上。",
 
     "privacy": "私隱",
     "privacyPolicy": "私隱政策",
