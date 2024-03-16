@@ -1,7 +1,7 @@
 # Setup
 
 ```
-conda create -n hbl maturin
+conda create -n hbl maturin requests
 ```
 
 ```
