@@ -3,8 +3,9 @@ import hbl
 
 with open('collated_data.json', 'r') as f:
     collated_data = json.load(f)
-    for book in collated_data:
-        for page in collated_data[book]['pages']:
+    for book in collated_data.values():
+        book['title_C_s'] = hbl.to_simplified(book['title_C'])
+        for page in book['pages']:
             for sent in page['sentences']:
                 for gloss in sent['glosses']:
                     gloss['C_s'] = hbl.to_simplified(gloss['C'])
