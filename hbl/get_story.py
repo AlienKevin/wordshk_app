@@ -74,7 +74,8 @@ for i in tqdm(range(len(books_data['id']))):
 
                     # Iterate over the characters data
                     for n in range(len(chars_data['id'])):
-                        if chars_data['id'][n] == book_id and chars_data['pg'][n] == pages_data['pg'][j] and chars_data['sent'][n] == sents_data['sent'][k]:
+                        char_sent_num = chars_data['sent'][n] + sum(len(page['sentences']) for page in collated_data[book_id]['pages'])
+                        if chars_data['id'][n] == book_id and chars_data['pg'][n] == pages_data['pg'][j] and char_sent_num == sents_data['sent'][k]:
                             sent_data['chars'].append({
                                 'char': chars_data['char'][n],
                                 'C': chars_data['C'][n],
