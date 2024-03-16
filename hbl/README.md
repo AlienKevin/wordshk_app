@@ -19,4 +19,5 @@ maturin develop
 python get_story.py
 python add_simplified.py
 python add_gloss_start_end.py
+python minify_json.py
 ```
