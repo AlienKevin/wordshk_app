@@ -14,6 +14,10 @@ with open('collated_data_simplified.json', 'r') as f:
                         if ''.join([char['C'] for char in sent['chars'][start:end]]) == phrase:
                             gloss['start'] = start
                             gloss['end'] = end
+                            i = 0
+                            for char in sent['chars'][start:end]:
+                                char['C_s'] = gloss['C_s'][i:i + len(char['C'])]
+                                i += len(char['C'])
                             start = end
                             break
                         else:
