@@ -35,6 +35,8 @@ import 'package:wordshk/pages/settings/romanization_page.dart';
 import 'package:wordshk/pages/settings/script_page.dart';
 import 'package:wordshk/pages/settings/search_bar_position_page.dart';
 import 'package:wordshk/pages/settings_page.dart';
+import 'package:wordshk/pages/stories_catalog_page.dart';
+import 'package:wordshk/pages/story_page.dart';
 import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
 import 'package:wordshk/pages/tone_exercise_page.dart';
 import 'package:wordshk/sentry_dsn.dart';
@@ -86,7 +88,8 @@ bool sentryEnabled = true;
 class CustomSentryEventProcessor implements EventProcessor {
   @override
   FutureOr<SentryEvent?> apply(SentryEvent event, {dynamic hint}) {
-    if (sentryEnabled || (event.message?.formatted.contains("[USER FEEDBACK]") ?? false)) {
+    if (sentryEnabled ||
+        (event.message?.formatted.contains("[USER FEEDBACK]") ?? false)) {
       return event;
     }
     // Returning null will discard the event, effectively stopping reporting
@@ -162,7 +165,8 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
         providers: [
           ChangeNotifierProvider<AnalyticsSettingsState>(
               create: (_) => AnalyticsSettingsState(prefs)),
-          ChangeNotifierProvider<AutoPasteSearchState>(create: (_) => AutoPasteSearchState(prefs)),
+          ChangeNotifierProvider<AutoPasteSearchState>(
+              create: (_) => AutoPasteSearchState(prefs)),
           ChangeNotifierProvider<SearchQueryState>(
               create: (_) => SearchQueryState()),
           ChangeNotifierProvider<SearchBarPositionState>(
@@ -194,8 +198,7 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
               lazy: false),
           ChangeNotifierProvider<ExerciseIntroductionState>(
               create: (_) => ExerciseIntroductionState(prefs)),
-          ChangeNotifierProvider<EntryState>(
-              create: (_) => EntryState()),
+          ChangeNotifierProvider<EntryState>(create: (_) => EntryState()),
         ],
         child: MyApp(firstTimeUser: firstTimeUser_, prefs: prefs),
       ),
@@ -237,6 +240,17 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                             state.uri.queryParameters['openedInExercise'] ==
                                 'true'),
                   ),
+                  GoRoute(
+                    path: 'stories',
+                    builder: (context, state) => const StoriesCatalogPage(),
+                  ),
+                GoRoute(
+                  path: 'stories/:storyId',
+                  builder: (context, state) {
+                    final storyId = int.parse(state.pathParameters['storyId']!);
+                    return StoryPage(storyId: storyId);
+                  },
+                ),
                 ],
               ),
             ]),
@@ -391,11 +405,11 @@ class _MyAppState extends State<MyApp> {
     accentColor(Brightness brightness) =>
         brightness == Brightness.light ? blueColor : lightBlueColor;
     const headlineLarge =
-    TextStyle(fontSize: 46.0, fontWeight: FontWeight.w600);
+        TextStyle(fontSize: 46.0, fontWeight: FontWeight.w600);
     const headlineMedium =
-    TextStyle(fontSize: 36.0, fontWeight: FontWeight.w600);
+        TextStyle(fontSize: 36.0, fontWeight: FontWeight.w600);
     const headlineSmall =
-    TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600);
+        TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600);
     const titleLarge = TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600);
     const titleMedium = TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600);
     const titleSmall = TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600);
@@ -413,25 +427,25 @@ class _MyAppState extends State<MyApp> {
       bodyMedium: bodyMedium,
     );
     appBarTheme(Brightness brightness) => AppBarTheme.of(context).copyWith(
-      backgroundColor:
-      brightness == Brightness.light ? lightGreyColor : null,
-      centerTitle: true,
-    );
+          backgroundColor:
+              brightness == Brightness.light ? lightGreyColor : null,
+          centerTitle: true,
+        );
     textSelectionTheme(Brightness brightness) => TextSelectionThemeData(
         selectionColor: lightBlueColor.withAlpha(50),
         selectionHandleColor:
-        brightness == Brightness.light ? blueColor : lightBlueColor,
+            brightness == Brightness.light ? blueColor : lightBlueColor,
         cursorColor:
-        brightness == Brightness.light ? blueColor : lightBlueColor);
+            brightness == Brightness.light ? blueColor : lightBlueColor);
     textButtonTheme(Brightness brightness) => TextButtonThemeData(
-        style: ButtonStyle(
+            style: ButtonStyle(
           textStyle: MaterialStateProperty.all(
               bodyLarge.copyWith(color: accentColor(brightness))),
           foregroundColor:
-          MaterialStateProperty.resolveWith((_) => accentColor(brightness)),
+              MaterialStateProperty.resolveWith((_) => accentColor(brightness)),
         ));
     elevatedButtonTheme(Brightness brightness) => ElevatedButtonThemeData(
-        style: ButtonStyle(
+            style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(blueColor),
           textStyle: MaterialStateProperty.all(
               bodyLarge.copyWith(color: Colors.white)),

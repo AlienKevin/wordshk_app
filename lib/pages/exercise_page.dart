@@ -40,6 +40,22 @@ class ExercisePage extends StatelessWidget {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: ListTile(
+                  title: Text("Stories"),
+                  tileColor: Theme.of(context).cardColor,
+                  onTap: () {
+                    context.go("/exercise/stories");
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),
