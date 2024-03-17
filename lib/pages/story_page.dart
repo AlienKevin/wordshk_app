@@ -12,8 +12,16 @@ class StoryPage extends StatefulWidget {
   _StoryPageState createState() => _StoryPageState();
 }
 
+class Book {
+  final int id;
+  final String title;
+  final List<dynamic> sentences;
+
+  Book({required this.id, required this.title, required this.sentences});
+}
+
 class _StoryPageState extends State<StoryPage> {
-  late Future<(String, List<dynamic>)> _content;
+  late Future<Book> _content;
 
   @override
   void initState() {
@@ -21,7 +29,7 @@ class _StoryPageState extends State<StoryPage> {
     _content = _loadStoryContent(widget.storyId);
   }
 
-  Future<(String, List<dynamic>)> _loadStoryContent(int storyId) async {
+  Future<Book> _loadStoryContent(int storyId) async {
     final String response = await rootBundle.loadString('assets/hbl.json');
     final data = await json.decode(response);
     List<dynamic> sentences = [];
@@ -36,10 +44,11 @@ class _StoryPageState extends State<StoryPage> {
         }
       }
     });
-    return (title, sentences);
+    return Book(id: storyId, title: title, sentences: sentences);
   }
 
-  EntryRubyLine glossesToRubyLine(glosses) {
+  EntryRubyLine glossesToRubyLine(
+      List<dynamic> glosses, int bookId, int sentId) {
     return EntryRubyLine(
       line: RubyLine(glosses
           .map<RubySegment>((gloss) => gloss['E'].length == 0 ||
@@ -67,12 +76,14 @@ class _StoryPageState extends State<StoryPage> {
       rubyFontSize: Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5,
       onTapLink: null,
       showPrsButton: true,
+      prUrl:
+          'https://hbl.kevinx.li/${bookId.toString().padLeft(5, '0')}_${sentId.toString().padLeft(2, '0')}.mp3',
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<(String, List<dynamic>)>(
+    return FutureBuilder<Book>(
         future: _content,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -81,10 +92,10 @@ class _StoryPageState extends State<StoryPage> {
             }
             return Scaffold(
                 appBar: AppBar(
-                  title: Text(snapshot.data!.$1),
+                  title: Text(snapshot.data!.title),
                 ),
                 body: ListView.builder(
-                    itemCount: snapshot.data?.$2.length ?? 0,
+                    itemCount: snapshot.data?.sentences.length ?? 0,
                     itemBuilder: (context, index) => Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: Theme.of(context)
@@ -93,7 +104,9 @@ class _StoryPageState extends State<StoryPage> {
                                 .fontSize!,
                             horizontal: 10),
                         child: glossesToRubyLine(
-                            snapshot.data!.$2[index]['glosses']))));
+                            snapshot.data!.sentences[index]['glosses'],
+                            snapshot.data!.id,
+                            index + 1))));
           } else {
             return const Center(child: CircularProgressIndicator());
           }

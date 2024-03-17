@@ -16,6 +16,7 @@ import '../models/speech_rate.dart';
 class PlayerState with ChangeNotifier {
   Completer<FlutterTts> ttsPlayer = Completer();
   Completer<AudioPlayer> syllablesPlayer = Completer();
+  Completer<AudioPlayer> urlPlayer = Completer();
   Completer<AudioSession> session = Completer();
   Player? currentPlayer;
   bool playerStoppedDueToSwitch = false;
@@ -49,6 +50,7 @@ class PlayerState with ChangeNotifier {
       session.complete(sessionValue);
 
       syllablesPlayer.complete(AudioPlayer());
+      urlPlayer.complete(AudioPlayer());
 
       final ttsPlayerValue = FlutterTts();
       await ttsPlayerValue.setSharedInstance(true);
@@ -90,6 +92,9 @@ class PlayerState with ChangeNotifier {
       case SyllablesPlayer():
         await syllablesPlay(newPlayer, speechRateState);
         break;
+      case UrlPlayer():
+        await urlPlay(newPlayer);
+        break;
     }
     return false;
   }
@@ -99,6 +104,24 @@ class PlayerState with ChangeNotifier {
     currentPlayer = null;
     playerStoppedDueToSwitch = false;
     notifyListeners();
+  }
+
+  Future<void> urlPlay(UrlPlayer player) async {
+    final player_ = await urlPlayer.future;
+    await player_.setUrl(player.url);
+
+    player_.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        if (!playerStoppedDueToSwitch) {
+          currentPlayer = null;
+          notifyListeners();
+        } else {
+          playerStoppedDueToSwitch = false;
+        }
+      }
+    });
+
+    await player_.play();
   }
 
   Future<void> syllablesPlay(
@@ -213,6 +236,9 @@ class PlayerState with ChangeNotifier {
         break;
       case SyllablesPlayer():
         await (await syllablesPlayer.future).stop();
+        break;
+      case UrlPlayer():
+        await (await urlPlayer.future).stop();
         break;
     }
   }

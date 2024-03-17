@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
+import 'package:wordshk/widgets/url_pronunciation_button.dart';
 
 import '../../models/entry.dart';
 import '../../models/pronunciation_method.dart';
@@ -18,6 +19,7 @@ class EntryRubyLine extends StatelessWidget {
   final double rubyFontSize;
   final OnTapLink? onTapLink;
   final bool showPrsButton;
+  final String? prUrl;
   const EntryRubyLine({
     Key? key,
     required this.line,
@@ -26,6 +28,7 @@ class EntryRubyLine extends StatelessWidget {
     required this.rubyFontSize,
     required this.onTapLink,
     this.showPrsButton = true,
+    this.prUrl,
   }) : super(key: key);
 
   @override
@@ -41,29 +44,40 @@ class EntryRubyLine extends StatelessWidget {
                           segment.type == RubySegmentType.punc &&
                               line.segments.last == segment))
                   .expand((i) => i),
-              ...showPrsButton ? [Consumer<PronunciationMethodState>(
-                  builder: (context, pronunciationMethodState, child) =>
-                      pronunciationMethodState.entryEgMethod ==
-                              PronunciationMethod.tts
-                          ? TtsPronunciationButton(
-                              text: Platform.isIOS
-                                  ? line.toPrs()
-                                  : line.toString(),
-                              alignment: Alignment.topCenter,
-                              atHeader: false,
-                            )
-                          : SyllablePronunciationButton(
-                              prs: line
-                                  .toPrs()
-                                  .split(RegExp(
-                                      r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
-                                  .where((segment) => segment.isNotEmpty)
-                                  .map((segment) =>
-                                      segment.split(RegExp(r"\s+")))
-                                  .toList(),
-                              alignment: Alignment.topCenter,
-                              atHeader: false,
-                            ))]: [],
+              ...showPrsButton
+                  ? [
+                      Consumer<PronunciationMethodState>(
+                          builder: (context, pronunciationMethodState, child) =>
+                              prUrl != null
+                                  ? UrlPronunciationButton(
+                                      url: prUrl!,
+                                      alignment: Alignment.topCenter,
+                                      atHeader: false,
+                                    )
+                                  : pronunciationMethodState.entryEgMethod ==
+                                          PronunciationMethod.tts
+                                  ? TtsPronunciationButton(
+                                      text: Platform.isIOS
+                                          ? line.toPrs()
+                                          : line.toString(),
+                                      alignment: Alignment.topCenter,
+                                      atHeader: false,
+                                    )
+                                  : SyllablePronunciationButton(
+                                      prs: line
+                                          .toPrs()
+                                          .split(RegExp(
+                                              r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
+                                          .where(
+                                              (segment) => segment.isNotEmpty)
+                                          .map((segment) =>
+                                              segment.split(RegExp(r"\s+")))
+                                          .toList(),
+                                      alignment: Alignment.topCenter,
+                                      atHeader: false,
+                                    ))
+                    ]
+                  : [],
             ]
                 .map((e) => Row(
                       crossAxisAlignment: CrossAxisAlignment.end,

@@ -33,3 +33,9 @@ class SyllablesPlayer extends Player {
 
   SyllablesPlayer({required this.prs, required super.atHeader, super.key});
 }
+
+class UrlPlayer extends Player {
+  final String url;
+
+  UrlPlayer({required this.url, required super.atHeader, super.key});
+}
