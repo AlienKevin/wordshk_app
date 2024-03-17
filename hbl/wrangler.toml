@@ -1,0 +1,9 @@
+name = "hbl"
+account_id = "9b1c15c31934d36a766a94435d0e90ad"
+workers_dev = true
+node_compat = true
+compatibility_date = "2024-03-04"
+
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "hbl"
