@@ -36,8 +36,8 @@ class EgIsJumpyPrsRadioListTiles extends StatelessWidget {
         controlAffinity: ListTileControlAffinity.leading,
         activeColor: Theme.of(context).colorScheme.onPrimary,
         activeTrackColor: Theme.of(context).colorScheme.secondary,
-        trackOutlineColor: MaterialStateProperty.all(
-            Theme.of(context).colorScheme.secondary),
+        trackOutlineColor:
+            MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
         inactiveThumbColor: Theme.of(context).colorScheme.secondary,
         inactiveTrackColor: const Color.fromARGB(0, 0, 0, 0),
         visualDensity: VisualDensity.compact,
@@ -46,8 +46,38 @@ class EgIsJumpyPrsRadioListTiles extends StatelessWidget {
       Divider(height: Theme.of(context).textTheme.bodyLarge!.fontSize! * 2),
       Center(
         child: EntryRubyLine(
-          line: RubyLine.fromJson(jsonDecode(
-              '[{"L":[[[["N","${isTraditional ? '舉' : '举'}"]],["geoi2"]] ,[[["N","${isTraditional ? '個' : '个'}"]],["go3"]], [[["N","例"]],["lai6"]], [[["N","子"]],["zi2"]]]}]')),
+          line: RubyLine([
+            RubySegment(
+                RubySegmentType.word,
+                RubySegmentWord(
+                    EntryWord([
+                      EntryText(
+                          EntryTextStyle.normal, isTraditional ? "舉" : "举")
+                    ]),
+                    const ["geoi2"],
+                    const [2])),
+            RubySegment(
+                RubySegmentType.word,
+                RubySegmentWord(
+                    EntryWord([
+                      EntryText(
+                          EntryTextStyle.normal, isTraditional ? "個" : "个")
+                    ]),
+                    const ["go3"],
+                    const [3])),
+            const RubySegment(
+                RubySegmentType.word,
+                RubySegmentWord(
+                    EntryWord([EntryText(EntryTextStyle.normal, "例")]),
+                    ["lai6"],
+                    [6])),
+            const RubySegment(
+                RubySegmentType.word,
+                RubySegmentWord(
+                    EntryWord([EntryText(EntryTextStyle.normal, "子")]),
+                    ["zi2"],
+                    [2]))
+          ]),
           textColor: Theme.of(context).textTheme.bodyLarge!.color!,
           linkColor: Theme.of(context).textTheme.bodyLarge!.color!,
           rubyFontSize: Theme.of(context).textTheme.bodyLarge!.fontSize! * 2,
