@@ -10,10 +10,6 @@ with open('collated_data_simplified_glossed.json', 'r') as f:
             for sent in page['sentences']:
                 del sent['sent']
                 del sent['verif_transl']
-                for gloss in sent['glosses']:
-                    del gloss['glo']
-                    del gloss['E']
-                    del gloss['C_s']
 
                 for char in sent['chars']:
                     del char['char']
@@ -23,5 +19,15 @@ with open('collated_data_simplified_glossed.json', 'r') as f:
                     char['pr'] = char['jyutping']
                     del char['jyutping']
 
-with open('collated_data_minified.json', 'w') as f:
+                for gloss in sent['glosses']:
+                    del gloss['glo']
+                    del gloss['C_s']
+                    del gloss['C']
+                    gloss['chars'] = [sent['chars'][i] for i in range(gloss['start'], gloss['end'])]
+                    del gloss['start']
+                    del gloss['end']
+
+                del sent['chars']
+
+with open('hbl.json', 'w') as f:
     json.dump(collated_data, f, ensure_ascii=False, indent=None, separators=(',', ':'))

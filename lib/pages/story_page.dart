@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wordshk/models/entry.dart';
+import 'package:wordshk/widgets/entry/entry_ruby_line.dart';
 
 class StoryPage extends StatefulWidget {
   final int storyId;
@@ -37,6 +39,34 @@ class _StoryPageState extends State<StoryPage> {
     return (title, sentences);
   }
 
+  EntryRubyLine glossesToRubyLine(glosses) {
+    return EntryRubyLine(
+      line: RubyLine(glosses
+          .map<RubySegment>((gloss) => RubySegment(
+              RubySegmentType.word,
+              RubySegmentWord(
+                  EntryWord(gloss['chars']
+                      .map<EntryText>((char) => EntryText(
+                          EntryTextStyle.normal, char['C_s'] as String))
+                      .toList()),
+                  (gloss['chars'] as List<dynamic>)
+                      .map((char) => char['pr'] as String)
+                      .toList(),
+                  (gloss['chars'] as List<dynamic>)
+                      .map((char) => char['pr'].length > 0
+                          ? int.parse(
+                              char['pr'][char['pr'].length - 1] as String)
+                          : 6)
+                      .toList())))
+          .toList()),
+      textColor: Theme.of(context).textTheme.bodyLarge!.color!,
+      linkColor: Theme.of(context).textTheme.bodyLarge!.color!,
+      rubyFontSize: Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5,
+      onTapLink: null,
+      showPrsButton: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<(String, List<dynamic>)>(
@@ -51,14 +81,16 @@ class _StoryPageState extends State<StoryPage> {
                   title: Text(snapshot.data!.$1),
                 ),
                 body: ListView.builder(
-                  itemCount: snapshot.data?.$2.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(snapshot.data!.$2[index]['C']),
-                      subtitle: Text(snapshot.data!.$2[index]['E']),
-                    );
-                  },
-                ));
+                    itemCount: snapshot.data?.$2.length ?? 0,
+                    itemBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .fontSize!,
+                            horizontal: 10),
+                        child: glossesToRubyLine(
+                            snapshot.data!.$2[index]['glosses']))));
           } else {
             return const Center(child: CircularProgressIndicator());
           }
