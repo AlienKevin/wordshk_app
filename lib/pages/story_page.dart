@@ -42,28 +42,31 @@ class _StoryPageState extends State<StoryPage> {
   EntryRubyLine glossesToRubyLine(glosses) {
     return EntryRubyLine(
       line: RubyLine(glosses
-          .map<RubySegment>((gloss) => RubySegment(
-              RubySegmentType.word,
-              RubySegmentWord(
-                  EntryWord(gloss['chars']
-                      .map<EntryText>((char) => EntryText(
-                          EntryTextStyle.normal, char['C_s'] as String))
-                      .toList()),
-                  (gloss['chars'] as List<dynamic>)
-                      .map((char) => char['pr'] as String)
-                      .toList(),
-                  (gloss['chars'] as List<dynamic>)
-                      .map((char) => char['pr'].length > 0
-                          ? int.parse(
-                              char['pr'][char['pr'].length - 1] as String)
-                          : 6)
-                      .toList())))
+          .map<RubySegment>((gloss) => gloss['E'].length == 0 ||
+                  gloss['chars'].every((char) => char['pr'].length == 0)
+              ? RubySegment(RubySegmentType.punc,
+                  gloss['chars'].map((char) => char['C_s'] as String).join(''))
+              : RubySegment(
+                  RubySegmentType.word,
+                  RubySegmentWord(
+                      EntryWord(gloss['chars']
+                          .map<EntryText>((char) => EntryText(
+                              EntryTextStyle.normal, char['C_s'] as String))
+                          .toList()),
+                      (gloss['chars'] as List<dynamic>)
+                          .map((char) => char['pr'] as String)
+                          .toList(),
+                      (gloss['chars'] as List<dynamic>)
+                          .map((char) => char['pr'].length > 0
+                              ? int.parse(char['pr'][char['pr'].length - 1] as String)
+                              : 6)
+                          .toList())))
           .toList()),
       textColor: Theme.of(context).textTheme.bodyLarge!.color!,
       linkColor: Theme.of(context).textTheme.bodyLarge!.color!,
       rubyFontSize: Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5,
       onTapLink: null,
-      showPrsButton: false,
+      showPrsButton: true,
     );
   }
 
