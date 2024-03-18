@@ -10,12 +10,36 @@ words.hk dictionary for Android and iOS
 <a href='https://play.google.com/store/apps/details?id=hk.words.wordshk&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="80"/></a>
 <a href="https://f-droid.org/repository/browse/?fdid=hk.words.wordshk"><img alt="Get it on F-Droid" height="80" src="https://f-droid.org/badge/get-it-on.png"/></a>
 
-# Generate Rust Bindings
+# Setup
+
+1. Install Flutter by following the official doc: https://docs.flutter.dev/get-started/install
+
+2. Download and install Android Studio to develop for Android: https://developer.android.com/studio
+
+3. Start Android Studio, and go through the ‘Android Studio Setup Wizard’. This installs the latest Android SDK, Android SDK Command-line Tools, and Android SDK Build-Tools, which are required by Flutter when developing for Android.
+
+4. Run `flutter doctor` to confirm your installation is working. You should see some output like below.
+At a minimum you should have [✓] Flutter and [✓] Android toolchain to develop for Android, the other check marks are optional.
 ```
-# Follow the flutter_rust_bridge version in pubspec.yaml
-cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.11'
-flutter_rust_bridge_codegen generate
+[✓] Flutter (Channel stable, 3.19.3, on Ubuntu 20.04.6 LTS 6.2.0-1019-azure, locale C.UTF-8)
+[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+[✗] Chrome - develop for the web (Cannot find Chrome executable at google-chrome)
+    ...
+[✗] Linux toolchain - develop for Linux desktop
+    ...
+[!] Android Studio (not installed)
+[✓] Connected device (1 available)
+[✓] Network resources
 ```
+
+If you want to build for iOS, you are required to use a Mac. You will need the latest version of Xcode as well.
+
+3. Run the `setup.sh` at the root of this project to install the Rust backend.
+
+4. Run `flutter run` to run the app, or
+   * `flutter build appbundle` to create an Android app bundle
+   * `flutter build apk` to build an Android APK
+   * `flutter build ios` to build for iOS
 
 # Normalize jyutping syllable audios
 
