@@ -18,14 +18,9 @@
 
 // Section: imports
 
-use flutter_rust_bridge::{Handler, IntoIntoDart};
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use flutter_rust_bridge::for_generated::transform_result_dco;
-
-#[cfg(not(target_family = "wasm"))]
-pub use io::*;
-#[cfg(target_family = "wasm")]
-pub use web::*;
+use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: boilerplate
 
@@ -1173,7 +1168,12 @@ impl SseEncode for crate::api::api::VariantSearchResult {
 #[cfg(not(target_family = "wasm"))]
 #[path = "frb_generated.io.rs"]
 mod io;
+#[cfg(not(target_family = "wasm"))]
+pub use io::*;
+
 /// cbindgen:ignore
 #[cfg(target_family = "wasm")]
 #[path = "frb_generated.web.rs"]
 mod web;
+#[cfg(target_family = "wasm")]
+pub use web::*;

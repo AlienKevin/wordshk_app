@@ -11,7 +11,7 @@ else
 fi
 
 # Install Flutter Rust Bridge
-FLUTTER_RUST_BRIDGE_VERSION=$(grep flutter_rust_bridge: pubspec.yaml | awk '{print $2}')
+FLUTTER_RUST_BRIDGE_VERSION=$(grep flutter_rust_bridge: pubspec.yaml | awk '{print $2}' | sed 's/^\^/=/')
 cargo install "flutter_rust_bridge_codegen@$FLUTTER_RUST_BRIDGE_VERSION"
 
 if ! command -v flutter &> /dev/null; then
