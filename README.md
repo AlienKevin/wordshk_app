@@ -10,136 +10,11 @@ words.hk dictionary for Android and iOS
 <a href='https://play.google.com/store/apps/details?id=hk.words.wordshk&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="80"/></a>
 <a href="https://f-droid.org/repository/browse/?fdid=hk.words.wordshk"><img alt="Get it on F-Droid" height="80" src="https://f-droid.org/badge/get-it-on.png"/></a>
 
-# Build
-
-## Crate-Type
-In your `Cargo.toml`, ensure the following `crate-type` is present:
-
+# Generate Rust Bindings
 ```
-[lib]
-crate-type = ["staticlib", "cdylib"] # "staticlib" for iOS, "cdylib" for Android
-```
-
-## Rust for Android
-Install Android NDK in Android Studio:
-```bash
-Android Studio > Tools > SDK Manager > SDK Tools > NDK (Side by side)
-```
-
-Install Cargo NDK for Android:
-```bash
-cargo install cargo-ndk --version ^3.2.2
-```
-See [here](https://cjycode.com/flutter_rust_bridge/template/setup_android.html#android-ndk-1) for potential caveats.
-
-Download the Android targets for Rust:
-```bash
-rustup target add armv7-linux-androideabi
-rustup target add aarch64-linux-android
-```
-
-## Rust for iOS
-Install Cargo lip for iOS:
-```bash
-cargo install cargo-lipo
-```
-
-Download the ios targets for Rust:
-```bash
-rustup target add x86_64-apple-ios
-rustup target add aarch64-apple-ios
-```
-
-## Install Flutter Rust Bridge
-```bash
-cargo install flutter_rust_bridge_codegen
-```
-
-Install ffigen
-```bash
-flutter pub add --dev ffigen && flutter pub add ffi
-dart pub global activate ffigen
-```
-
-## Build Rust for iOS and Android
-Give the build script execution permission:
-
-```bash
-chmod +x ./build_rust.sh
-```
-
-Run the build script to build Rust for Android and iOS:
-
-```bash
-./build_rust.sh
-```
-
-If you are building this app on an M1 mac, you may need to run the following line before running `flutter run`:
-```
-sudo gem uninstall ffi && sudo gem install ffi -- --enable-libffi-alloc
-```
-
-## Updating Flutter Rust Bridge
-
-1. Update the version of `flutter_rust_bridge` in `pubspec.yaml`
-2. Update the version of `ffigen` in `pubspec.yaml` if not updated automatically
-3. Update the version of `flutter_rust_bridge` in `rust/Cargo.toml` to the same version as (1)
-4. Update the version of `flutter_rust_bridge_codegen` using `cargo install flutter_rust_bridge_codegen --version <version>` to the same version as (1)
-5. Run `dart pub global activate ffigen` to activate updated ffigen
-6. Run `./build_rust.sh` and fix any compiler error
-7. Run `flutter clean` to clean build files
-8. Restart flutter using `flutter run`
-
-# How Does the Build Script Work?
-
-## flutter_rust_bridge
-
-The build script first generate a glue code that bridges Rust and Dart code using flutter_rust_bridge.
-
-## iOS
-
-The build script then generate a release version of the iOS binary:
-
-```
-cargo lipo --release && cp target/universal/debug/libwordshk_api.a ../ios/Runner
-```
-
-If the release build is too slow, you can replace the above line in the build script with
-this instruction for running a debug build:
-
-```
-cargo lipo && cp target/universal/debug/libwordshk_api.a ../ios/Runner
-```
-
-## Android
-
-The build script then generate a release version of the Android binary.
-
-```
-cargo ndk -o ../android/app/src/main/jniLibs build --release
-```
-
-If the release build is too slow, you can replace the above line in the build script with
-this instruction for running a debug build:
-
-```
-cargo ndk -o ../android/app/src/main/jniLibs build
-```
-
-See [this tutorial](https://cjycode.com/flutter_rust_bridge/template/setup_android.html) to set up Android.
-
-# Generate App Store images
-
-Run snapshot:
-
-```
-bundle exec fastlane snapshot --configuration "Release" --stop_after_first_error
-```
-
-Reset all simulators in case of errors during snapshot:
-
-```
-bundle exec fastlane fastlane snapshot reset_simulators
+# Follow the flutter_rust_bridge version in pubspec.yaml
+cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.11'
+flutter_rust_bridge_codegen generate
 ```
 
 # Normalize jyutping syllable audios
@@ -167,24 +42,6 @@ bundle exec fastlane fastlane snapshot reset_simulators
    1. Trim silence at the beginning and end of all mp3 files
    2. Pad the end of jap6sing1 syllables so they are not too short
    3. Peak normalize jap6sing1 syllables to make they as loud as other syllables
-
-# TODO
-
-- [ ] Show jyutping help before search or suggestions for fix during search
-- [ ] Add spell checker suggestion to english search
-- [x] Use word match percent instead of direct lookup for phrases with >1 words
-- [ ] Test multi-language support for entries
-- [ ] Add auto language detection for searches
-- [x] Show possible jyutping when search result is not found.
-- [x] Offer option to show entries in simplified
-- [ ] Wait for fast2s to merge my 乾/干 PR and update to use the new version
-- [ ] Make text selection in entries smoother
-- [ ] Fix ruby positioning in Entry M/jam's <eg>: "好M唔M，M套？"
-- [x] Customize keyboard bar for iOS and Android using https://pub.dev/packages/keyboard_actions
-- [ ] Cut off audio when switching audio or exiting page
-- [ ] Add Yale romanization support
-- [ ] Convert traditional characters in links of eng explanation to simplified
-- [x] Convert traditional characters in result not found to simplified
 
 # Legal
 
