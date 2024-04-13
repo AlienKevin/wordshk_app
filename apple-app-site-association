@@ -1,0 +1,26 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "4N4F6Z5PYA.hk.words",
+                "components": [
+                    {
+                        "/": "/zidin/*",
+                        "comment": "Matches any URL with a path that starts with /zidin/."
+                    },
+                    {
+                        "/": "/zidin/goi/*",
+                        "exclude": true,
+                        "comment": "Exclude /zidin/goi/* from the deep linking."
+                    },
+                    {
+                        "/": "/zidin/zijan/*",
+                        "exclude": true,
+                        "comment": "Exclude /zidin/zijan/* from the deep linking."
+                    }
+                ]
+            }
+        ]
+    }
+}
