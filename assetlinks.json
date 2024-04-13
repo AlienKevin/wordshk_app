@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "hk.words.wordshk",
+            "sha256_cert_fingerprints": [
+                "10:20:CA:DC:60:79:60:AE:4A:46:71:50:48:45:73:39:A8:8D:45:EF:89:CE:0C:A1:F8:64:13:80:BF:3E:E7:35"
+            ]
+        }
+    }
+]
