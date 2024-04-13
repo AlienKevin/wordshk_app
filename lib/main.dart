@@ -211,6 +211,47 @@ runMyApp({bool? firstTimeUser, Language? language}) async {
   }
 }
 
+EntryPage entryPageBuilder(BuildContext context, GoRouterState state) {
+  final entryId = int.parse(state.pathParameters['entryId']!);
+  final key = state.uri.queryParameters['key'] == null
+      ? null
+      : int.parse(state.uri.queryParameters['key']!);
+  final showFirstEntryInGroupInitially =
+      state.uri.queryParameters['showFirstInGroup'] == "true";
+  final defIndex = state.uri.queryParameters['defIndex'] == null
+      ? null
+      : int.parse(state.uri.queryParameters['defIndex']!);
+  final embedded = state.uri.queryParameters['embedded'] == null
+      ? Embedded.topLevel
+      : Embedded.values.byName(state.uri.queryParameters['embedded']!);
+
+  // debugPrint("Going to entry $entryId");
+  // debugPrint("showFirstEntryInGroupInitially: $showFirstEntryInGroupInitially");
+  // debugPrint("embedded: $embedded");
+  // debugPrint("defIndex: $defIndex");
+
+  return EntryPage(
+    key: key == null ? null : ValueKey(key),
+    id: entryId,
+    showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
+    defIndex: defIndex,
+    embedded: embedded,
+  );
+}
+
+Future<String> redirectZidinV(context, state) async {
+  if (state.uri.hasFragment) {
+    final fragment = state.uri.fragment;
+    if (fragment.startsWith('w')) {
+      return 'entry/id/${fragment.substring(1)}';
+    } else {
+      Sentry.captureMessage(
+          'Fragment ${state.uri.fragment} does not start with a w');
+    }
+  }
+  return 'entry/id/${state.pathParameters['entryId']}';
+}
+
 initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
   router = GoRouter(
     initialLocation: firstTimeUser ? '/introduction' : '/',
@@ -244,13 +285,14 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                     path: 'stories',
                     builder: (context, state) => const StoriesCatalogPage(),
                   ),
-                GoRoute(
-                  path: 'stories/:storyId',
-                  builder: (context, state) {
-                    final storyId = int.parse(state.pathParameters['storyId']!);
-                    return StoryPage(storyId: storyId);
-                  },
-                ),
+                  GoRoute(
+                    path: 'stories/:storyId',
+                    builder: (context, state) {
+                      final storyId =
+                          int.parse(state.pathParameters['storyId']!);
+                      return StoryPage(storyId: storyId);
+                    },
+                  ),
                 ],
               ),
             ]),
@@ -261,41 +303,44 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                       const HomePage(title: 'words.hk'),
                   routes: [
                     GoRoute(
-                        path: 'entry/id/:entryId',
-                        builder: (context, state) {
-                          final entryId =
-                              int.parse(state.pathParameters['entryId']!);
-                          final key = state.uri.queryParameters['key'] == null
-                              ? null
-                              : int.parse(state.uri.queryParameters['key']!);
-                          final showFirstEntryInGroupInitially =
-                              state.uri.queryParameters['showFirstInGroup'] ==
-                                  "true";
-                          final defIndex =
-                              state.uri.queryParameters['defIndex'] == null
-                                  ? null
-                                  : int.parse(
-                                      state.uri.queryParameters['defIndex']!);
-                          final embedded =
-                              state.uri.queryParameters['embedded'] == null
-                                  ? Embedded.topLevel
-                                  : Embedded.values.byName(
-                                      state.uri.queryParameters['embedded']!);
+                        path: 'entry/id/:entryId', builder: entryPageBuilder),
+                    // Handle all variations of words.hk website entry URLs
+                    // https://words.hk/zidin/v/92598	㗎 / 嘎 第#1條
+                    // https://words.hk/zidin/v/92598#w100955	𠿪 / 㗎 第#3條
+                    // https://words.hk/zidin/v/92598/㗎	㗎 / 嘎 第#1條
+                    // https://words.hk/zidin/v/92598/㗎#w100955	𠿪 / 㗎 第#3條
+                    // https://words.hk/zidin/幾	幾 第#1條
+                    // https://words.hk/zidin/幾#w96806	幾 第#2條
+                    GoRoute(path: 'zidin/v/:entryId', redirect: redirectZidinV),
+                    GoRoute(
+                        path: 'zidin/v/:entryId/:entryVariant',
+                        redirect: redirectZidinV),
+                    GoRoute(
+                      path: 'zidin/:entryVariant',
+                      redirect: (context, state) async {
+                        if (state.uri.hasFragment) {
+                          final fragment = state.uri.fragment;
+                          if (fragment.startsWith('w')) {
+                            return 'entry/id/${fragment.substring(1)}';
+                          } else {
+                            Sentry.captureMessage(
+                                'Fragment ${state.uri.fragment} does not start with a w');
+                          }
+                        }
 
-                          // debugPrint("Going to entry $entryId");
-                          // debugPrint("showFirstEntryInGroupInitially: $showFirstEntryInGroupInitially");
-                          // debugPrint("embedded: $embedded");
-                          // debugPrint("defIndex: $defIndex");
-
-                          return EntryPage(
-                            key: key == null ? null : ValueKey(key),
-                            id: entryId,
-                            showFirstEntryInGroupInitially:
-                                showFirstEntryInGroupInitially,
-                            defIndex: defIndex,
-                            embedded: embedded,
-                          );
-                        }),
+                        final entryVariant =
+                            state.pathParameters['entryVariant']!;
+                        return getEntryId(
+                                query: entryVariant, script: Script.traditional)
+                            .then((id) {
+                          if (id == null) {
+                            return 'entry/not-published/$entryVariant';
+                          } else {
+                            return 'entry/id/$id';
+                          }
+                        });
+                      },
+                    ),
                     GoRoute(
                       path: 'entry/not-published/:entryVariant',
                       builder: (context, state) => EntryNotPublishedPage(
