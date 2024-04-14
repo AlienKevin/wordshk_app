@@ -13,20 +13,20 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_rust_bridge: ^2.0.0-dev.11
+  flutter_rust_bridge: ">=2.0.0-dev.11 <2.0.0-dev.12"
   equatable: ^2.0.0
   flutter_native_splash: ^2.3.6
-  just_audio: ^0.9.35
-  url_launcher: ^6.1.12
+  just_audio: ^0.9.37
+  url_launcher: ^6.2.6
   intl: ^0.18.1
   provider: ^6.0.5
   flutter_portal: ^1.1.4
   flutter_web_browser: ^0.17.1
   shared_preferences: ^2.2.0
-  flutter_tts: ^3.8.3
-  audio_session: ^0.1.16
-  csv: ^5.0.2
-  flutter_keyboard_visibility: ^5.4.1
+  flutter_tts: ^4.0.2
+  audio_session: ^0.1.19
+  csv: ^6.0.0
+  flutter_keyboard_visibility: ^6.0.0
   google_mlkit_digital_ink_recognition: ^0.10.0
   settings_ui: ^2.0.2
   cupertino_icons: ^1.0.5
@@ -35,14 +35,14 @@ dependencies:
   permission_handler: ^11.1.0
   ffi: ^2.1.0
   path_provider: ^2.1.0
-  sqflite: ^2.3.0
+  sqflite: ^2.3.3
   path: ^1.8.3
   draw_on_path: ^0.0.2
   aws_cognito_identity_api: ^2.0.0
   aws_sqs_api: ^2.0.0
   uuid: ^3.0.7
   flutter_fgbg: ^0.3.0
-  device_info_plus: ^9.1.1
+  device_info_plus: ^10.1.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   rust_builder:
@@ -52,7 +52,7 @@ dependencies:
   bubble_tab_indicator: ^0.1.6
   scrollview_observer: ^1.19.0
   flutter_svg: ^2.0.9
-  package_info_plus: ^5.0.1
+  package_info_plus: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -66,8 +66,8 @@ dev_dependencies:
       url: https://github.com/AlienKevin/flutter_launcher_name
       ref: "0.11.1"
   ffigen: ">=8.0.0 <10.0.0"
-  sentry_flutter: ^7.13.2
-  sentry_dart_plugin: ^1.6.3
+  sentry_flutter: ^7.19.0
+  sentry_dart_plugin: ^1.7.1
   build_runner: ^2.4.7
   json_serializable:
   freezed: ^2.4.5
