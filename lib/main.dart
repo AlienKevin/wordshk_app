@@ -243,13 +243,15 @@ Future<String> redirectZidinV(BuildContext context, GoRouterState state) async {
   if (state.uri.hasFragment) {
     final fragment = state.uri.fragment;
     if (fragment.startsWith('w')) {
-      return '/entry/id/${fragment.substring(1)}';
+      final id = fragment.substring(1);
+      return '/entry/id/$id?key=$id';
     } else {
       Sentry.captureMessage(
           'Fragment ${state.uri.fragment} does not start with a w');
     }
   }
-  return '/entry/id/${state.pathParameters['entryId']}';
+  final id = state.pathParameters['entryId'];
+  return '/entry/id/$id?key=$id';
 }
 
 Future<String> redirectZidinVariant(
@@ -257,7 +259,8 @@ Future<String> redirectZidinVariant(
   if (state.uri.hasFragment) {
     final fragment = state.uri.fragment;
     if (fragment.startsWith('w')) {
-      return '/entry/id/${fragment.substring(1)}';
+      final id = fragment.substring(1);
+      return '/entry/id/$id?key=$id';
     } else {
       Sentry.captureMessage(
           'Fragment ${state.uri.fragment} does not start with a w');
@@ -269,7 +272,7 @@ Future<String> redirectZidinVariant(
     if (id == null) {
       return '/entry/not-published/$entryVariant';
     } else {
-      return '/entry/id/$id?showFirstInGroup=true';
+      return '/entry/id/$id?key=$id&showFirstInGroup=true';
     }
   });
 }
