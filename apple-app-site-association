@@ -5,18 +5,99 @@
                 "appID": "Z5TP7VUYRW.hk.words",
                 "components": [
                     {
-                        "/": "/zidin/goi/*",
-                        "exclude": true,
-                        "comment": "Exclude /zidin/goi/* from the deep linking."
-                    },
-                    {
                         "/": "/zidin/zijan/*",
-                        "exclude": true,
-                        "comment": "Exclude /zidin/zijan/* from the deep linking."
+                        "exclude": true
                     },
                     {
-                        "/": "/zidin/*",
-                        "comment": "Matches any URL with a path that starts with /zidin/."
+                        "/": "/zidin/goi/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/pai/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/caan/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/wan/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/ceoigei/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/mantai/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/geoiboumantai/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/gaaikyutmantai/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/mleimantai/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/fanpuimantai/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/mantaicizeoi/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/log/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/macro_log/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/year_rank/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/geiluk/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/dashboard/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/choose/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/editor_preferences/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/generated_image_chooser/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/*.csv",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/bousau/*",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/ping/jam.mp3",
+                        "exclude": true
+                    },
+                    {
+                        "/": "/zidin/*"
                     }
                 ]
             }
