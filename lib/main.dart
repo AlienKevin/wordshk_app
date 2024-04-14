@@ -239,17 +239,39 @@ EntryPage entryPageBuilder(BuildContext context, GoRouterState state) {
   );
 }
 
-Future<String> redirectZidinV(context, state) async {
+Future<String> redirectZidinV(BuildContext context, GoRouterState state) async {
   if (state.uri.hasFragment) {
     final fragment = state.uri.fragment;
     if (fragment.startsWith('w')) {
-      return 'entry/id/${fragment.substring(1)}';
+      return '/entry/id/${fragment.substring(1)}';
     } else {
       Sentry.captureMessage(
           'Fragment ${state.uri.fragment} does not start with a w');
     }
   }
-  return 'entry/id/${state.pathParameters['entryId']}';
+  return '/entry/id/${state.pathParameters['entryId']}';
+}
+
+Future<String> redirectZidinVariant(
+    BuildContext context, GoRouterState state) async {
+  if (state.uri.hasFragment) {
+    final fragment = state.uri.fragment;
+    if (fragment.startsWith('w')) {
+      return '/entry/id/${fragment.substring(1)}';
+    } else {
+      Sentry.captureMessage(
+          'Fragment ${state.uri.fragment} does not start with a w');
+    }
+  }
+
+  final entryVariant = state.pathParameters['entryVariant']!;
+  return getEntryId(query: entryVariant, script: Script.traditional).then((id) {
+    if (id == null) {
+      return '/entry/not-published/$entryVariant';
+    } else {
+      return '/entry/id/$id?showFirstInGroup=true';
+    }
+  });
 }
 
 initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
@@ -317,29 +339,7 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                         redirect: redirectZidinV),
                     GoRoute(
                       path: 'zidin/:entryVariant',
-                      redirect: (context, state) async {
-                        if (state.uri.hasFragment) {
-                          final fragment = state.uri.fragment;
-                          if (fragment.startsWith('w')) {
-                            return 'entry/id/${fragment.substring(1)}';
-                          } else {
-                            Sentry.captureMessage(
-                                'Fragment ${state.uri.fragment} does not start with a w');
-                          }
-                        }
-
-                        final entryVariant =
-                            state.pathParameters['entryVariant']!;
-                        return getEntryId(
-                                query: entryVariant, script: Script.traditional)
-                            .then((id) {
-                          if (id == null) {
-                            return 'entry/not-published/$entryVariant';
-                          } else {
-                            return 'entry/id/$id';
-                          }
-                        });
-                      },
+                      redirect: redirectZidinVariant,
                     ),
                     GoRoute(
                       path: 'entry/not-published/:entryVariant',
