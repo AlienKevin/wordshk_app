@@ -97,7 +97,7 @@ PODS:
     - Flutter
   - Sentry/HybridSDK (8.21.0):
     - SentryPrivate (= 8.21.0)
-  - sentry_flutter (7.19.0):
+  - sentry_flutter (7.20.0):
     - Flutter
     - FlutterMacOS
     - Sentry/HybridSDK (= 8.21.0)
@@ -226,7 +226,7 @@ SPEC CHECKSUMS:
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   rust_builder: f6978b592ea8050cb7ffe27cba97bdfb8bca8141
   Sentry: ebc12276bd17613a114ab359074096b6b3725203
-  sentry_flutter: 88ebea3f595b0bc16acc5bedacafe6d60c12dcd5
+  sentry_flutter: df6e28477322fc5202bbe20aafdd7404b6e97729
   SentryPrivate: d651efb234cf385ec9a1cdd3eff94b5e78a0e0fe
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
