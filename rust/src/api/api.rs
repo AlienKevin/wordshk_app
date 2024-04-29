@@ -193,8 +193,10 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
 }
 
 pub fn generate_pr_indices(romanization: Romanization) {
+    let mut t = Instant::now();
     let pr_indices = wordshk_tools::pr_index::generate_pr_indices( dict(), romanization);
     API.lock().unwrap().pr_indices = Some(wordshk_tools::pr_index::pr_indices_into_fst(pr_indices));
+    log!(t, "Generated pr indices");
 }
 
 pub fn combined_search(capacity: u32, query: String, script: Script, romanization: Romanization) -> CombinedSearchResults {
