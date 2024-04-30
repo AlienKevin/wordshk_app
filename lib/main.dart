@@ -12,6 +12,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -102,11 +103,25 @@ class CustomSentryEventProcessor implements EventProcessor {
 }
 
 Future<Uint8List?> getZippedDict(String dictPath) async {
-  if (!await File(dictPath).exists()) {
-    final bytes = await rootBundle.load('assets/dict.db.gz');
-    return Uint8List.sublistView(bytes);
+  if (await File(dictPath).exists()) {
+    try {
+      Database db = await openDatabase(dictPath);
+      final metadata = await db.query('rich_dict_metadata');
+      final version = metadata.firstWhere((row) => row['key'] == 'version');
+      if (version['value'] != (await PackageInfo.fromPlatform()).version) {
+        debugPrint(
+            "Got a newer version of dictionary database.\nReplacing the old version with the new one...");
+      } else {
+        // Same version, no need to replace
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error opening database: $e');
+      debugPrint('Generating a new dictionary database...');
+    }
   }
-  return null;
+  final bytes = await rootBundle.load('assets/dict.db.gz');
+  return Uint8List.sublistView(bytes);
 }
 
 main() async {
