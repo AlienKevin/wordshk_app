@@ -114,8 +114,8 @@ main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Start unzipping dict
-  String appDir = (await getApplicationDocumentsDirectory()).path;
-  final dictPath = join(appDir, 'dict.db');
+  String cacheDir = (await getApplicationCacheDirectory()).path;
+  final dictPath = join(cacheDir, 'dict.db');
   final dictZip = await getZippedDict(dictPath);
 
   await RustLib.init();
