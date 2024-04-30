@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:archive/archive_io.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +12,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' show join;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -97,14 +101,28 @@ class CustomSentryEventProcessor implements EventProcessor {
   }
 }
 
+Future<String> unzipDict() async {
+  String dictPath = (await getApplicationDocumentsDirectory()).path;
+  if (!await File(dictPath).exists()) {
+    final bytes = await rootBundle.load('assets/dict.db.zip');
+    final archive = ZipDecoder().decodeBytes(Uint8List.view(bytes.buffer));
+    await extractArchiveToDisk(archive, dictPath);
+    debugPrint('Finished extracting dict to $dictPath');
+  }
+  return join(dictPath, 'dict.db');
+}
+
 main() async {
+  // Avoid errors caused by flutter upgrade.
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Start unzipping dict
+  final dictPath = await unzipDict();
+
   await RustLib.init();
   createLogStream().listen((msg) {
     print('[rust]: $msg');
   });
-
-  // Avoid errors caused by flutter upgrade.
-  WidgetsFlutterBinding.ensureInitialized();
 
   isPhone = await getIsPhone();
 
@@ -123,12 +141,13 @@ main() async {
     // Setting to 1.0 will profile 100% of sampled transactions:
     options.profilesSampleRate = 1.0;
     options.addEventProcessor(CustomSentryEventProcessor());
-  }, appRunner: runMyApp);
+  }, appRunner: runMyApp(dictPath: dictPath));
 }
 
-runMyApp({bool? firstTimeUser, Language? language}) async {
+runMyApp(
+    {required String dictPath, bool? firstTimeUser, Language? language}) async {
   try {
-    await initApi();
+    await initApi(dictPath: dictPath);
 
     final prefs = await SharedPreferences.getInstance();
     if (kDebugMode) {
