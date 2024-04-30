@@ -497,8 +497,12 @@ pub fn wire_get_jyutping(port_: flutter_rust_bridge::for_generated::MessagePort,
 }
 
 #[wasm_bindgen]
-pub fn wire_init_api(port_: flutter_rust_bridge::for_generated::MessagePort, dict_path: String) {
-    wire_init_api_impl(port_, dict_path)
+pub fn wire_init_api(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    dict_path: String,
+    dict_zip: Box<[u8]>,
+) {
+    wire_init_api_impl(port_, dict_path, dict_zip)
 }
 
 #[wasm_bindgen]

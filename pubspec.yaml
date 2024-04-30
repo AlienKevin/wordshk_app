@@ -53,7 +53,7 @@ dependencies:
   scrollview_observer: ^1.19.0
   flutter_svg: ^2.0.9
   package_info_plus: ^6.0.0
-  archive: ^3.5.0
+  flutter_archive: ^6.0.3
 
 dev_dependencies:
   flutter_test:

@@ -92,7 +92,8 @@ abstract class RustLibApi extends BaseApi {
 
   Future<List<String>> getJyutping({required String query, dynamic hint});
 
-  Future<void> initApi({required String dictPath, dynamic hint});
+  Future<void> initApi(
+      {required String dictPath, required Uint8List dictZip, dynamic hint});
 
   Future<void> initUtils({dynamic hint});
 }
@@ -332,18 +333,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> initApi({required String dictPath, dynamic hint}) {
+  Future<void> initApi(
+      {required String dictPath, required Uint8List dictZip, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         var arg0 = cst_encode_String(dictPath);
-        return wire.wire_init_api(port_, arg0);
+        var arg1 = cst_encode_list_prim_u_8(dictZip);
+        return wire.wire_init_api(port_, arg0, arg1);
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_unit,
         decodeErrorData: null,
       ),
       constMeta: kInitApiConstMeta,
-      argValues: [dictPath],
+      argValues: [dictPath, dictZip],
       apiImpl: this,
       hint: hint,
     ));
@@ -351,7 +354,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kInitApiConstMeta => const TaskConstMeta(
         debugName: "init_api",
-        argNames: ["dictPath"],
+        argNames: ["dictPath", "dictZip"],
       );
 
   @override

@@ -9,8 +9,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 Stream<String> createLogStream({dynamic hint}) =>
     RustLib.instance.api.createLogStream(hint: hint);
 
-Future<void> initApi({required String dictPath, dynamic hint}) =>
-    RustLib.instance.api.initApi(dictPath: dictPath, hint: hint);
+Future<void> initApi(
+        {required String dictPath, required Uint8List dictZip, dynamic hint}) =>
+    RustLib.instance.api
+        .initApi(dictPath: dictPath, dictZip: dictZip, hint: hint);
 
 Future<List<EntrySummary>> getEntrySummaries(
         {required Uint32List entryIds, dynamic hint}) =>

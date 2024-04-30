@@ -101,15 +101,12 @@ class CustomSentryEventProcessor implements EventProcessor {
   }
 }
 
-Future<String> unzipDict() async {
-  String dictPath = (await getApplicationDocumentsDirectory()).path;
+Future<Uint8List?> getZippedDict(String dictPath) async {
   if (!await File(dictPath).exists()) {
-    final bytes = await rootBundle.load('assets/dict.db.zip');
-    final archive = ZipDecoder().decodeBytes(Uint8List.view(bytes.buffer));
-    await extractArchiveToDisk(archive, dictPath);
-    debugPrint('Finished extracting dict to $dictPath');
+    final bytes = await rootBundle.load('assets/dict.db.gz');
+    return Uint8List.sublistView(bytes);
   }
-  return join(dictPath, 'dict.db');
+  return null;
 }
 
 main() async {
@@ -117,7 +114,9 @@ main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Start unzipping dict
-  final dictPath = await unzipDict();
+  String appDir = (await getApplicationDocumentsDirectory()).path;
+  final dictPath = join(appDir, 'dict.db');
+  final dictZip = await getZippedDict(dictPath);
 
   await RustLib.init();
   createLogStream().listen((msg) {
@@ -141,13 +140,16 @@ main() async {
     // Setting to 1.0 will profile 100% of sampled transactions:
     options.profilesSampleRate = 1.0;
     options.addEventProcessor(CustomSentryEventProcessor());
-  }, appRunner: runMyApp(dictPath: dictPath));
+  }, appRunner: runMyApp(dictPath: dictPath, dictZip: dictZip));
 }
 
 runMyApp(
-    {required String dictPath, bool? firstTimeUser, Language? language}) async {
+    {required String dictPath,
+    Uint8List? dictZip,
+    bool? firstTimeUser,
+    Language? language}) async {
   try {
-    await initApi(dictPath: dictPath);
+    await initApi(dictPath: dictPath, dictZip: dictZip ?? Uint8List(0));
 
     final prefs = await SharedPreferences.getInstance();
     if (kDebugMode) {

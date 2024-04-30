@@ -1,5 +1,6 @@
 use std::collections::BinaryHeap;
 use std::collections::{BTreeMap, HashMap};
+use std::io::{Cursor, Read, Write};
 use std::sync::Mutex;
 use std::time::Instant;
 
@@ -124,10 +125,16 @@ pub fn init_utils() {
     flutter_rust_bridge::setup_default_user_utils();
 }
 
-pub fn init_api(dict_path: String) {
+pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
     let mut api = API.lock().unwrap();
 
     let mut t = Instant::now();
+
+    if !dict_zip.is_empty() {
+        let mut archive = flate2::read::GzDecoder::new(Cursor::new(dict_zip));
+        let mut file = std::fs::File::create(&dict_path).unwrap();
+        std::io::copy(&mut archive, &mut file).unwrap();
+    }
 
     let dict = SqliteRichDict::new(&dict_path);
     api.dict = Some(Box::new(dict));

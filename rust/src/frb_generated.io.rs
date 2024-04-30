@@ -485,8 +485,12 @@ pub extern "C" fn frbgen_wordshk_wire_get_jyutping(port_: i64, query: *mut wire_
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_wordshk_wire_init_api(port_: i64, dict_path: *mut wire_cst_list_prim_u_8) {
-    wire_init_api_impl(port_, dict_path)
+pub extern "C" fn frbgen_wordshk_wire_init_api(
+    port_: i64,
+    dict_path: *mut wire_cst_list_prim_u_8,
+    dict_zip: *mut wire_cst_list_prim_u_8,
+) {
+    wire_init_api_impl(port_, dict_path, dict_zip)
 }
 
 #[no_mangle]

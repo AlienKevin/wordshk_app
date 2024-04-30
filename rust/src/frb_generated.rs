@@ -237,6 +237,7 @@ fn wire_get_jyutping_impl(
 fn wire_init_api_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     dict_path: impl CstDecode<String>,
+    dict_zip: impl CstDecode<Vec<u8>>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -246,9 +247,10 @@ fn wire_init_api_impl(
         },
         move || {
             let api_dict_path = dict_path.cst_decode();
+            let api_dict_zip = dict_zip.cst_decode();
             move |context| {
                 transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::init_api(api_dict_path))
+                    Result::<_, ()>::Ok(crate::api::api::init_api(api_dict_path, api_dict_zip))
                 })())
             }
         },

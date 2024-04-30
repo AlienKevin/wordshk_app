@@ -4,6 +4,9 @@ PODS:
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_archive (0.0.1):
+    - Flutter
+    - ZIPFoundation (= 0.9.19)
   - flutter_fgbg (0.0.1):
     - Flutter
   - flutter_keyboard_visibility (0.0.1):
@@ -111,11 +114,13 @@ PODS:
   - SSZipArchive (2.4.3)
   - url_launcher_ios (0.0.1):
     - Flutter
+  - ZIPFoundation (0.9.19)
 
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
+  - flutter_archive (from `.symlinks/plugins/flutter_archive/ios`)
   - flutter_fgbg (from `.symlinks/plugins/flutter_fgbg/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
@@ -152,6 +157,7 @@ SPEC REPOS:
     - Sentry
     - SentryPrivate
     - SSZipArchive
+    - ZIPFoundation
 
 EXTERNAL SOURCES:
   audio_session:
@@ -160,6 +166,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
+  flutter_archive:
+    :path: ".symlinks/plugins/flutter_archive/ios"
   flutter_fgbg:
     :path: ".symlinks/plugins/flutter_fgbg/ios"
   flutter_keyboard_visibility:
@@ -199,6 +207,7 @@ SPEC CHECKSUMS:
   audio_session: 088d2483ebd1dc43f51d253d4a1c517d9a2e7207
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_archive: cb3e0219e555897ba4b36f166baa1eca394890b9
   flutter_fgbg: 31c0d1140a131daea2d342121808f6aa0dcd879d
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
@@ -232,6 +241,7 @@ SPEC CHECKSUMS:
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   url_launcher_ios: 6116280ddcfe98ab8820085d8d76ae7449447586
+  ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
 PODFILE CHECKSUM: 05f83e6fc4f6bdc46cede134283b67482b1359cd
 
