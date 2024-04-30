@@ -134,6 +134,7 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
         let mut archive = flate2::read::GzDecoder::new(Cursor::new(dict_zip));
         let mut file = std::fs::File::create(&dict_path).unwrap();
         std::io::copy(&mut archive, &mut file).unwrap();
+        log!(t, "Extracted new dictionary database");
     }
 
     let dict = SqliteRichDict::new(&dict_path);
@@ -146,7 +147,8 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
         .write()
         .as_ref()
         .unwrap()
-        .add("Initialized API".to_string());
+        .add("Initialized API".to_string())
+        .unwrap();
 }
 
 impl WordshkApi {
