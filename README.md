@@ -66,7 +66,7 @@ If you want to build for iOS, you are required to use a Mac. You will need the l
    cd ios/
    pod install
    cd ..
-   flutter build ipa
+   # Go to Xcode and Product -> Archive
    flutter build appbundle
    ```
 
