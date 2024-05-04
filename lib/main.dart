@@ -191,9 +191,6 @@ runMyApp(
       await prefs.setString("userId", v4Crypto);
     }
 
-    // Initialize AWS service
-    await awsService.init();
-
     initializeRouter(firstTimeUser_, prefs);
 
     runApp(

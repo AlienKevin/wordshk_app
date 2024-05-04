@@ -83,7 +83,6 @@ flutter:
     - assets/
     - assets/images/
     - assets/jyutping_female/
-    - aws_secrets.json
   fonts:
     - family: ChironHeiHK
       fonts:

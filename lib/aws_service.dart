@@ -5,20 +5,11 @@ import 'package:aws_sqs_api/sqs-2012-11-05.dart';
 import 'package:flutter/services.dart';
 
 class AwsService {
-  late final String identityPoolId;
-  late final String region;
-  late final String queueUrl;
-
-  AwsService();
-
-  Future<void> init() async {
-    // Read AWS secrets from JSON file
-    String jsonString = await rootBundle.loadString('aws_secrets.json');
-    Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-    identityPoolId = jsonMap['identityPoolId'];
-    region = jsonMap['region'];
-    queueUrl = jsonMap['queueUrl'];
-  }
+  static const String identityPoolId =
+      "ap-southeast-1:927c2cdb-f6dc-4e4e-9bc1-7b5e83f1d795";
+  static const String region = "ap-southeast-1";
+  static const String queueUrl =
+      "https://sqs.ap-southeast-1.amazonaws.com/999404134598/wordshk";
 
   Future<SQS?> getSQSClient() async {
     // Initialize Cognito Identity client
