@@ -2,8 +2,6 @@
 Runner.app.dSYM.zip
 Runner.ipa
 untranslated_fields.txt
-smtp_credentials.dart
-lib/sentry_dsn.dart
 set_sentry_env_vars.sh
 
 # Miscellaneous
