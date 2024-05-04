@@ -44,7 +44,6 @@ import 'package:wordshk/pages/stories_catalog_page.dart';
 import 'package:wordshk/pages/story_page.dart';
 import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
 import 'package:wordshk/pages/tone_exercise_page.dart';
-import 'package:wordshk/sentry_dsn.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/src/rust/frb_generated.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
@@ -149,7 +148,8 @@ main() async {
   }
 
   await SentryFlutter.init((options) {
-    options.dsn = sentryDsn;
+    options.dsn =
+        "https://1fc4b551176d3b595bfc45748e3111c8@o4505785577373696.ingest.sentry.io/4505785578487808";
     options.tracesSampleRate = kDebugMode ? 1.0 : 0.1;
     // The sampling rate for profiling is relative to tracesSampleRate
     // Setting to 1.0 will profile 100% of sampled transactions:
