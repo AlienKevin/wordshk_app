@@ -72,6 +72,14 @@ android {
         }
     }
 
+    flavorDimensions "default"
+
+    productFlavors {
+        foss {
+            dimension "default"
+        }
+    }
+
     packagingOptions {
         jniLibs.keepDebugSymbols += "**/*.so"
     }

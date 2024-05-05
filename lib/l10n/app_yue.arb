@@ -24,6 +24,7 @@
     "clear": "清除",
     "inkModelDownloading": "下載緊手寫識別模型...",
     "inkModelFailedToDownload": "無法下載手寫識別模型。請檢查您嘅網路連結後重試。",
+    "inkModelUnsupportedInTheFdroidVersion": "由於手寫識別需要喺 App 入面附加專有軟件，F-Droid 版本未能支持手寫識別。",
     "tryAgain": "試多次",
     "done": "完成",
 
