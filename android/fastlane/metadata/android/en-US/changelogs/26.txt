@@ -1,0 +1,5 @@
+Big update!
+
+1. Refreshed UI
+2. Better search
+3. One-handed navigation

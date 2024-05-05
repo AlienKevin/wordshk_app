@@ -1,1 +1,0 @@
-Add try again button to speech recognition dialog.
