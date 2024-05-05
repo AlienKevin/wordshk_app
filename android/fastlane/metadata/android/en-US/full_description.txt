@@ -1,8 +1,6 @@
 Words.hk is an open Cantonese dictionary for users with various backgrounds: whether you are a Cantonese beginner or native speaker.
 
 Features:
-1. Search in English, Cantonese, or various romanizations like Jyutping and Yale
-2. Handwritting recognition of Chinese characters in searches
-3. Cantonese dictation in searches
-4. Listen to pronunciations for words and example sentences
-5. Bilingual dictionary contents in both English and Cantonese
+1. Search in English, Cantonese, Jyutping, or Yale
+2. Listen to pronunciations for words and example sentences
+3. Bilingual dictionary contents in both English and Cantonese
