@@ -9,12 +9,12 @@ import 'package:wordshk/states/input_mode_state.dart';
 
 import '../models/input_mode.dart';
 
-class DigitalInkViewNonFree extends StatefulWidget {
+class DigitalInkViewFull extends StatefulWidget {
   final void Function(String) typeCharacter;
   final void Function() backspace;
   final void Function() moveToEndOfSelection;
 
-  const DigitalInkViewNonFree({
+  const DigitalInkViewFull({
     Key? key,
     required this.typeCharacter,
     required this.backspace,
@@ -22,7 +22,7 @@ class DigitalInkViewNonFree extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  DigitalInkViewNonFreeState createState() => DigitalInkViewNonFreeState();
+  DigitalInkViewFullState createState() => DigitalInkViewFullState();
 }
 
 enum DownloadEndStatus {
@@ -30,7 +30,7 @@ enum DownloadEndStatus {
   failure,
 }
 
-class DigitalInkViewNonFreeState extends State<DigitalInkViewNonFree> {
+class DigitalInkViewFullState extends State<DigitalInkViewFull> {
   final DigitalInkRecognizerModelManager _modelManager =
       DigitalInkRecognizerModelManager();
   final String _language = 'zh-Hani-HK';

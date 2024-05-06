@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Ink;
 import 'package:flutter/services.dart';
 import 'package:wordshk/widgets/digital_ink_view_foss.dart';
-import 'package:wordshk/widgets/digital_ink_view_non_free.dart';
+import 'package:wordshk/widgets/digital_ink_view_full.dart';
 
 class DigitalInkView extends StatelessWidget {
   final void Function(String) typeCharacter;
@@ -21,7 +21,7 @@ class DigitalInkView extends StatelessWidget {
     if (appFlavor == "fdroid") {
       return const DigitalInkViewFoss();
     } else {
-      return DigitalInkViewNonFree(
+      return DigitalInkViewFull(
           typeCharacter: typeCharacter,
           backspace: backspace,
           moveToEndOfSelection: moveToEndOfSelection);

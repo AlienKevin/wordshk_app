@@ -72,11 +72,15 @@ android {
         }
     }
 
-    flavorDimensions "default"
+    flavorDimensions "version"
 
     productFlavors {
         foss {
-            dimension "default"
+            dimension "version"
+        }
+
+        full {
+            dimension "version"
         }
     }
 
