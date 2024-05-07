@@ -28,6 +28,7 @@
     "clear": "Clear",
     "inkModelDownloading": "Downloading ink recognition model...",
     "inkModelFailedToDownload": "Failed to download ink recognition model. Please check your internet connection and try again.",
+    "inkModelUnsupportedInTheFdroidVersion": "The F-Droid version of this app does not support ink recognition because ink recognition requires proprietary software to be included in the app.",
     "tryAgain": "Try Again",
     "done": "Done",
 
