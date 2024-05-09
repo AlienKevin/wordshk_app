@@ -18,7 +18,7 @@ class DigitalInkView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (appFlavor == "fdroid") {
+    if (appFlavor == "foss") {
       return const DigitalInkViewFoss();
     } else {
       return DigitalInkViewFull(

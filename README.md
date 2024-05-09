@@ -67,7 +67,7 @@ If you want to build for iOS, you are required to use a Mac. You will need the l
    pod install
    cd ..
    # Go to Xcode and Product -> Archive
-   flutter build appbundle
+   flutter build appbundle --flavor full
    ```
 
 # Normalize jyutping syllable audios
