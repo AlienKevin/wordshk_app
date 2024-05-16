@@ -1,6 +1,6 @@
+use std::collections::BTreeMap;
 use std::collections::BinaryHeap;
-use std::collections::{BTreeMap, HashMap};
-use std::io::{Cursor, Read, Write};
+use std::io::Cursor;
 use std::sync::Mutex;
 use std::time::Instant;
 
@@ -9,13 +9,13 @@ use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
 use parking_lot::RwLock;
 use wordshk_tools::dict::{clause_to_string, EntryId};
-use wordshk_tools::english_index::{ArchivedEnglishIndex, EnglishIndex, EnglishSearchRank};
+use wordshk_tools::english_index::{EnglishIndexLike, EnglishSearchRank};
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::pr_index::FstPrIndices;
-use wordshk_tools::search::{self, CombinedSearchRank, RichDictLike, SqliteRichDict, VariantsMap};
+use wordshk_tools::search::{self, CombinedSearchRank, RichDictLike, VariantsMap};
 pub use wordshk_tools::search::{MatchedInfix, MatchedSegment, Script};
-use wordshk_tools::unicode::is_cjk;
+use wordshk_tools::sqlite_db::SqliteDb;
 
 use crate::frb_generated::StreamSink;
 
@@ -86,16 +86,11 @@ pub struct EntrySummary {
     pub defs: Vec<EntryDef>,
 }
 
-#[repr(align(8))]
-struct Align8<T: ?Sized>(pub T);
-
 pub struct WordshkApi {
     pr_indices: Option<FstPrIndices>,
     variants_map: VariantsMap,
-    dict: Option<Box<dyn RichDictLike>>,
+    dict: Option<SqliteDb>,
 }
-
-const english_index_data: &Align8<[u8]> = &Align8(*include_bytes!("../../data/english_index.rkyv"));
 
 lazy_static! {
     static ref log_stream_sink: RwLock<Option<StreamSink<String>>> = RwLock::new(None);
@@ -136,8 +131,8 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
         log!(t, "Extracted new dictionary database");
     }
 
-    let dict = SqliteRichDict::new(&dict_path);
-    api.dict = Some(Box::new(dict));
+    let dict = SqliteDb::new(&dict_path);
+    api.dict = Some(dict);
 
     api.variants_map = search::rich_dict_to_variants_map(api.dict());
     log!(t, "Constructed variants_map");
@@ -152,8 +147,6 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
 
 impl WordshkApi {
     fn new() -> WordshkApi {
-        let mut t = Instant::now();
-
         WordshkApi {
             pr_indices: None,
             variants_map: BTreeMap::default(),
@@ -162,12 +155,12 @@ impl WordshkApi {
     }
 
     fn dict(&self) -> &dyn RichDictLike {
-        self.dict.as_ref().unwrap().as_ref()
+        self.dict.as_ref().unwrap()
     }
-}
 
-fn english_index() -> &'static ArchivedEnglishIndex {
-    unsafe { rkyv::archived_root::<EnglishIndex>(&english_index_data.0) }
+    fn english_index(&self) -> &dyn EnglishIndexLike {
+        self.dict.as_ref().unwrap()
+    }
 }
 
 pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
@@ -205,7 +198,7 @@ pub fn combined_search(
     match &mut search::combined_search(
         &api.variants_map,
         api.pr_indices.as_ref(),
-        english_index(),
+        api.english_index(),
         api.dict(),
         &query,
         script,

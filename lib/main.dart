@@ -19,8 +19,9 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/data.dart';
 import 'package:uuid/uuid.dart';
-import 'package:uuid/uuid_util.dart';
+import 'package:uuid/rng.dart';
 import 'package:wordshk/models/language.dart';
 import 'package:wordshk/pages/about_page.dart';
 import 'package:wordshk/pages/dictionary_license_page.dart';
@@ -187,7 +188,7 @@ runMyApp(
     // Set UserId if not set
     if (prefs.getString("userId") == null) {
       var uuid = const Uuid();
-      var v4Crypto = uuid.v4(options: {'rng': UuidUtil.cryptoRNG});
+      var v4Crypto = uuid.v4(config: V4Options(null, CryptoRNG()));
       await prefs.setString("userId", v4Crypto);
     }
 

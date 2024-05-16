@@ -40,7 +40,7 @@ dependencies:
   draw_on_path: ^0.0.2
   aws_cognito_identity_api: ^2.0.0
   aws_sqs_api: ^2.0.0
-  uuid: ^3.0.7
+  uuid: ^4.4.0
   flutter_fgbg: ^0.3.0
   device_info_plus: ^10.1.0
   freezed_annotation: ^2.4.1
@@ -54,9 +54,6 @@ dependencies:
   flutter_svg: ^2.0.9
   package_info_plus: ^6.0.0
   flutter_archive: ^6.0.3
-
-dependency_overrides:
-  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
