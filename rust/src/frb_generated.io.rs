@@ -480,11 +480,6 @@ pub extern "C" fn frbgen_wordshk_wire_get_entry_summaries(
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_wordshk_wire_get_jyutping(port_: i64, query: *mut wire_cst_list_prim_u_8) {
-    wire_get_jyutping_impl(port_, query)
-}
-
-#[no_mangle]
 pub extern "C" fn frbgen_wordshk_wire_init_api(
     port_: i64,
     dict_path: *mut wire_cst_list_prim_u_8,

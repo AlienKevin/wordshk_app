@@ -90,8 +90,6 @@ abstract class RustLibApi extends BaseApi {
   Future<List<EntrySummary>> getEntrySummaries(
       {required Uint32List entryIds, dynamic hint});
 
-  Future<List<String>> getJyutping({required String query, dynamic hint});
-
   Future<void> initApi(
       {required String dictPath, required Uint8List dictZip, dynamic hint});
 
@@ -307,29 +305,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kGetEntrySummariesConstMeta => const TaskConstMeta(
         debugName: "get_entry_summaries",
         argNames: ["entryIds"],
-      );
-
-  @override
-  Future<List<String>> getJyutping({required String query, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(query);
-        return wire.wire_get_jyutping(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_String,
-        decodeErrorData: null,
-      ),
-      constMeta: kGetJyutpingConstMeta,
-      argValues: [query],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kGetJyutpingConstMeta => const TaskConstMeta(
-        debugName: "get_jyutping",
-        argNames: ["query"],
       );
 
   @override

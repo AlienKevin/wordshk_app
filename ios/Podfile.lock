@@ -221,7 +221,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   GoogleUtilitiesComponents: 679b2c881db3b615a2777504623df6122dd20afe
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
-  integration_test: 13825b8a9334a850581300559b8839134b124670
+  integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   MLImage: 7bb7c4264164ade9bf64f679b40fb29c8f33ee9b
   MLKitCommon: c1b791c3e667091918d91bda4bba69a91011e390

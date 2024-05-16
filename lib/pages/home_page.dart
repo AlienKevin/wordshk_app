@@ -136,7 +136,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (value != null && value.text != null) {
         final text = value.text!.replaceAll('\n', '');
         final tokenCounts = countTokens(text);
-        if (tokenCounts.total < 12 && tokenCounts.english <= 5 && text.characters.length <= 30) {
+        if (tokenCounts.total < 12 &&
+            tokenCounts.english <= 5 &&
+            text.characters.length <= 30) {
           if (kDebugMode) {
             debugPrint(
                 "Replacing query text: ${context.read<SearchQueryState>().query}");
@@ -145,8 +147,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           context.read<SearchQueryState>().typeString(text);
         } else if (Platform.isIOS && text != previousClipboardText) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                AppLocalizations.of(context)!.textTooLongNotPasted),
+            content: Text(AppLocalizations.of(context)!.textTooLongNotPasted),
             duration: const Duration(seconds: 2),
           ));
         }
@@ -298,45 +299,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget showResultsNotFound() => FutureBuilder<List<String>>(
-      future: (() {
-        final query = context.watch<SearchQueryState>().query;
-        return getJyutping(query: query);
-      })(), // a previously-obtained Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) =>
-          Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: snapshot.hasData
-                      ? (snapshot.data!.isNotEmpty
-                          ? [
-                              Text(AppLocalizations.of(context)!
-                                  .searchDictionaryOnlyPronunciationFound),
-                              Text.rich(TextSpan(
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                  children: snapshot.data!
-                                      .map((pr) => [
-                                            TextSpan(text: pr),
-                                            WidgetSpan(
-                                                child:
-                                                    SyllablePronunciationButton(
-                                              prs: [pr.split(" ")],
-                                              alignment: Alignment.bottomCenter,
-                                              atHeader: true,
-                                            ))
-                                          ])
-                                      .expand((i) => i)
-                                      .toList()))
-                            ]
-                          : [
-                              Text(AppLocalizations.of(context)!
-                                  .searchDictionaryNoResultsFound)
-                            ])
-                      : snapshot.hasError
-                          ? [const Text("Error loading jyutping data.")]
-                          : [])));
+  Widget showResultsNotFound() => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(AppLocalizations.of(context)!.searchDictionaryNoResultsFound)
+      ]));
 
   void _clearSearchResults() {
     setState(() {

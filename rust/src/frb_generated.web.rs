@@ -492,11 +492,6 @@ pub fn wire_get_entry_summaries(
 }
 
 #[wasm_bindgen]
-pub fn wire_get_jyutping(port_: flutter_rust_bridge::for_generated::MessagePort, query: String) {
-    wire_get_jyutping_impl(port_, query)
-}
-
-#[wasm_bindgen]
 pub fn wire_init_api(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     dict_path: String,

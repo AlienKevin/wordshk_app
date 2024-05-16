@@ -823,24 +823,6 @@ class RustLibWire implements BaseWire {
   late final _wire_get_entry_summaries = _wire_get_entry_summariesPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_32>)>();
 
-  void wire_get_jyutping(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8> query,
-  ) {
-    return _wire_get_jyutping(
-      port_,
-      query,
-    );
-  }
-
-  late final _wire_get_jyutpingPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(
-                  ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8>)>>(
-      'frbgen_wordshk_wire_get_jyutping');
-  late final _wire_get_jyutping = _wire_get_jyutpingPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8>)>();
-
   void wire_init_api(
     int port_,
     ffi.Pointer<wire_cst_list_prim_u_8> dict_path,

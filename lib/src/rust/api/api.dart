@@ -59,9 +59,6 @@ Future<int?> getEntryId(
         {required String query, required Script script, dynamic hint}) =>
     RustLib.instance.api.getEntryId(query: query, script: script, hint: hint);
 
-Future<List<String>> getJyutping({required String query, dynamic hint}) =>
-    RustLib.instance.api.getJyutping(query: query, hint: hint);
-
 class CombinedSearchResults {
   final (int?, List<VariantSearchResult>) variantResults;
   final (int?, List<PrSearchResult>) prResults;

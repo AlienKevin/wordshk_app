@@ -92,7 +92,6 @@ struct Align8<T: ?Sized>(pub T);
 pub struct WordshkApi {
     pr_indices: Option<FstPrIndices>,
     variants_map: VariantsMap,
-    word_list: HashMap<String, Vec<String>>,
     dict: Option<Box<dyn RichDictLike>>,
 }
 
@@ -155,33 +154,9 @@ impl WordshkApi {
     fn new() -> WordshkApi {
         let mut t = Instant::now();
 
-        let word_list = include_str!("../../data/word_list.tsv");
-        log!(t, "Loaded word_list");
-
-        let mut rdr = csv::ReaderBuilder::new()
-            .has_headers(false)
-            .delimiter(b'\t')
-            .from_reader(word_list.as_bytes());
-        log!(t, "Read word_list");
-        let mut word_list = HashMap::new();
-        for result in rdr.records() {
-            let record = result.unwrap();
-            let trad = record[0].to_string();
-            let simp = record[1].to_string();
-            let pr = record[2].to_string();
-            // push simplified variant if it's different from the traditional
-            if simp != trad {
-                word_list.entry(simp).or_insert(vec![]).push(pr.clone());
-            }
-            // push traditional variant
-            word_list.entry(trad).or_insert(vec![]).push(pr);
-        }
-        log!(t, "Loaded word_list");
-
         WordshkApi {
             pr_indices: None,
             variants_map: BTreeMap::default(),
-            word_list,
             dict: None,
         }
     }
@@ -335,20 +310,6 @@ pub fn get_entry_group_json(id: u32) -> Vec<String> {
 
 pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
     search::get_entry_id(&API.lock().unwrap().variants_map, &query, script).map(|id| id as u32)
-}
-
-pub fn get_jyutping(query: String) -> Vec<String> {
-    let query_normalized: String = query.chars().filter(|&c| is_cjk(c)).collect();
-    if query_normalized.chars().count() == 1 {
-        search::get_char_jyutpings(query_normalized.chars().next().unwrap()).unwrap_or(vec![])
-    } else {
-        API.lock()
-            .unwrap()
-            .word_list
-            .get(&query_normalized)
-            .unwrap_or(&vec![])
-            .clone()
-    }
 }
 
 fn variant_ranks_to_results(
