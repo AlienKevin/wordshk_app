@@ -1,5 +1,5 @@
 use std::collections::BinaryHeap;
-use std::io::Curso
+use std::io::Cursor;
 use std::time::Instant;
 
 use flutter_rust_bridge::frb;
