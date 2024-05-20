@@ -90,14 +90,10 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
 final AnalyticsState analyticsState = AnalyticsState();
 bool sentryEnabled = true;
 
-class CustomSentryEventProcessor implements EventProcessor {
-  @override
-  FutureOr<SentryEvent?> apply(SentryEvent event, {dynamic hint}) {
-    if (sentryEnabled ||
-        (event.message?.formatted.contains("[USER FEEDBACK]") ?? false)) {
-      return event;
-    }
-    // Returning null will discard the event, effectively stopping reporting
+FutureOr<SentryEvent?> beforeSend(SentryEvent event, Hint hint) async {
+  if (sentryEnabled) {
+    return event;
+  } else {
     return null;
   }
 }
@@ -155,94 +151,85 @@ main() async {
     // The sampling rate for profiling is relative to tracesSampleRate
     // Setting to 1.0 will profile 100% of sampled transactions:
     options.profilesSampleRate = 1.0;
-    options.addEventProcessor(CustomSentryEventProcessor());
-  }, appRunner: runMyApp(dictPath: dictPath, dictZip: dictZip));
+    options.beforeSend = beforeSend;
+  }, appRunner: () => runMyApp(dictPath: dictPath, dictZip: dictZip));
 }
 
-runMyApp(
+void runMyApp(
     {required String dictPath,
     Uint8List? dictZip,
     bool? firstTimeUser,
     Language? language}) async {
-  try {
-    await initApi(dictPath: dictPath, dictZip: dictZip ?? Uint8List(0));
+  await initApi(dictPath: dictPath, dictZip: dictZip ?? Uint8List(0));
 
-    final prefs = await SharedPreferences.getInstance();
-    if (kDebugMode) {
-      print("Opening database...");
-    }
-    bookmarkDatabase = EntryItemState.createDatabase(
-        tableName: "bookmarks", databaseName: "bookmarkedEntries");
-    historyDatabase = EntryItemState.createDatabase(
-        tableName: "history", databaseName: "historyEntries");
-
-    WidgetsFlutterBinding
-        .ensureInitialized(); // mandatory when awaiting on main
-    final bool firstTimeUser_ =
-        firstTimeUser ?? (prefs.getBool("firstTimeUser") ?? true);
-
-    if (language != null) {
-      prefs.setInt("language", language.index);
-    }
-
-    // Set UserId if not set
-    if (prefs.getString("userId") == null) {
-      var uuid = const Uuid();
-      var v4Crypto = uuid.v4(config: V4Options(null, CryptoRNG()));
-      await prefs.setString("userId", v4Crypto);
-    }
-
-    initializeRouter(firstTimeUser_, prefs);
-
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AnalyticsSettingsState>(
-              create: (_) => AnalyticsSettingsState(prefs)),
-          ChangeNotifierProvider<AutoPasteSearchState>(
-              create: (_) => AutoPasteSearchState(prefs)),
-          ChangeNotifierProvider<SearchQueryState>(
-              create: (_) => SearchQueryState()),
-          ChangeNotifierProvider<SearchBarPositionState>(
-              create: (_) => SearchBarPositionState(prefs)),
-          ChangeNotifierProvider<InputModeState>(
-              create: (_) => InputModeState()),
-          ChangeNotifierProvider<LanguageState>(
-              create: (context) => LanguageState(prefs), lazy: false),
-          ChangeNotifierProvider<EntryLanguageState>(
-              create: (_) => EntryLanguageState(prefs)),
-          ChangeNotifierProvider<PronunciationMethodState>(
-              create: (_) => PronunciationMethodState(prefs)),
-          ChangeNotifierProvider<EntryEgFontSizeState>(
-              create: (_) => EntryEgFontSizeState(prefs)),
-          ChangeNotifierProvider<RomanizationState>(
-              create: (context) => RomanizationState(prefs), lazy: false),
-          ChangeNotifierProvider<EntryEgJumpyPrsState>(
-              create: (_) => EntryEgJumpyPrsState(prefs)),
-          ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
-          ChangeNotifierProvider<SpeechRateState>(
-              create: (_) => SpeechRateState(prefs)),
-          ChangeNotifierProvider<BookmarkState>(
-              create: (_) => BookmarkState(
-                  tableName: "bookmarks", getDatabase: () => bookmarkDatabase),
-              lazy: false),
-          ChangeNotifierProvider<HistoryState>(
-              create: (_) => HistoryState(
-                  tableName: "history", getDatabase: () => historyDatabase),
-              lazy: false),
-          ChangeNotifierProvider<ExerciseIntroductionState>(
-              create: (_) => ExerciseIntroductionState(prefs)),
-          ChangeNotifierProvider<EntryState>(create: (_) => EntryState()),
-        ],
-        child: MyApp(firstTimeUser: firstTimeUser_, prefs: prefs),
-      ),
-    );
-  } catch (exception, stackTrace) {
-    await Sentry.captureException(
-      exception,
-      stackTrace: stackTrace,
-    );
+  final prefs = await SharedPreferences.getInstance();
+  if (kDebugMode) {
+    print("Opening database...");
   }
+  bookmarkDatabase = EntryItemState.createDatabase(
+      tableName: "bookmarks", databaseName: "bookmarkedEntries");
+  historyDatabase = EntryItemState.createDatabase(
+      tableName: "history", databaseName: "historyEntries");
+
+  WidgetsFlutterBinding.ensureInitialized(); // mandatory when awaiting on main
+  final bool firstTimeUser_ =
+      firstTimeUser ?? (prefs.getBool("firstTimeUser") ?? true);
+
+  if (language != null) {
+    prefs.setInt("language", language.index);
+  }
+
+  // Set UserId if not set
+  if (prefs.getString("userId") == null) {
+    var uuid = const Uuid();
+    var v4Crypto = uuid.v4(config: V4Options(null, CryptoRNG()));
+    await prefs.setString("userId", v4Crypto);
+  }
+
+  initializeRouter(firstTimeUser_, prefs);
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AnalyticsSettingsState>(
+            create: (_) => AnalyticsSettingsState(prefs)),
+        ChangeNotifierProvider<AutoPasteSearchState>(
+            create: (_) => AutoPasteSearchState(prefs)),
+        ChangeNotifierProvider<SearchQueryState>(
+            create: (_) => SearchQueryState()),
+        ChangeNotifierProvider<SearchBarPositionState>(
+            create: (_) => SearchBarPositionState(prefs)),
+        ChangeNotifierProvider<InputModeState>(create: (_) => InputModeState()),
+        ChangeNotifierProvider<LanguageState>(
+            create: (context) => LanguageState(prefs), lazy: false),
+        ChangeNotifierProvider<EntryLanguageState>(
+            create: (_) => EntryLanguageState(prefs)),
+        ChangeNotifierProvider<PronunciationMethodState>(
+            create: (_) => PronunciationMethodState(prefs)),
+        ChangeNotifierProvider<EntryEgFontSizeState>(
+            create: (_) => EntryEgFontSizeState(prefs)),
+        ChangeNotifierProvider<RomanizationState>(
+            create: (context) => RomanizationState(prefs), lazy: false),
+        ChangeNotifierProvider<EntryEgJumpyPrsState>(
+            create: (_) => EntryEgJumpyPrsState(prefs)),
+        ChangeNotifierProvider<PlayerState>(create: (_) => PlayerState()),
+        ChangeNotifierProvider<SpeechRateState>(
+            create: (_) => SpeechRateState(prefs)),
+        ChangeNotifierProvider<BookmarkState>(
+            create: (_) => BookmarkState(
+                tableName: "bookmarks", getDatabase: () => bookmarkDatabase),
+            lazy: false),
+        ChangeNotifierProvider<HistoryState>(
+            create: (_) => HistoryState(
+                tableName: "history", getDatabase: () => historyDatabase),
+            lazy: false),
+        ChangeNotifierProvider<ExerciseIntroductionState>(
+            create: (_) => ExerciseIntroductionState(prefs)),
+        ChangeNotifierProvider<EntryState>(create: (_) => EntryState()),
+      ],
+      child: MyApp(firstTimeUser: firstTimeUser_, prefs: prefs),
+    ),
+  );
 }
 
 EntryPage entryPageBuilder(BuildContext context, GoRouterState state) {
