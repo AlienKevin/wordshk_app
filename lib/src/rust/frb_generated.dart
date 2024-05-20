@@ -70,16 +70,6 @@ abstract class RustLibApi extends BaseApi {
 
   Stream<String> createLogStream({dynamic hint});
 
-  Future<List<EgSearchResult>> egSearch(
-      {required int capacity,
-      required int maxFirstIndexInEg,
-      required String query,
-      required Script script,
-      dynamic hint});
-
-  Future<void> generatePrIndices(
-      {required Romanization romanization, dynamic hint});
-
   Future<List<String>> getEntryGroupJson({required int id, dynamic hint});
 
   Future<int?> getEntryId(
@@ -155,61 +145,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCreateLogStreamConstMeta => const TaskConstMeta(
         debugName: "create_log_stream",
         argNames: [],
-      );
-
-  @override
-  Future<List<EgSearchResult>> egSearch(
-      {required int capacity,
-      required int maxFirstIndexInEg,
-      required String query,
-      required Script script,
-      dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_u_32(capacity);
-        var arg1 = cst_encode_u_32(maxFirstIndexInEg);
-        var arg2 = cst_encode_String(query);
-        var arg3 = cst_encode_script(script);
-        return wire.wire_eg_search(port_, arg0, arg1, arg2, arg3);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_eg_search_result,
-        decodeErrorData: null,
-      ),
-      constMeta: kEgSearchConstMeta,
-      argValues: [capacity, maxFirstIndexInEg, query, script],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kEgSearchConstMeta => const TaskConstMeta(
-        debugName: "eg_search",
-        argNames: ["capacity", "maxFirstIndexInEg", "query", "script"],
-      );
-
-  @override
-  Future<void> generatePrIndices(
-      {required Romanization romanization, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_romanization(romanization);
-        return wire.wire_generate_pr_indices(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: null,
-      ),
-      constMeta: kGeneratePrIndicesConstMeta,
-      argValues: [romanization],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kGeneratePrIndicesConstMeta => const TaskConstMeta(
-        debugName: "generate_pr_indices",
-        argNames: ["romanization"],
       );
 
   @override
@@ -392,19 +327,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  EgSearchResult dco_decode_eg_search_result(dynamic raw) {
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return EgSearchResult(
-      id: dco_decode_u_32(arr[0]),
-      defIndex: dco_decode_u_32(arr[1]),
-      egIndex: dco_decode_u_32(arr[2]),
-      matchedEg: dco_decode_matched_infix(arr[3]),
-    );
-  }
-
-  @protected
   EnglishSearchResult dco_decode_english_search_result(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 4)
@@ -449,11 +371,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   List<String> dco_decode_list_String(dynamic raw) {
     return (raw as List<dynamic>).map(dco_decode_String).toList();
-  }
-
-  @protected
-  List<EgSearchResult> dco_decode_list_eg_search_result(dynamic raw) {
-    return (raw as List<dynamic>).map(dco_decode_eg_search_result).toList();
   }
 
   @protected
@@ -673,19 +590,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  EgSearchResult sse_decode_eg_search_result(SseDeserializer deserializer) {
-    var var_id = sse_decode_u_32(deserializer);
-    var var_defIndex = sse_decode_u_32(deserializer);
-    var var_egIndex = sse_decode_u_32(deserializer);
-    var var_matchedEg = sse_decode_matched_infix(deserializer);
-    return EgSearchResult(
-        id: var_id,
-        defIndex: var_defIndex,
-        egIndex: var_egIndex,
-        matchedEg: var_matchedEg);
-  }
-
-  @protected
   EnglishSearchResult sse_decode_english_search_result(
       SseDeserializer deserializer) {
     var var_id = sse_decode_u_32(deserializer);
@@ -729,17 +633,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <String>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_String(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<EgSearchResult> sse_decode_list_eg_search_result(
-      SseDeserializer deserializer) {
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <EgSearchResult>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_eg_search_result(deserializer));
     }
     return ans_;
   }
@@ -1013,15 +906,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_eg_search_result(
-      EgSearchResult self, SseSerializer serializer) {
-    sse_encode_u_32(self.id, serializer);
-    sse_encode_u_32(self.defIndex, serializer);
-    sse_encode_u_32(self.egIndex, serializer);
-    sse_encode_matched_infix(self.matchedEg, serializer);
-  }
-
-  @protected
   void sse_encode_english_search_result(
       EnglishSearchResult self, SseSerializer serializer) {
     sse_encode_u_32(self.id, serializer);
@@ -1054,15 +938,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_String(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_eg_search_result(
-      List<EgSearchResult> self, SseSerializer serializer) {
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_eg_search_result(item, serializer);
     }
   }
 

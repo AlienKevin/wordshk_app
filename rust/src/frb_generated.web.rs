@@ -45,27 +45,6 @@ impl CstDecode<crate::api::api::CombinedSearchResults>
         }
     }
 }
-impl CstDecode<crate::api::api::EgSearchResult>
-    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-{
-    fn cst_decode(self) -> crate::api::api::EgSearchResult {
-        let self_ = self
-            .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap();
-        assert_eq!(
-            self_.length(),
-            4,
-            "Expected 4 elements, got {}",
-            self_.length()
-        );
-        crate::api::api::EgSearchResult {
-            id: self_.get(0).cst_decode(),
-            def_index: self_.get(1).cst_decode(),
-            eg_index: self_.get(2).cst_decode(),
-            matched_eg: self_.get(3).cst_decode(),
-        }
-    }
-}
 impl CstDecode<crate::api::api::EnglishSearchResult>
     for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
 {
@@ -129,17 +108,6 @@ impl CstDecode<crate::api::api::EntrySummary>
 }
 impl CstDecode<Vec<String>> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
     fn cst_decode(self) -> Vec<String> {
-        self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-            .unwrap()
-            .iter()
-            .map(CstDecode::cst_decode)
-            .collect()
-    }
-}
-impl CstDecode<Vec<crate::api::api::EgSearchResult>>
-    for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-{
-    fn cst_decode(self) -> Vec<crate::api::api::EgSearchResult> {
         self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
             .unwrap()
             .iter()
@@ -443,25 +411,6 @@ pub fn wire_combined_search(
 #[wasm_bindgen]
 pub fn wire_create_log_stream(port_: flutter_rust_bridge::for_generated::MessagePort) {
     wire_create_log_stream_impl(port_)
-}
-
-#[wasm_bindgen]
-pub fn wire_eg_search(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: u32,
-    max_first_index_in_eg: u32,
-    query: String,
-    script: i32,
-) {
-    wire_eg_search_impl(port_, capacity, max_first_index_in_eg, query, script)
-}
-
-#[wasm_bindgen]
-pub fn wire_generate_pr_indices(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    romanization: i32,
-) {
-    wire_generate_pr_indices_impl(port_, romanization)
 }
 
 #[wasm_bindgen]

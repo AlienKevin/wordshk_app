@@ -18,11 +18,6 @@ Future<List<EntrySummary>> getEntrySummaries(
         {required Uint32List entryIds, dynamic hint}) =>
     RustLib.instance.api.getEntrySummaries(entryIds: entryIds, hint: hint);
 
-Future<void> generatePrIndices(
-        {required Romanization romanization, dynamic hint}) =>
-    RustLib.instance.api
-        .generatePrIndices(romanization: romanization, hint: hint);
-
 Future<CombinedSearchResults> combinedSearch(
         {required int capacity,
         required String query,
@@ -34,19 +29,6 @@ Future<CombinedSearchResults> combinedSearch(
         query: query,
         script: script,
         romanization: romanization,
-        hint: hint);
-
-Future<List<EgSearchResult>> egSearch(
-        {required int capacity,
-        required int maxFirstIndexInEg,
-        required String query,
-        required Script script,
-        dynamic hint}) =>
-    RustLib.instance.api.egSearch(
-        capacity: capacity,
-        maxFirstIndexInEg: maxFirstIndexInEg,
-        query: query,
-        script: script,
         hint: hint);
 
 Future<String> getEntryJson({required int id, dynamic hint}) =>
@@ -82,34 +64,6 @@ class CombinedSearchResults {
           variantResults == other.variantResults &&
           prResults == other.prResults &&
           englishResults == other.englishResults;
-}
-
-class EgSearchResult {
-  final int id;
-  final int defIndex;
-  final int egIndex;
-  final MatchedInfix matchedEg;
-
-  const EgSearchResult({
-    required this.id,
-    required this.defIndex,
-    required this.egIndex,
-    required this.matchedEg,
-  });
-
-  @override
-  int get hashCode =>
-      id.hashCode ^ defIndex.hashCode ^ egIndex.hashCode ^ matchedEg.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is EgSearchResult &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          defIndex == other.defIndex &&
-          egIndex == other.egIndex &&
-          matchedEg == other.matchedEg;
 }
 
 class EnglishSearchResult {

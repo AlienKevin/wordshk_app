@@ -34,9 +34,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CombinedSearchResults dco_decode_combined_search_results(dynamic raw);
 
   @protected
-  EgSearchResult dco_decode_eg_search_result(dynamic raw);
-
-  @protected
   EnglishSearchResult dco_decode_english_search_result(dynamic raw);
 
   @protected
@@ -50,9 +47,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
-
-  @protected
-  List<EgSearchResult> dco_decode_list_eg_search_result(dynamic raw);
 
   @protected
   List<EnglishSearchResult> dco_decode_list_english_search_result(dynamic raw);
@@ -147,9 +141,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
-  EgSearchResult sse_decode_eg_search_result(SseDeserializer deserializer);
-
-  @protected
   EnglishSearchResult sse_decode_english_search_result(
       SseDeserializer deserializer);
 
@@ -164,10 +155,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
-
-  @protected
-  List<EgSearchResult> sse_decode_list_eg_search_result(
-      SseDeserializer deserializer);
 
   @protected
   List<EnglishSearchResult> sse_decode_list_english_search_result(
@@ -275,16 +262,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  ffi.Pointer<wire_cst_list_eg_search_result> cst_encode_list_eg_search_result(
-      List<EgSearchResult> raw) {
-    final ans = wire.cst_new_list_eg_search_result(raw.length);
-    for (var i = 0; i < raw.length; ++i) {
-      cst_api_fill_to_wire_eg_search_result(raw[i], ans.ref.ptr[i]);
-    }
-    return ans;
-  }
-
-  @protected
   ffi.Pointer<wire_cst_list_english_search_result>
       cst_encode_list_english_search_result(List<EnglishSearchResult> raw) {
     final ans = wire.cst_new_list_english_search_result(raw.length);
@@ -378,15 +355,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
         apiObj.prResults, wireObj.pr_results);
     cst_api_fill_to_wire_record_opt_box_autoadd_usize_list_english_search_result(
         apiObj.englishResults, wireObj.english_results);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_eg_search_result(
-      EgSearchResult apiObj, wire_cst_eg_search_result wireObj) {
-    wireObj.id = cst_encode_u_32(apiObj.id);
-    wireObj.def_index = cst_encode_u_32(apiObj.defIndex);
-    wireObj.eg_index = cst_encode_u_32(apiObj.egIndex);
-    cst_api_fill_to_wire_matched_infix(apiObj.matchedEg, wireObj.matched_eg);
   }
 
   @protected
@@ -518,10 +486,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       CombinedSearchResults self, SseSerializer serializer);
 
   @protected
-  void sse_encode_eg_search_result(
-      EgSearchResult self, SseSerializer serializer);
-
-  @protected
   void sse_encode_english_search_result(
       EnglishSearchResult self, SseSerializer serializer);
 
@@ -536,10 +500,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_list_eg_search_result(
-      List<EgSearchResult> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_english_search_result(
@@ -711,49 +671,6 @@ class RustLibWire implements BaseWire {
   late final _wire_create_log_stream =
       _wire_create_log_streamPtr.asFunction<void Function(int)>();
 
-  void wire_eg_search(
-    int port_,
-    int capacity,
-    int max_first_index_in_eg,
-    ffi.Pointer<wire_cst_list_prim_u_8> query,
-    int script,
-  ) {
-    return _wire_eg_search(
-      port_,
-      capacity,
-      max_first_index_in_eg,
-      query,
-      script,
-    );
-  }
-
-  late final _wire_eg_searchPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(
-              ffi.Int64,
-              ffi.Uint32,
-              ffi.Uint32,
-              ffi.Pointer<wire_cst_list_prim_u_8>,
-              ffi.Int32)>>('frbgen_wordshk_wire_eg_search');
-  late final _wire_eg_search = _wire_eg_searchPtr.asFunction<
-      void Function(int, int, int, ffi.Pointer<wire_cst_list_prim_u_8>, int)>();
-
-  void wire_generate_pr_indices(
-    int port_,
-    int romanization,
-  ) {
-    return _wire_generate_pr_indices(
-      port_,
-      romanization,
-    );
-  }
-
-  late final _wire_generate_pr_indicesPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Int32)>>(
-          'frbgen_wordshk_wire_generate_pr_indices');
-  late final _wire_generate_pr_indices =
-      _wire_generate_pr_indicesPtr.asFunction<void Function(int, int)>();
-
   void wire_get_entry_group_json(
     int port_,
     int id,
@@ -900,21 +817,6 @@ class RustLibWire implements BaseWire {
               ffi.Int32)>>('frbgen_wordshk_cst_new_list_String');
   late final _cst_new_list_String = _cst_new_list_StringPtr
       .asFunction<ffi.Pointer<wire_cst_list_String> Function(int)>();
-
-  ffi.Pointer<wire_cst_list_eg_search_result> cst_new_list_eg_search_result(
-    int len,
-  ) {
-    return _cst_new_list_eg_search_result(
-      len,
-    );
-  }
-
-  late final _cst_new_list_eg_search_resultPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<wire_cst_list_eg_search_result> Function(
-              ffi.Int32)>>('frbgen_wordshk_cst_new_list_eg_search_result');
-  late final _cst_new_list_eg_search_result = _cst_new_list_eg_search_resultPtr
-      .asFunction<ffi.Pointer<wire_cst_list_eg_search_result> Function(int)>();
 
   ffi.Pointer<wire_cst_list_english_search_result>
       cst_new_list_english_search_result(
@@ -1072,34 +974,6 @@ final class wire_cst_list_String extends ffi.Struct {
   external int len;
 }
 
-final class wire_cst_matched_infix extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8> prefix;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8> query;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8> suffix;
-}
-
-final class wire_cst_eg_search_result extends ffi.Struct {
-  @ffi.Uint32()
-  external int id;
-
-  @ffi.Uint32()
-  external int def_index;
-
-  @ffi.Uint32()
-  external int eg_index;
-
-  external wire_cst_matched_infix matched_eg;
-}
-
-final class wire_cst_list_eg_search_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_eg_search_result> ptr;
-
-  @ffi.Int32()
-  external int len;
-}
-
 final class wire_cst_matched_segment extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8> segment;
 
@@ -1181,6 +1055,14 @@ final class wire_cst_list_pr_search_result extends ffi.Struct {
 
   @ffi.Int32()
   external int len;
+}
+
+final class wire_cst_matched_infix extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8> prefix;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8> query;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8> suffix;
 }
 
 final class wire_cst_variant_search_result extends ffi.Struct {

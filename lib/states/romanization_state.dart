@@ -17,8 +17,6 @@ class RomanizationState with ChangeNotifier {
           ? Romanization.jyutping
           : Romanization.values[romanizationIndex];
     }
-
-    generatePrIndices(romanization: romanization);
   }
 
   void updateRomanization(Romanization newRomanization) async {
@@ -28,7 +26,6 @@ class RomanizationState with ChangeNotifier {
     SharedPreferences.getInstance().then((prefs) async {
       prefs.setInt("romanization", newRomanization.index);
     });
-    await generatePrIndices(romanization: romanization);
   }
 
   String showPrs(List<String> jyutpings) {

@@ -81,57 +81,6 @@ fn wire_create_log_stream_impl(port_: flutter_rust_bridge::for_generated::Messag
         },
     )
 }
-fn wire_eg_search_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    capacity: impl CstDecode<u32>,
-    max_first_index_in_eg: impl CstDecode<u32>,
-    query: impl CstDecode<String>,
-    script: impl CstDecode<crate::api::api::Script>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "eg_search",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_capacity = capacity.cst_decode();
-            let api_max_first_index_in_eg = max_first_index_in_eg.cst_decode();
-            let api_query = query.cst_decode();
-            let api_script = script.cst_decode();
-            move |context| {
-                transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::eg_search(
-                        api_capacity,
-                        api_max_first_index_in_eg,
-                        api_query,
-                        api_script,
-                    ))
-                })())
-            }
-        },
-    )
-}
-fn wire_generate_pr_indices_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    romanization: impl CstDecode<crate::api::api::Romanization>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "generate_pr_indices",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_romanization = romanization.cst_decode();
-            move |context| {
-                transform_result_dco((move || {
-                    Result::<_, ()>::Ok(crate::api::api::generate_pr_indices(api_romanization))
-                })())
-            }
-        },
-    )
-}
 fn wire_get_entry_group_json_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     id: impl CstDecode<u32>,
@@ -356,21 +305,6 @@ impl SseDecode for crate::api::api::CombinedSearchResults {
     }
 }
 
-impl SseDecode for crate::api::api::EgSearchResult {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_id = <u32>::sse_decode(deserializer);
-        let mut var_defIndex = <u32>::sse_decode(deserializer);
-        let mut var_egIndex = <u32>::sse_decode(deserializer);
-        let mut var_matchedEg = <crate::api::api::MatchedInfix>::sse_decode(deserializer);
-        return crate::api::api::EgSearchResult {
-            id: var_id,
-            def_index: var_defIndex,
-            eg_index: var_egIndex,
-            matched_eg: var_matchedEg,
-        };
-    }
-}
-
 impl SseDecode for crate::api::api::EnglishSearchResult {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <u32>::sse_decode(deserializer);
@@ -424,17 +358,6 @@ impl SseDecode for Vec<String> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<String>::sse_decode(deserializer));
-        }
-        return ans_;
-    }
-}
-
-impl SseDecode for Vec<crate::api::api::EgSearchResult> {
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut len_ = <i32>::sse_decode(deserializer);
-        let mut ans_ = vec![];
-        for idx_ in 0..len_ {
-            ans_.push(<crate::api::api::EgSearchResult>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -699,28 +622,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::api::CombinedSearchResults>
         self
     }
 }
-impl flutter_rust_bridge::IntoDart for crate::api::api::EgSearchResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        vec![
-            self.id.into_into_dart().into_dart(),
-            self.def_index.into_into_dart().into_dart(),
-            self.eg_index.into_into_dart().into_dart(),
-            self.matched_eg.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::api::EgSearchResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::api::EgSearchResult>
-    for crate::api::api::EgSearchResult
-{
-    fn into_into_dart(self) -> crate::api::api::EgSearchResult {
-        self
-    }
-}
 impl flutter_rust_bridge::IntoDart for crate::api::api::EnglishSearchResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         vec![
@@ -913,15 +814,6 @@ impl SseEncode for crate::api::api::CombinedSearchResults {
     }
 }
 
-impl SseEncode for crate::api::api::EgSearchResult {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <u32>::sse_encode(self.id, serializer);
-        <u32>::sse_encode(self.def_index, serializer);
-        <u32>::sse_encode(self.eg_index, serializer);
-        <crate::api::api::MatchedInfix>::sse_encode(self.matched_eg, serializer);
-    }
-}
-
 impl SseEncode for crate::api::api::EnglishSearchResult {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.id, serializer);
@@ -958,15 +850,6 @@ impl SseEncode for Vec<String> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <String>::sse_encode(item, serializer);
-        }
-    }
-}
-
-impl SseEncode for Vec<crate::api::api::EgSearchResult> {
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <i32>::sse_encode(self.len() as _, serializer);
-        for item in self {
-            <crate::api::api::EgSearchResult>::sse_encode(item, serializer);
         }
     }
 }

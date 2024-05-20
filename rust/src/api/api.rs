@@ -1,4 +1,3 @@
-use std::collections::BTreeMap;
 use std::collections::BinaryHeap;
 use std::io::Cursor;
 use std::sync::Mutex;
@@ -9,11 +8,11 @@ use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
 use parking_lot::RwLock;
 use wordshk_tools::dict::{clause_to_string, EntryId};
-use wordshk_tools::english_index::{EnglishIndexLike, EnglishSearchRank};
+use wordshk_tools::english_index::EnglishSearchRank;
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
-use wordshk_tools::pr_index::FstPrIndices;
-use wordshk_tools::search::{self, CombinedSearchRank, RichDictLike, VariantsMap};
+use wordshk_tools::search::VariantMapLike;
+use wordshk_tools::search::{self, CombinedSearchRank, RichDictLike};
 pub use wordshk_tools::search::{MatchedInfix, MatchedSegment, Script};
 use wordshk_tools::sqlite_db::SqliteDb;
 
@@ -86,12 +85,6 @@ pub struct EntrySummary {
     pub defs: Vec<EntryDef>,
 }
 
-pub struct WordshkApi {
-    pr_indices: Option<FstPrIndices>,
-    variants_map: VariantsMap,
-    dict: Option<SqliteDb>,
-}
-
 lazy_static! {
     static ref log_stream_sink: RwLock<Option<StreamSink<String>>> = RwLock::new(None);
 }
@@ -111,7 +104,7 @@ macro_rules! log {
     }};
 }
 
-static API: Lazy<Mutex<WordshkApi>> = Lazy::new(|| Mutex::new(WordshkApi::new()));
+static API: Lazy<Mutex<Option<SqliteDb>>> = Lazy::new(|| Mutex::new(None));
 
 #[frb(init)]
 pub fn init_utils() {
@@ -132,10 +125,7 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
     }
 
     let dict = SqliteDb::new(&dict_path);
-    api.dict = Some(dict);
-
-    api.variants_map = search::rich_dict_to_variants_map(api.dict());
-    log!(t, "Constructed variants_map");
+    *api = Some(dict);
 
     log_stream_sink
         .write()
@@ -145,47 +135,22 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
         .unwrap();
 }
 
-impl WordshkApi {
-    fn new() -> WordshkApi {
-        WordshkApi {
-            pr_indices: None,
-            variants_map: BTreeMap::default(),
-            dict: None,
-        }
-    }
-
-    fn dict(&self) -> &dyn RichDictLike {
-        self.dict.as_ref().unwrap()
-    }
-
-    fn english_index(&self) -> &dyn EnglishIndexLike {
-        self.dict.as_ref().unwrap()
-    }
-}
-
 pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
     let summaries = entry_ids
         .into_iter()
         .map(|entry_id| {
             let api = API.lock().unwrap();
-            let entry = api.variants_map.get(&entry_id).unwrap().first().unwrap();
-            let defs = get_entry_defs(entry_id, api.dict());
+            let api = api.as_ref().unwrap();
+            let entry = api.get_entry(entry_id);
+            let defs = get_entry_defs(entry_id, api);
             EntrySummary {
-                variant_trad: entry.word_trad.clone(),
-                variant_simp: entry.word_simp.clone(),
+                variant_trad: entry.variants.0.first().unwrap().word.clone(),
+                variant_simp: entry.variants.0.first().unwrap().word_simp.clone(),
                 defs,
             }
         })
         .collect();
     summaries
-}
-
-pub fn generate_pr_indices(romanization: Romanization) {
-    let mut t = Instant::now();
-    let mut api = API.lock().unwrap();
-    let pr_indices = wordshk_tools::pr_index::generate_pr_indices(api.dict(), romanization);
-    api.pr_indices = Some(wordshk_tools::pr_index::pr_indices_into_fst(pr_indices));
-    log!(t, "Generated pr indices");
 }
 
 pub fn combined_search(
@@ -195,106 +160,37 @@ pub fn combined_search(
     romanization: Romanization,
 ) -> CombinedSearchResults {
     let api = API.lock().unwrap();
-    match &mut search::combined_search(
-        &api.variants_map,
-        api.pr_indices.as_ref(),
-        api.english_index(),
-        api.dict(),
-        &query,
-        script,
-        romanization,
-    ) {
+    let api = api.as_ref().unwrap();
+    match &mut search::combined_search(api, &query, script, romanization) {
         CombinedSearchRank::Variant(variant_ranks) => CombinedSearchResults {
-            variant_results: variant_ranks_to_results(
-                variant_ranks,
-                &api.variants_map,
-                api.dict(),
-                script,
-                capacity,
-            ),
+            variant_results: variant_ranks_to_results(variant_ranks, api, script, capacity),
             pr_results: (None, vec![]),
             english_results: (None, vec![]),
         },
         CombinedSearchRank::Pr(pr_ranks) => CombinedSearchResults {
             variant_results: (None, vec![]),
-            pr_results: pr_ranks_to_results(
-                pr_ranks,
-                &api.variants_map,
-                api.dict(),
-                script,
-                capacity,
-            ),
+            pr_results: pr_ranks_to_results(pr_ranks, api, script, capacity),
             english_results: (None, vec![]),
         },
         CombinedSearchRank::All(variant_ranks, pr_ranks, english_ranks) => CombinedSearchResults {
-            variant_results: variant_ranks_to_results(
-                variant_ranks,
-                &api.variants_map,
-                api.dict(),
-                script,
-                capacity,
-            ),
-            pr_results: pr_ranks_to_results(
-                pr_ranks,
-                &api.variants_map,
-                api.dict(),
-                script,
-                capacity,
-            ),
-            english_results: english_ranks_to_results(
-                english_ranks,
-                &api.variants_map,
-                script,
-                capacity,
-            ),
+            variant_results: variant_ranks_to_results(variant_ranks, api, script, capacity),
+            pr_results: pr_ranks_to_results(pr_ranks, api, script, capacity),
+            english_results: english_ranks_to_results(english_ranks, api, script, capacity),
         },
     }
-}
-
-pub fn eg_search(
-    capacity: u32,
-    max_first_index_in_eg: u32,
-    query: String,
-    script: Script,
-) -> Vec<EgSearchResult> {
-    let api = API.lock().unwrap();
-    let mut ranks = search::eg_search(
-        &api.variants_map,
-        api.dict(),
-        &query,
-        max_first_index_in_eg as usize,
-        script,
-    );
-    let mut results = vec![];
-    let mut i = 0;
-    while ranks.len() > 0 && i < capacity {
-        let search::EgSearchRank {
-            id,
-            def_index,
-            eg_index,
-            matched_eg,
-            ..
-        } = ranks.pop().unwrap();
-        results.push(EgSearchResult {
-            id: id as u32,
-            def_index: def_index as u32,
-            eg_index: eg_index as u32,
-            matched_eg,
-        });
-        i += 1;
-    }
-    results
 }
 
 pub fn get_entry_json(id: u32) -> String {
     let api = API.lock().unwrap();
-    let rich_entry = api.dict().get_entry(id);
+    let api = api.as_ref().unwrap();
+    let rich_entry = api.get_entry(id);
     serde_json::to_string(&to_lean_rich_entry(&rich_entry)).unwrap()
 }
 
 pub fn get_entry_group_json(id: u32) -> Vec<String> {
     let api = API.lock().unwrap();
-    let rich_entry_group = search::get_entry_group(&api.variants_map, api.dict(), id);
+    let api = api.as_ref().unwrap();
+    let rich_entry_group = search::get_entry_group(api, id);
     rich_entry_group
         .iter()
         .map(|entry| serde_json::to_string(&to_lean_rich_entry(entry)).unwrap())
@@ -302,12 +198,13 @@ pub fn get_entry_group_json(id: u32) -> Vec<String> {
 }
 
 pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
-    search::get_entry_id(&API.lock().unwrap().variants_map, &query, script).map(|id| id as u32)
+    let api = API.lock().unwrap();
+    let api = api.as_ref().unwrap() as &dyn VariantMapLike;
+    api.get(&query, script).map(|id| id as u32)
 }
 
 fn variant_ranks_to_results(
     variant_ranks: &mut BinaryHeap<search::VariantSearchRank>,
-    variants_map: &VariantsMap,
     dict: &dyn RichDictLike,
     script: Script,
     capacity: u32,
@@ -344,7 +241,6 @@ fn variant_ranks_to_results(
 
 fn pr_ranks_to_results(
     pr_ranks: &mut BinaryHeap<search::PrSearchRank>,
-    variants_map: &VariantsMap,
     dict: &dyn RichDictLike,
     script: Script,
     capacity: u32,
@@ -405,7 +301,7 @@ fn get_entry_defs(id: EntryId, dict: &dyn RichDictLike) -> Vec<EntryDef> {
 
 fn english_ranks_to_results(
     english_ranks: &mut BinaryHeap<EnglishSearchRank>,
-    variants_map: &VariantsMap,
+    dict: &dyn RichDictLike,
     script: Script,
     capacity: u32,
 ) -> (Option<usize>, Vec<EnglishSearchResult>) {
@@ -421,7 +317,7 @@ fn english_ranks_to_results(
     });
     while !english_ranks.is_empty() && i < capacity {
         let entry = english_ranks.pop().unwrap();
-        let variants = search::pick_variants(&variants_map.get(&entry.entry_id).unwrap(), script);
+        let variants = search::pick_variants(&dict.get_entry(entry.entry_id).variants, script);
         let variants = variants.to_words();
         english_search_results.push(EnglishSearchResult {
             id: entry.entry_id as u32,
