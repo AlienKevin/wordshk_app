@@ -1,6 +1,5 @@
 use std::collections::BinaryHeap;
-use std::io::Cursor;
-use std::sync::Mutex;
+use std::io::Curso
 use std::time::Instant;
 
 use flutter_rust_bridge::frb;
@@ -9,6 +8,7 @@ use once_cell::sync::Lazy;
 use parking_lot::RwLock;
 use wordshk_tools::dict::{clause_to_string, EntryId};
 use wordshk_tools::english_index::EnglishSearchRank;
+use wordshk_tools::entry_group_index;
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::search::VariantMapLike;
@@ -190,7 +190,7 @@ pub fn get_entry_json(id: u32) -> String {
 pub fn get_entry_group_json(id: u32) -> Vec<String> {
     let api = API.read();
     let api = api.as_ref().unwrap();
-    let rich_entry_group = search::get_entry_group(api, id);
+    let rich_entry_group = entry_group_index::get_entry_group(api, id);
     rich_entry_group
         .iter()
         .map(|entry| serde_json::to_string(&to_lean_rich_entry(entry)).unwrap())
