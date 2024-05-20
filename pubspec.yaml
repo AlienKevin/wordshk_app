@@ -54,6 +54,7 @@ dependencies:
   flutter_svg: ^2.0.9
   package_info_plus: ^6.0.0
   flutter_archive: ^6.0.3
+  sentry_flutter: ^8.2.0
 
 dev_dependencies:
   flutter_test:
@@ -67,8 +68,6 @@ dev_dependencies:
       url: https://github.com/AlienKevin/flutter_launcher_name
       ref: "0.11.1"
   ffigen: ">=8.0.0 <10.0.0"
-  sentry_flutter: ^7.19.0
-  sentry_dart_plugin: ^1.7.1
   build_runner: ^2.4.7
   json_serializable:
   freezed: ^2.4.5
