@@ -104,7 +104,7 @@ macro_rules! log {
     }};
 }
 
-static API: Lazy<Mutex<Option<SqliteDb>>> = Lazy::new(|| Mutex::new(None));
+static API: Lazy<RwLock<Option<SqliteDb>>> = Lazy::new(|| RwLock::new(None));
 
 #[frb(init)]
 pub fn init_utils() {
@@ -113,7 +113,7 @@ pub fn init_utils() {
 }
 
 pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
-    let mut api = API.lock().unwrap();
+    let mut api = API.write();
 
     let mut t = Instant::now();
 
@@ -139,7 +139,7 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
     let summaries = entry_ids
         .into_iter()
         .map(|entry_id| {
-            let api = API.lock().unwrap();
+            let api = API.read();
             let api = api.as_ref().unwrap();
             let entry = api.get_entry(entry_id);
             let defs = get_entry_defs(entry_id, api);
@@ -159,7 +159,7 @@ pub fn combined_search(
     script: Script,
     romanization: Romanization,
 ) -> CombinedSearchResults {
-    let api = API.lock().unwrap();
+    let api = API.read();
     let api = api.as_ref().unwrap();
     match &mut search::combined_search(api, &query, script, romanization) {
         CombinedSearchRank::Variant(variant_ranks) => CombinedSearchResults {
@@ -181,14 +181,14 @@ pub fn combined_search(
 }
 
 pub fn get_entry_json(id: u32) -> String {
-    let api = API.lock().unwrap();
+    let api = API.read();
     let api = api.as_ref().unwrap();
     let rich_entry = api.get_entry(id);
     serde_json::to_string(&to_lean_rich_entry(&rich_entry)).unwrap()
 }
 
 pub fn get_entry_group_json(id: u32) -> Vec<String> {
-    let api = API.lock().unwrap();
+    let api = API.read();
     let api = api.as_ref().unwrap();
     let rich_entry_group = search::get_entry_group(api, id);
     rich_entry_group
@@ -198,8 +198,8 @@ pub fn get_entry_group_json(id: u32) -> Vec<String> {
 }
 
 pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
-    let api = API.lock().unwrap();
-    let api = api.as_ref().unwrap() as &dyn VariantMapLike;
+    let api = API.read();
+    let api = api.as_ref().unwrap();
     api.get(&query, script).map(|id| id as u32)
 }
 

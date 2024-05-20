@@ -45,6 +45,9 @@ class _EntryPageState extends State<EntryPage> {
     () async {
       try {
         final json = await getEntryGroupJson(id: widget.id);
+        if (!mounted) {
+          return;
+        }
         setState(() {
           entryGroup = json
               .map((entryJson) => Entry.fromJson(jsonDecode(entryJson)))
@@ -57,6 +60,9 @@ class _EntryPageState extends State<EntryPage> {
       } catch (err) {
         if (kDebugMode) {
           print(err);
+        }
+        if (!mounted) {
+          return;
         }
         setState(() {
           hasError = true;
