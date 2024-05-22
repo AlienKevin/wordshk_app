@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter (full)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "-d",
+                "LYA AL00",
+                "--flavor",
+                "full"
+            ]
+        },
+        {
+            "name": "Flutter (foss)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "-d",
+                "LYA AL00",
+                "--flavor",
+                "foss"
+            ]
+        },
+        {
+            "name": "Flutter (ios)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "-d",
+                "iPhone"
+            ]
+        }
+    ]
+}
