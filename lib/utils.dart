@@ -172,21 +172,36 @@ SummaryDefLanguage watchSummaryDefLanguage(BuildContext context) {
 
 List<TextSpan> showDefSummary(
     BuildContext context, List<String> defs, textStyle) {
-  defSpan(String text, {required bool bold}) => TextSpan(
-      text: text
-          .replaceAll(RegExp(r'[;；].+'), "")
-          .replaceAll(RegExp(r'\(.+\)'), "")
-          .replaceAll(RegExp(r'（.+）'), ""),
-      style: textStyle.copyWith(
-          fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
-          fontWeight: bold ? FontWeight.bold : FontWeight.normal));
+  defSpan(String text, {required bool bold}) {
+    return TextSpan(
+        text: text,
+        style: textStyle.copyWith(
+            fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal));
+  }
+
   return (defs.length == 1
-      ? [defSpan(defs[0], bold: false)]
+      ? [
+          defSpan(
+              defs[0]
+                  .replaceAll(RegExp(r'\(.+?\)'), "")
+                  .replaceAll(RegExp(r'（.+?）'), "")
+                  .trim(),
+              bold: false)
+        ]
       : defs
-          .mapIndexed((i, def) => [
-                defSpan("${i > 0 ? "  " : ""}${i + 1} ", bold: true),
-                defSpan(def, bold: false)
-              ])
+          .mapIndexed((i, def) {
+            return [
+              defSpan("${i > 0 ? "  " : ""}${i + 1} ", bold: true),
+              defSpan(
+                  def
+                      .replaceAll(RegExp(r'[;；].+'), "")
+                      .replaceAll(RegExp(r'\(.+?\)'), "")
+                      .replaceAll(RegExp(r'（.+?）'), "")
+                      .trim(),
+                  bold: false)
+            ];
+          })
           .expand((x) => x)
           .toList());
 }

@@ -364,7 +364,7 @@ class _EntryItemsState<T extends EntryItemState>
     );
   }
 
-  getSummaryDef(List<EntryDef> summaryDefs,
+  List<String> getSummaryDef(List<EntryDef> summaryDefs,
           SummaryDefLanguage summaryDefLanguage, Script script) =>
       switch ((summaryDefLanguage, script)) {
         (SummaryDefLanguage.cantonese, Script.traditional) =>
