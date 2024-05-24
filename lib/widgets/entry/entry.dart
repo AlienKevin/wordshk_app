@@ -190,8 +190,8 @@ class _EntryWidgetState extends State<EntryWidget>
                           }),
                     ),
                     OverflowBar(
-                      alignment:
-                          MainAxisAlignment.spaceAround, // Optional: align buttons
+                      alignment: MainAxisAlignment
+                          .spaceAround, // Optional: align buttons
                       children: <Widget>[
                         TextButton(
                           onPressed: () {
@@ -239,6 +239,31 @@ class _EntryWidgetState extends State<EntryWidget>
             ))
         .expand((x) => x)
         .toList();
+
+    final entryContent = SelectionTransformer.separated(
+        onSelectionChange: (String? selectedText) {
+          if (widget.allowLookup) {
+            context
+                .read<EntryState>()
+                .setSelectedContent(selectedText, context);
+          }
+        },
+        child: ListView.separated(
+          controller: _scrollController,
+          padding: const EdgeInsets.all(10),
+          itemCount: items.length,
+          cacheExtent: double.maxFinite,
+          separatorBuilder: (context, index) => SizedBox(
+            height: defIndexRanges
+                        .firstWhereOrNull((range) => range.$2 - 1 == index) !=
+                    null
+                ? (MediaQuery.of(context).size.width > wideScreenThreshold
+                    ? 40
+                    : 20)
+                : 10,
+          ),
+          itemBuilder: (context, index) => items[index],
+        ));
 
     return Column(
       key: entryWidgetKey,
@@ -327,10 +352,9 @@ class _EntryWidgetState extends State<EntryWidget>
                         });
                       }
                     },
-                    child: SelectionArea(
-                      contextMenuBuilder: !widget.allowLookup
-                          ? null
-                          : (
+                    child: widget.allowLookup
+                        ? SelectionArea(
+                            contextMenuBuilder: (
                               BuildContext context,
                               SelectableRegionState selectableRegionState,
                             ) {
@@ -361,7 +385,8 @@ class _EntryWidgetState extends State<EntryWidget>
                                                     .insert(overlayEntry!);
                                               });
                                             },
-                                            label: AppLocalizations.of(context)!.lookUp,
+                                            label: AppLocalizations.of(context)!
+                                                .lookUp,
                                           )
                                         ]
                                       : []),
@@ -370,32 +395,9 @@ class _EntryWidgetState extends State<EntryWidget>
                                 ],
                               );
                             },
-                      child: SelectionTransformer.separated(
-                          onSelectionChange: (String? selectedText) {
-                            if (widget.allowLookup) {
-                              context
-                                  .read<EntryState>()
-                                  .setSelectedContent(selectedText, context);
-                            }
-                          },
-                          child: ListView.separated(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.all(10),
-                            itemCount: items.length,
-                            cacheExtent: double.maxFinite,
-                            separatorBuilder: (context, index) => SizedBox(
-                              height: defIndexRanges.firstWhereOrNull(
-                                          (range) => range.$2 - 1 == index) !=
-                                      null
-                                  ? (MediaQuery.of(context).size.width >
-                                          wideScreenThreshold
-                                      ? 40
-                                      : 20)
-                                  : 10,
-                            ),
-                            itemBuilder: (context, index) => items[index],
-                          )),
-                    )))),
+                            child: entryContent,
+                          )
+                        : entryContent))),
         ...widget.showBottomNavigation
             ? [
                 Row(children: [
