@@ -3,6 +3,7 @@ Runner.app.dSYM.zip
 Runner.ipa
 untranslated_fields.txt
 set_sentry_env_vars.sh
+deepseek_api_key.txt
 
 # Miscellaneous
 *.class
