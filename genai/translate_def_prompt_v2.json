@@ -1,11 +1,11 @@
 [
     {
         "role": "system",
-        "content": "你是一個熟練掌握粵語和普通話的香港人，需要幫助一個粵語詞典把粵語詞語翻譯成普通話詞語（繁體）。詞典會提供粵語詞語及其粵語和英語解釋。如果有多個對應的普通話詞語，就列出最常見的幾個，用；隔開，簡短常用的優先排列，注意不要重複列出粵語詞語。如果對應的普通話詞語和粵語詞語相同，則直接重複粵語詞語。除了對應的普通話詞語，不要列出任何額外解釋，不要翻譯粵語解釋。"
+        "content": "你是一個熟練掌握粵語和普通話的香港人，需要幫助一個粵語詞典把粵語詞語翻譯成普通話詞語（繁體）。詞典會提供粵語詞語及其粵語和英語解釋。如果有多個對應的普通話詞語，就列出最常見的幾個，用；隔開，簡短常用的優先排列。除了對應的普通話詞語，不要列出任何額外解釋，不要翻譯粵語解釋。"
     },
     {
         "role": "user",
-        "content": "粵語詞語：嘅\n粵語解釋：用嚟連接兩個名詞短語，表示從屬關係，指後者屬於前者，或者係前者一部份\n英語解釋：used with two noun phrases to indicate possession; denotes that the latter belongs to, or is a part of, the former; similar to English \" 's \""
+        "content": "英語解釋：used with two noun phrases to indicate possession; denotes that the latter belongs to, or is a part of, the former; similar to English \" 's \"\n粵語解釋：用嚟連接兩個名詞短語，表示從屬關係，指後者屬於前者，或者係前者一部份\n粵語詞語：嘅"
     },
     {
         "role": "system",
@@ -13,7 +13,7 @@
     },
     {
         "role": "user",
-        "content": "粵語詞語：大耳窿\n粵語解釋：以高於法定利率借錢畀其他人嘅人（量詞：個）\n英語解釋：loan shark; usurer; literally: big ear hole"
+        "content": "英語解釋：loan shark; usurer; literally: big ear hole\n粵語解釋：以高於法定利率借錢畀其他人嘅人（量詞：個）\n粵語詞語：大耳窿"
     },
     {
         "role": "system",
@@ -21,7 +21,7 @@
     },
     {
         "role": "user",
-        "content": "粵語詞語：𠽤/撠\n粵語解釋：揢 (kak1)；阻\n英語解釋：to be or get stuck; to become lodged in"
+        "content": "英語解釋：to be or get stuck; to become lodged in\n粵語解釋：揢 (kak1)；阻\n粵語詞語：𠽤/撠"
     },
     {
         "role": "system",
@@ -29,7 +29,7 @@
     },
     {
         "role": "user",
-        "content": "粵語詞語：綠豆\n粵語解釋：一種豆；外皮係綠色，可以發芽菜（量詞：粒）\n英語解釋：mung bean"
+        "content": "英語解釋：mung bean\n粵語解釋：一種豆；外皮係綠色，可以發芽菜（量詞：粒）\n粵語詞語：綠豆"
     },
     {
         "role": "system",
@@ -37,7 +37,7 @@
     },
     {
         "role": "user",
-        "content": "粵語詞語：黐線佬/痴線佬\n粵語解釋：行為或者講嘢唔正常、有問題、唔合乎邏輯嘅男性；黐線嘅男人\n英語解釋：insane man; madman"
+        "content": "英語解釋：insane man; madman\n粵語解釋：行為或者講嘢唔正常、有問題、唔合乎邏輯嘅男性；黐線嘅男人\n粵語詞語：黐線佬/痴線佬"
     },
     {
         "role": "system",

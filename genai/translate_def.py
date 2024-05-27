@@ -4,6 +4,9 @@ from tqdm import tqdm
 import time
 import json
 from threading import Lock
+from opencc import OpenCC
+
+cc = OpenCC('t2s')
 
 with open('deepseek_api_key.txt', 'r') as file:
     api_key = file.read().strip()
@@ -22,7 +25,7 @@ def translate(variant, yue_def, eng_def):
                 messages=[*prompt,
                           {
                             "role": "user",
-                            "content": f"粵語詞條：{variant}\n粵語解釋：{yue_def}\n英語解釋：{eng_def}"
+                            "content": f"英語解釋：{eng_def}\n粵語解釋：{yue_def}\n粵語詞語：{variant}"
                           }],
                 max_tokens=256,
                 temperature=0,
@@ -45,6 +48,19 @@ with open('cantonese_phrase_translations.tsv', 'r') as file:
 print(f'Number of Cantonese phrases: {len(cantonese_ids)}')
 
 
+mandarin_words = set()
+with open('idiom.json', 'r') as file:
+    idioms = json.load(file)
+    for idiom in idioms:
+        mandarin_words.add(idiom['word'])
+
+with open('word.json', 'r') as file:
+    words = json.load(file)
+    for word in words:
+        mandarin_words.add(word['word'])
+print(f'Number of Mandarin words: {len(mandarin_words)}')
+
+
 def extract_yue_variants_and_defs(data):
     entries = []
     for entry in data.values():
@@ -52,6 +68,10 @@ def extract_yue_variants_and_defs(data):
             continue
         variants = entry.get('variants', [])
         variants = [variant.get('w', '') for variant in variants]
+
+        if any(cc.convert(variant) in mandarin_words for variant in variants):
+            continue
+
         for definition in entry.get('defs', []):
             yue_def_lines = []
             for line in definition.get('yue', []):
@@ -71,7 +91,7 @@ def extract_yue_variants_and_defs(data):
                     segment_type, segment_content = segment[0], segment[1]
                     eng_def_line += segment_content
                 eng_def_lines.append(eng_def_line)
-            entries.append({"id": entry.get('id'), "variants": variants, "defIndex": i, "yueDef": ''.join(yue_def_lines), "engDef": ''.join(eng_def_lines)})
+            entries.append({"id": entry.get('id'), "variants": variants, "defIndex": i, "yueDef": '\n'.join(yue_def_lines), "engDef": '\n'.join(eng_def_lines)})
     return entries
 
 
