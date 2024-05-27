@@ -5,13 +5,19 @@ from cedict_utils.cedict import CedictParser
 cc = OpenCC('t2s')
 
 def extract_result(result):
-    if '國語翻譯：' in result and '\n國語解釋：' in result:
-        translation_start = result.find('國語翻譯：') + len('國語翻譯：')
-        definition_start = result.find('\n國語解釋：') + len('\n國語解釋：')
-        translation = result[translation_start:result.find('\n', translation_start)].strip()
-        definition = result[definition_start:].strip()
-        return translation, definition
-    return None, None
+    start_tag = '<mandarin>'
+    end_tag = '</mandarin>'
+    
+    start_index = result.find(start_tag)
+    end_index = result.find(end_tag, start_index)
+    
+    if start_index != -1 and end_index != -1:
+        start_index += len(start_tag)
+        mandarin_content = result[start_index:end_index]
+    else:
+        mandarin_content = ''
+    
+    return mandarin_content.split('/')
 
 mandarin_phrases = set()
 parser = CedictParser()
@@ -28,17 +34,15 @@ def verify_translation_format(file_path):
             result = entry.get('result', '')
             if 'error' in result:
                 print(f"Error entry ID {entry['id']}: {result['error']}")
-            elif not (result.startswith('國語翻譯：') and '\n國語解釋：' in result):
-                print(f"Entry ID {entry['id']} has an incorrect format in 'result': {result}")
             else:
-                (translation, definition) = extract_result(result)
-                trans = cc.convert(translation)
-                defi = cc.convert(definition)
-                vars = [cc.convert(variant) for variant in entry['variants']]
-                if trans not in vars and trans not in defi.split('；') and \
-                    not any(variant in mandarin_phrases for variant in vars) and all(len(variant) > 1 for variant in vars):
-                    if '/'.join(vars) != trans and '#' not in translation and len(trans) <= 2 * max(len(var) for var in vars):
-                        cantonese_phrases[entry['id']] = ('/'.join(entry['variants']), translation)
+                translations = extract_result(result)
+                definition = cc.convert(entry['yueDef'])
+                variants = [cc.convert(variant) for variant in entry['variants']]
+                if len(set(translations).intersection(set(variants))) == 0 and \
+                    not any(variant in mandarin_phrases for variant in variants) and \
+                    not any('/'.join(variants) == translation for translation in translations) and \
+                    not any(len(translation) > 2 * max(len(variant) for variant in variants) for translation in translations):
+                    cantonese_phrases[entry['id']] = ('/'.join(entry['variants']), translations, entry['defIndex'])
     return cantonese_phrases
 
 # Specify the path to the results.jsonl file
@@ -47,5 +51,6 @@ cantonese_phrases = verify_translation_format(results_file_path)
 
 print(f'Number of Cantonese phrases: {len(cantonese_phrases)}')
 with open('cantonese_phrase_translations.tsv', 'w') as f:
-    for id, (cantonese, mandarin) in cantonese_phrases.items():
-        f.write(str(id) + '\t' + cantonese + '\t' + mandarin + '\n')
+    f.write('entry_id\tdef_index\tvariants\tmandarin_translations\n')
+    for id, (cantonese, translations, def_index) in cantonese_phrases.items():
+        f.write(str(id) + '\t' + str(def_index) + '\t' + cantonese + '\t' + '/'.join(translations) + '\n')
