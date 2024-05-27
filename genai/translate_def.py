@@ -25,7 +25,7 @@ def translate(variant, yue_def, eng_def):
                 messages=[*prompt,
                           {
                             "role": "user",
-                            "content": f"英語解釋：{eng_def}\n粵語解釋：{yue_def}\n粵語詞語：{variant}"
+                            "content": f"<english>{eng_def}</english>\n<cantonese>{variant}</cantonese>"
                           }],
                 max_tokens=256,
                 temperature=0,
@@ -47,13 +47,14 @@ with open('cantonese_phrase_translations.tsv', 'r') as file:
         cantonese_ids.add(int(id))
 print(f'Number of Cantonese phrases: {len(cantonese_ids)}')
 
-
+# idiom.json from: https://github.com/mapull/chinese-dictionary/blob/main/idiom/idiom.json
 mandarin_words = set()
 with open('idiom.json', 'r') as file:
     idioms = json.load(file)
     for idiom in idioms:
         mandarin_words.add(idiom['word'])
 
+# word.json from: https://github.com/mapull/chinese-dictionary/blob/main/word/word.json
 with open('word.json', 'r') as file:
     words = json.load(file)
     for word in words:
@@ -72,11 +73,11 @@ def extract_yue_variants_and_defs(data):
         if any(cc.convert(variant) in mandarin_words for variant in variants):
             continue
 
-        for definition in entry.get('defs', []):
+        for def_index, definition in enumerate(entry.get('defs', [])):
             yue_def_lines = []
             for line in definition.get('yue', []):
                 yue_def_line = ''
-                for i, segment in enumerate(line):
+                for segment in line:
                     segment_type, segment_content = segment[0], segment[1]
                     yue_def_line += segment_content
                 yue_def_lines.append(yue_def_line)
@@ -87,11 +88,11 @@ def extract_yue_variants_and_defs(data):
             eng_def_lines = []
             for line in definition.get('eng', []):
                 eng_def_line = ''
-                for i, segment in enumerate(line):
+                for segment in line:
                     segment_type, segment_content = segment[0], segment[1]
                     eng_def_line += segment_content
                 eng_def_lines.append(eng_def_line)
-            entries.append({"id": entry.get('id'), "variants": variants, "defIndex": i, "yueDef": '\n'.join(yue_def_lines), "engDef": '\n'.join(eng_def_lines)})
+            entries.append({"id": entry.get('id'), "variants": variants, "defIndex": def_index, "yueDef": '\n'.join(yue_def_lines), "engDef": '\n'.join(eng_def_lines)})
     return entries
 
 

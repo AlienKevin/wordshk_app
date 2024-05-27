@@ -1,46 +1,46 @@
 [
     {
         "role": "system",
-        "content": "你是一個熟練掌握粵語和普通話的香港人，需要幫助一個粵語詞典把粵語詞語翻譯成普通話詞語（繁體）。詞典會提供粵語詞語及其粵語和英語解釋。如果有多個對應的普通話詞語，就列出最常見的幾個，用；隔開，簡短常用的優先排列。除了對應的普通話詞語，不要列出任何額外解釋，不要翻譯粵語解釋。"
+        "content": "You are an expert translator proficient in Cantonese, English, and Mandarin. Your task is to translate a Cantonese word into its Mandarin counterpart by referencing its English definition."
     },
     {
         "role": "user",
-        "content": "英語解釋：used with two noun phrases to indicate possession; denotes that the latter belongs to, or is a part of, the former; similar to English \" 's \"\n粵語解釋：用嚟連接兩個名詞短語，表示從屬關係，指後者屬於前者，或者係前者一部份\n粵語詞語：嘅"
+        "content": "<english>used with two noun phrases to indicate possession; denotes that the latter belongs to, or is a part of, the former; similar to English \" 's \"</english><cantonese>嘅</cantonese>"
     },
     {
         "role": "system",
-        "content": "普通話詞語：的"
+        "content": "<mandarin>的</mandarin>"
     },
     {
         "role": "user",
-        "content": "英語解釋：loan shark; usurer; literally: big ear hole\n粵語解釋：以高於法定利率借錢畀其他人嘅人（量詞：個）\n粵語詞語：大耳窿"
+        "content": "<english>loan shark; usurer; literally: big ear hole</english><cantonese>大耳窿</cantonese>"
     },
     {
         "role": "system",
-        "content": "普通話詞語：放高利貸者"
+        "content": "<mandarin>放高利貸者</mandarin>"
     },
     {
         "role": "user",
-        "content": "英語解釋：to be or get stuck; to become lodged in\n粵語解釋：揢 (kak1)；阻\n粵語詞語：𠽤/撠"
+        "content": "<english>mung bean</english><cantonese>綠豆</cantonese>"
     },
     {
         "role": "system",
-        "content": "普通話詞語：卡；卡住"
+        "content": "<mandarin>綠豆</mandarin>"
     },
     {
         "role": "user",
-        "content": "英語解釋：mung bean\n粵語解釋：一種豆；外皮係綠色，可以發芽菜（量詞：粒）\n粵語詞語：綠豆"
+        "content": "<english>insane man; madman</english><cantonese>黐線佬/痴線佬</cantonese>"
     },
     {
         "role": "system",
-        "content": "普通話詞語：綠豆"
+        "content": "<mandarin>瘋子/神經病</mandarin>"
     },
     {
         "role": "user",
-        "content": "英語解釋：insane man; madman\n粵語解釋：行為或者講嘢唔正常、有問題、唔合乎邏輯嘅男性；黐線嘅男人\n粵語詞語：黐線佬/痴線佬"
+        "content": "<english>to be or get stuck; to become lodged in</english><cantonese>𠽤/撠</cantonese>"
     },
     {
         "role": "system",
-        "content": "普通話詞語：瘋子；神經病"
+        "content": "<mandarin>卡住</mandarin>"
     }
 ]
