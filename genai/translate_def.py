@@ -10,10 +10,10 @@ with open('deepseek_api_key.txt', 'r') as file:
 
 client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
 
-with open('translate_def_prompt.json', 'r') as file:
+with open('translate_def_prompt_v2.json', 'r') as file:
     prompt = json.load(file)
 
-def translate(variant, yue_def):
+def translate(variant, yue_def, eng_def):
     attempts = 0
     while True:
         try:
@@ -22,7 +22,7 @@ def translate(variant, yue_def):
                 messages=[*prompt,
                           {
                             "role": "user",
-                            "content": f"粵語詞條：{variant}\n粵語解釋：{yue_def}"
+                            "content": f"粵語詞條：{variant}\n粵語解釋：{yue_def}\n英語解釋：{eng_def}"
                           }],
                 max_tokens=256,
                 temperature=0,
@@ -37,23 +37,41 @@ def translate(variant, yue_def):
                 return {'error': str(e)}
 
 
+cantonese_ids = set()
+with open('cantonese_phrase_translations.tsv', 'r') as file:
+    for line in file:
+        id = line.split('\t')[0]
+        cantonese_ids.add(int(id))
+print(f'Number of Cantonese phrases: {len(cantonese_ids)}')
+
+
 def extract_yue_variants_and_defs(data):
     entries = []
     for entry in data.values():
+        if entry['id'] not in cantonese_ids:
+            continue
         variants = entry.get('variants', [])
         variants = [variant.get('w', '') for variant in variants]
-        
         for definition in entry.get('defs', []):
             yue_def_lines = []
             for line in definition.get('yue', []):
                 yue_def_line = ''
                 for i, segment in enumerate(line):
                     segment_type, segment_content = segment[0], segment[1]
-                    if segment_type == 'L':
-                        segment_content = f"{'' if i == 0 else ' '}#{segment_content}{' ' if i < len(line) - 1 else ''}"
                     yue_def_line += segment_content
                 yue_def_lines.append(yue_def_line)
-            entries.append({"id": entry.get('id'), "variants": variants, "defIndex": i, "yueDef": ''.join(yue_def_lines)})
+            
+            if definition.get('eng') is None:
+                continue
+
+            eng_def_lines = []
+            for line in definition.get('eng', []):
+                eng_def_line = ''
+                for i, segment in enumerate(line):
+                    segment_type, segment_content = segment[0], segment[1]
+                    eng_def_line += segment_content
+                eng_def_lines.append(eng_def_line)
+            entries.append({"id": entry.get('id'), "variants": variants, "defIndex": i, "yueDef": ''.join(yue_def_lines), "engDef": ''.join(eng_def_lines)})
     return entries
 
 
@@ -72,7 +90,9 @@ if __name__ == '__main__':
                 result = {"id": entry['id'],
                           "variants": entry['variants'],
                           "yueDef": entry['yueDef'],
-                          "result": translate('/'.join(entry['variants']), entry['yueDef'])
+                          "engDef": entry['engDef'],
+                          "defIndex": entry['defIndex'],
+                          "result": translate('/'.join(entry['variants']), entry['yueDef'], entry['engDef'])
                           }
                 with lock:
                     file.write(json.dumps(result, ensure_ascii=False) + '\n')
