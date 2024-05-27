@@ -28,7 +28,7 @@ def translate(variant, yue_def, eng_def):
                             "content": f"<english>{eng_def}</english>\n<cantonese>{variant}</cantonese>"
                           }],
                 max_tokens=256,
-                temperature=0,
+                temperature=1.1,
                 stream=False
             )
             return response.choices[0].message.content

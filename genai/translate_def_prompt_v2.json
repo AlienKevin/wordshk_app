@@ -17,7 +17,7 @@
     },
     {
         "role": "system",
-        "content": "<mandarin>放高利貸者</mandarin>"
+        "content": "<mandarin>放高利贷者</mandarin>"
     },
     {
         "role": "user",
@@ -25,7 +25,7 @@
     },
     {
         "role": "system",
-        "content": "<mandarin>綠豆</mandarin>"
+        "content": "<mandarin>绿豆</mandarin>"
     },
     {
         "role": "user",
@@ -33,7 +33,7 @@
     },
     {
         "role": "system",
-        "content": "<mandarin>瘋子/神經病</mandarin>"
+        "content": "<mandarin>疯子/神经病</mandarin>"
     },
     {
         "role": "user",
