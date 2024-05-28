@@ -208,6 +208,8 @@
     "feedback": "Feedback",
     "shareFeedbackHintText": "Share feedback or report a bug",
     "wordshkFeedback": "words.hk feedback",
+    "emailClientNotFound": "You can contact words.hk through:",
+    "copiedToClipboard": "{url} copied to clipboard",
 
     "aboutWordshkIntroductionTitle": "Introduction",
     "aboutWordshkIntroductionText": "We use crowd-sourcing methods to sustainably develop a comprehensive Cantonese dictionary that will be useful for both beginners and advanced users. We aim to provide complete explanations and illustrative example sentences.",

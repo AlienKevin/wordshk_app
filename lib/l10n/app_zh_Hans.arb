@@ -195,6 +195,7 @@
     "feedback": "反馈",
     "shareFeedbackHintText": "分享反馈或报告错误",
     "wordshkFeedback": "words.hk 反馈",
+    "emailClientNotFound": "你可以通过以下渠道联系粤典：",
 
     "aboutWordshkIntroductionTitle": "简介",
     "aboutWordshkIntroductionText": "《粤典》是一个大型的粤语辞典计划。我们用Crowd-sourcing的方法，制作一本大型、可持续发展的粤语辞典。我们的字典用香港粤语（广东话）做中心，编写解释和例句时都会考虑香港的用法；部份例句会从本土的文章中节选出来，务求反映真实的语言现状。",

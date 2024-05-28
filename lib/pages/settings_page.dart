@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart' hide NavigationDrawer;
+import 'package:flutter/services.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -23,6 +25,107 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> sendEmail(
+        String recipient, String subject, String body) async {
+      final Email email = Email(
+        subject: subject,
+        body: body,
+        recipients: [recipient],
+        isHTML: false,
+      );
+
+      const developerEmail = "kevinli020508@gmail.com";
+      const facebookGroupUrl = "facebook.com/www.words.hk";
+
+      try {
+        await FlutterEmailSender.send(email);
+      } catch (error) {
+        print(error);
+
+        final buttonTextColor =
+            MediaQuery.of(context).platformBrightness == Brightness.light
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.onPrimary;
+
+        showDialog(
+          useRootNavigator: false,
+          context: context,
+          builder: (_) => AlertDialog(
+            content: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 200),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(AppLocalizations.of(context)!.emailClientNotFound),
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.email,
+                        ),
+                        WidgetSpan(
+                            child: IconButton(
+                                visualDensity: VisualDensity.compact,
+                                alignment: Alignment.bottomCenter,
+                                color: buttonTextColor,
+                                onPressed: () async {
+                                  await Clipboard.setData(const ClipboardData(
+                                      text: developerEmail));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(AppLocalizations.of(
+                                              context)!
+                                          .copiedToClipboard(developerEmail)),
+                                    ),
+                                  );
+                                },
+                                icon:
+                                    Icon(Icons.copy, color: buttonTextColor))),
+                        const TextSpan(
+                          text: developerEmail,
+                        )
+                      ])),
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.facebook,
+                        ),
+                        WidgetSpan(
+                            child: IconButton(
+                                visualDensity: VisualDensity.compact,
+                                alignment: Alignment.bottomCenter,
+                                color: buttonTextColor,
+                                onPressed: () async {
+                                  await Clipboard.setData(const ClipboardData(
+                                      text: facebookGroupUrl));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(AppLocalizations.of(
+                                              context)!
+                                          .copiedToClipboard(facebookGroupUrl)),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.copy,
+                                  color: buttonTextColor,
+                                ))),
+                        const TextSpan(
+                          text: facebookGroupUrl,
+                        ),
+                      ])),
+                    ])),
+            actions: [
+              TextButton(
+                child: Text("OK", style: TextStyle(color: buttonTextColor)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    }
+
     final s = AppLocalizations.of(context)!;
 
     final language = context.watch<LanguageState>().language!;
@@ -144,7 +247,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   SettingsTile.switchTile(
                       initialValue:
-                      context.watch<AutoPasteSearchState>().autoPasteSearch,
+                          context.watch<AutoPasteSearchState>().autoPasteSearch,
                       onToggle: (newAutoPasteSearch) {
                         context
                             .read<AutoPasteSearchState>()
@@ -179,16 +282,15 @@ class SettingsPage extends StatelessWidget {
                   SettingsTile.navigation(
                     onPressed: (context) async {
                       final subject =
-                      Uri.encodeComponent(AppLocalizations.of(context)!.wordshkFeedback);
-                      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+                          AppLocalizations.of(context)!.wordshkFeedback;
+                      PackageInfo packageInfo =
+                          await PackageInfo.fromPlatform();
                       String version = packageInfo.version;
                       String buildNumber = packageInfo.buildNumber;
-                      final body = Uri.encodeComponent(
-                          "\n\n------------------\n"
-                              "App version: $version+$buildNumber\n"
-                              "Device info:\n${await getDeviceInfo()}");
-                      openLink(
-                      "mailto:kevinli020508@gmail.com?subject=$subject&body=$body");
+                      final body = "\n\n------------------\n"
+                          "App version: $version+$buildNumber\n"
+                          "Device info:\n${await getDeviceInfo()}";
+                      sendEmail("kevinli020508@gmail.com", subject, body);
                     },
                     title: Text(s.shareFeedback),
                   ),
