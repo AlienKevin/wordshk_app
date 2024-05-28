@@ -11,7 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/main.dart';
+import 'package:wordshk/models/language.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/widgets/entry/entry_mandarin_variants.dart';
 
 import '../../constants.dart';
 import '../../models/entry.dart';
@@ -517,6 +519,12 @@ class _EntryWidgetState extends State<EntryWidget>
         ),
         EntryLabels(
             entryId: entry.id, poses: entry.poses, labels: entry.labels),
+        ...(context.read<LanguageState>().language == Language.zhHans)
+            ? [
+                EntryMandarinVariants(
+                    label: "[普通话]", mandarinVariants: entry.mandarinVariants)
+              ]
+            : [],
         EntrySimsOrAnts(
             label: "[${AppLocalizations.of(context)!.synonym}]",
             simsOrAnts: entry.sims,

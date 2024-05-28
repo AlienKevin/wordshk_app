@@ -15,6 +15,7 @@ class Entry extends Equatable {
   final List<String> simsSimp;
   final List<Segment> ants;
   final List<String> antsSimp;
+  final List<MandarinVariant> mandarinVariants;
   final List<Def> defs;
   final bool published;
 
@@ -28,6 +29,7 @@ class Entry extends Equatable {
     required this.simsSimp,
     required this.ants,
     required this.antsSimp,
+    required this.mandarinVariants,
     required this.defs,
     required this.published,
   });
@@ -54,6 +56,9 @@ class Entry extends Equatable {
           return Segment.fromJson(segment);
         }).toList(),
         antsSimp = List.from(json['ants_simp']),
+        mandarinVariants = List.from(json['mandarin_variants']).map((variant) {
+          return MandarinVariant.fromJson(variant);
+        }).toList(),
         defs = List.from(json['defs']).map((def) {
           return Def.fromJson(def);
         }).toList(),
@@ -386,6 +391,20 @@ class AltClause extends Equatable {
 
   @override
   List<Object?> get props => [altLang, clause];
+}
+
+class MandarinVariant extends Equatable {
+  final String wordSimp;
+  final List<int> defIndices;
+
+  const MandarinVariant(this.wordSimp, this.defIndices);
+
+  MandarinVariant.fromJson(Map<String, dynamic> json)
+      : wordSimp = json['ws'],
+        defIndices = List<int>.from(json['d']);
+
+  @override
+  List<Object?> get props => [wordSimp, defIndices];
 }
 
 class Variant extends Equatable {
