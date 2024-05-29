@@ -24,3 +24,7 @@ crate-type = ["cdylib", "staticlib"]
 
 [profile.release]
 debug = true
+
+# Disable debug info for dependencies in release mode
+[profile.release.package."*"]
+debug = false

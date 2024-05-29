@@ -13,6 +13,18 @@
             ]
         },
         {
+            "name": "Flutter (full) Release",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "-d",
+                "LYA AL00",
+                "--release",
+                "--flavor",
+                "full"
+            ]
+        },
+        {
             "name": "Flutter (foss)",
             "request": "launch",
             "type": "dart",
@@ -24,12 +36,34 @@
             ]
         },
         {
+            "name": "Flutter (foss) Release",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "-d",
+                "LYA AL00",
+                "--release",
+                "--flavor",
+                "foss"
+            ]
+        },
+        {
             "name": "Flutter (ios)",
             "request": "launch",
             "type": "dart",
             "args": [
                 "-d",
                 "iPhone"
+            ]
+        },
+        {
+            "name": "Flutter (ios) Release",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "-d",
+                "iPhone",
+                "--release"
             ]
         }
     ]
