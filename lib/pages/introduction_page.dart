@@ -54,6 +54,12 @@ class IntroductionPage extends StatelessWidget {
               onDone: () {
                 context.go('/');
                 prefs.setBool("firstTimeUser", false);
+
+                // Commit user's analytics choice to the default option
+                //(enable analytics) if no choice was made.
+                if (context.read<AnalyticsSettingsState>().enabled == null) {
+                  context.read<AnalyticsSettingsState>().setEnabled(true);
+                }
               },
               globalBackgroundColor:
                   (Theme.of(context).brightness == Brightness.dark
@@ -65,7 +71,8 @@ class IntroductionPage extends StatelessWidget {
               showBackButton: true,
               //rtl: true, // Display as right-to-left
               back: const Icon(Icons.arrow_back),
-              backSemantic: MaterialLocalizations.of(context).previousPageTooltip,
+              backSemantic:
+                  MaterialLocalizations.of(context).previousPageTooltip,
               next: const Icon(Icons.arrow_forward),
               nextSemantic: MaterialLocalizations.of(context).nextPageTooltip,
               done: Text(s.done,
@@ -147,7 +154,7 @@ class AnalyticsRadioListTiles extends StatelessWidget {
             ? AppLocalizations.of(context)!.agreeToShare
             : AppLocalizations.of(context)!.doNotShare,
         value: value,
-        groupValue: enabled,
+        groupValue: enabled ?? true, // enable analytics by default
         onChanged: onEnabledChange);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

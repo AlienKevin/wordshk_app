@@ -88,7 +88,7 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 final AnalyticsState analyticsState = AnalyticsState();
-bool sentryEnabled = true;
+bool sentryEnabled = false;
 
 FutureOr<SentryEvent?> beforeSend(SentryEvent event, Hint hint) async {
   if (sentryEnabled) {
@@ -144,15 +144,7 @@ main() async {
     );
   }
 
-  await SentryFlutter.init((options) {
-    options.dsn =
-        "https://1fc4b551176d3b595bfc45748e3111c8@o4505785577373696.ingest.sentry.io/4505785578487808";
-    options.tracesSampleRate = kDebugMode ? 1.0 : 0.1;
-    // The sampling rate for profiling is relative to tracesSampleRate
-    // Setting to 1.0 will profile 100% of sampled transactions:
-    options.profilesSampleRate = 1.0;
-    options.beforeSend = beforeSend;
-  }, appRunner: () => runMyApp(dictPath: dictPath, dictZip: dictZip));
+  return runMyApp(dictPath: dictPath, dictZip: dictZip);
 }
 
 void runMyApp(
@@ -584,7 +576,7 @@ class _MyAppState extends State<MyApp> {
     return FGBGNotifier(
       onEvent: (event) async {
         if (event == FGBGType.background &&
-            context.read<AnalyticsSettingsState>().enabled) {
+            context.read<AnalyticsSettingsState>().enabled == true) {
           final language = context.read<LanguageState>().language;
           final romanization =
               context.read<RomanizationState>().romanization.name;
