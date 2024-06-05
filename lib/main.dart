@@ -523,6 +523,19 @@ class _MyAppState extends State<MyApp> {
         brightness == Brightness.light ? lightGreyColor : darkGreyColor;
     dividerTheme(Brightness brightness) => DividerThemeData(
         space: 0, thickness: 1, color: dividerColor(brightness));
+    switchTheme(Brightness brightness) => SwitchThemeData(
+          thumbColor: MaterialStateProperty.resolveWith((states) {
+            // On Android, the switch is invisible when not selected (because
+            // it has the same color as the background), so we need to return
+            // a different color for the thumb.
+            if (Platform.isAndroid &&
+                brightness == Brightness.light &&
+                states.isEmpty) {
+              return lightGreyColor;
+            }
+            return null; // Use default color for all other states
+          }),
+        );
 
     const lightThemeAccentColor = blueColor;
     const darkThemeAccentColor = lightBlueColor;
@@ -547,6 +560,7 @@ class _MyAppState extends State<MyApp> {
       elevatedButtonTheme: elevatedButtonTheme(Brightness.light),
       dividerColor: dividerColor(Brightness.light),
       dividerTheme: dividerTheme(Brightness.light),
+      switchTheme: switchTheme(Brightness.light),
     );
     darkTheme = ThemeData(
       useMaterial3: true,
@@ -570,6 +584,7 @@ class _MyAppState extends State<MyApp> {
       elevatedButtonTheme: elevatedButtonTheme(Brightness.dark),
       dividerColor: dividerColor(Brightness.dark),
       dividerTheme: dividerTheme(Brightness.dark),
+      switchTheme: switchTheme(Brightness.dark),
     );
 
     super.initState();
