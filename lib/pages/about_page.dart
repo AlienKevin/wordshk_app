@@ -39,8 +39,7 @@ class AboutPageState extends State<AboutPage> {
       };
 
     privacyNoticeLinkTapRecognizer = TapGestureRecognizer()
-      ..onTap = () => openLink(
-          "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md");
+      ..onTap = () => context.push("/privacy-policy");
     appLinkTapRecognizer = TapGestureRecognizer()
       ..onTap = () => openLink("https://github.com/AlienKevin/wordshk_app");
     wordshkLinkTapRecognizer = TapGestureRecognizer()

@@ -260,10 +260,7 @@ class SettingsPage extends StatelessWidget {
                 title: Text(s.privacy),
                 tiles: [
                   SettingsTile.navigation(
-                    onPressed: (context) {
-                      openLink(
-                          "https://github.com/AlienKevin/wordshk_app/blob/main/privacy.md#privacy-policy");
-                    },
+                    onPressed: (context) => context.push('/privacy-policy'),
                     title: Text(s.privacyPolicy),
                   ),
                   SettingsTile.switchTile(

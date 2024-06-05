@@ -30,6 +30,7 @@ import 'package:wordshk/pages/entry_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
+import 'package:wordshk/pages/privacy_policy_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/pages/settings/entry_eg_font_size_page.dart';
 import 'package:wordshk/pages/settings/entry_eg_page.dart';
@@ -379,6 +380,10 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                   GoRoute(
                     path: '/license',
                     builder: (context, state) => const DictionaryLicensePage(),
+                  ),
+                  GoRoute(
+                    path: '/privacy-policy',
+                    builder: (context, state) => PrivacyPolicyPage(),
                   ),
                   GoRoute(
                       path: '/settings',

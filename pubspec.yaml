@@ -55,6 +55,7 @@ dependencies:
   flutter_archive: ^6.0.3
   sentry_flutter: ^8.2.0
   flutter_email_sender: ^6.0.3
+  flutter_markdown: ^0.7.1
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +83,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/jyutping_female/
+    - assets/privacy_policy/
   fonts:
     - family: ChironHeiHK
       fonts:
