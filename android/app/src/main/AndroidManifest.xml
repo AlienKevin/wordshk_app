@@ -10,7 +10,7 @@
         </intent>
     </queries>
    <application
-        android:label="words.hk"
+        android:label="@string/appName"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
