@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
+import 'package:wordshk/widgets/privacy_policy.dart';
 import 'package:wordshk/widgets/settings/title.dart';
 
 import '../constants.dart';
@@ -15,10 +17,17 @@ import '../widgets/settings/language_radio_list_tiles.dart';
 import '../widgets/settings/radio_list_tile.dart';
 import '../widgets/settings/romanization_radio_list_tiles.dart';
 
-class IntroductionPage extends StatelessWidget {
+class IntroductionPage extends StatefulWidget {
   final SharedPreferences prefs;
 
   const IntroductionPage({Key? key, required this.prefs}) : super(key: key);
+
+  @override
+  _IntroductionPageState createState() => _IntroductionPageState();
+}
+
+class _IntroductionPageState extends State<IntroductionPage> {
+  bool agreeToPrivacyPolicy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +62,7 @@ class IntroductionPage extends StatelessWidget {
               safeAreaList: const [false, false, true, true],
               onDone: () {
                 context.go('/');
-                prefs.setBool("firstTimeUser", false);
+                widget.prefs.setBool("firstTimeUser", false);
 
                 // Commit user's analytics choice to the default option
                 //(enable analytics) if no choice was made.
@@ -69,6 +78,8 @@ class IntroductionPage extends StatelessWidget {
               skipOrBackFlex: 0,
               nextFlex: 0,
               showBackButton: true,
+              showNextButton: agreeToPrivacyPolicy,
+              isProgress: agreeToPrivacyPolicy,
               //rtl: true, // Display as right-to-left
               back: const Icon(Icons.arrow_back),
               backSemantic:
@@ -91,7 +102,61 @@ class IntroductionPage extends StatelessWidget {
                         width: 200,
                         image: Theme.of(context).brightness == Brightness.light
                             ? const AssetImage('assets/icon.png')
-                            : const AssetImage('assets/icon_grey.png'))
+                            : const AssetImage('assets/icon_grey.png')),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(children: [
+                          Checkbox(
+                            value: agreeToPrivacyPolicy,
+                            onChanged: (bool? value) {
+                              if (value != null) {
+                                setState(() {
+                                  agreeToPrivacyPolicy = value;
+                                });
+                              }
+                            },
+                          ),
+                          Expanded(
+                              child: Text.rich(
+                            TextSpan(
+                              text: s.introductionReadAndAgreeTo,
+                              children: [
+                                TextSpan(
+                                  text: s.introductionThePrivacyPolicy,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        useSafeArea: true,
+                                        builder: (BuildContext context) {
+                                          return Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Expanded(child: PrivacyPolicy()),
+                                              SizedBox(
+                                                  height: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .fontSize),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(s.close),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                ),
+                              ],
+                            ),
+                          )),
+                        ]))
                   ]),
                   decoration: pageDecoration,
                 ),

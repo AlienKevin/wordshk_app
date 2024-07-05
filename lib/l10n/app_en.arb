@@ -2,6 +2,8 @@
     "introduction": "Introduction",
     "welcome": "Welcome to words.hk!",
     "introductionText": "Before we start, please take a moment to select your learning preferences.",
+    "introductionReadAndAgreeTo": "I've read and agree to ",
+    "introductionThePrivacyPolicy": "the privacy policy",
     "introductionLanguage": "I feel most comfortable with...",
     "introductionRomanization": "I'm most familiar with...",
     "agreeToShare": "Agree to share",
