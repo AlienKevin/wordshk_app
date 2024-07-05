@@ -1,5 +1,6 @@
-# Privacy Policy
+# Privacy Policy for the Words.hk App
 
+App developer: Kevin Li
 Updated December 30, 2023
 
 This privacy policy for words.hk ("we", "us", or "our"), describes how and why we might collect, store,
