@@ -65,6 +65,15 @@
                 "iPhone",
                 "--release"
             ]
+        },
+        {
+            "name": "Flutter (full) Debug on current device",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "full"
+            ]
         }
     ]
 }
