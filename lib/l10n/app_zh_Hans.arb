@@ -147,6 +147,7 @@
     "entryHeaderSpeechRate": "标题发音速度",
 
     "entryEgPronunciationMethod": "注音例句发音方式",
+    "pronunciationMethodOnlineTts": "线上语音合成",
     "pronunciationMethodSyllableRecordings": "音节录音",
     "pronunciationMethodTts": "系统语音合成",
     "pronunciation": "发音",

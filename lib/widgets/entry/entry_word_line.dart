@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wordshk/models/pronunciation_method.dart';
+import 'package:wordshk/states/pronunciation_method_state.dart';
+import 'package:wordshk/widgets/online_tts_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';

@@ -160,8 +160,10 @@
     "entryEgPronunciationMethod": "Example Pronunciation Method",
     "pronunciationMethodSyllableRecordings": "Syllable recordings",
     "pronunciationMethodTts": "System Text-to-Speech",
+    "pronunciationMethodOnlineTts": "Online Text-to-Speech",
     "pronunciationMethodSyllableRecordingsShort": "Recording",
-    "pronunciationMethodTtsShort": "TTS",
+    "pronunciationMethodTtsShort": "System TTS",
+    "pronunciationMethodOnlineTtsShort": "Online TTS",
     "pronunciation": "Pronunciation",
     "entryEgSpeechRate": "Example Speech Rate",
 

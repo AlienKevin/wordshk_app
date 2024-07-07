@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:audio_session/audio_session.dart';
@@ -9,11 +10,13 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:sentry/sentry_io.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
+import 'package:crypto/crypto.dart';
 
 import '../models/player.dart';
 import '../models/speech_rate.dart';
 
 class PlayerState with ChangeNotifier {
+  Completer<AudioPlayer> onlineTtsPlayer = Completer();
   Completer<FlutterTts> ttsPlayer = Completer();
   Completer<AudioPlayer> syllablesPlayer = Completer();
   Completer<AudioPlayer> urlPlayer = Completer();
@@ -51,6 +54,7 @@ class PlayerState with ChangeNotifier {
 
       syllablesPlayer.complete(AudioPlayer());
       urlPlayer.complete(AudioPlayer());
+      onlineTtsPlayer.complete(AudioPlayer());
 
       final ttsPlayerValue = FlutterTts();
       await ttsPlayerValue.setSharedInstance(true);
@@ -86,6 +90,9 @@ class PlayerState with ChangeNotifier {
     currentPlayer = newPlayer;
     notifyListeners();
     switch (newPlayer) {
+      case OnlineTtsPlayer():
+        await onlineTtsPlay(newPlayer, speechRateState);
+        break;
       case TtsPlayer():
         await ttsPlay(newPlayer, speechRateState);
         break;
@@ -221,6 +228,45 @@ class PlayerState with ChangeNotifier {
     }
   }
 
+  Future<void> onlineTtsPlay(
+      OnlineTtsPlayer player, SpeechRateState speechRateState) async {
+    assert(!player.atHeader); // Only support playing egs for now
+    final rate = speechRateState.entryEgRate;
+
+    final speed = rate == SpeechRate.verySlow
+        ? 0.15
+        : rate == SpeechRate.slow
+            ? 0.3
+            : 0.5;
+
+    final url =
+        'http://wordshk.cn/${sha256.convert(utf8.encode(player.text))}.m4a';
+    print("player_state[online tts text]: ${player.text}");
+    print("player_state[online tts url]: $url");
+    final player_ = await onlineTtsPlayer.future;
+    try {
+      await player_.setUrl(url);
+    } on PlayerException catch (e) {
+      if (kDebugMode) {
+        print("player_state[online tts load error]: $e");
+      }
+      Sentry.captureMessage("player_state[online tts load error]: $e");
+      currentPlayer = null;
+      notifyListeners();
+      return;
+    }
+    await player_.setSpeed(speed);
+    if (await (await session.future).setActive(true)) {
+      await player_.play();
+    } else {
+      // The request was denied and the app should not play audio
+      // e.g. a phone call is in progress.
+      currentPlayer = null;
+      notifyListeners();
+      return;
+    }
+  }
+
   stop() async {
     if (currentPlayer != null) {
       await stopHelper();
@@ -231,6 +277,9 @@ class PlayerState with ChangeNotifier {
 
   stopHelper() async {
     switch (currentPlayer!) {
+      case OnlineTtsPlayer():
+        await (await onlineTtsPlayer.future).stop();
+        break;
       case TtsPlayer():
         await (await ttsPlayer.future).stop();
         break;

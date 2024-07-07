@@ -22,6 +22,12 @@ sealed class Player {
   int get hashCode => key?.hashCode ?? super.hashCode;
 }
 
+class OnlineTtsPlayer extends Player {
+  final String text;
+
+  OnlineTtsPlayer({required this.text, required super.atHeader, super.key});
+}
+
 class TtsPlayer extends Player {
   final String text;
 

@@ -105,6 +105,8 @@ String getFontSizeName(FontSize size, AppLocalizations s) {
 String getPronunciationMethodName(
     PronunciationMethod method, AppLocalizations s) {
   switch (method) {
+    case PronunciationMethod.onlineTts:
+      return s.pronunciationMethodOnlineTts;
     case PronunciationMethod.tts:
       return s.pronunciationMethodTts;
     case PronunciationMethod.syllableRecordings:
@@ -116,6 +118,8 @@ String getPronunciationMethodShortName(
     PronunciationMethod method, AppLocalizations s, Language language) {
   if (language == Language.en) {
     switch (method) {
+      case PronunciationMethod.onlineTts:
+        return s.pronunciationMethodOnlineTtsShort;
       case PronunciationMethod.tts:
         return s.pronunciationMethodTtsShort;
       case PronunciationMethod.syllableRecordings:
@@ -123,6 +127,8 @@ String getPronunciationMethodShortName(
     }
   } else {
     switch (method) {
+      case PronunciationMethod.onlineTts:
+        return s.pronunciationMethodOnlineTts;
       case PronunciationMethod.tts:
         return s.pronunciationMethodTts;
       case PronunciationMethod.syllableRecordings:

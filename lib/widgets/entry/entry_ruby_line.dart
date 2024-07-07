@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/widgets/online_tts_pronunciation_button.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 import 'package:wordshk/widgets/url_pronunciation_button.dart';
@@ -54,28 +55,36 @@ class EntryRubyLine extends StatelessWidget {
                                       alignment: Alignment.topCenter,
                                       atHeader: false,
                                     )
-                                  : pronunciationMethodState.entryEgMethod ==
-                                          PronunciationMethod.tts
-                                  ? TtsPronunciationButton(
-                                      text: Platform.isIOS
-                                          ? line.toPrs()
-                                          : line.toString(),
-                                      alignment: Alignment.topCenter,
-                                      atHeader: false,
-                                    )
-                                  : SyllablePronunciationButton(
-                                      prs: line
-                                          .toPrs()
-                                          .split(RegExp(
-                                              r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
-                                          .where(
-                                              (segment) => segment.isNotEmpty)
-                                          .map((segment) =>
-                                              segment.split(RegExp(r"\s+")))
-                                          .toList(),
-                                      alignment: Alignment.topCenter,
-                                      atHeader: false,
-                                    ))
+                                  : switch (
+                                      pronunciationMethodState.entryEgMethod) {
+                                      PronunciationMethod.onlineTts =>
+                                        OnlineTtsPronunciationButton(
+                                          text: line.toString(),
+                                          alignment: Alignment.topCenter,
+                                          atHeader: false,
+                                        ),
+                                      PronunciationMethod.tts =>
+                                        TtsPronunciationButton(
+                                          text: Platform.isIOS
+                                              ? line.toPrs()
+                                              : line.toString(),
+                                          alignment: Alignment.topCenter,
+                                          atHeader: false,
+                                        ),
+                                      _ => SyllablePronunciationButton(
+                                          prs: line
+                                              .toPrs()
+                                              .split(RegExp(
+                                                  r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
+                                              .where((segment) =>
+                                                  segment.isNotEmpty)
+                                              .map((segment) =>
+                                                  segment.split(RegExp(r"\s+")))
+                                              .toList(),
+                                          alignment: Alignment.topCenter,
+                                          atHeader: false,
+                                        )
+                                    })
                     ]
                   : [],
             ]

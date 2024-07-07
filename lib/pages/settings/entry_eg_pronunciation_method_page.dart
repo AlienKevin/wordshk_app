@@ -41,6 +41,7 @@ class EntryEgPronunciationMethodSettingsPage extends StatelessWidget {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SettingsTitle(title: s.entryEgPronunciationMethod),
+              methodRadioListTile(PronunciationMethod.onlineTts),
               methodRadioListTile(PronunciationMethod.tts),
               methodRadioListTile(PronunciationMethod.syllableRecordings),
               const SizedBox(height: 20),

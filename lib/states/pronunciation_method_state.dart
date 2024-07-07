@@ -13,7 +13,7 @@ class PronunciationMethodState with ChangeNotifier {
     entryEgMethod = entryEgMethodIndex == null
         ? (Platform.isIOS
             ? PronunciationMethod.tts
-            : PronunciationMethod.syllableRecordings)
+            : PronunciationMethod.onlineTts)
         : PronunciationMethod.values[entryEgMethodIndex];
   }
 
