@@ -44,7 +44,8 @@ class EntryWordLine extends StatelessWidget {
                   child: Consumer<PronunciationMethodState>(
                       builder: (context, pronunciationMethodState, child) =>
                           switch (pronunciationMethodState.entryEgMethod) {
-                            PronunciationMethod.onlineTts =>
+                            PronunciationMethod.onlineTts ||
+                            PronunciationMethod.syllableRecordings =>
                               OnlineTtsPronunciationButton(
                                   text: lineTrad.toString(),
                                   alignment: Alignment.topCenter,
