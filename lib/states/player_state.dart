@@ -234,18 +234,19 @@ class PlayerState with ChangeNotifier {
     final rate = speechRateState.entryEgRate;
 
     final speed = rate == SpeechRate.verySlow
-        ? 0.15
+        ? 0.6
         : rate == SpeechRate.slow
-            ? 0.3
-            : 0.5;
+            ? 0.8
+            : 1.0;
 
     final url =
-        'http://wordshk.cn/${sha256.convert(utf8.encode(player.text))}.m4a';
+        'http://wordshk.cn/${sha256.convert(utf8.encode(player.text.replaceAll(' ', '')))}.mp3';
     print("player_state[online tts text]: ${player.text}");
     print("player_state[online tts url]: $url");
     final player_ = await onlineTtsPlayer.future;
     try {
       await player_.setUrl(url);
+      await player_.setSpeed(speed);
     } on PlayerException catch (e) {
       if (kDebugMode) {
         print("player_state[online tts load error]: $e");
@@ -255,16 +256,18 @@ class PlayerState with ChangeNotifier {
       notifyListeners();
       return;
     }
-    await player_.setSpeed(speed);
-    if (await (await session.future).setActive(true)) {
-      await player_.play();
-    } else {
-      // The request was denied and the app should not play audio
-      // e.g. a phone call is in progress.
-      currentPlayer = null;
-      notifyListeners();
-      return;
-    }
+
+    player_.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        if (!playerStoppedDueToSwitch) {
+          currentPlayer = null;
+          notifyListeners();
+        } else {
+          playerStoppedDueToSwitch = false;
+        }
+      }
+    });
+    await player_.play();
   }
 
   stop() async {

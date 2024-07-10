@@ -33,11 +33,20 @@ class EntryWordLine extends StatelessWidget {
                   showWordSegment(segment, linkColor, fontSize, onTapLink)),
               WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
-                  child: TtsPronunciationButton(
-                    text: line.toString(),
-                    alignment: Alignment.topCenter,
-                    atHeader: false,
-                  ))
+                  child: Consumer<PronunciationMethodState>(
+                      builder: (context, pronunciationMethodState, child) =>
+                          switch (pronunciationMethodState.entryEgMethod) {
+                            PronunciationMethod.onlineTts =>
+                              OnlineTtsPronunciationButton(
+                                  text: line.toString(),
+                                  alignment: Alignment.topCenter,
+                                  atHeader: false),
+                            _ => TtsPronunciationButton(
+                                text: line.toString(),
+                                alignment: Alignment.topCenter,
+                                atHeader: false,
+                              )
+                          }))
             ],
             style: TextStyle(fontSize: fontSize, height: 1.2, color: textColor),
           ),
