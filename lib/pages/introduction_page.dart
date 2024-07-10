@@ -80,6 +80,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
               showBackButton: true,
               showNextButton: agreeToPrivacyPolicy,
               isProgress: agreeToPrivacyPolicy,
+              freeze: !agreeToPrivacyPolicy,
               //rtl: true, // Display as right-to-left
               back: const Icon(Icons.arrow_back),
               backSemantic:
@@ -106,15 +107,19 @@ class _IntroductionPageState extends State<IntroductionPage> {
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Row(children: [
-                          Checkbox(
-                            value: agreeToPrivacyPolicy,
-                            onChanged: (bool? value) {
-                              if (value != null) {
-                                setState(() {
-                                  agreeToPrivacyPolicy = value;
-                                });
-                              }
-                            },
+                          Transform.scale(
+                            scale:
+                                1.5, // Adjust the scale factor to make the checkbox larger
+                            child: Checkbox(
+                              value: agreeToPrivacyPolicy,
+                              onChanged: (bool? value) {
+                                if (value != null) {
+                                  setState(() {
+                                    agreeToPrivacyPolicy = value;
+                                  });
+                                }
+                              },
+                            ),
                           ),
                           Expanded(
                               child: Text.rich(
@@ -124,7 +129,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
                                 TextSpan(
                                   text: s.introductionThePrivacyPolicy,
                                   style: TextStyle(
-                                      color: Theme.of(context).primaryColor),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       showModalBottomSheet(
