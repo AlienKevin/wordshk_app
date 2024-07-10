@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/models/entry.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
-import 'package:wordshk/states/language_state.dart';
 
 import '../../src/rust/api/api.dart';
 import '../entry/entry_ruby_line.dart';
@@ -24,8 +21,46 @@ class EgIsJumpyPrsRadioListTiles extends StatelessWidget {
       }
     }
 
-    final isTraditional =
-        context.watch<LanguageState>().getScript() == Script.traditional;
+    RubyLine exampleRubyLine(Script script) => RubyLine([
+          RubySegment(
+              RubySegmentType.word,
+              RubySegmentWord(
+                  EntryWord([
+                    EntryText(
+                        EntryTextStyle.normal,
+                        switch (script) {
+                          Script.traditional => "舉",
+                          Script.simplified => "举",
+                        })
+                  ]),
+                  const ["geoi2"],
+                  const [2])),
+          RubySegment(
+              RubySegmentType.word,
+              RubySegmentWord(
+                  EntryWord([
+                    EntryText(
+                        EntryTextStyle.normal,
+                        switch (script) {
+                          Script.traditional => "個",
+                          Script.simplified => "个",
+                        })
+                  ]),
+                  const ["go3"],
+                  const [3])),
+          const RubySegment(
+              RubySegmentType.word,
+              RubySegmentWord(
+                  EntryWord([EntryText(EntryTextStyle.normal, "例")]),
+                  ["lai6"],
+                  [6])),
+          const RubySegment(
+              RubySegmentType.word,
+              RubySegmentWord(
+                  EntryWord([EntryText(EntryTextStyle.normal, "子")]),
+                  ["zi2"],
+                  [2]))
+        ]);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SwitchListTile(
@@ -46,38 +81,8 @@ class EgIsJumpyPrsRadioListTiles extends StatelessWidget {
       Divider(height: Theme.of(context).textTheme.bodyLarge!.fontSize! * 2),
       Center(
         child: EntryRubyLine(
-          line: RubyLine([
-            RubySegment(
-                RubySegmentType.word,
-                RubySegmentWord(
-                    EntryWord([
-                      EntryText(
-                          EntryTextStyle.normal, isTraditional ? "舉" : "举")
-                    ]),
-                    const ["geoi2"],
-                    const [2])),
-            RubySegment(
-                RubySegmentType.word,
-                RubySegmentWord(
-                    EntryWord([
-                      EntryText(
-                          EntryTextStyle.normal, isTraditional ? "個" : "个")
-                    ]),
-                    const ["go3"],
-                    const [3])),
-            const RubySegment(
-                RubySegmentType.word,
-                RubySegmentWord(
-                    EntryWord([EntryText(EntryTextStyle.normal, "例")]),
-                    ["lai6"],
-                    [6])),
-            const RubySegment(
-                RubySegmentType.word,
-                RubySegmentWord(
-                    EntryWord([EntryText(EntryTextStyle.normal, "子")]),
-                    ["zi2"],
-                    [2]))
-          ]),
+          lineSimp: exampleRubyLine(Script.simplified),
+          lineTrad: exampleRubyLine(Script.traditional),
           textColor: Theme.of(context).textTheme.bodyLarge!.color!,
           linkColor: Theme.of(context).textTheme.bodyLarge!.color!,
           rubyFontSize: Theme.of(context).textTheme.bodyLarge!.fontSize! * 2,

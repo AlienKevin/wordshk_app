@@ -49,28 +49,30 @@ class _StoryPageState extends State<StoryPage> {
 
   EntryRubyLine glossesToRubyLine(
       List<dynamic> glosses, int bookId, int sentId) {
+    final lineSimp = RubyLine(glosses
+        .map<RubySegment>((gloss) => gloss['E'].length == 0 ||
+                gloss['chars'].every((char) => char['pr'].length == 0)
+            ? RubySegment(RubySegmentType.punc,
+                gloss['chars'].map((char) => char['C_s'] as String).join(''))
+            : RubySegment(
+                RubySegmentType.word,
+                RubySegmentWord(
+                    EntryWord(gloss['chars']
+                        .map<EntryText>((char) => EntryText(
+                            EntryTextStyle.normal, char['C_s'] as String))
+                        .toList()),
+                    (gloss['chars'] as List<dynamic>)
+                        .map((char) => char['pr'] as String)
+                        .toList(),
+                    (gloss['chars'] as List<dynamic>)
+                        .map((char) => char['pr'].length > 0
+                            ? int.parse(char['pr'][char['pr'].length - 1] as String)
+                            : 6)
+                        .toList())))
+        .toList());
     return EntryRubyLine(
-      line: RubyLine(glosses
-          .map<RubySegment>((gloss) => gloss['E'].length == 0 ||
-                  gloss['chars'].every((char) => char['pr'].length == 0)
-              ? RubySegment(RubySegmentType.punc,
-                  gloss['chars'].map((char) => char['C_s'] as String).join(''))
-              : RubySegment(
-                  RubySegmentType.word,
-                  RubySegmentWord(
-                      EntryWord(gloss['chars']
-                          .map<EntryText>((char) => EntryText(
-                              EntryTextStyle.normal, char['C_s'] as String))
-                          .toList()),
-                      (gloss['chars'] as List<dynamic>)
-                          .map((char) => char['pr'] as String)
-                          .toList(),
-                      (gloss['chars'] as List<dynamic>)
-                          .map((char) => char['pr'].length > 0
-                              ? int.parse(char['pr'][char['pr'].length - 1] as String)
-                              : 6)
-                          .toList())))
-          .toList()),
+      lineSimp: lineSimp,
+      lineTrad: lineSimp, // TODO: also define lineTrad
       textColor: Theme.of(context).textTheme.bodyLarge!.color!,
       linkColor: Theme.of(context).textTheme.bodyLarge!.color!,
       rubyFontSize: Theme.of(context).textTheme.bodyLarge!.fontSize! * 1.5,

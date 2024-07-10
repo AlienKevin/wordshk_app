@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordshk/src/rust/api/api.dart';
+import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/online_tts_pronunciation_button.dart';
 import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
@@ -14,7 +16,8 @@ import '../../states/pronunciation_method_state.dart';
 import 'entry_ruby_segment.dart';
 
 class EntryRubyLine extends StatelessWidget {
-  final RubyLine line;
+  final RubyLine lineSimp;
+  final RubyLine lineTrad;
   final Color textColor;
   final Color linkColor;
   final double rubyFontSize;
@@ -23,7 +26,8 @@ class EntryRubyLine extends StatelessWidget {
   final String? prUrl;
   const EntryRubyLine({
     Key? key,
-    required this.line,
+    required this.lineSimp,
+    required this.lineTrad,
     required this.textColor,
     required this.linkColor,
     required this.rubyFontSize,
@@ -34,6 +38,10 @@ class EntryRubyLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
+        final line = switch (context.read<LanguageState>().getScript()) {
+          Script.simplified => lineSimp,
+          Script.traditional => lineTrad,
+        };
         return Wrap(
             runSpacing: context.watch<EntryEgJumpyPrsState>().isJumpy ? 10 : 0,
             crossAxisAlignment: WrapCrossAlignment.end,
@@ -59,20 +67,20 @@ class EntryRubyLine extends StatelessWidget {
                                       pronunciationMethodState.entryEgMethod) {
                                       PronunciationMethod.onlineTts =>
                                         OnlineTtsPronunciationButton(
-                                          text: line.toString(),
+                                          text: lineTrad.toString(),
                                           alignment: Alignment.topCenter,
                                           atHeader: false,
                                         ),
                                       PronunciationMethod.tts =>
                                         TtsPronunciationButton(
                                           text: Platform.isIOS
-                                              ? line.toPrs()
-                                              : line.toString(),
+                                              ? lineTrad.toPrs()
+                                              : lineTrad.toString(),
                                           alignment: Alignment.topCenter,
                                           atHeader: false,
                                         ),
                                       _ => SyllablePronunciationButton(
-                                          prs: line
+                                          prs: lineTrad
                                               .toPrs()
                                               .split(RegExp(
                                                   r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))

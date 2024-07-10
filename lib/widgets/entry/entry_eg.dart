@@ -47,7 +47,8 @@ class EntryEg extends StatelessWidget {
             eg.zho == null
                 ? const SizedBox.shrink()
                 : EntryRichLine(
-                    line: script == Script.simplified ? eg.zhoSimp! : eg.zho!,
+                    lineSimp: eg.zhoSimp!,
+                    lineTrad: eg.zho!,
                     lineTextStyle: lineTextStyle,
                     linkColor: linkColor,
                     rubyFontSize: rubyFontSize,
@@ -56,7 +57,8 @@ class EntryEg extends StatelessWidget {
             eg.yue == null
                 ? const SizedBox.shrink()
                 : EntryRichLine(
-                    line: script == Script.simplified ? eg.yueSimp! : eg.yue!,
+                    lineSimp: eg.yueSimp!,
+                    lineTrad: eg.yue!,
                     lineTextStyle: lineTextStyle,
                     linkColor: linkColor,
                     rubyFontSize: rubyFontSize,

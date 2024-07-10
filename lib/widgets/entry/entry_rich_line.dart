@@ -8,7 +8,8 @@ import 'entry_ruby_line.dart';
 import 'entry_word_line.dart';
 
 class EntryRichLine extends StatelessWidget {
-  final RichLine line;
+  final RichLine lineSimp;
+  final RichLine lineTrad;
   final TextStyle lineTextStyle;
   final Color linkColor;
   final double rubyFontSize;
@@ -16,7 +17,8 @@ class EntryRichLine extends StatelessWidget {
 
   const EntryRichLine({
     Key? key,
-    required this.line,
+    required this.lineSimp,
+    required this.lineTrad,
     required this.lineTextStyle,
     required this.linkColor,
     required this.rubyFontSize,
@@ -43,10 +45,11 @@ class EntryRichLine extends StatelessWidget {
     }
     final renderedRubyFontSize = rubyFontSize * rubyFontSizeFactor;
 
-    switch (line.type) {
+    switch (lineTrad.type) {
       case RichLineType.ruby:
         return EntryRubyLine(
-          line: line.line,
+          lineSimp: lineSimp.line,
+          lineTrad: lineTrad.line,
           textColor: lineTextStyle.color!,
           linkColor: linkColor,
           rubyFontSize: renderedRubyFontSize,
@@ -54,7 +57,8 @@ class EntryRichLine extends StatelessWidget {
         );
       case RichLineType.word:
         return EntryWordLine(
-          line: line.line,
+          lineSimp: lineSimp.line,
+          lineTrad: lineTrad.line,
           textColor: lineTextStyle.color!,
           linkColor: linkColor,
           fontSize: renderedRubyFontSize,

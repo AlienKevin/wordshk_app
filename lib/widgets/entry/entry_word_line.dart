@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/models/pronunciation_method.dart';
+import 'package:wordshk/src/rust/api/api.dart';
+import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/widgets/online_tts_pronunciation_button.dart';
 import 'package:wordshk/widgets/tts_pronunciation_button.dart';
@@ -9,7 +11,8 @@ import '../../models/entry.dart';
 import 'entry_word_segment.dart';
 
 class EntryWordLine extends StatelessWidget {
-  final WordLine line;
+  final WordLine lineSimp;
+  final WordLine lineTrad;
   final Color textColor;
   final Color linkColor;
   final double fontSize;
@@ -17,7 +20,8 @@ class EntryWordLine extends StatelessWidget {
 
   const EntryWordLine({
     Key? key,
-    required this.line,
+    required this.lineSimp,
+    required this.lineTrad,
     required this.textColor,
     required this.linkColor,
     required this.fontSize,
@@ -26,6 +30,10 @@ class EntryWordLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
+        final line = switch (context.read<LanguageState>().getScript()) {
+          Script.simplified => lineSimp,
+          Script.traditional => lineTrad,
+        };
         return Text.rich(
           TextSpan(
             children: [
@@ -38,11 +46,11 @@ class EntryWordLine extends StatelessWidget {
                           switch (pronunciationMethodState.entryEgMethod) {
                             PronunciationMethod.onlineTts =>
                               OnlineTtsPronunciationButton(
-                                  text: line.toString(),
+                                  text: lineTrad.toString(),
                                   alignment: Alignment.topCenter,
                                   atHeader: false),
                             _ => TtsPronunciationButton(
-                                text: line.toString(),
+                                text: lineTrad.toString(),
                                 alignment: Alignment.topCenter,
                                 atHeader: false,
                               )
