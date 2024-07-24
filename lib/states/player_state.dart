@@ -6,7 +6,6 @@ import 'package:audio_session/audio_session.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:sentry/sentry_io.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
@@ -17,7 +16,6 @@ import '../models/speech_rate.dart';
 
 class PlayerState with ChangeNotifier {
   Completer<AudioPlayer> onlineTtsPlayer = Completer();
-  Completer<FlutterTts> ttsPlayer = Completer();
   Completer<AudioPlayer> syllablesPlayer = Completer();
   Completer<AudioPlayer> urlPlayer = Completer();
   Completer<AudioSession> session = Completer();
@@ -55,23 +53,6 @@ class PlayerState with ChangeNotifier {
       syllablesPlayer.complete(AudioPlayer());
       urlPlayer.complete(AudioPlayer());
       onlineTtsPlayer.complete(AudioPlayer());
-
-      final ttsPlayerValue = FlutterTts();
-      await ttsPlayerValue.setSharedInstance(true);
-      await ttsPlayerValue.setLanguage("zh-HK");
-      await ttsPlayerValue.setSpeechRate(0.5);
-      await ttsPlayerValue.setVolume(1.0);
-      await ttsPlayerValue.setPitch(1.0);
-      await ttsPlayerValue.isLanguageAvailable("zh-HK");
-      ttsPlayerValue.setCompletionHandler(() {
-        if (!playerStoppedDueToSwitch) {
-          currentPlayer = null;
-          notifyListeners();
-        } else {
-          playerStoppedDueToSwitch = false;
-        }
-      });
-      ttsPlayer.complete(ttsPlayerValue);
     });
   }
 
@@ -92,9 +73,6 @@ class PlayerState with ChangeNotifier {
     switch (newPlayer) {
       case OnlineTtsPlayer():
         await onlineTtsPlay(newPlayer, speechRateState);
-        break;
-      case TtsPlayer():
-        await ttsPlay(newPlayer, speechRateState);
         break;
       case SyllablesPlayer():
         await syllablesPlay(newPlayer, speechRateState);
@@ -204,30 +182,6 @@ class PlayerState with ChangeNotifier {
     await player_.play();
   }
 
-  Future<void> ttsPlay(
-      TtsPlayer player, SpeechRateState speechRateState) async {
-    final rate = player.atHeader
-        ? speechRateState.entryHeaderRate
-        : speechRateState.entryEgRate;
-
-    final speed = rate == SpeechRate.verySlow
-        ? 0.15
-        : rate == SpeechRate.slow
-            ? 0.3
-            : 0.5;
-    final player_ = await ttsPlayer.future;
-    await player_.setSpeechRate(speed);
-    if (await (await session.future).setActive(true)) {
-      await player_.speak(player.text);
-    } else {
-      // The request was denied and the app should not play audio
-      // e.g. a phone call is in progress.
-      currentPlayer = null;
-      notifyListeners();
-      return;
-    }
-  }
-
   Future<void> onlineTtsPlay(
       OnlineTtsPlayer player, SpeechRateState speechRateState) async {
     assert(!player.atHeader); // Only support playing egs for now
@@ -240,7 +194,7 @@ class PlayerState with ChangeNotifier {
             : 1.0;
 
     final url =
-        'http://wordshk.cn/${sha256.convert(utf8.encode(player.text.replaceAll(' ', '')))}.mp3';
+        'http://hiujin.wordshk.cn/${sha256.convert(utf8.encode(player.text.replaceAll(' ', '')))}.mp3';
     print("player_state[online tts text]: ${player.text}");
     print("player_state[online tts url]: $url");
     final player_ = await onlineTtsPlayer.future;
@@ -282,9 +236,6 @@ class PlayerState with ChangeNotifier {
     switch (currentPlayer!) {
       case OnlineTtsPlayer():
         await (await onlineTtsPlayer.future).stop();
-        break;
-      case TtsPlayer():
-        await (await ttsPlayer.future).stop();
         break;
       case SyllablesPlayer():
         await (await syllablesPlayer.future).stop();

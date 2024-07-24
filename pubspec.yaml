@@ -23,7 +23,6 @@ dependencies:
   flutter_portal: ^1.1.4
   flutter_web_browser: ^0.17.1
   shared_preferences: ^2.2.0
-  flutter_tts: ^4.0.2
   audio_session: ^0.1.19
   csv: ^6.0.0
   flutter_keyboard_visibility: ^6.0.0

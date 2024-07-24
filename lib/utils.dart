@@ -8,7 +8,6 @@ import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/constants.dart';
 import 'package:wordshk/models/entry_language.dart';
-import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/models/search_result_type.dart';
 import 'package:wordshk/models/speech_rate.dart';
 import 'package:wordshk/states/entry_language_state.dart';
@@ -99,41 +98,6 @@ String getFontSizeName(FontSize size, AppLocalizations s) {
       return s.fontSizeLarge;
     case FontSize.veryLarge:
       return s.fontSizeVeryLarge;
-  }
-}
-
-String getPronunciationMethodName(
-    PronunciationMethod method, AppLocalizations s) {
-  switch (method) {
-    case PronunciationMethod.onlineTts:
-      return s.pronunciationMethodOnlineTts;
-    case PronunciationMethod.tts:
-      return s.pronunciationMethodTts;
-    case PronunciationMethod.syllableRecordings:
-      return s.pronunciationMethodSyllableRecordings;
-  }
-}
-
-String getPronunciationMethodShortName(
-    PronunciationMethod method, AppLocalizations s, Language language) {
-  if (language == Language.en) {
-    switch (method) {
-      case PronunciationMethod.onlineTts:
-        return s.pronunciationMethodOnlineTtsShort;
-      case PronunciationMethod.tts:
-        return s.pronunciationMethodTtsShort;
-      case PronunciationMethod.syllableRecordings:
-        return s.pronunciationMethodSyllableRecordingsShort;
-    }
-  } else {
-    switch (method) {
-      case PronunciationMethod.onlineTts:
-        return s.pronunciationMethodOnlineTts;
-      case PronunciationMethod.tts:
-        return s.pronunciationMethodTts;
-      case PronunciationMethod.syllableRecordings:
-        return s.pronunciationMethodSyllableRecordings;
-    }
   }
 }
 

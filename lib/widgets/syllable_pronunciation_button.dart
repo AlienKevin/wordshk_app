@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:wordshk/models/player.dart';
-import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/widgets/pronunciation_button.dart';
 
 import '../constants.dart';
@@ -22,15 +20,14 @@ class SyllablePronunciationButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Consumer<PronunciationMethodState>(
-      builder: (context, prMethodState, child) => PronunciationButton(
-            key: key,
-            player: SyllablesPlayer(prs: prs, atHeader: atHeader, key: key),
-            alignment: alignment,
-            large: large,
-            playable: prs
-                .expand((prs) => prs)
-                .where((pr) => !jyutpingFemaleSyllableNames.contains(pr))
-                .isEmpty,
-          ));
+  Widget build(BuildContext context) => PronunciationButton(
+        key: key,
+        player: SyllablesPlayer(prs: prs, atHeader: atHeader, key: key),
+        alignment: alignment,
+        large: large,
+        playable: prs
+            .expand((prs) => prs)
+            .where((pr) => !jyutpingFemaleSyllableNames.contains(pr))
+            .isEmpty,
+      );
 }

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wordshk/models/pronunciation_method.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/language_state.dart';
-import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/widgets/online_tts_pronunciation_button.dart';
-import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';
 import 'entry_word_segment.dart';
@@ -40,22 +37,12 @@ class EntryWordLine extends StatelessWidget {
               ...line.segments.map((segment) =>
                   showWordSegment(segment, linkColor, fontSize, onTapLink)),
               WidgetSpan(
-                  alignment: PlaceholderAlignment.middle,
-                  child: Consumer<PronunciationMethodState>(
-                      builder: (context, pronunciationMethodState, child) =>
-                          switch (pronunciationMethodState.entryEgMethod) {
-                            PronunciationMethod.onlineTts ||
-                            PronunciationMethod.syllableRecordings =>
-                              OnlineTtsPronunciationButton(
-                                  text: lineTrad.toString(),
-                                  alignment: Alignment.topCenter,
-                                  atHeader: false),
-                            _ => TtsPronunciationButton(
-                                text: lineTrad.toString(),
-                                alignment: Alignment.topCenter,
-                                atHeader: false,
-                              )
-                          }))
+                alignment: PlaceholderAlignment.middle,
+                child: OnlineTtsPronunciationButton(
+                    text: lineTrad.toString(),
+                    alignment: Alignment.topCenter,
+                    atHeader: false),
+              )
             ],
             style: TextStyle(fontSize: fontSize, height: 1.2, color: textColor),
           ),

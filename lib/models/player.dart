@@ -28,12 +28,6 @@ class OnlineTtsPlayer extends Player {
   OnlineTtsPlayer({required this.text, required super.atHeader, super.key});
 }
 
-class TtsPlayer extends Player {
-  final String text;
-
-  TtsPlayer({required this.text, required super.atHeader, super.key});
-}
-
 class SyllablesPlayer extends Player {
   final List<List<String>> prs;
 

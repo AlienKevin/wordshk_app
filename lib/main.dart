@@ -34,7 +34,7 @@ import 'package:wordshk/pages/privacy_policy_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/pages/settings/entry_eg_font_size_page.dart';
 import 'package:wordshk/pages/settings/entry_eg_page.dart';
-import 'package:wordshk/pages/settings/entry_eg_pronunciation_method_page.dart';
+import 'package:wordshk/pages/settings/entry_eg_speech_rate.dart';
 import 'package:wordshk/pages/settings/entry_explanation_language.dart';
 import 'package:wordshk/pages/settings/entry_header_speech_rate.dart';
 import 'package:wordshk/pages/settings/language_page.dart';
@@ -61,7 +61,6 @@ import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
-import 'package:wordshk/states/pronunciation_method_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_bar_position_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
@@ -197,8 +196,6 @@ void runMyApp(
             create: (context) => LanguageState(prefs), lazy: false),
         ChangeNotifierProvider<EntryLanguageState>(
             create: (_) => EntryLanguageState(prefs)),
-        ChangeNotifierProvider<PronunciationMethodState>(
-            create: (_) => PronunciationMethodState(prefs)),
         ChangeNotifierProvider<EntryEgFontSizeState>(
             create: (_) => EntryEgFontSizeState(prefs)),
         ChangeNotifierProvider<RomanizationState>(
@@ -418,14 +415,14 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                               const EntryEgSettingsPage(),
                         ),
                         GoRoute(
+                          path: 'entry/example/speech-rate',
+                          builder: (context, state) =>
+                              const EntryEgSpeechRateSettingsPage(),
+                        ),
+                        GoRoute(
                           path: 'entry/example/font-size',
                           builder: (context, state) =>
                               const EntryEgFontSizeSettingsPage(),
-                        ),
-                        GoRoute(
-                          path: 'entry/example/pronunciation',
-                          builder: (context, state) =>
-                              const EntryEgPronunciationMethodSettingsPage(),
                         ),
                         GoRoute(
                           path: 'search-bar-position',
@@ -603,8 +600,6 @@ class _MyAppState extends State<MyApp> {
           final egJumpyPrs = context.read<EntryEgJumpyPrsState>().isJumpy;
           final numBookmarks = context.read<BookmarkState>().items.length;
           final numHistory = context.read<HistoryState>().items.length;
-          final entryEgPrMethod =
-              context.read<PronunciationMethodState>().entryEgMethod;
           final entryEgFontSize = context.read<EntryEgFontSizeState>().size;
 
           final prefs = await SharedPreferences.getInstance();
@@ -629,7 +624,6 @@ class _MyAppState extends State<MyApp> {
             "egJumpyPrs": egJumpyPrs,
             "numBookmarks": numBookmarks,
             "numHistory": numHistory,
-            "entryEgPrMethod": entryEgPrMethod,
             "entryEgFontSize": entryEgFontSize,
             ...analyticsState.toJson(),
           };

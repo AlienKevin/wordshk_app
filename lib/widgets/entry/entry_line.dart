@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordshk/widgets/tts_pronunciation_button.dart';
+import 'package:wordshk/widgets/online_tts_pronunciation_button.dart';
 
 import '../../models/entry.dart';
 import 'entry_segment.dart';
@@ -38,7 +38,7 @@ class EntryLine extends StatelessWidget {
                   ? [
                       WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
-                          child: TtsPronunciationButton(
+                          child: OnlineTtsPronunciationButton(
                             text: line.toString(),
                             alignment: Alignment.center,
                             atHeader: false,

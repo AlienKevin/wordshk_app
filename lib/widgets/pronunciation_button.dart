@@ -77,7 +77,6 @@ class PronunciationButtonState extends State<PronunciationButton> {
                 iconSize:
                     Theme.of(context).textTheme.bodyMedium!.fontSize! * 1.5,
                 visualDensity: VisualDensity.compact,
-                tooltip: AppLocalizations.of(context)!.pronunciation,
                 alignment: widget.alignment,
                 icon: icon(),
                 color: Theme.of(context).colorScheme.secondary,

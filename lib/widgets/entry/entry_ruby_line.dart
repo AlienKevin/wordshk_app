@@ -5,14 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/language_state.dart';
 import 'package:wordshk/widgets/online_tts_pronunciation_button.dart';
-import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
-import 'package:wordshk/widgets/tts_pronunciation_button.dart';
 import 'package:wordshk/widgets/url_pronunciation_button.dart';
 
 import '../../models/entry.dart';
-import '../../models/pronunciation_method.dart';
 import '../../states/entry_eg_jumpy_prs_state.dart';
-import '../../states/pronunciation_method_state.dart';
 import 'entry_ruby_segment.dart';
 
 class EntryRubyLine extends StatelessWidget {
@@ -55,44 +51,17 @@ class EntryRubyLine extends StatelessWidget {
                   .expand((i) => i),
               ...showPrsButton
                   ? [
-                      Consumer<PronunciationMethodState>(
-                          builder: (context, pronunciationMethodState, child) =>
-                              prUrl != null
-                                  ? UrlPronunciationButton(
-                                      url: prUrl!,
-                                      alignment: Alignment.topCenter,
-                                      atHeader: false,
-                                    )
-                                  : switch (
-                                      pronunciationMethodState.entryEgMethod) {
-                                      PronunciationMethod.onlineTts =>
-                                        OnlineTtsPronunciationButton(
-                                          text: lineTrad.toString(),
-                                          alignment: Alignment.topCenter,
-                                          atHeader: false,
-                                        ),
-                                      PronunciationMethod.tts =>
-                                        TtsPronunciationButton(
-                                          text: Platform.isIOS
-                                              ? lineTrad.toPrs()
-                                              : lineTrad.toString(),
-                                          alignment: Alignment.topCenter,
-                                          atHeader: false,
-                                        ),
-                                      _ => SyllablePronunciationButton(
-                                          prs: lineTrad
-                                              .toPrs()
-                                              .split(RegExp(
-                                                  r"\s*[^a-zA-Z0-6\s]+\s*[^a-zA-Z0-6\s]*\s*"))
-                                              .where((segment) =>
-                                                  segment.isNotEmpty)
-                                              .map((segment) =>
-                                                  segment.split(RegExp(r"\s+")))
-                                              .toList(),
-                                          alignment: Alignment.topCenter,
-                                          atHeader: false,
-                                        )
-                                    })
+                      prUrl != null
+                          ? UrlPronunciationButton(
+                              url: prUrl!,
+                              alignment: Alignment.topCenter,
+                              atHeader: false,
+                            )
+                          : OnlineTtsPronunciationButton(
+                              text: lineTrad.toString(),
+                              alignment: Alignment.topCenter,
+                              atHeader: false,
+                            )
                     ]
                   : [],
             ]

@@ -20,7 +20,6 @@ import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/search_bar_position_state.dart';
 import 'package:wordshk/widgets/digital_ink_view.dart';
 import 'package:wordshk/widgets/search_bar.dart';
-import 'package:wordshk/widgets/syllable_pronunciation_button.dart';
 
 import '../constants.dart';
 import '../main.dart';

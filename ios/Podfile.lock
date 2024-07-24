@@ -15,8 +15,6 @@ PODS:
     - Flutter
   - flutter_native_splash (0.0.1):
     - Flutter
-  - flutter_tts (0.0.1):
-    - Flutter
   - flutter_web_browser (0.17.1):
     - Flutter
   - google_mlkit_commons (0.6.1):
@@ -125,7 +123,6 @@ DEPENDENCIES:
   - flutter_fgbg (from `.symlinks/plugins/flutter_fgbg/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
-  - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
   - flutter_web_browser (from `.symlinks/plugins/flutter_web_browser/ios`)
   - google_mlkit_commons (from `.symlinks/plugins/google_mlkit_commons/ios`)
   - google_mlkit_digital_ink_recognition (from `.symlinks/plugins/google_mlkit_digital_ink_recognition/ios`)
@@ -176,8 +173,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
-  flutter_tts:
-    :path: ".symlinks/plugins/flutter_tts/ios"
   flutter_web_browser:
     :path: ".symlinks/plugins/flutter_web_browser/ios"
   google_mlkit_commons:
@@ -214,7 +209,6 @@ SPEC CHECKSUMS:
   flutter_fgbg: 31c0d1140a131daea2d342121808f6aa0dcd879d
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
-  flutter_tts: 0f492aab6accf87059b72354fcb4ba934304771d
   flutter_web_browser: 7bccaafbb0c5b8862afe7bcd158f15557109f61f
   google_mlkit_commons: 3857c1e9f23ca02073f8dd34a7a3580feb814cef
   google_mlkit_digital_ink_recognition: d389ce65a846a29ca6e5a67d0257284f54cc9788

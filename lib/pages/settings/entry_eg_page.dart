@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 import 'package:wordshk/widgets/settings/settings_switch_tile.dart';
 
 import '../../states/entry_eg_font_size_state.dart';
-import '../../states/pronunciation_method_state.dart';
 import '../../utils.dart';
 import '../../widgets/settings/settings_list.dart';
 
@@ -19,11 +19,9 @@ class EntryEgSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context)!;
-    final language = context.watch<LanguageState>().language!;
     final entryEgFontSize = context.watch<EntryEgFontSizeState>().size;
-    final entryEgPronunciationMethod =
-        context.watch<PronunciationMethodState>().entryEgMethod;
     final entryEgIsJumpy = context.watch<EntryEgJumpyPrsState>().isJumpy;
+    final entryEgSpeechRate = context.watch<SpeechRateState>().entryEgRate;
 
     onEntryEgJumpyPrsChange(bool newIsJumpy) {
       context.read<EntryEgJumpyPrsState>().updateIsJumpy(newIsJumpy);
@@ -43,11 +41,10 @@ class EntryEgSettingsPage extends StatelessWidget {
                         context.push('/settings/entry/example/font-size'),
                   ),
                   SettingsTile.navigation(
-                    title: Text(s.entryEgPronunciationMethod),
-                    value: Text(getPronunciationMethodShortName(
-                        entryEgPronunciationMethod, s, language)),
+                    title: Text(s.entryEgSpeechRate),
+                    value: Text(getSpeechRateName(entryEgSpeechRate, s)),
                     onPressed: (context) =>
-                        context.push('/settings/entry/example/pronunciation'),
+                        context.push('/settings/entry/example/speech-rate'),
                   ),
                   MySettingsSwitchTile(
                       initialValue: entryEgIsJumpy,
