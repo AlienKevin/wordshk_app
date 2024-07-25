@@ -51,5 +51,22 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<!-- TODO: Turn off when pronunciation server is HTTPS encrypted -->
+	<!-- Source: https://stackoverflow.com/a/31254874/6798201 -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>wordshk.cn</key>
+			<dict>
+			<!--Include to allow subdomains-->
+			<key>NSIncludesSubdomains</key>
+			<true/>
+			<!--Include to allow HTTP requests-->
+			<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+			<true/>
+			</dict>
+		</dict>
+	</dict>
 </dict>
 </plist>
