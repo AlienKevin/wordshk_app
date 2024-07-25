@@ -70,6 +70,7 @@ If you want to build for iOS, you are required to use a Mac. You will need the l
    # Go to Xcode and Product -> Archive
    flutter build appbundle --flavor full
    ```
+5. TAG the commit for F-droid.
 
 # Normalize jyutping syllable audios
 
