@@ -73,7 +73,6 @@ class EntryEg extends StatelessWidget {
                       tag: "",
                       lineTextStyle: lineTextStyle,
                       onTapLink: onTapLink,
-                      isCantonese: false,
                     )
                   ]
                 : [],

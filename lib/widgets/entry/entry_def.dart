@@ -50,12 +50,13 @@ class EntryDef extends StatelessWidget {
                           entryLanguage == EntryLanguage.both
                       ? [
                           EntryClause(
-                              clause: script == Script.simplified
-                                  ? def.yueSimp
-                                  : def.yue,
-                              lineTextStyle: lineTextStyle,
-                              onTapLink: onTapLink,
-                              isCantonese: true)
+                            clause: script == Script.simplified
+                                ? def.yueSimp
+                                : def.yue,
+                            lineTextStyle: lineTextStyle,
+                            onTapLink: onTapLink,
+                            prClause: def.yue,
+                          )
                         ]
                       : [],
                   ...entryLanguage == EntryLanguage.english ||
@@ -67,7 +68,7 @@ class EntryDef extends StatelessWidget {
                                   clause: def.eng!,
                                   lineTextStyle: lineTextStyle,
                                   onTapLink: onTapLink,
-                                  isCantonese: false)
+                                )
                         ]
                       : [],
                 ],

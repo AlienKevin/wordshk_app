@@ -9,14 +9,14 @@ class EntryLine extends StatelessWidget {
   final String? tag;
   final TextStyle lineTextStyle;
   final OnTapLink? onTapLink;
-  final bool isCantonese;
+  final String? prString;
   const EntryLine(
       {Key? key,
       required this.line,
       this.tag,
       required this.lineTextStyle,
       required this.onTapLink,
-      required this.isCantonese})
+      this.prString})
       : super(key: key);
 
   @override
@@ -34,12 +34,12 @@ class EntryLine extends StatelessWidget {
                   style: const TextStyle(fontWeight: FontWeight.w600)),
               ...line.segments.map((segment) => showSegment(
                   segment, Theme.of(context).colorScheme.secondary, onTapLink)),
-              ...isCantonese
+              ...prString != null
                   ? [
                       WidgetSpan(
                           alignment: PlaceholderAlignment.middle,
                           child: OnlineTtsPronunciationButton(
-                            text: line.toString(),
+                            text: prString!,
                             alignment: Alignment.center,
                             atHeader: false,
                           ))

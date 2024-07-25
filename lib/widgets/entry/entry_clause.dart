@@ -8,14 +8,14 @@ class EntryClause extends StatelessWidget {
   final String? tag;
   final TextStyle lineTextStyle;
   final OnTapLink? onTapLink;
-  final bool isCantonese;
+  final Clause? prClause;
   const EntryClause(
       {Key? key,
       required this.clause,
       this.tag,
       required this.lineTextStyle,
       required this.onTapLink,
-      required this.isCantonese})
+      this.prClause})
       : super(key: key);
 
   @override
@@ -27,7 +27,7 @@ class EntryClause extends StatelessWidget {
             tag: index == 0 ? tag : null,
             lineTextStyle: lineTextStyle,
             onTapLink: onTapLink,
-            isCantonese: isCantonese,
+            prString: prClause?.lines[index].toString(),
           );
         }).toList(),
       );
