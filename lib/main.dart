@@ -41,6 +41,7 @@ import 'package:wordshk/pages/settings/language_page.dart';
 import 'package:wordshk/pages/settings/romanization_page.dart';
 import 'package:wordshk/pages/settings/script_page.dart';
 import 'package:wordshk/pages/settings/search_bar_position_page.dart';
+import 'package:wordshk/pages/settings/text_size_page.dart';
 import 'package:wordshk/pages/settings_page.dart';
 import 'package:wordshk/pages/stories_catalog_page.dart';
 import 'package:wordshk/pages/story_page.dart';
@@ -67,6 +68,7 @@ import 'package:wordshk/states/search_query_state.dart';
 import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/scaffold_with_bottom_navigation.dart';
+import 'package:wordshk/states/text_size_state.dart';
 
 import 'aws_service.dart';
 import 'constants.dart';
@@ -194,6 +196,8 @@ void runMyApp(
         ChangeNotifierProvider<InputModeState>(create: (_) => InputModeState()),
         ChangeNotifierProvider<LanguageState>(
             create: (context) => LanguageState(prefs), lazy: false),
+        ChangeNotifierProvider<TextSizeState>(
+            create: (context) => TextSizeState(prefs), lazy: false),
         ChangeNotifierProvider<EntryLanguageState>(
             create: (_) => EntryLanguageState(prefs)),
         ChangeNotifierProvider<EntryEgFontSizeState>(
@@ -400,6 +404,11 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
                             builder: (context, state) =>
                                 const RomanizationSettingsPage()),
                         GoRoute(
+                          path: 'text-size',
+                          builder: (context, state) =>
+                              const TextSizeSettingsPage(),
+                        ),
+                        GoRoute(
                           path: 'entry/definition/language',
                           builder: (context, state) =>
                               const EntryExplanationLanguageSettingsPage(),
@@ -597,6 +606,7 @@ class _MyAppState extends State<MyApp> {
           final language = context.read<LanguageState>().language;
           final romanization =
               context.read<RomanizationState>().romanization.name;
+          final textSize = context.read<TextSizeState>().textSize;
           final egJumpyPrs = context.read<EntryEgJumpyPrsState>().isJumpy;
           final numBookmarks = context.read<BookmarkState>().items.length;
           final numHistory = context.read<HistoryState>().items.length;
@@ -620,6 +630,7 @@ class _MyAppState extends State<MyApp> {
             "Timestamp": timeNowString,
             "deviceInfo": await getDeviceInfo(),
             "language": language,
+            "textSize": textSize,
             "romanization": romanization,
             "egJumpyPrs": egJumpyPrs,
             "numBookmarks": numBookmarks,
@@ -635,66 +646,80 @@ class _MyAppState extends State<MyApp> {
           }
         }
       },
-      child: Portal(
-        child: MaterialApp.router(
-          scaffoldMessengerKey: scaffoldMessengerKey,
-          debugShowCheckedModeBanner: false,
-          locale: context.watch<LanguageState>().language?.toLocale,
-          title: 'words.hk',
-          localizationsDelegates: const [
-            ...AppLocalizations.localizationsDelegates,
-            MaterialLocalizationYueDelegate(),
-            CupertinoLocalizationYueDelegate(),
-          ],
-          localeListResolutionCallback: (
-            locales,
-            supportedLocales,
-          ) {
-            if (kDebugMode) {
-              print("Detected locales: $locales");
-            }
-            for (final locale in locales ?? []) {
-              if (locale.languageCode == 'en') {
-                return context.read<LanguageState>().initLanguage(Language.en);
-              } else if (locale.languageCode == 'yue') {
-                return context.read<LanguageState>().initLanguage(Language.yue);
-              } else if (locale.languageCode == 'zh') {
-                if (locale.scriptCode == 'Hant') {
-                  return context
-                      .read<LanguageState>()
-                      .initLanguage(Language.zhHant);
-                } else {
-                  return context
-                      .read<LanguageState>()
-                      .initLanguage(Language.zhHans);
+      child: Portal(child: Builder(builder: (context) {
+        // Get the current text scale factor from your TextSizeState
+        final textSize = context.watch<TextSizeState>().textSize;
+
+        return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: textSize == null
+                  ? null
+                  : TextScaler.linear(textSize.toDouble() / 100),
+            ),
+            child: MaterialApp.router(
+              scaffoldMessengerKey: scaffoldMessengerKey,
+              debugShowCheckedModeBanner: false,
+              locale: context.watch<LanguageState>().language?.toLocale,
+              title: 'words.hk',
+              localizationsDelegates: const [
+                ...AppLocalizations.localizationsDelegates,
+                MaterialLocalizationYueDelegate(),
+                CupertinoLocalizationYueDelegate(),
+              ],
+              localeListResolutionCallback: (
+                locales,
+                supportedLocales,
+              ) {
+                if (kDebugMode) {
+                  print("Detected locales: $locales");
                 }
-              }
-            }
-            // fallback to English
-            return Language.en.toLocale;
-          },
-          supportedLocales: const [
-            Locale.fromSubtags(
-                languageCode:
-                    'en'), // generic English (defaults to American English)
-            Locale.fromSubtags(
-                languageCode:
-                    'yue'), // generic Cantonese 'yue' (traditional script)
-            Locale.fromSubtags(
-                languageCode:
-                    'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
-            Locale.fromSubtags(
-                languageCode: 'zh',
-                scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
-            Locale.fromSubtags(
-                languageCode: 'zh',
-                scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
-          ],
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          routerConfig: router,
-        ),
-      ),
+                for (final locale in locales ?? []) {
+                  if (locale.languageCode == 'en') {
+                    return context
+                        .read<LanguageState>()
+                        .initLanguage(Language.en);
+                  } else if (locale.languageCode == 'yue') {
+                    return context
+                        .read<LanguageState>()
+                        .initLanguage(Language.yue);
+                  } else if (locale.languageCode == 'zh') {
+                    if (locale.scriptCode == 'Hant') {
+                      return context
+                          .read<LanguageState>()
+                          .initLanguage(Language.zhHant);
+                    } else {
+                      return context
+                          .read<LanguageState>()
+                          .initLanguage(Language.zhHans);
+                    }
+                  }
+                }
+                // fallback to English
+                return Language.en.toLocale;
+              },
+              supportedLocales: const [
+                Locale.fromSubtags(
+                    languageCode:
+                        'en'), // generic English (defaults to American English)
+                Locale.fromSubtags(
+                    languageCode:
+                        'yue'), // generic Cantonese 'yue' (traditional script)
+                Locale.fromSubtags(
+                    languageCode:
+                        'zh'), // generic Chinese 'zh' (defaults to zh_Hans)
+                Locale.fromSubtags(
+                    languageCode: 'zh',
+                    scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
+                Locale.fromSubtags(
+                    languageCode: 'zh',
+                    scriptCode:
+                        'Hant'), // generic traditional Chinese 'zh_Hant'
+              ],
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              routerConfig: router,
+            ));
+      })),
     );
   }
 }

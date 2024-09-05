@@ -9,6 +9,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/history_state.dart';
+import 'package:wordshk/states/text_size_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
 
@@ -132,6 +133,7 @@ class SettingsPage extends StatelessWidget {
     final script = context.watch<LanguageState>().getScript();
     final entryLanguage = context.watch<EntryLanguageState>().language;
     final romanization = context.watch<RomanizationState>().romanization;
+    final textSize = context.watch<TextSizeState>().getTextSize();
     final entryHeaderSpeechRate =
         context.watch<SpeechRateState>().entryHeaderRate;
 
@@ -158,6 +160,11 @@ class SettingsPage extends StatelessWidget {
                     value: Text(getRomanizationName(romanization, s)),
                     onPressed: (context) =>
                         context.push('/settings/romanization'),
+                  ),
+                  SettingsTile.navigation(
+                    title: Text(s.textSize),
+                    value: Text("${textSize.toString()}%"),
+                    onPressed: (context) => context.push('/settings/text-size'),
                   ),
                 ],
               ),

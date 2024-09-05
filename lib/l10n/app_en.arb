@@ -155,6 +155,8 @@
     "scriptSimplified": "Simplified",
     "scriptTraditional": "Traditional",
 
+    "textSize": "Text Size",
+
     "entryHeaderSpeechRate": "Header Speech Rate",
 
     "entryEgSpeechRate": "Example Speech Rate",

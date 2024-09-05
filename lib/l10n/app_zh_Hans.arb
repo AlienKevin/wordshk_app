@@ -144,6 +144,8 @@
     "scriptSimplified": "简体",
     "scriptTraditional": "繁体",
 
+    "textSize": "文字大小",
+
     "entryHeaderSpeechRate": "标题发音速度",
 
     "entryEgSpeechRate": "例句发音速度",
