@@ -25,7 +25,7 @@ jobs:
           mkdir -p public
           for file in assets/privacy_policy/policy_zhHans.md assets/privacy_policy/policy_zhHant.md assets/privacy_policy/policy_yue.md assets/privacy_policy/policy_en.md; do
             cat "$file" >> public/privacy_policy.md
-            echo "" >> public/privacy_policy.md
+            echo -e "\n\n\n\n" >> public/privacy_policy.md
           done
 
       - name: Setup GitHub Pages
