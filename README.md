@@ -42,6 +42,15 @@ If you want to build for iOS, you are required to use a Mac. You will need the l
    * `flutter build apk` to build an Android APK
    * `flutter build ios` to build for iOS
 
+Notes:
+1. Build command for F-Droid (which forbids proprietary components like Google's MLKit):
+   `flutter build appbundle --flavor foss`
+2. Build command for Huawei AppGallery (which forbids sensitive content):
+   `flutter build appbundle --flavor huawei`
+3. Build command for Google Play Store (full version):
+   `flutter build appbundle --flavor full`
+
+
 # Release Checklist
 1. Bump app version in `pubspec.yaml`
 2. Open the wordshk-tools project and update the app version in `examples/export_sqlite_db/src/main.rs`:

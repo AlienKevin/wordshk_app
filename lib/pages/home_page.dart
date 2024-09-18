@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/models/embedded.dart';
 import 'package:wordshk/models/search_bar_position.dart';
+import 'package:wordshk/pages/sensitive_content_filter.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/history_state.dart';
@@ -335,6 +336,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           .then((results) {
         if (!context.mounted) return;
         if (searchStartTime >= lastSearchStartTime) {
+          if (appFlavor == "huawei") {
+            // Hide sensitive results
+            final filteredPrResults = (
+              results.prResults.$1,
+              results.prResults.$2
+                  .where((result) => !containsSensitiveContent(
+                      "${result.variants.join(" ")} ${result.yues.join(" ")}"))
+                  .toList()
+            );
+            final filteredVariantResults = (
+              results.variantResults.$1,
+              results.variantResults.$2
+                  .where((result) => !containsSensitiveContent(
+                      "${result.matchedVariant.prefix}${result.matchedVariant.query}${result.matchedVariant.suffix} ${result.yues.join(" ")}"))
+                  .toList()
+            );
+            final filteredEnglishResults = (
+              results.englishResults.$1,
+              results.englishResults.$2
+                  .where((result) =>
+                      !containsSensitiveContent(result.variants.join(" ")))
+                  .toList()
+            );
+            results = CombinedSearchResults(
+                prResults: filteredPrResults,
+                variantResults: filteredVariantResults,
+                englishResults: filteredEnglishResults);
+          }
+
           final isCombinedResultsEmpty = results.prResults.$2.isEmpty &&
               results.variantResults.$2.isEmpty &&
               results.englishResults.$2.isEmpty;

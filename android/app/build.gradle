@@ -86,6 +86,10 @@ android {
         full {
             dimension "version"
         }
+
+        huawei {
+            dimension "version"
+        }
     }
 
     packagingOptions {
