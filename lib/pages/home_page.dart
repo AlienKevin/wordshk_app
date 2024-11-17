@@ -643,45 +643,56 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               (bool selected) {
                 return TextSpan(
                   children: [
-                    TextSpan(
-                        text: "${result.variants.join(" / ")} ",
-                        style: textStyle.copyWith(
-                            color: selected
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : null)),
-                    ...result.matchedPr
-                        .map((segment) => segment.segment.characters.map((c) =>
-                            MatchedSegment(
-                                segment: c, matched: segment.matched)))
-                        .expand((x) => x)
-                        .map((segment) => TextSpan(
-                            text: segment.segment,
-                            style: textStyle.copyWith(
-                              color: selected
-                                  ? lightGreyColor
-                                  : ((segment.matched ||
-                                          segment.segment == "\u{0301}" ||
-                                          segment.segment == "\u{0300}" ||
-                                          segment.segment == "\u{0304}")
-                                      ? Theme.of(context).colorScheme.primary
-                                      : greyColor),
-                              // Workaround for accent marks not displayed
-                              // in correct position when font weights don't match
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .fontSize,
-                              fontWeight: (segment.matched ||
-                                      segment.segment == "\u{0301}" ||
-                                      segment.segment == "\u{0300}" ||
-                                      segment.segment == "\u{0304}")
-                                  ? FontWeight.w600
-                                  : null,
-                            ))),
-                    TextSpan(
-                        text: "\n",
-                        style: textStyle.copyWith(
-                            color: selected ? lightGreyColor : greyColor)),
+                    WidgetSpan(
+                        child: Text.rich(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            TextSpan(children: [
+                              TextSpan(
+                                  text: "${result.variants.join(" / ")} ",
+                                  style: textStyle.copyWith(
+                                      color: selected
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary
+                                          : null)),
+                              ...result.matchedPr
+                                  .map((segment) => segment.segment.characters
+                                      .map((c) => MatchedSegment(
+                                          segment: c,
+                                          matched: segment.matched)))
+                                  .expand((x) => x)
+                                  .map((segment) => TextSpan(
+                                      text: segment.segment,
+                                      style: textStyle.copyWith(
+                                        color: selected
+                                            ? lightGreyColor
+                                            : ((segment.matched ||
+                                                    segment.segment ==
+                                                        "\u{0301}" ||
+                                                    segment.segment ==
+                                                        "\u{0300}" ||
+                                                    segment.segment ==
+                                                        "\u{0304}")
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : greyColor),
+                                        // Workaround for accent marks not displayed
+                                        // in correct position when font weights don't match
+                                        fontSize: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .fontSize,
+                                        fontWeight: (segment.matched ||
+                                                segment.segment == "\u{0301}" ||
+                                                segment.segment == "\u{0300}" ||
+                                                segment.segment == "\u{0304}")
+                                            ? FontWeight.w600
+                                            : null,
+                                      )))
+                            ]))),
+                    TextSpan(text: "\n"),
                     ...showDefSummary(
                         context,
                         switch (watchSummaryDefLanguage(context)) {
@@ -707,33 +718,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         result.id,
         showFirstEntryInGroupInitially: false,
         (bool selected) => TextSpan(children: [
-          TextSpan(
-              text: result.matchedVariant.prefix,
-              style: textStyle.copyWith(
-                  color: selected
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : null)),
-          TextSpan(
-              text: result.matchedVariant.query,
-              style: textStyle.copyWith(
-                  color: selected
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600)),
-          TextSpan(
-              text: result.matchedVariant.suffix,
-              style: textStyle.copyWith(
-                  color: selected
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : null)),
-          TextSpan(
-              text: " ${result.prs.join(", ")}\n",
-              style: textStyle.copyWith(
-                color: selected ? lightGreyColor : greyColor,
-                // Workaround for accent marks not displayed
-                // in correct position when font weights don't match
-                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-              )),
+          WidgetSpan(
+              child: Text.rich(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  TextSpan(children: [
+                    TextSpan(
+                        text: result.matchedVariant.prefix,
+                        style: textStyle.copyWith(
+                            color: selected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : null)),
+                    TextSpan(
+                        text: result.matchedVariant.query,
+                        style: textStyle.copyWith(
+                            color: selected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w600)),
+                    TextSpan(
+                        text: result.matchedVariant.suffix,
+                        style: textStyle.copyWith(
+                            color: selected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : null)),
+                    TextSpan(
+                        text: " ${result.prs.join(", ")}",
+                        style: textStyle.copyWith(
+                          color: selected ? lightGreyColor : greyColor,
+                          // Workaround for accent marks not displayed
+                          // in correct position when font weights don't match
+                          fontSize:
+                              Theme.of(context).textTheme.bodyMedium!.fontSize,
+                        ))
+                  ]))),
+          TextSpan(text: "\n"),
           ...showDefSummary(
               context,
               switch (watchSummaryDefLanguage(context)) {
