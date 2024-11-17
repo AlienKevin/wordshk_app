@@ -71,7 +71,7 @@ pub struct VariantSearchResult {
 pub struct EnglishSearchResult {
     pub id: u32,
     pub def_index: u32,
-    pub variants: Vec<String>,
+    pub variants: Vec<(String, String)>,
     pub matched_eng: Vec<MatchedSegment>,
 }
 
@@ -169,8 +169,8 @@ pub fn combined_search(
                 variant_ranks,
                 api,
                 script,
-                capacity,
                 romanization,
+                capacity,
             ),
             pr_results: (None, vec![]),
             english_results: (None, vec![]),
@@ -185,11 +185,17 @@ pub fn combined_search(
                 variant_ranks,
                 api,
                 script,
-                capacity,
                 romanization,
+                capacity,
             ),
             pr_results: pr_ranks_to_results(pr_ranks, api, script, capacity),
-            english_results: english_ranks_to_results(english_ranks, api, script, capacity),
+            english_results: english_ranks_to_results(
+                english_ranks,
+                api,
+                script,
+                romanization,
+                capacity,
+            ),
         },
     }
 }
@@ -273,8 +279,8 @@ fn variant_ranks_to_results(
     variant_ranks: &mut BinaryHeap<search::VariantSearchRank>,
     dict: &dyn RichDictLike,
     script: Script,
-    capacity: u32,
     romanization: Romanization,
+    capacity: u32,
 ) -> (Option<u32>, Vec<VariantSearchResult>) {
     let mut variant_search_results = vec![];
     let mut i = 0;
@@ -381,6 +387,7 @@ fn english_ranks_to_results(
     english_ranks: &mut BinaryHeap<EnglishSearchRank>,
     dict: &dyn RichDictLike,
     script: Script,
+    romanization: Romanization,
     capacity: u32,
 ) -> (Option<u32>, Vec<EnglishSearchResult>) {
     let mut english_search_results = vec![];
@@ -396,11 +403,23 @@ fn english_ranks_to_results(
     while !english_ranks.is_empty() && i < capacity {
         let entry = english_ranks.pop().unwrap();
         let variants = search::pick_variants(&dict.get_entry(entry.entry_id).variants, script);
-        let variants = variants.to_words();
         english_search_results.push(EnglishSearchResult {
             id: entry.entry_id as u32,
             def_index: entry.def_index as u32,
-            variants: variants.into_iter().map(|v| v.to_string()).collect(),
+            variants: variants
+                .0
+                .iter()
+                .map(|v| {
+                    (
+                        v.word.clone(),
+                        v.prs
+                            .0
+                            .iter()
+                            .filter_map(|pr| jyutping_to_standard_romanization(pr, romanization))
+                            .join(", "),
+                    )
+                })
+                .collect(),
             matched_eng: entry.matched_eng.clone(),
         });
         i += 1;

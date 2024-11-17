@@ -549,16 +549,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           (bool selected) => TextSpan(
                 children: [
                   WidgetSpan(
-                      child: RichText(
-                    text: TextSpan(
-                      text: "${result.variants.join(" / ")} ",
-                      style: selected
-                          ? textStyle.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary)
-                          : textStyle,
+                    child: Text.rich(
+                      TextSpan(
+                        children: result.variants.indexed
+                            .expand((variant) => [
+                                  TextSpan(
+                                    text: (variant.$1 == 0 ? "" : " ") +
+                                        variant.$2.$1,
+                                    style: selected
+                                        ? textStyle.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary)
+                                        : textStyle,
+                                  ),
+                                  TextSpan(text: " "),
+                                  TextSpan(
+                                      text: variant.$2.$2,
+                                      style: textStyle.copyWith(
+                                          fontSize: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .fontSize,
+                                          color: selected
+                                              ? lightGreyColor
+                                              : greyColor)),
+                                ])
+                            .toList(),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                  )),
+                  ),
                   const TextSpan(text: "\n"),
                   ...result.matchedEng.map((segment) => TextSpan(
                       text: segment.segment,

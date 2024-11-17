@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `english_ranks_to_results`, `get_entry_defs`, `pr_ranks_to_results`, `variant_ranks_to_results`
+// These functions are ignored because they are not marked as `pub`: `english_ranks_to_results`, `get_entry_defs`, `jyutping_to_standard_romanization`, `pr_ranks_to_results`, `variant_ranks_to_results`
 // These types are ignored because they are not used by any `pub` functions: `log_stream_sink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `initialize`
 
@@ -107,7 +107,7 @@ class EgSearchResult {
 class EnglishSearchResult {
   final int id;
   final int defIndex;
-  final List<String> variants;
+  final List<(String, String)> variants;
   final List<MatchedSegment> matchedEng;
 
   const EnglishSearchResult({
