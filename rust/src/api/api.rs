@@ -2,21 +2,23 @@ use std::collections::BinaryHeap;
 use std::io::Cursor;
 use std::time::Instant;
 
+use crate::frb_generated::StreamSink;
 use flutter_rust_bridge::frb;
+use itertools::Itertools;
 use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
 use parking_lot::RwLock;
 use wordshk_tools::dict::{clause_to_string, EntryId};
 use wordshk_tools::english_index::EnglishSearchRank;
 use wordshk_tools::entry_group_index;
+use wordshk_tools::jyutping::LaxJyutPing;
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
+use wordshk_tools::rich_dict::RichVariants;
 use wordshk_tools::search::VariantMapLike;
 use wordshk_tools::search::{self, CombinedSearchRank, RichDictLike};
 pub use wordshk_tools::search::{MatchedInfix, MatchedSegment, Script};
 use wordshk_tools::sqlite_db::SqliteDb;
-
-use crate::frb_generated::StreamSink;
 
 pub struct CombinedSearchResults {
     // First Option<usize> is the score
@@ -61,6 +63,7 @@ pub struct _MatchedInfix {
 pub struct VariantSearchResult {
     pub id: u32,
     pub matched_variant: MatchedInfix,
+    pub prs: Vec<String>,
     pub yues: Vec<String>,
     pub engs: Vec<String>,
 }
@@ -141,11 +144,10 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
         .map(|entry_id| {
             let api = API.read();
             let api = api.as_ref().unwrap();
-            let entry = api.get_entry(entry_id);
-            let defs = get_entry_defs(entry_id, api);
+            let (variants, defs) = get_entry_defs(entry_id, api);
             EntrySummary {
-                variant_trad: entry.variants.0.first().unwrap().word.clone(),
-                variant_simp: entry.variants.0.first().unwrap().word_simp.clone(),
+                variant_trad: variants.0.first().unwrap().word.clone(),
+                variant_simp: variants.0.first().unwrap().word_simp.clone(),
                 defs,
             }
         })
@@ -163,7 +165,13 @@ pub fn combined_search(
     let api = api.as_ref().unwrap();
     match &mut search::combined_search(api, &query, script, romanization) {
         CombinedSearchRank::Variant(variant_ranks) => CombinedSearchResults {
-            variant_results: variant_ranks_to_results(variant_ranks, api, script, capacity),
+            variant_results: variant_ranks_to_results(
+                variant_ranks,
+                api,
+                script,
+                capacity,
+                romanization,
+            ),
             pr_results: (None, vec![]),
             english_results: (None, vec![]),
         },
@@ -173,7 +181,13 @@ pub fn combined_search(
             english_results: (None, vec![]),
         },
         CombinedSearchRank::All(variant_ranks, pr_ranks, english_ranks) => CombinedSearchResults {
-            variant_results: variant_ranks_to_results(variant_ranks, api, script, capacity),
+            variant_results: variant_ranks_to_results(
+                variant_ranks,
+                api,
+                script,
+                capacity,
+                romanization,
+            ),
             pr_results: pr_ranks_to_results(pr_ranks, api, script, capacity),
             english_results: english_ranks_to_results(english_ranks, api, script, capacity),
         },
@@ -233,11 +247,34 @@ pub fn get_entry_id(query: String, script: Script) -> Option<u32> {
     api.get(&query, script).map(|id| id as u32)
 }
 
+fn jyutping_to_standard_romanization(
+    pr: &LaxJyutPing,
+    romanization: Romanization,
+) -> Option<String> {
+    match romanization {
+        Romanization::Jyutping => pr.to_jyutpings().map(|jyutpings| {
+            jyutpings
+                .iter()
+                .map(|jyutping| jyutping.to_string())
+                .join(" ")
+        }),
+        Romanization::Yale => {
+            let yale = pr.to_yale();
+            if yale.is_empty() {
+                None
+            } else {
+                Some(yale)
+            }
+        }
+    }
+}
+
 fn variant_ranks_to_results(
     variant_ranks: &mut BinaryHeap<search::VariantSearchRank>,
     dict: &dyn RichDictLike,
     script: Script,
     capacity: u32,
+    romanization: Romanization,
 ) -> (Option<u32>, Vec<VariantSearchResult>) {
     let mut variant_search_results = vec![];
     let mut i = 0;
@@ -249,12 +286,19 @@ fn variant_ranks_to_results(
         let search::VariantSearchRank {
             id,
             matched_variant,
+            variant_index,
             ..
         } = variant_ranks.pop().unwrap();
-        let defs = get_entry_defs(id, dict);
+        let (variants, defs) = get_entry_defs(id, dict);
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
             matched_variant: matched_variant.clone(),
+            prs: variants.0[variant_index]
+                .prs
+                .0
+                .iter()
+                .filter_map(|pr| jyutping_to_standard_romanization(pr, romanization))
+                .collect(),
             yues: defs
                 .iter()
                 .map(|def| match script {
@@ -285,7 +329,7 @@ fn pr_ranks_to_results(
             matched_pr,
             ..
         } = pr_ranks.pop().unwrap();
-        let defs = get_entry_defs(id, dict);
+        let (_, defs) = get_entry_defs(id, dict);
         pr_search_results.push(PrSearchResult {
             id: id as u32,
             variants,
@@ -310,23 +354,27 @@ pub struct EntryDef {
     pub eng: String,
 }
 
-fn get_entry_defs(id: EntryId, dict: &dyn RichDictLike) -> Vec<EntryDef> {
-    let defs = &dict.get_entry(id).defs;
-    defs.iter()
-        .filter_map(|def| {
-            def.eng
-                .as_ref()
-                .map(|def| {
-                    let result = clause_to_string(&def);
-                    result
-                })
-                .map(|eng| EntryDef {
-                    yue_trad: clause_to_string(&def.yue),
-                    yue_simp: clause_to_string(&def.yue_simp),
-                    eng,
-                })
-        })
-        .collect()
+fn get_entry_defs(id: EntryId, dict: &dyn RichDictLike) -> (RichVariants, Vec<EntryDef>) {
+    let entry = dict.get_entry(id);
+    let defs: &Vec<wordshk_tools::rich_dict::RichDef> = &entry.defs;
+    (
+        entry.variants,
+        defs.iter()
+            .filter_map(|def| {
+                def.eng
+                    .as_ref()
+                    .map(|def| {
+                        let result = clause_to_string(&def);
+                        result
+                    })
+                    .map(|eng| EntryDef {
+                        yue_trad: clause_to_string(&def.yue),
+                        yue_simp: clause_to_string(&def.yue_simp),
+                        eng,
+                    })
+            })
+            .collect(),
+    )
 }
 
 fn english_ranks_to_results(

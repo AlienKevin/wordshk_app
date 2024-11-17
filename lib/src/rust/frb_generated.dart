@@ -665,13 +665,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   VariantSearchResult dco_decode_variant_search_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return VariantSearchResult(
       id: dco_decode_u_32(arr[0]),
       matchedVariant: dco_decode_matched_infix(arr[1]),
-      yues: dco_decode_list_String(arr[2]),
-      engs: dco_decode_list_String(arr[3]),
+      prs: dco_decode_list_String(arr[2]),
+      yues: dco_decode_list_String(arr[3]),
+      engs: dco_decode_list_String(arr[4]),
     );
   }
 
@@ -1025,11 +1026,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_id = sse_decode_u_32(deserializer);
     var var_matchedVariant = sse_decode_matched_infix(deserializer);
+    var var_prs = sse_decode_list_String(deserializer);
     var var_yues = sse_decode_list_String(deserializer);
     var var_engs = sse_decode_list_String(deserializer);
     return VariantSearchResult(
         id: var_id,
         matchedVariant: var_matchedVariant,
+        prs: var_prs,
         yues: var_yues,
         engs: var_engs);
   }
@@ -1335,6 +1338,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_u_32(self.id, serializer);
     sse_encode_matched_infix(self.matchedVariant, serializer);
+    sse_encode_list_String(self.prs, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
   }

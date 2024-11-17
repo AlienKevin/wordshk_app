@@ -17,6 +17,7 @@ lazy_static = "1.4.0"
 log = "0.4.20"
 regex = "1.5.5"
 flate2 = "1.0.30"
+itertools = "0.13.0"
 #anyhow = { version = "1.0.79", features = ["backtrace"] }
 
 [lib]

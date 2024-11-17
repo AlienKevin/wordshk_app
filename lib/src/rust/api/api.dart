@@ -276,19 +276,25 @@ enum Script {
 class VariantSearchResult {
   final int id;
   final MatchedInfix matchedVariant;
+  final List<String> prs;
   final List<String> yues;
   final List<String> engs;
 
   const VariantSearchResult({
     required this.id,
     required this.matchedVariant,
+    required this.prs,
     required this.yues,
     required this.engs,
   });
 
   @override
   int get hashCode =>
-      id.hashCode ^ matchedVariant.hashCode ^ yues.hashCode ^ engs.hashCode;
+      id.hashCode ^
+      matchedVariant.hashCode ^
+      prs.hashCode ^
+      yues.hashCode ^
+      engs.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -297,6 +303,7 @@ class VariantSearchResult {
           runtimeType == other.runtimeType &&
           id == other.id &&
           matchedVariant == other.matchedVariant &&
+          prs == other.prs &&
           yues == other.yues &&
           engs == other.engs;
 }

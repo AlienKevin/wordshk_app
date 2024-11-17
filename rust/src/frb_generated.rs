@@ -760,11 +760,13 @@ impl SseDecode for crate::api::api::VariantSearchResult {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <u32>::sse_decode(deserializer);
         let mut var_matchedVariant = <crate::api::api::MatchedInfix>::sse_decode(deserializer);
+        let mut var_prs = <Vec<String>>::sse_decode(deserializer);
         let mut var_yues = <Vec<String>>::sse_decode(deserializer);
         let mut var_engs = <Vec<String>>::sse_decode(deserializer);
         return crate::api::api::VariantSearchResult {
             id: var_id,
             matched_variant: var_matchedVariant,
+            prs: var_prs,
             yues: var_yues,
             engs: var_engs,
         };
@@ -1026,6 +1028,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::VariantSearchResult {
         [
             self.id.into_into_dart().into_dart(),
             self.matched_variant.into_into_dart().into_dart(),
+            self.prs.into_into_dart().into_dart(),
             self.yues.into_into_dart().into_dart(),
             self.engs.into_into_dart().into_dart(),
         ]
@@ -1353,6 +1356,7 @@ impl SseEncode for crate::api::api::VariantSearchResult {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.id, serializer);
         <crate::api::api::MatchedInfix>::sse_encode(self.matched_variant, serializer);
+        <Vec<String>>::sse_encode(self.prs, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
     }

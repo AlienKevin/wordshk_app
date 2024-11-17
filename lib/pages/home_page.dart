@@ -699,11 +699,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       : Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w600)),
           TextSpan(
-              text: "${result.matchedVariant.suffix}\n",
+              text: result.matchedVariant.suffix,
               style: textStyle.copyWith(
                   color: selected
                       ? Theme.of(context).colorScheme.onPrimary
                       : null)),
+          TextSpan(
+              text: " ${result.prs.join(", ")}\n",
+              style: textStyle.copyWith(
+                color: selected ? lightGreyColor : greyColor,
+                // Workaround for accent marks not displayed
+                // in correct position when font weights don't match
+                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+              )),
           ...showDefSummary(
               context,
               switch (watchSummaryDefLanguage(context)) {
