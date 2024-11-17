@@ -35,6 +35,16 @@ impl CstDecode<crate::api::api::CombinedSearchResults> for wire_cst_combined_sea
         }
     }
 }
+impl CstDecode<crate::api::api::EgSearchResult> for wire_cst_eg_search_result {
+    fn cst_decode(self) -> crate::api::api::EgSearchResult {
+        crate::api::api::EgSearchResult {
+            id: self.id.cst_decode(),
+            def_index: self.def_index.cst_decode(),
+            eg_index: self.eg_index.cst_decode(),
+            matched_eg: self.matched_eg.cst_decode(),
+        }
+    }
+}
 impl CstDecode<crate::api::api::EnglishSearchResult> for wire_cst_english_search_result {
     fn cst_decode(self) -> crate::api::api::EnglishSearchResult {
         crate::api::api::EnglishSearchResult {
@@ -65,6 +75,15 @@ impl CstDecode<crate::api::api::EntrySummary> for wire_cst_entry_summary {
 }
 impl CstDecode<Vec<String>> for *mut wire_cst_list_String {
     fn cst_decode(self) -> Vec<String> {
+        let vec = unsafe {
+            let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
+            flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
+        };
+        vec.into_iter().map(CstDecode::cst_decode).collect()
+    }
+}
+impl CstDecode<Vec<crate::api::api::EgSearchResult>> for *mut wire_cst_list_eg_search_result {
+    fn cst_decode(self) -> Vec<crate::api::api::EgSearchResult> {
         let vec = unsafe {
             let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
             flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
@@ -224,6 +243,21 @@ impl NewWithNullPtr for wire_cst_combined_search_results {
     }
 }
 impl Default for wire_cst_combined_search_results {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
+impl NewWithNullPtr for wire_cst_eg_search_result {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            id: Default::default(),
+            def_index: Default::default(),
+            eg_index: Default::default(),
+            matched_eg: Default::default(),
+        }
+    }
+}
+impl Default for wire_cst_eg_search_result {
     fn default() -> Self {
         Self::new_with_null_ptr()
     }
@@ -403,6 +437,17 @@ pub extern "C" fn frbgen_wordshk_wire_create_log_stream(port_: i64) {
 }
 
 #[no_mangle]
+pub extern "C" fn frbgen_wordshk_wire_eg_search(
+    port_: i64,
+    capacity: u32,
+    max_first_index_in_eg: u32,
+    query: *mut wire_cst_list_prim_u_8,
+    script: i32,
+) {
+    wire_eg_search_impl(port_, capacity, max_first_index_in_eg, query, script)
+}
+
+#[no_mangle]
 pub extern "C" fn frbgen_wordshk_wire_get_entry_group_json(port_: i64, id: u32) {
     wire_get_entry_group_json_impl(port_, id)
 }
@@ -458,6 +503,20 @@ pub extern "C" fn frbgen_wordshk_cst_new_list_String(len: i32) -> *mut wire_cst_
     let wrap = wire_cst_list_String {
         ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
             <*mut wire_cst_list_prim_u_8>::new_with_null_ptr(),
+            len,
+        ),
+        len,
+    };
+    flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_wordshk_cst_new_list_eg_search_result(
+    len: i32,
+) -> *mut wire_cst_list_eg_search_result {
+    let wrap = wire_cst_list_eg_search_result {
+        ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
+            <wire_cst_eg_search_result>::new_with_null_ptr(),
             len,
         ),
         len,
@@ -574,6 +633,14 @@ pub struct wire_cst_combined_search_results {
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct wire_cst_eg_search_result {
+    id: u32,
+    def_index: u32,
+    eg_index: u32,
+    matched_eg: wire_cst_matched_infix,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct wire_cst_english_search_result {
     id: u32,
     def_index: u32,
@@ -598,6 +665,12 @@ pub struct wire_cst_entry_summary {
 #[derive(Clone, Copy)]
 pub struct wire_cst_list_String {
     ptr: *mut *mut wire_cst_list_prim_u_8,
+    len: i32,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_list_eg_search_result {
+    ptr: *mut wire_cst_eg_search_result,
     len: i32,
 }
 #[repr(C)]

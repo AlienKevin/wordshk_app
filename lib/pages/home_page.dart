@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<VariantSearchResult> variantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
   List<SearchResultType> searchResultOrder = [];
+  List<EgSearchResult> egSearchResults = [];
   int lastSearchStartTime = 0;
   bool finishedSearch = false;
   bool isSearchResultsEmpty = false;
@@ -309,6 +310,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       variantSearchResults.clear();
       prSearchResults.clear();
       englishSearchResults.clear();
+      egSearchResults.clear();
       finishedSearch = false;
     });
   }
@@ -368,9 +370,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           final isCombinedResultsEmpty = results.prResults.$2.isEmpty &&
               results.variantResults.$2.isEmpty &&
               results.englishResults.$2.isEmpty;
-
+          if (isCombinedResultsEmpty) {
+            egSearch(
+                    capacity: 10,
+                    maxFirstIndexInEg: 10,
+                    query: query,
+                    script: script)
+                .then((results) {
+              if (!context.mounted) return;
+              if (searchStartTime >= lastSearchStartTime) {
+                // print("Query: $query");
+                // print("Result: ${results.map((res) => res.eg)}");
+                if (isSearchResultsEmpty &&
+                    query == context.read<SearchQueryState>().query) {
+                  setState(() {
+                    egSearchResults =
+                        results.unique((result) => result.matchedEg);
+                    isSearchResultsEmpty = egSearchResults.isEmpty;
+                    searchResultOrder = [SearchResultType.eg];
+                    finishedSearch = true;
+                  });
+                  // if (isSearchResultsEmpty) {
+                  //   analyticsState.addResultNotFound(ResultNotFound(query));
+                  // }
+                }
+              }
+            });
+          }
           setState(() {
             isSearchResultsEmpty = isCombinedResultsEmpty;
+            egSearchResults.clear();
             prSearchResults = results.prResults.$2;
             variantSearchResults = results.variantResults.$2;
             englishSearchResults = results.englishResults.$2;
@@ -381,6 +410,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   SearchResultType.variant => results.variantResults.$1!,
                   SearchResultType.pr => results.prResults.$1!,
                   SearchResultType.english => results.englishResults.$1!,
+                  SearchResultType.eg => 0, // impossible
                 };
             searchResultOrder = [
               if (variantSearchResults.isNotEmpty) SearchResultType.variant,
@@ -388,7 +418,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               if (englishSearchResults.isNotEmpty) SearchResultType.english,
             ].sorted((a, b) => getSearchResultTypePriority(b)
                 .compareTo(getSearchResultTypePriority(a)));
-            finishedSearch = true;
+            if (!isCombinedResultsEmpty) {
+              finishedSearch = true;
+            }
           });
         }
       });
@@ -543,6 +575,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ],
               ),
           SearchResultType.english,
+          embedded: embedded);
+    }).toList();
+  }
+
+  List<Widget> showEgSearchResults(int startIndex, Embedded embedded) {
+    return egSearchResults.mapIndexed((index, result) {
+      egs(bool selected) => [
+            TextSpan(
+                text: result.matchedEg.prefix,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(color: greyColor)),
+            TextSpan(
+                text: result.matchedEg.query,
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: selected
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.primary)),
+            TextSpan(
+                text: result.matchedEg.suffix,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(color: greyColor)),
+          ];
+      return showSearchResult(
+          startIndex + index,
+          result.id,
+          (bool selected) => TextSpan(children: egs(selected)),
+          SearchResultType.eg,
+          maxLines: 1,
+          defIndex: result.defIndex,
           embedded: embedded);
     }).toList();
   }
@@ -707,6 +772,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             prSearchResults.length,
                         textStyle,
                         embedded))
+                  ],
+                SearchResultType.eg => [
+                    showSearchResultCategory(
+                        s.searchResults(s.searchResultsCategoryExample)),
+                    ...addSeparator(showEgSearchResults(
+                        startIndex +
+                            variantSearchResults.length +
+                            prSearchResults.length +
+                            englishSearchResults.length,
+                        embedded)),
                   ],
               })
         );

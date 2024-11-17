@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
@@ -60,6 +62,7 @@ String getSearchResultTypeName(
         getRomanizationName(context.read<RomanizationState>().romanization, s),
       SearchResultType.variant => s.searchResultsCategoryCantonese,
       SearchResultType.english => s.searchResultsCategoryEnglish,
+      SearchResultType.eg => s.searchResultsCategoryExample
     };
 
 String getRomanizationName(Romanization romanization, AppLocalizations s) {

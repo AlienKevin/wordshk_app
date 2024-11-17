@@ -180,6 +180,41 @@ pub fn combined_search(
     }
 }
 
+pub fn eg_search(
+    capacity: u32,
+    max_first_index_in_eg: u32,
+    query: String,
+    script: Script,
+) -> Vec<EgSearchResult> {
+    let api = API.read();
+    let api = api.as_ref().unwrap();
+    let mut ranks = search::eg_search(
+        api,
+        &query,
+        max_first_index_in_eg as usize,
+        script,
+    );
+    let mut results = vec![];
+    let mut i = 0;
+    while ranks.len() > 0 && i < capacity {
+        let search::EgSearchRank {
+            id,
+            def_index,
+            eg_index,
+            matched_eg,
+            ..
+        } = ranks.pop().unwrap();
+        results.push(EgSearchResult {
+            id: id as u32,
+            def_index: def_index as u32,
+            eg_index: eg_index as u32,
+            matched_eg,
+        });
+        i += 1;
+    }
+    results
+}
+
 pub fn get_entry_json(id: u32) -> String {
     let api = API.read();
     let api = api.as_ref().unwrap();

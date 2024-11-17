@@ -33,6 +33,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CombinedSearchResults dco_decode_combined_search_results(dynamic raw);
 
   @protected
+  EgSearchResult dco_decode_eg_search_result(dynamic raw);
+
+  @protected
   EnglishSearchResult dco_decode_english_search_result(dynamic raw);
 
   @protected
@@ -46,6 +49,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
+  List<EgSearchResult> dco_decode_list_eg_search_result(dynamic raw);
 
   @protected
   List<EnglishSearchResult> dco_decode_list_english_search_result(dynamic raw);
@@ -140,6 +146,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  EgSearchResult sse_decode_eg_search_result(SseDeserializer deserializer);
+
+  @protected
   EnglishSearchResult sse_decode_english_search_result(
       SseDeserializer deserializer);
 
@@ -154,6 +163,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
+  List<EgSearchResult> sse_decode_list_eg_search_result(
+      SseDeserializer deserializer);
 
   @protected
   List<EnglishSearchResult> sse_decode_list_english_search_result(
@@ -264,6 +277,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
+  List<dynamic> cst_encode_eg_search_result(EgSearchResult raw) {
+    return [
+      cst_encode_u_32(raw.id),
+      cst_encode_u_32(raw.defIndex),
+      cst_encode_u_32(raw.egIndex),
+      cst_encode_matched_infix(raw.matchedEg)
+    ];
+  }
+
+  @protected
   List<dynamic> cst_encode_english_search_result(EnglishSearchResult raw) {
     return [
       cst_encode_u_32(raw.id),
@@ -294,6 +317,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<dynamic> cst_encode_list_String(List<String> raw) {
     return raw.map(cst_encode_String).toList();
+  }
+
+  @protected
+  List<dynamic> cst_encode_list_eg_search_result(List<EgSearchResult> raw) {
+    return raw.map(cst_encode_eg_search_result).toList();
   }
 
   @protected
@@ -453,6 +481,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       CombinedSearchResults self, SseSerializer serializer);
 
   @protected
+  void sse_encode_eg_search_result(
+      EgSearchResult self, SseSerializer serializer);
+
+  @protected
   void sse_encode_english_search_result(
       EnglishSearchResult self, SseSerializer serializer);
 
@@ -467,6 +499,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_eg_search_result(
+      List<EgSearchResult> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_english_search_result(
@@ -567,6 +603,11 @@ class RustLibWire extends BaseWire {
   void wire_create_log_stream(NativePortType port_) =>
       wasmModule.wire_create_log_stream(port_);
 
+  void wire_eg_search(NativePortType port_, int capacity,
+          int max_first_index_in_eg, String query, int script) =>
+      wasmModule.wire_eg_search(
+          port_, capacity, max_first_index_in_eg, query, script);
+
   void wire_get_entry_group_json(NativePortType port_, int id) =>
       wasmModule.wire_get_entry_group_json(port_, id);
 
@@ -606,6 +647,9 @@ class RustLibWasmModule implements WasmModule {
       String query, int script, int romanization);
 
   external void wire_create_log_stream(NativePortType port_);
+
+  external void wire_eg_search(NativePortType port_, int capacity,
+      int max_first_index_in_eg, String query, int script);
 
   external void wire_get_entry_group_json(NativePortType port_, int id);
 
