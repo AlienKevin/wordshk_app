@@ -13,11 +13,13 @@ import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:wordshk/main.dart';
 import 'package:wordshk/models/language.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/widgets/entry/entry_mandarin_variants.dart';
 
 import '../../constants.dart';
 import '../../models/entry.dart';
-import '../../src/rust/api/api.dart' show Script, getEntryGroupJson;
+import '../../src/rust/api/api.dart'
+    show Romanization, Script, getEntryGroupJson;
 import '../../states/entry_language_state.dart';
 import '../../states/entry_state.dart';
 import '../selection_transformer.dart';
@@ -233,7 +235,11 @@ class _EntryWidgetState extends State<EntryWidget>
               entryIndex: item.$1,
               script: context.watch<LanguageState>().getScript(),
               variantTextStyle: Theme.of(context).textTheme.headlineSmall!,
-              prTextStyle: Theme.of(context).textTheme.bodySmall!,
+              prTextStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  fontFamily: context.watch<RomanizationState>().romanization ==
+                          Romanization.jyutping
+                      ? 'VFCantoRuby'
+                      : null),
               lineTextStyle: lineTextStyle,
               linkColor: Theme.of(context).colorScheme.secondary,
               rubyFontSize: rubyFontSize,

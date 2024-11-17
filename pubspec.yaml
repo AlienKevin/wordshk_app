@@ -89,6 +89,9 @@ flutter:
         - asset: fonts/ChironHeiHK-Text-R.otf
         - asset: fonts/ChironHeiHK-Text-SB.otf
           weight: 600
+    - family: VFCantoRuby
+      fonts:
+        - asset: fonts/VFCantoRuby.otf
 
 flutter_native_splash:
   color: "ffffff"

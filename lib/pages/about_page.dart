@@ -55,7 +55,8 @@ class AboutPageState extends State<AboutPage> {
       "https://www.facebook.com/o.indicum",
       "https://twitter.com/cancheng",
       "https://chiron-fonts.github.io/",
-      "https://repository.eduhk.hk/en/persons/chaak-ming%E5%8A%89%E6%93%87%E6%98%8E-lau"
+      "https://repository.eduhk.hk/en/persons/chaak-ming%E5%8A%89%E6%93%87%E6%98%8E-lau",
+      "https://visual-fonts.com/"
     ]
         .map((link) => TapGestureRecognizer()..onTap = () => openLink(link))
         .toList();

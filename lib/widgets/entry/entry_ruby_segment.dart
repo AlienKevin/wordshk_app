@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
-
+import 'package:wordshk/src/rust/api/api.dart';
 import '../../models/entry.dart';
 import '../../states/romanization_state.dart';
 import 'entry_word.dart';
@@ -139,9 +139,16 @@ List<Widget> showRubySegment(
                         child: Padding(
                       padding: EdgeInsets.only(right: rubySize * 0.1),
                       child: Text.rich(TextSpan(
-                          text: prs,
+                          text: prs.toLowerCase(),
                           style: TextStyle(
-                              fontSize: rubySize * 0.5, color: textColor))),
+                              fontFamily: context
+                                          .watch<RomanizationState>()
+                                          .romanization ==
+                                      Romanization.jyutping
+                                  ? 'VFCantoRuby'
+                                  : null,
+                              fontSize: rubySize * 0.5,
+                              color: textColor))),
                     ))
                   ]
                 : [],
