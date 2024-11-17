@@ -141,15 +141,15 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
 pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
     let summaries = entry_ids
         .into_iter()
-        .map(|entry_id| {
+        .filter_map(|entry_id| {
             let api = API.read();
             let api = api.as_ref().unwrap();
-            let (variants, defs) = get_entry_defs(entry_id, api);
-            EntrySummary {
+            let (variants, defs) = get_entry_defs(entry_id, api)?;
+            Some(EntrySummary {
                 variant_trad: variants.0.first().unwrap().word.clone(),
                 variant_simp: variants.0.first().unwrap().word_simp.clone(),
                 defs,
-            }
+            })
         })
         .collect();
     summaries
@@ -230,13 +230,6 @@ pub fn eg_search(
     results
 }
 
-pub fn get_entry_json(id: u32) -> String {
-    let api = API.read();
-    let api = api.as_ref().unwrap();
-    let rich_entry = api.get_entry(id);
-    serde_json::to_string(&to_lean_rich_entry(&rich_entry)).unwrap()
-}
-
 pub fn get_entry_group_json(id: u32) -> Vec<String> {
     let api = API.read();
     let api = api.as_ref().unwrap();
@@ -295,7 +288,7 @@ fn variant_ranks_to_results(
             variant_index,
             ..
         } = variant_ranks.pop().unwrap();
-        let (variants, defs) = get_entry_defs(id, dict);
+        let (variants, defs) = get_entry_defs(id, dict).unwrap();
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
             matched_variant: matched_variant.clone(),
@@ -335,7 +328,7 @@ fn pr_ranks_to_results(
             matched_pr,
             ..
         } = pr_ranks.pop().unwrap();
-        let (_, defs) = get_entry_defs(id, dict);
+        let (_, defs) = get_entry_defs(id, dict).unwrap();
         pr_search_results.push(PrSearchResult {
             id: id as u32,
             variants,
@@ -360,10 +353,10 @@ pub struct EntryDef {
     pub eng: String,
 }
 
-fn get_entry_defs(id: EntryId, dict: &dyn RichDictLike) -> (RichVariants, Vec<EntryDef>) {
-    let entry = dict.get_entry(id);
+fn get_entry_defs(id: EntryId, dict: &dyn RichDictLike) -> Option<(RichVariants, Vec<EntryDef>)> {
+    let entry = dict.get_entry(id)?;
     let defs: &Vec<wordshk_tools::rich_dict::RichDef> = &entry.defs;
-    (
+    Some((
         entry.variants,
         defs.iter()
             .filter_map(|def| {
@@ -380,7 +373,7 @@ fn get_entry_defs(id: EntryId, dict: &dyn RichDictLike) -> (RichVariants, Vec<En
                     })
             })
             .collect(),
-    )
+    ))
 }
 
 fn english_ranks_to_results(
@@ -402,7 +395,8 @@ fn english_ranks_to_results(
     });
     while !english_ranks.is_empty() && i < capacity {
         let entry = english_ranks.pop().unwrap();
-        let variants = search::pick_variants(&dict.get_entry(entry.entry_id).variants, script);
+        let variants =
+            search::pick_variants(&dict.get_entry(entry.entry_id).unwrap().variants, script);
         english_search_results.push(EnglishSearchResult {
             id: entry.entry_id as u32,
             def_index: entry.def_index as u32,

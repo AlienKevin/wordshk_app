@@ -42,9 +42,6 @@ Future<List<EgSearchResult>> egSearch(
         query: query,
         script: script);
 
-Future<String> getEntryJson({required int id}) =>
-    RustLib.instance.api.crateApiApiGetEntryJson(id: id);
-
 Future<List<String>> getEntryGroupJson({required int id}) =>
     RustLib.instance.api.crateApiApiGetEntryGroupJson(id: id);
 
