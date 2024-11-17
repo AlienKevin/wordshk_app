@@ -20,9 +20,9 @@ use crate::frb_generated::StreamSink;
 
 pub struct CombinedSearchResults {
     // First Option<usize> is the score
-    pub variant_results: (Option<usize>, Vec<VariantSearchResult>),
-    pub pr_results: (Option<usize>, Vec<PrSearchResult>),
-    pub english_results: (Option<usize>, Vec<EnglishSearchResult>),
+    pub variant_results: (Option<u32>, Vec<VariantSearchResult>),
+    pub pr_results: (Option<u32>, Vec<PrSearchResult>),
+    pub english_results: (Option<u32>, Vec<EnglishSearchResult>),
 }
 
 #[frb(mirror(Script))]
@@ -188,12 +188,7 @@ pub fn eg_search(
 ) -> Vec<EgSearchResult> {
     let api = API.read();
     let api = api.as_ref().unwrap();
-    let mut ranks = search::eg_search(
-        api,
-        &query,
-        max_first_index_in_eg as usize,
-        script,
-    );
+    let mut ranks = search::eg_search(api, &query, max_first_index_in_eg as usize, script);
     let mut results = vec![];
     let mut i = 0;
     while ranks.len() > 0 && i < capacity {
@@ -243,12 +238,12 @@ fn variant_ranks_to_results(
     dict: &dyn RichDictLike,
     script: Script,
     capacity: u32,
-) -> (Option<usize>, Vec<VariantSearchResult>) {
+) -> (Option<u32>, Vec<VariantSearchResult>) {
     let mut variant_search_results = vec![];
     let mut i = 0;
     let max_score = variant_ranks.peek().map(|rank| {
         let m = &rank.matched_variant;
-        100 - m.prefix.chars().count() - m.suffix.chars().count()
+        (100 - m.prefix.chars().count() - m.suffix.chars().count()) as u32
     });
     while !variant_ranks.is_empty() && i < capacity {
         let search::VariantSearchRank {
@@ -279,10 +274,10 @@ fn pr_ranks_to_results(
     dict: &dyn RichDictLike,
     script: Script,
     capacity: u32,
-) -> (Option<usize>, Vec<PrSearchResult>) {
+) -> (Option<u32>, Vec<PrSearchResult>) {
     let mut pr_search_results = vec![];
     let mut i = 0;
-    let max_score = pr_ranks.peek().map(|rank| rank.score);
+    let max_score = pr_ranks.peek().map(|rank| rank.score as u32);
     while !pr_ranks.is_empty() && i < capacity {
         let search::PrSearchRank {
             id,
@@ -339,7 +334,7 @@ fn english_ranks_to_results(
     dict: &dyn RichDictLike,
     script: Script,
     capacity: u32,
-) -> (Option<usize>, Vec<EnglishSearchResult>) {
+) -> (Option<u32>, Vec<EnglishSearchResult>) {
     let mut english_search_results = vec![];
     let mut i = 0;
     let max_score = english_ranks.peek().map(|rank| {
@@ -347,7 +342,7 @@ fn english_ranks_to_results(
         if rank.matched_eng.iter().any(|segment| segment.matched) {
             100
         } else {
-            rank.score
+            rank.score as u32
         }
     });
     while !english_ranks.is_empty() && i < capacity {

@@ -13,12 +13,12 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_rust_bridge: ">=2.0.0-dev.11 <2.0.0-dev.12"
+  flutter_rust_bridge: ^2.6.0
   equatable: ^2.0.0
   flutter_native_splash: ^2.3.6
   just_audio: ^0.9.37
   url_launcher: ^6.2.6
-  intl: ^0.18.1
+  intl: ^0.19.0
   provider: ^6.0.5
   flutter_portal: ^1.1.4
   flutter_web_browser: ^0.17.1
@@ -26,10 +26,10 @@ dependencies:
   audio_session: ^0.1.19
   csv: ^6.0.0
   flutter_keyboard_visibility: ^6.0.0
-  google_mlkit_digital_ink_recognition: ^0.10.0
+  google_mlkit_digital_ink_recognition: ^0.13.0
   settings_ui: ^2.0.2
   cupertino_icons: ^1.0.5
-  flutter_platform_widgets: ^6.0.2
+  flutter_platform_widgets: ^7.0.1
   introduction_screen: ^3.1.12
   permission_handler: ^11.1.0
   ffi: ^2.1.0
@@ -40,17 +40,17 @@ dependencies:
   aws_cognito_identity_api: ^2.0.0
   aws_sqs_api: ^2.0.0
   uuid: ^4.4.0
-  flutter_fgbg: ^0.3.0
-  device_info_plus: ^10.1.0
+  flutter_fgbg: ^0.6.0
+  device_info_plus: ^11.1.1
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   rust_builder:
     path: rust_builder
-  go_router: ^13.2.4
+  go_router: ^14.6.0
   bubble_tab_indicator: ^0.1.6
   scrollview_observer: ^1.19.0
   flutter_svg: ^2.0.9
-  package_info_plus: ^6.0.0
+  package_info_plus: ^8.1.1
   flutter_archive: ^6.0.3
   sentry_flutter: ^8.2.0
   flutter_email_sender: ^6.0.3
@@ -60,20 +60,20 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^3.0.1
+  flutter_lints: ^5.0.0
   test: ^1.17.10
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.1
   flutter_launcher_name:
     git:
       url: https://github.com/AlienKevin/flutter_launcher_name
       ref: "0.11.1"
-  ffigen: ">=8.0.0 <10.0.0"
+  ffigen: ^16.0.0
   build_runner: ^2.4.7
   json_serializable:
   freezed: ^2.4.5
   integration_test:
     sdk: flutter
-  http: ^0.13.1
+  http: ^1.2.2
 
 flutter:
   generate: true
