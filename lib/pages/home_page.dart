@@ -377,6 +377,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     query: query,
                     script: script)
                 .then((results) {
+              if (appFlavor == "huawei") {
+                // Hide sensitive results
+                results = results
+                    .where((result) => !containsSensitiveContent(
+                        result.matchedEg.prefix +
+                            result.matchedEg.query +
+                            result.matchedEg.suffix))
+                    .toList();
+              }
               if (!context.mounted) return;
               if (searchStartTime >= lastSearchStartTime) {
                 // print("Query: $query");
