@@ -1,6 +1,7 @@
 import json
 import sqlite3
 import time
+import os
 
 def create_db(db_path, table_name):
     conn = sqlite3.connect(db_path)
@@ -26,13 +27,15 @@ def main():
 
     start_time = int(time.time() * 1000)  # Current time in milliseconds
 
+    os.makedirs('dbs', exist_ok=True)
+
     # Create and populate bookmarks database
-    bookmarks_conn = create_db('bookmarkedEntries.db', 'bookmarks')
+    bookmarks_conn = create_db('dbs/bookmarkedEntries.db', 'bookmarks')
     insert_entries(bookmarks_conn, 'bookmarks', entry_ids, start_time)
     bookmarks_conn.close()
 
     # Create and populate history database
-    history_conn = create_db('historyEntries.db', 'history') 
+    history_conn = create_db('dbs/historyEntries.db', 'history') 
     insert_entries(history_conn, 'history', entry_ids, start_time)
     history_conn.close()
 

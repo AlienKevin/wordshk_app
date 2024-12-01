@@ -135,6 +135,20 @@ main() async {
   // Avoid errors caused by flutter upgrade.
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Testing migration from old sqflite databases to PowerSync
+  final bookmarkedEntriesBytes = await rootBundle.load('test/dbs/bookmarkedEntries.db');
+  final historyEntriesBytes = await rootBundle.load('test/dbs/historyEntries.db');
+
+  final databasesPath = await getApplicationDocumentsDirectory();
+  
+  // Write bookmarks database
+  final bookmarksDbPath = join(databasesPath.path, 'bookmarkedEntries.db');
+  await File(bookmarksDbPath).writeAsBytes(bookmarkedEntriesBytes.buffer.asUint8List());
+
+  // Write history database  
+  final historyDbPath = join(databasesPath.path, 'historyEntries.db');
+  await File(historyDbPath).writeAsBytes(historyEntriesBytes.buffer.asUint8List());
+
   // Start unzipping dict
   String cacheDir = (await getApplicationCacheDirectory()).path;
   final dictPath = join(cacheDir, 'dict.db');
