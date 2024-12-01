@@ -1,5 +1,5 @@
-import 'entry_item_state.dart';
+import 'entry_items_state.dart';
 
-class BookmarkState extends EntryItemState {
-  BookmarkState({required super.tableName, required super.getDatabase});
+class BookmarkState extends EntryItemsState {
+  BookmarkState({required super.tableName});
 }

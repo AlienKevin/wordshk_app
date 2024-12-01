@@ -55,7 +55,7 @@ import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
-import 'package:wordshk/states/entry_item_state.dart';
+import 'package:wordshk/states/entry_items_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/entry_state.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
@@ -69,6 +69,12 @@ import 'package:wordshk/states/speech_rate_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/scaffold_with_bottom_navigation.dart';
 import 'package:wordshk/states/text_size_state.dart';
+import 'package:wordshk/app_config.dart';
+import 'package:wordshk/models/schema.dart';
+import 'package:wordshk/models/sync_mode.dart';
+import 'package:wordshk/models/schema.dart';
+
+import 'package:wordshk/powersync.dart' as powersync;
 
 import 'aws_service.dart';
 import 'constants.dart';
@@ -146,6 +152,9 @@ main() async {
     );
   }
 
+  await openSyncModeDatabase(); // Special sqlite used to determine config for the PowerSync database
+  await powersync.openDatabase();
+
   return runMyApp(dictPath: dictPath, dictZip: dictZip);
 }
 
@@ -160,10 +169,6 @@ void runMyApp(
   if (kDebugMode) {
     print("Opening database...");
   }
-  bookmarkDatabase = EntryItemState.createDatabase(
-      tableName: "bookmarks", databaseName: "bookmarkedEntries");
-  historyDatabase = EntryItemState.createDatabase(
-      tableName: "history", databaseName: "historyEntries");
 
   WidgetsFlutterBinding.ensureInitialized(); // mandatory when awaiting on main
   final bool firstTimeUser_ =
@@ -210,13 +215,10 @@ void runMyApp(
         ChangeNotifierProvider<SpeechRateState>(
             create: (_) => SpeechRateState(prefs)),
         ChangeNotifierProvider<BookmarkState>(
-            create: (_) => BookmarkState(
-                tableName: "bookmarks", getDatabase: () => bookmarkDatabase),
+            create: (_) => BookmarkState(tableName: bookmarksTable),
             lazy: false),
         ChangeNotifierProvider<HistoryState>(
-            create: (_) => HistoryState(
-                tableName: "history", getDatabase: () => historyDatabase),
-            lazy: false),
+            create: (_) => HistoryState(tableName: historyTable), lazy: false),
         ChangeNotifierProvider<ExerciseIntroductionState>(
             create: (_) => ExerciseIntroductionState(prefs)),
         ChangeNotifierProvider<EntryState>(create: (_) => EntryState()),

@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             item.$2.matchedVariant.suffix.isEmpty);
     if (exactMatchVariant != null) {
       final (index, variant) = exactMatchVariant;
-      context.read<HistoryState>().updateItem(variant.id);
+      context.read<HistoryState>().addItem(variant.id);
       if (embedded != Embedded.embedded) {
         context.push("/entry/id/${variant.id}");
       } else {
@@ -869,7 +869,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           onPressed: () {
-            context.read<HistoryState>().updateItem(id);
+            context.read<HistoryState>().addItem(id);
             final entryPage = EntryPage(
               key: ValueKey(index),
               id: id,

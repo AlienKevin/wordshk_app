@@ -1,5 +1,5 @@
-import 'entry_item_state.dart';
+import 'entry_items_state.dart';
 
-class HistoryState extends EntryItemState {
-  HistoryState({required super.tableName, required super.getDatabase});
+class HistoryState extends EntryItemsState {
+  HistoryState({required super.tableName});
 }

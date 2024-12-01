@@ -1,25 +1,27 @@
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:powersync/powersync.dart';
+import 'package:powersync/sqlite3_common.dart' as sqlite;
+import '../powersync.dart';
+import '../models/entry_item.dart';
 
 typedef RemoveItemCallback = void Function(int entryId);
 typedef AddItemCallback = Future<void> Function(int entryId);
 typedef LoadedItemsCallback = void Function();
 
-class EntryItemState with ChangeNotifier {
+/// EntryItems represents a collection of entry items (bookmarks or history).
+///
+/// This class manages watching and modifying collections of entry items.
+class EntryItemsState extends ChangeNotifier {
   final String tableName;
-  final Future<Database> Function() getDatabase;
-  List<int> _items = [];
   final List<RemoveItemCallback> _onRemoveListeners = [];
   final List<AddItemCallback> _onAddListeners = [];
   final List<LoadedItemsCallback> _onLoadedListeners = [];
+  List<int> _items = [];
 
-  EntryItemState({required this.tableName, required this.getDatabase}) {
+  EntryItemsState({required this.tableName}) {
     _loadItems();
   }
 
-  // Methods to add and remove listeners
   void registerLoadedItemsListener(LoadedItemsCallback listener) {
     _onLoadedListeners.add(listener);
   }
@@ -46,55 +48,22 @@ class EntryItemState with ChangeNotifier {
 
   List<int> get items => _items;
 
-  static Future<Database> createDatabase(
-      {required String tableName, required String databaseName}) async {
-    final databasesPath = await getApplicationDocumentsDirectory();
-
-    String databasePath = join(databasesPath.path, '$databaseName.db');
-    Database database = await openDatabase(databasePath, version: 1,
-        onCreate: (Database db, int version) async {
-      if (kDebugMode) {
-        print("Create database");
-      }
-      await db.execute(
-          'CREATE TABLE $tableName (id INTEGER PRIMARY KEY, time INTEGER)');
-    });
-    return database;
-  }
-
   Future<void> _loadItems() async {
-    final db = await getDatabase();
-    List<Map<String, dynamic>> results =
-        List<Map<String, dynamic>>.from(await db.query(tableName));
-    // sort by ordering more recent items first
-    results.sort((a, b) => b['time'] - a['time']);
-    _items = results.map((e) => e['id'] as int).toList();
+    final results =
+        await db.getAll('SELECT * FROM $tableName ORDER BY time DESC');
+    _items =
+        removeDuplicates(results.map((row) => row['entry_id'] as int).toList());
     for (final listener in _onLoadedListeners) {
       listener();
     }
     notifyListeners();
   }
 
-  Future<void> updateItem(int entryId) async {
-    if (_items.contains(entryId)) {
-      // remove and add again to update time
-      await removeItem(entryId);
-      await addItem(entryId);
-    } else {
-      await addItem(entryId);
-    }
-  }
-
   Future<void> addItem(int entryId) async {
-    final db = await getDatabase();
-    final result = await db.insert(
-      tableName,
-      {'id': entryId, 'time': DateTime.now().millisecondsSinceEpoch},
-      conflictAlgorithm: ConflictAlgorithm.replace,
+    await db.execute(
+      'INSERT INTO $tableName (id, entry_id, time, owner_id) VALUES (?, ?, ?, ?)',
+      [uuid.v4(), entryId, DateTime.now().millisecondsSinceEpoch, getUserId()],
     );
-    if (kDebugMode) {
-      print("added to $tableName: $result");
-    }
     _items.insert(0, entryId);
     for (final listener in _onAddListeners) {
       await listener(entryId);
@@ -103,8 +72,7 @@ class EntryItemState with ChangeNotifier {
   }
 
   Future<void> removeItem(int entryId) async {
-    final db = await getDatabase();
-    await db.delete(tableName, where: 'id = ?', whereArgs: [entryId]);
+    await db.execute('DELETE FROM $tableName WHERE entry_id = ?', [entryId]);
     _items.remove(entryId);
     for (final listener in _onRemoveListeners) {
       listener(entryId);
@@ -123,4 +91,9 @@ class EntryItemState with ChangeNotifier {
       await removeItem(entryId);
     }
   }
+}
+
+List<T> removeDuplicates<T>(List<T> inputList) {
+  final seen = <T>{};
+  return inputList.where((element) => seen.add(element)).toList();
 }

@@ -14,11 +14,11 @@ import 'package:wordshk/states/language_state.dart';
 import '../constants.dart';
 import '../models/embedded.dart';
 import '../models/summary_def_language.dart';
-import '../states/entry_item_state.dart';
+import '../states/entry_items_state.dart';
 import '../utils.dart';
 import 'entry_page.dart';
 
-class EntryItemsPage<T extends EntryItemState> extends StatefulWidget {
+class EntryItemsPage<T extends EntryItemsState> extends StatefulWidget {
   final String emptyMessage;
   final String deletionConfirmationMessage;
   final bool allowEdits;
@@ -45,7 +45,7 @@ class EditMode extends Mode {
 
 typedef EntryItemSummaries = ListQueue<(int, EntrySummary)>;
 
-class _EntryItemsState<T extends EntryItemState>
+class _EntryItemsState<T extends EntryItemsState>
     extends State<EntryItemsPage<T>> {
   // TODO: find a more scalable data structure for removal or summaries by entryId
   final EntryItemSummaries _entryItemSummaries = EntryItemSummaries();
@@ -185,7 +185,7 @@ class _EntryItemsState<T extends EntryItemState>
             )),
       ),
       body: Consumer<T>(
-          builder: (BuildContext context, EntryItemState s, Widget? child) => s
+          builder: (BuildContext context, EntryItemsState s, Widget? child) => s
                   .items.isEmpty
               ? Center(child: Text(widget.emptyMessage))
               : LayoutBuilder(
@@ -375,7 +375,7 @@ class _EntryItemsState<T extends EntryItemState>
           summaryDefs.map((def) => def.eng).toList()
       };
 
-  itemsList(EntryItemState s, Embedded embedded) => ListView.separated(
+  itemsList(EntryItemsState s, Embedded embedded) => ListView.separated(
         itemCount: _hasMore
             ? _entryItemSummaries.length + 1
             : _entryItemSummaries.length,
