@@ -82,6 +82,7 @@ flutter:
   generate: true
   uses-material-design: true
   assets:
+    - test/dbs/
     - assets/
     - assets/images/
     - assets/jyutping_female/
