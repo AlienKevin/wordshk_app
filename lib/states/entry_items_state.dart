@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:powersync/powersync.dart';
 import 'package:powersync/sqlite3_common.dart' as sqlite;
@@ -72,12 +74,32 @@ class EntryItemsState extends ChangeNotifier {
   }
 
   Future<void> removeItem(int entryId) async {
-    await db.execute('DELETE FROM $tableName WHERE entry_id = ?', [entryId]);
-    _items.remove(entryId);
-    for (final listener in _onRemoveListeners) {
-      listener(entryId);
+    await removeItems([entryId]);
+  }
+
+  Future<void> removeItems(List<int> entryIds) async {
+    if (entryIds.isEmpty) return;
+
+    // debugPrint('Removing ${entryIds.length} items from $tableName');
+    // Delete in batches of 100 to avoid too many parameters in IN clause
+    for (var i = 0; i < entryIds.length; i += 100) {
+      final batchIds = entryIds.sublist(i, min(i + 100, entryIds.length));
+      final placeholders = List.filled(batchIds.length, '?').join(',');
+      await db.execute(
+        'DELETE FROM $tableName WHERE entry_id IN ($placeholders)',
+        batchIds,
+      );
+      
+      // Update state and notify listeners for this batch
+      _items.removeWhere((id) => batchIds.contains(id));
+      for (final entryId in batchIds) {
+        for (final listener in _onRemoveListeners) {
+          listener(entryId);
+        }
+      }
+      notifyListeners();
     }
-    notifyListeners();
+    // debugPrint('Removed ${entryIds.length} items from $tableName');
   }
 
   bool isItemInStore(int entryId) {

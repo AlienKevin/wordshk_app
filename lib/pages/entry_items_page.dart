@@ -335,9 +335,7 @@ class _EntryItemsState<T extends EntryItemsState>
                                                     .onPrimary)),
                                     onPressed: () {
                                       Navigator.of(context).pop();
-                                      for (final id in selectedEntryItems) {
-                                        context.read<T>().removeItem(id);
-                                      }
+                                      context.read<T>().removeItems(selectedEntryItems.toList());
                                       setState(() {
                                         _mode = EditMode(
                                             selectedEntryItems: HashSet());
