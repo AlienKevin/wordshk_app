@@ -73,6 +73,17 @@ class EntryItemsState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> clearItems() async {
+    await db.execute('DELETE FROM $tableName');
+    for (final entryId in _items) {
+      for (final listener in _onRemoveListeners) {
+        listener(entryId);
+      }
+    }
+    _items.clear();
+    notifyListeners();
+  }
+
   Future<void> removeItem(int entryId) async {
     await removeItems([entryId]);
   }
@@ -89,16 +100,16 @@ class EntryItemsState extends ChangeNotifier {
         'DELETE FROM $tableName WHERE entry_id IN ($placeholders)',
         batchIds,
       );
-      
-      // Update state and notify listeners for this batch
-      _items.removeWhere((id) => batchIds.contains(id));
-      for (final entryId in batchIds) {
-        for (final listener in _onRemoveListeners) {
-          listener(entryId);
-        }
-      }
-      notifyListeners();
     }
+
+    // Update state and notify listeners for this batch
+    _items.removeWhere((id) => entryIds.contains(id));
+    for (final entryId in entryIds) {
+      for (final listener in _onRemoveListeners) {
+        listener(entryId);
+      }
+    }
+    notifyListeners();
     // debugPrint('Removed ${entryIds.length} items from $tableName');
   }
 

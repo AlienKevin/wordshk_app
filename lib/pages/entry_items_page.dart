@@ -43,10 +43,12 @@ class EditMode extends Mode {
   EditMode({required this.selectedEntryItems});
 }
 
+class ProcessingMode extends Mode {}
+
 typedef EntryItemSummaries = ListQueue<(int, EntrySummary)>;
 
 class _EntryItemsState<T extends EntryItemsState>
-    extends State<EntryItemsPage<T>> {
+    extends State<EntryItemsPage<T>> with AutomaticKeepAliveClientMixin {
   // TODO: find a more scalable data structure for removal or summaries by entryId
   final EntryItemSummaries _entryItemSummaries = EntryItemSummaries();
   late final RemoveItemCallback removeEntryItemListener;
@@ -57,6 +59,9 @@ class _EntryItemsState<T extends EntryItemsState>
   Mode _mode = ViewMode();
   // The EntryId corresponding to the select item (used in wide screens)
   int? selectedEntryId;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -161,7 +166,8 @@ class _EntryItemsState<T extends EntryItemsState>
         builder: (context, isKeyboardVisible) => Visibility(
             visible: widget.allowEdits &&
                 _entryItemSummaries.isNotEmpty &&
-                !isKeyboardVisible,
+                !isKeyboardVisible &&
+                _mode is! ProcessingMode,
             child: ElevatedButton(
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(
@@ -172,6 +178,8 @@ class _EntryItemsState<T extends EntryItemsState>
                 switch (_mode) {
                   ViewMode() => AppLocalizations.of(context)!.edit,
                   EditMode() => AppLocalizations.of(context)!.done,
+                  ProcessingMode() =>
+                    "Processing...", // unreachable due to _mode != ProcessingMode()
                 },
               ),
               onPressed: () {
@@ -179,57 +187,65 @@ class _EntryItemsState<T extends EntryItemsState>
                   _mode = switch (_mode) {
                     ViewMode() => EditMode(selectedEntryItems: HashSet<int>()),
                     EditMode() => ViewMode(),
+                    ProcessingMode() =>
+                      ProcessingMode(), // unreachable due to _mode != ProcessingMode()
                   };
                 });
               },
             )),
       ),
-      body: Consumer<T>(
-          builder: (BuildContext context, EntryItemsState s, Widget? child) => s
-                  .items.isEmpty
-              ? Center(child: Text(widget.emptyMessage))
-              : LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    // Embedded search results in the right column on wide screens
-                    final embedded = constraints.maxWidth > wideScreenThreshold
-                        ? Embedded.embedded
-                        : Embedded.topLevel;
-                    // TODO: Fix keyboard automatically unfocused when selectedEntryId is set.
-                    //       For now, have to disable default selection.
-                    // Select the first item by default
-                    // if (selectedEntryId == null && s.items.isNotEmpty) {
-                    //   selectedEntryId = s.items.first;
-                    // }
-                    return embedded == Embedded.embedded
-                        ? Row(
-                            children: [
-                              Expanded(child: itemsList(s, embedded)),
-                              const VerticalDivider(
-                                width: 1,
-                                thickness: 1,
-                              ),
-                              Expanded(
-                                  flex: 2,
-                                  child: selectedEntryId != null
-                                      ? Navigator(
-                                          key: ValueKey(selectedEntryId!),
-                                          onGenerateRoute: (settings) =>
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      EntryPage(
-                                                        key: ValueKey(
-                                                            selectedEntryId!),
-                                                        id: selectedEntryId!,
-                                                        showFirstEntryInGroupInitially:
-                                                            false,
-                                                        embedded: embedded,
-                                                      )))
-                                      : Container()),
-                            ],
-                          )
-                        : itemsList(s, embedded);
-                  },
-                )),
+      body: switch (_mode) {
+        ProcessingMode() => const Center(child: CircularProgressIndicator()),
+        ViewMode() || EditMode() => Consumer<T>(
+            builder: (BuildContext context, EntryItemsState s, Widget? child) =>
+                s.items.isEmpty
+                    ? Center(child: Text(widget.emptyMessage))
+                    : LayoutBuilder(
+                        builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          // Embedded search results in the right column on wide screens
+                          final embedded =
+                              constraints.maxWidth > wideScreenThreshold
+                                  ? Embedded.embedded
+                                  : Embedded.topLevel;
+                          // TODO: Fix keyboard automatically unfocused when selectedEntryId is set.
+                          //       For now, have to disable default selection.
+                          // Select the first item by default
+                          // if (selectedEntryId == null && s.items.isNotEmpty) {
+                          //   selectedEntryId = s.items.first;
+                          // }
+                          return embedded == Embedded.embedded
+                              ? Row(
+                                  children: [
+                                    Expanded(child: itemsList(s, embedded)),
+                                    const VerticalDivider(
+                                      width: 1,
+                                      thickness: 1,
+                                    ),
+                                    Expanded(
+                                        flex: 2,
+                                        child: selectedEntryId != null
+                                            ? Navigator(
+                                                key: ValueKey(selectedEntryId!),
+                                                onGenerateRoute: (settings) =>
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EntryPage(
+                                                              key: ValueKey(
+                                                                  selectedEntryId!),
+                                                              id: selectedEntryId!,
+                                                              showFirstEntryInGroupInitially:
+                                                                  false,
+                                                              embedded:
+                                                                  embedded,
+                                                            )))
+                                            : Container()),
+                                  ],
+                                )
+                              : itemsList(s, embedded);
+                        },
+                      ))
+      },
       bottomNavigationBar: switch (_mode) {
         EditMode(selectedEntryItems: var selectedEntryItems)
             when _entryItemSummaries.isNotEmpty =>
@@ -273,6 +289,9 @@ class _EntryItemsState<T extends EntryItemsState>
                                 selectedEntryItems.clear();
                               });
                             }
+                            break;
+                          case ProcessingMode():
+                            // unreachable
                             break;
                         }
                       },
@@ -333,9 +352,15 @@ class _EntryItemsState<T extends EntryItemsState>
                                                 : Theme.of(context)
                                                     .colorScheme
                                                     .onPrimary)),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       Navigator.of(context).pop();
-                                      context.read<T>().removeItems(selectedEntryItems.toList());
+                                      if (selectedEntryItems.length > 100) {
+                                        setState(() {
+                                          _mode = ProcessingMode();
+                                        });
+                                      }
+                                      await context.read<T>().removeItems(
+                                          selectedEntryItems.toList());
                                       setState(() {
                                         _mode = EditMode(
                                             selectedEntryItems: HashSet());
@@ -357,7 +382,7 @@ class _EntryItemsState<T extends EntryItemsState>
               ),
             ),
           ),
-        _ => null,
+        EditMode() || ViewMode() || ProcessingMode() => null,
       },
     );
   }
@@ -392,7 +417,7 @@ class _EntryItemsState<T extends EntryItemsState>
             selectedTileColor: Theme.of(context).primaryColor,
             selectedColor: Theme.of(context).colorScheme.onPrimary,
             leading: switch (_mode) {
-              ViewMode() => null,
+              ViewMode() || ProcessingMode() => null,
               EditMode(selectedEntryItems: var selectedEntryItems) => Checkbox(
                   value: selectedEntryItems.contains(id),
                   visualDensity: VisualDensity.compact,
@@ -459,7 +484,10 @@ class _EntryItemsState<T extends EntryItemsState>
                       selectedEntryItems.add(id);
                     });
                   }
-                }
+                },
+              ProcessingMode() => () {
+                  // unreachable
+                },
             },
           );
         },
