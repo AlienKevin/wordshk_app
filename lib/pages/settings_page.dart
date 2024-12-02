@@ -241,9 +241,7 @@ class SettingsPage extends StatelessWidget {
                                 Navigator.of(context).pop();
                                 final historyState =
                                     context.read<HistoryState>();
-                                for (final id in historyState.items) {
-                                  historyState.removeItem(id);
-                                }
+                                historyState.removeItems(historyState.items);
                               },
                             ),
                           ],
