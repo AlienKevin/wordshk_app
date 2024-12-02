@@ -1,0 +1,7 @@
+bucket_definitions:
+  user_lists:
+    # Separate bucket per user
+    parameters: SELECT request.user_id() AS owner_id
+    data:
+      - SELECT * FROM bookmarks WHERE owner_id = bucket.owner_id
+      - SELECT * FROM history WHERE owner_id = bucket.owner_id
