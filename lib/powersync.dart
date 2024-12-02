@@ -49,6 +49,7 @@ class SupabaseConnector extends PowerSyncBackendConnector {
 
     // Use the access token to authenticate against PowerSync
     final token = session.accessToken;
+    debugPrint('supabase session token is $token');
 
     // userId and expiresAt are for debugging purposes only
     final userId = session.user.id;

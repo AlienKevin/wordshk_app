@@ -143,6 +143,15 @@ class SettingsPage extends StatelessWidget {
           child: MySettingsList(
             sections: [
               SettingsSection(
+                title: Text("Log In to Sync"),
+                tiles: [
+                  SettingsTile.navigation(
+                    title: Text("Log in"),
+                    onPressed: (context) => context.push('/login'),
+                  ),
+                ],
+              ),
+              SettingsSection(
                 title: Text(s.general),
                 tiles: <SettingsTile>[
                   SettingsTile.navigation(

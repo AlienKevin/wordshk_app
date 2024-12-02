@@ -30,6 +30,7 @@ import 'package:wordshk/pages/entry_page.dart';
 import 'package:wordshk/pages/exercise_page.dart';
 import 'package:wordshk/pages/home_page.dart';
 import 'package:wordshk/pages/introduction_page.dart';
+import 'package:wordshk/pages/login_page.dart';
 import 'package:wordshk/pages/privacy_policy_page.dart';
 import 'package:wordshk/pages/quality_control_page.dart';
 import 'package:wordshk/pages/settings/entry_eg_font_size_page.dart';
@@ -43,6 +44,7 @@ import 'package:wordshk/pages/settings/script_page.dart';
 import 'package:wordshk/pages/settings/search_bar_position_page.dart';
 import 'package:wordshk/pages/settings/text_size_page.dart';
 import 'package:wordshk/pages/settings_page.dart';
+import 'package:wordshk/pages/signup_page.dart';
 import 'package:wordshk/pages/stories_catalog_page.dart';
 import 'package:wordshk/pages/story_page.dart';
 import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
@@ -301,6 +303,14 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
       GoRoute(
         path: '/introduction',
         builder: (context, state) => IntroductionPage(prefs: prefs),
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) => const SignupPage(),
       ),
       StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
