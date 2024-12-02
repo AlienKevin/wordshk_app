@@ -63,8 +63,8 @@ class EntryItemsState extends ChangeNotifier {
 
   Future<void> addItem(int entryId) async {
     await db.execute(
-      'INSERT INTO $tableName (id, entry_id, time, owner_id) VALUES (?, ?, ?, ?)',
-      [uuid.v4(), entryId, DateTime.now().millisecondsSinceEpoch, getUserId()],
+      'INSERT INTO $tableName (id, time, entry_id, owner_id) VALUES (uuid(), datetime(), ?, ?)',
+      [entryId, getUserId()],
     );
     _items.insert(0, entryId);
     for (final listener in _onAddListeners) {

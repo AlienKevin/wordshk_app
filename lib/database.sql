@@ -3,7 +3,7 @@ create table
   public.bookmarks (
     id uuid not null default gen_random_uuid (),
     entry_id integer not null,
-    time integer not null,
+    time timestamp with time zone not null default now(),
     owner_id uuid not null,
     constraint bookmarks_pkey primary key (id),
     constraint bookmarks_owner_id_fkey foreign key (owner_id) references auth.users (id) on delete cascade
@@ -13,7 +13,7 @@ create table
   public.history (
     id uuid not null default gen_random_uuid (),
     entry_id integer not null,
-    time integer not null, 
+    time timestamp with time zone not null default now(),
     owner_id uuid not null,
     constraint history_pkey primary key (id),
     constraint history_owner_id_fkey foreign key (owner_id) references auth.users (id) on delete cascade

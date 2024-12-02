@@ -188,8 +188,14 @@ Future<void> openDatabase() async {
         final bookmarks = await bookmarksDb.query(bookmarksTable);
         for (final bookmark in bookmarks) {
           await db.execute(
-              'INSERT INTO $bookmarksTable (id, entry_id, time, owner_id) VALUES (?, ?, ?, ?)',
-              [uuid.v4(), bookmark['id'], bookmark['time'], getUserId()]);
+              'INSERT INTO $bookmarksTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
+              [
+                bookmark['id'],
+                DateTime.fromMillisecondsSinceEpoch(bookmark['time'] as int,
+                        isUtc: true)
+                    .toIso8601String(),
+                getUserId()
+              ]);
         }
         await bookmarksDb.close();
       }
@@ -201,8 +207,14 @@ Future<void> openDatabase() async {
         final history = await historyDb.query(historyTable);
         for (final entry in history) {
           await db.execute(
-              'INSERT INTO $historyTable (id, entry_id, time, owner_id) VALUES (?, ?, ?, ?)',
-              [uuid.v4(), entry['id'], entry['time'], getUserId()]);
+              'INSERT INTO $historyTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
+              [
+                entry['id'],
+                DateTime.fromMillisecondsSinceEpoch(entry['time'] as int,
+                        isUtc: true)
+                    .toIso8601String(),
+                getUserId()
+              ]);
         }
         await historyDb.close();
       }

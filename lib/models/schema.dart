@@ -28,12 +28,12 @@ Schema makeSchema({synced = bool}) {
   final tables = [
     const Table(bookmarksTable, [
       Column.integer('entry_id'),
-      Column.integer('time'),
+      Column.text('time'),
       Column.text('owner_id')
     ]),
     const Table(historyTable, [
       Column.integer('entry_id'),
-      Column.integer('time'),
+      Column.text('time'),
       Column.text('owner_id')
     ])
   ];
@@ -57,9 +57,11 @@ switchToSyncedSchema(PowerSyncDatabase db, String userId) async {
   await db.writeTransaction((tx) async {
     // Copy local-only data to the sync-enabled views
     await tx.execute(
-        'INSERT INTO $bookmarksTable(id, entry_id, time, owner_id) SELECT id, entry_id, time, owner_id FROM inactive_local_$bookmarksTable');
+        'INSERT INTO $bookmarksTable(id, entry_id, time, owner_id) SELECT id, entry_id, time, ? FROM inactive_local_$bookmarksTable',
+        [userId]);
     await tx.execute(
-        'INSERT INTO $historyTable(id, entry_id, time, owner_id) SELECT id, entry_id, time, owner_id FROM inactive_local_$historyTable');
+        'INSERT INTO $historyTable(id, entry_id, time, owner_id) SELECT id, entry_id, time, ? FROM inactive_local_$historyTable',
+        [userId]);
 
     // Delete the local-only data
     await tx.execute('DELETE FROM inactive_local_$bookmarksTable');
