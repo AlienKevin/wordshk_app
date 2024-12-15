@@ -180,23 +180,20 @@ Future<void> openDatabase() async {
 
     if (isEmpty) {
       final databasesPath = await getApplicationDocumentsDirectory();
-
       // Check and copy bookmarks
       final bookmarksDbPath = join(databasesPath.path, 'bookmarkedEntries.db');
       if (await File(bookmarksDbPath).exists()) {
         final bookmarksDb = await sqflite.openDatabase(bookmarksDbPath);
         final bookmarks = await bookmarksDb.query(bookmarksTable);
-        for (final bookmark in bookmarks) {
-          await db.execute(
-              'INSERT INTO $bookmarksTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
-              [
-                bookmark['id'],
-                DateTime.fromMillisecondsSinceEpoch(bookmark['time'] as int,
-                        isUtc: true)
-                    .toIso8601String(),
-                getUserId()
-              ]);
-        }
+        await db.executeBatch(
+            'INSERT INTO $bookmarksTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
+            bookmarks.map((bookmark) => [
+                  bookmark['id'],
+                  DateTime.fromMillisecondsSinceEpoch(bookmark['time'] as int,
+                          isUtc: true)
+                      .toIso8601String(),
+                  getUserId()
+                ]).toList());
         await bookmarksDb.close();
       }
 
@@ -205,17 +202,15 @@ Future<void> openDatabase() async {
       if (await File(historyDbPath).exists()) {
         final historyDb = await sqflite.openDatabase(historyDbPath);
         final history = await historyDb.query(historyTable);
-        for (final entry in history) {
-          await db.execute(
-              'INSERT INTO $historyTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
-              [
-                entry['id'],
-                DateTime.fromMillisecondsSinceEpoch(entry['time'] as int,
-                        isUtc: true)
-                    .toIso8601String(),
-                getUserId()
-              ]);
-        }
+        await db.executeBatch(
+            'INSERT INTO $historyTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
+            history.map((entry) => [
+                  entry['id'],
+                  DateTime.fromMillisecondsSinceEpoch(entry['time'] as int,
+                          isUtc: true)
+                      .toIso8601String(),
+                  getUserId()
+                ]).toList());
         await historyDb.close();
       }
     }
