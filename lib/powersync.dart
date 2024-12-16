@@ -94,26 +94,46 @@ class SupabaseConnector extends PowerSyncBackendConnector {
     }
 
     final rest = Supabase.instance.client.rest;
-    CrudEntry? lastOp;
     try {
-      // Note: If transactional consistency is important, use database functions
-      // or edge functions to process the entire transaction in a single call.
-      for (var op in transaction.crud) {
-        lastOp = op;
+      // Group operations by type and table
+      final putOps = <String, List<Map<String, dynamic>>>{};
+      final deleteOps = <String, List<String>>{};
+      final patchOps = <CrudEntry>[];
 
-        final table = rest.from(op.table);
-        if (op.op == UpdateType.put) {
-          var data = Map<String, dynamic>.of(op.opData!);
-          data['id'] = op.id;
-          await table.upsert(data);
-        } else if (op.op == UpdateType.patch) {
-          await table.update(op.opData!).eq('id', op.id);
-        } else if (op.op == UpdateType.delete) {
-          await table.delete().eq('id', op.id);
+      // Organize operations
+      for (final op in transaction.crud) {
+        switch (op.op) {
+          case UpdateType.put:
+            putOps.putIfAbsent(op.table, () => []);
+            var data = Map<String, dynamic>.of(op.opData!);
+            data['id'] = op.id;
+            putOps[op.table]!.add(data);
+          case UpdateType.patch:
+            patchOps.add(op);
+          case UpdateType.delete:
+            deleteOps.putIfAbsent(op.table, () => []);
+            deleteOps[op.table]!.add(op.id);
         }
       }
 
-      // All operations successful.
+      debugPrint('Number of putOps: ${putOps.length}');
+      debugPrint('Number of deleteOps: ${deleteOps.length}');
+      debugPrint('Number of patchOps: ${patchOps.length}');
+
+      // Execute bulk operations
+      for (final table in putOps.keys) {
+        await rest.from(table).upsert(putOps[table]!);
+      }
+
+      for (final table in deleteOps.keys) {
+        await rest.from(table).delete().inFilter('id', deleteOps[table]!);
+      }
+
+      // Execute PATCH operations individually since they can't be easily batched
+      for (final op in patchOps) {
+        await rest.from(op.table).update(op.opData!).eq('id', op.id);
+      }
+
       await transaction.complete();
     } on PostgrestException catch (e) {
       if (e.code != null &&
@@ -124,7 +144,7 @@ class SupabaseConnector extends PowerSyncBackendConnector {
         /// Note that these errors typically indicate a bug in the application.
         /// If protecting against data loss is important, save the failing records
         /// elsewhere instead of discarding, and/or notify the user.
-        log.severe('Data upload error - discarding $lastOp', e);
+        log.severe('Data upload error - discarding transaction', e);
         await transaction.complete();
       } else {
         // Error may be retryable - e.g. network error or temporary server error.
@@ -187,13 +207,16 @@ Future<void> openDatabase() async {
         final bookmarks = await bookmarksDb.query(bookmarksTable);
         await db.executeBatch(
             'INSERT INTO $bookmarksTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
-            bookmarks.map((bookmark) => [
-                  bookmark['id'],
-                  DateTime.fromMillisecondsSinceEpoch(bookmark['time'] as int,
-                          isUtc: true)
-                      .toIso8601String(),
-                  getUserId()
-                ]).toList());
+            bookmarks
+                .map((bookmark) => [
+                      bookmark['id'],
+                      DateTime.fromMillisecondsSinceEpoch(
+                              bookmark['time'] as int,
+                              isUtc: true)
+                          .toIso8601String(),
+                      getUserId()
+                    ])
+                .toList());
         await bookmarksDb.close();
       }
 
@@ -204,13 +227,15 @@ Future<void> openDatabase() async {
         final history = await historyDb.query(historyTable);
         await db.executeBatch(
             'INSERT INTO $historyTable (id, entry_id, time, owner_id) VALUES (uuid(), ?, ?, ?)',
-            history.map((entry) => [
-                  entry['id'],
-                  DateTime.fromMillisecondsSinceEpoch(entry['time'] as int,
-                          isUtc: true)
-                      .toIso8601String(),
-                  getUserId()
-                ]).toList());
+            history
+                .map((entry) => [
+                      entry['id'],
+                      DateTime.fromMillisecondsSinceEpoch(entry['time'] as int,
+                              isUtc: true)
+                          .toIso8601String(),
+                      getUserId()
+                    ])
+                .toList());
         await historyDb.close();
       }
     }
