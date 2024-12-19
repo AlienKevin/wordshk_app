@@ -134,13 +134,21 @@ class _EntryItemsState<T extends EntryItemsState>
     }
   }
 
-  _loadMore() {
-    if (!_hasMore || _isLoading) {
-      return;
+  _loadMore({dbChanged = true}) {
+    _isLoading = true;
+    int numFetchItems = 10;
+
+    // Need to update existing summaries if the db changed
+    if (dbChanged) {
+      numFetchItems = _entryItemSummaries.length + 10;
+      _entryItemSummaries.clear();
     }
 
-    _isLoading = true;
-    _fetchMoreEntryItems(10).then((newEntryItems) {
+    debugPrint('_loadMore trying to load $numFetchItems more items');
+
+    _fetchMoreEntryItems(numFetchItems).then((newEntryItems) {
+      debugPrint('_loadMore loaded ${newEntryItems.length} more items');
+
       // Issue: https://kevin-li-f0196b65e.sentry.io/issues/4927414021/events/956194d0a1c0447fb78de8da4ac596e0/?project=4505785578487808
       // ?Fix: Check if the widget is still mounted
       if (!mounted) return;
@@ -155,6 +163,12 @@ class _EntryItemsState<T extends EntryItemsState>
           _isLoading = false;
           _entryItemSummaries.addAll(newEntryItems);
         });
+      }
+
+      // Clear selection if the selected entry was deleted
+      if (dbChanged &&
+          !_entryItemSummaries.any((item) => item.$1 == selectedEntryId)) {
+        selectedEntryId = null;
       }
     });
   }
@@ -404,7 +418,9 @@ class _EntryItemsState<T extends EntryItemsState>
             : _entryItemSummaries.length,
         itemBuilder: (context, index) {
           if (index >= _entryItemSummaries.length) {
-            _loadMore();
+            if (_hasMore && !_isLoading) {
+              _loadMore(dbChanged: false);
+            }
             return const Center(child: CircularProgressIndicator());
           }
           final summaryEntry = _entryItemSummaries.elementAt(index);

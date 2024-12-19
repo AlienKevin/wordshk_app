@@ -1,5 +1,6 @@
 // This file performs setup of the PowerSync database
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -125,8 +126,14 @@ class SupabaseConnector extends PowerSyncBackendConnector {
         await rest.from(table).upsert(putOps[table]!);
       }
 
+      // Delete in batches to prevent 414 URI too long error on Android
+      const batchSize = 100;
       for (final table in deleteOps.keys) {
-        await rest.from(table).delete().inFilter('id', deleteOps[table]!);
+        final ids = deleteOps[table]!;
+        for (var i = 0; i < ids.length; i += batchSize) {
+          final chunk = ids.sublist(i, min(i + batchSize, ids.length));
+          await rest.from(table).delete().inFilter('id', chunk);
+        }
       }
 
       // Execute PATCH operations individually since they can't be easily batched
@@ -147,6 +154,7 @@ class SupabaseConnector extends PowerSyncBackendConnector {
         log.severe('Data upload error - discarding transaction', e);
         await transaction.complete();
       } else {
+        debugPrint('Data upload error: $e');
         // Error may be retryable - e.g. network error or temporary server error.
         // Throwing an error here causes this call to be retried after a delay.
         rethrow;

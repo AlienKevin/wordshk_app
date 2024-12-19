@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -20,8 +21,16 @@ class EntryItemsState extends ChangeNotifier {
   final List<LoadedItemsCallback> _onLoadedListeners = [];
   List<int> _items = [];
 
+  StreamSubscription<List<sqlite.Row>>? _subscription;
+
   EntryItemsState({required this.tableName}) {
-    _loadItems();
+    _watchChanges();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 
   void registerLoadedItemsListener(LoadedItemsCallback listener) {
@@ -50,15 +59,19 @@ class EntryItemsState extends ChangeNotifier {
 
   List<int> get items => _items;
 
-  Future<void> _loadItems() async {
-    final results =
-        await db.getAll('SELECT * FROM $tableName ORDER BY time DESC');
-    _items =
-        removeDuplicates(results.map((row) => row['entry_id'] as int).toList());
-    for (final listener in _onLoadedListeners) {
-      listener();
-    }
-    notifyListeners();
+  void _watchChanges() {
+    _subscription = db
+        .watch('SELECT * FROM $tableName ORDER BY time DESC')
+        .listen((results) {
+      _items = removeDuplicates(
+          results.map((row) => row['entry_id'] as int).toList());
+      debugPrint(
+          "Remote $tableName changed and now has only ${_items.length} items");
+      for (final listener in _onLoadedListeners) {
+        listener();
+      }
+      notifyListeners();
+    });
   }
 
   Future<void> addItem(int entryId) async {
