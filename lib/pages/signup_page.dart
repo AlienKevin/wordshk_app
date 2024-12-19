@@ -65,7 +65,7 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-              "PowerSync Flutter Supabase Todolist Optional Sync Demo"),
+              "Sign Up"),
         ),
         body: Center(
           child: SingleChildScrollView(
