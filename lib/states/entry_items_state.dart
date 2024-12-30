@@ -34,7 +34,7 @@ class EntryItemsState extends ChangeNotifier {
           results.map((row) => row['entry_id'] as int).toList());
       notifyListeners();
       debugPrint(
-          "Remote $tableName changed and now has only ${_items.length} items");
+          "$tableName changed and now has ${_items.length} items (${results.length} before deduplication)");
     });
   }
 
