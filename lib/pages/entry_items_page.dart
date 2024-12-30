@@ -45,17 +45,8 @@ class EditMode extends Mode {
 
 class ProcessingMode extends Mode {}
 
-typedef EntryItemSummaries = ListQueue<(int, EntrySummary)>;
-
 class _EntryItemsState<T extends EntryItemsState>
     extends State<EntryItemsPage<T>> with AutomaticKeepAliveClientMixin {
-  // TODO: find a more scalable data structure for removal or summaries by entryId
-  final EntryItemSummaries _entryItemSummaries = EntryItemSummaries();
-  late final RemoveItemCallback removeEntryItemListener;
-  late final AddItemCallback addEntryItemListener;
-  late final LoadedItemsCallback loadedItemsListener;
-  bool _isLoading = false;
-  bool _hasMore = true;
   Mode _mode = ViewMode();
   // The EntryId corresponding to the select item (used in wide screens)
   int? selectedEntryId;
@@ -64,127 +55,17 @@ class _EntryItemsState<T extends EntryItemsState>
   bool get wantKeepAlive => true;
 
   @override
-  void initState() {
-    super.initState();
-
-    loadedItemsListener = _loadMore;
-    context.read<T>().registerLoadedItemsListener(loadedItemsListener);
-
-    removeEntryItemListener = (id) {
-      setState(() {
-        var removeIndex = 0;
-        var found = false;
-        _entryItemSummaries.removeWhere((item) {
-          final itemFound = item.$1 == id;
-          found |= itemFound;
-          if (!found) {
-            removeIndex++;
-          }
-          return itemFound;
-        });
-        if (selectedEntryId == id) {
-          selectedEntryId = removeIndex < _entryItemSummaries.length
-              ? _entryItemSummaries.elementAt(removeIndex).$1
-              : null;
-        }
-      });
-    };
-    context.read<T>().registerRemoveItemListener(removeEntryItemListener);
-
-    addEntryItemListener = (id) async {
-      final summaries = await fetchSummaries([id]);
-      assert(summaries.length == 1);
-      setState(() {
-        _entryItemSummaries.addFirst((id, summaries.first.$2));
-      });
-    };
-    context.read<T>().registerAddItemListener(addEntryItemListener);
-  }
-
-  @override
-  void activate() {
-    super.activate();
-    context.read<T>().registerLoadedItemsListener(loadedItemsListener);
-    context.read<T>().registerRemoveItemListener(removeEntryItemListener);
-    context.read<T>().registerAddItemListener(addEntryItemListener);
-  }
-
-  @override
-  void deactivate() {
-    context.read<T>().unregisterLoadedItemsListener(loadedItemsListener);
-    context.read<T>().unregisterRemoveItemListener(removeEntryItemListener);
-    context.read<T>().unregisterAddItemListener(addEntryItemListener);
-    super.deactivate();
-  }
-
-  Future<EntryItemSummaries> fetchSummaries(List<int> ids) {
-    return getEntrySummaries(entryIds: Uint32List.fromList(ids)).then(
-        (summaries) => EntryItemSummaries.of(
-            summaries.indexed.map((item) => (ids[item.$1], item.$2))));
-  }
-
-  Future<EntryItemSummaries> _fetchMoreEntryItems(int amount) {
-    final allEntryItems = context.read<T>().items;
-    if (allEntryItems.length > _entryItemSummaries.length) {
-      final ids = allEntryItems.sublist(_entryItemSummaries.length,
-          min(_entryItemSummaries.length + amount, allEntryItems.length));
-      return fetchSummaries(ids);
-    } else {
-      return Future.value(EntryItemSummaries());
-    }
-  }
-
-  _loadMore({dbChanged = true}) {
-    _isLoading = true;
-    int numFetchItems = 10;
-
-    // Need to update existing summaries if the db changed
-    if (dbChanged) {
-      numFetchItems = _entryItemSummaries.length + 10;
-      _entryItemSummaries.clear();
-    }
-
-    debugPrint('_loadMore trying to load $numFetchItems more items');
-
-    _fetchMoreEntryItems(numFetchItems).then((newEntryItems) {
-      debugPrint('_loadMore loaded ${newEntryItems.length} more items');
-
-      // Issue: https://kevin-li-f0196b65e.sentry.io/issues/4927414021/events/956194d0a1c0447fb78de8da4ac596e0/?project=4505785578487808
-      // ?Fix: Check if the widget is still mounted
-      if (!mounted) return;
-
-      if (newEntryItems.isEmpty) {
-        setState(() {
-          _isLoading = false;
-          _hasMore = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-          _entryItemSummaries.addAll(newEntryItems);
-        });
-      }
-
-      // Clear selection if the selected entry was deleted
-      if (dbChanged &&
-          !_entryItemSummaries.any((item) => item.$1 == selectedEntryId)) {
-        selectedEntryId = null;
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: KeyboardVisibilityBuilder(
         builder: (context, isKeyboardVisible) => Visibility(
             visible: widget.allowEdits &&
-                _entryItemSummaries.isNotEmpty &&
+                context.watch<T>().items.isNotEmpty &&
                 !isKeyboardVisible &&
                 _mode is! ProcessingMode,
             child: ElevatedButton(
               style: ButtonStyle(
-                padding: MaterialStateProperty.all(
+                padding: WidgetStateProperty.all(
                   const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 ),
               ),
@@ -262,7 +143,7 @@ class _EntryItemsState<T extends EntryItemsState>
       },
       bottomNavigationBar: switch (_mode) {
         EditMode(selectedEntryItems: var selectedEntryItems)
-            when _entryItemSummaries.isNotEmpty =>
+            when context.watch<T>().items.isNotEmpty =>
           BottomAppBar(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             height: Theme.of(context)
@@ -276,7 +157,7 @@ class _EntryItemsState<T extends EntryItemsState>
                 children: [
                   ElevatedButton(
                       style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
+                        padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 8),
                         ),
@@ -314,7 +195,7 @@ class _EntryItemsState<T extends EntryItemsState>
                           constraints: const BoxConstraints(minWidth: 80),
                           child: Text(
                             selectedEntryItems.length <
-                                    _entryItemSummaries.length
+                                    context.watch<T>().items.length
                                 ? AppLocalizations.of(context)!.all
                                 : AppLocalizations.of(context)!.none,
                             textAlign: TextAlign.center,
@@ -324,7 +205,7 @@ class _EntryItemsState<T extends EntryItemsState>
                   const Spacer(),
                   ElevatedButton(
                     style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
+                      padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       ),
                     ),
@@ -413,99 +294,102 @@ class _EntryItemsState<T extends EntryItemsState>
       };
 
   itemsList(EntryItemsState s, Embedded embedded) => ListView.separated(
-        itemCount: _hasMore
-            ? _entryItemSummaries.length + 1
-            : _entryItemSummaries.length,
+        itemCount: context.watch<T>().items.length,
         itemBuilder: (context, index) {
-          if (index >= _entryItemSummaries.length) {
-            if (_hasMore && !_isLoading) {
-              _loadMore(dbChanged: false);
-            }
-            return const Center(child: CircularProgressIndicator());
-          }
-          final summaryEntry = _entryItemSummaries.elementAt(index);
-          final id = summaryEntry.$1;
-          final summary = summaryEntry.$2;
+          final id = context.watch<T>().items.elementAt(index);
+          final summary = getEntrySummaries(entryIds: [id])
+              .then((summaries) => summaries.first);
           final selected =
               embedded == Embedded.embedded && id == selectedEntryId;
-          return ListTile(
-            selected: selected,
-            selectedTileColor: Theme.of(context).primaryColor,
-            selectedColor: Theme.of(context).colorScheme.onPrimary,
-            leading: switch (_mode) {
-              ViewMode() || ProcessingMode() => null,
-              EditMode(selectedEntryItems: var selectedEntryItems) => Checkbox(
-                  value: selectedEntryItems.contains(id),
-                  visualDensity: VisualDensity.compact,
-                  onChanged: (value) {
-                    if (value!) {
-                      setState(() {
-                        selectedEntryItems.add(id);
-                      });
-                    } else {
-                      setState(() {
-                        selectedEntryItems.remove(id);
-                      });
-                    }
-                  },
-                  side: selected
-                      ? BorderSide(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          width: 2)
-                      : null,
-                )
-            },
-            title: Text(
-              switch (context.watch<LanguageState>().getScript()) {
-                Script.traditional => summary.variantTrad,
-                Script.simplified => summary.variantSimp,
-              },
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text.rich(
-              TextSpan(
-                  children: showDefSummary(
-                      context,
-                      getSummaryDef(
-                          summary.defs,
-                          watchSummaryDefLanguage(context),
-                          context.watch<LanguageState>().getScript()),
-                      Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: selected
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : null))),
-              textAlign: TextAlign.start,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            onTap: switch (_mode) {
-              ViewMode() => () {
-                  setState(() {
-                    selectedEntryId = id;
-                  });
-                  if (embedded != Embedded.embedded) {
-                    context.push(
-                        "/entry/id/$id?key=$id&embedded=${embedded.name}");
-                  }
-                },
-              EditMode(selectedEntryItems: var selectedEntryItems) => () {
-                  // Toggles entryItem selected state
-                  if (selectedEntryItems.contains(id)) {
-                    setState(() {
-                      selectedEntryItems.remove(id);
-                    });
-                  } else {
-                    setState(() {
-                      selectedEntryItems.add(id);
-                    });
-                  }
-                },
-              ProcessingMode() => () {
-                  // unreachable
-                },
-            },
-          );
+          return FutureBuilder(
+              future: summary,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return ListTile(
+                    selected: selected,
+                    selectedTileColor: Theme.of(context).primaryColor,
+                    selectedColor: Theme.of(context).colorScheme.onPrimary,
+                    leading: switch (_mode) {
+                      ViewMode() || ProcessingMode() => null,
+                      EditMode(selectedEntryItems: var selectedEntryItems) =>
+                        Checkbox(
+                          value: selectedEntryItems.contains(id),
+                          visualDensity: VisualDensity.compact,
+                          onChanged: (value) {
+                            if (value!) {
+                              setState(() {
+                                selectedEntryItems.add(id);
+                              });
+                            } else {
+                              setState(() {
+                                selectedEntryItems.remove(id);
+                              });
+                            }
+                          },
+                          side: selected
+                              ? BorderSide(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  width: 2)
+                              : null,
+                        )
+                    },
+                    title: Text(
+                      switch (context.watch<LanguageState>().getScript()) {
+                        Script.traditional => snapshot.data.variantTrad,
+                        Script.simplified => snapshot.data.variantSimp,
+                      },
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text.rich(
+                      TextSpan(
+                          children: showDefSummary(
+                              context,
+                              getSummaryDef(
+                                  snapshot.data.defs,
+                                  watchSummaryDefLanguage(context),
+                                  context.watch<LanguageState>().getScript()),
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                  color: selected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : null))),
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: switch (_mode) {
+                      ViewMode() => () {
+                          setState(() {
+                            selectedEntryId = id;
+                          });
+                          if (embedded != Embedded.embedded) {
+                            context.push(
+                                "/entry/id/$id?key=$id&embedded=${embedded.name}");
+                          }
+                        },
+                      EditMode(selectedEntryItems: var selectedEntryItems) =>
+                        () {
+                          // Toggles entryItem selected state
+                          if (selectedEntryItems.contains(id)) {
+                            setState(() {
+                              selectedEntryItems.remove(id);
+                            });
+                          } else {
+                            setState(() {
+                              selectedEntryItems.add(id);
+                            });
+                          }
+                        },
+                      ProcessingMode() => () {
+                          // unreachable
+                        },
+                    },
+                  );
+                } else {
+                  return CircularProgressIndicator();
+                }
+              });
         },
         separatorBuilder: (context, index) => const Divider(),
       );

@@ -2,23 +2,14 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:powersync/powersync.dart';
 import 'package:powersync/sqlite3_common.dart' as sqlite;
 import '../powersync.dart';
-import '../models/entry_item.dart';
-
-typedef RemoveItemCallback = void Function(int entryId);
-typedef AddItemCallback = Future<void> Function(int entryId);
-typedef LoadedItemsCallback = void Function();
 
 /// EntryItems represents a collection of entry items (bookmarks or history).
 ///
 /// This class manages watching and modifying collections of entry items.
 class EntryItemsState extends ChangeNotifier {
   final String tableName;
-  final List<RemoveItemCallback> _onRemoveListeners = [];
-  final List<AddItemCallback> _onAddListeners = [];
-  final List<LoadedItemsCallback> _onLoadedListeners = [];
   List<int> _items = [];
 
   StreamSubscription<List<sqlite.Row>>? _subscription;
@@ -33,30 +24,6 @@ class EntryItemsState extends ChangeNotifier {
     super.dispose();
   }
 
-  void registerLoadedItemsListener(LoadedItemsCallback listener) {
-    _onLoadedListeners.add(listener);
-  }
-
-  void unregisterLoadedItemsListener(LoadedItemsCallback listener) {
-    _onLoadedListeners.remove(listener);
-  }
-
-  void registerRemoveItemListener(RemoveItemCallback listener) {
-    _onRemoveListeners.add(listener);
-  }
-
-  void unregisterRemoveItemListener(RemoveItemCallback listener) {
-    _onRemoveListeners.remove(listener);
-  }
-
-  void registerAddItemListener(AddItemCallback listener) {
-    _onAddListeners.add(listener);
-  }
-
-  void unregisterAddItemListener(AddItemCallback listener) {
-    _onAddListeners.remove(listener);
-  }
-
   List<int> get items => _items;
 
   void _watchChanges() {
@@ -65,36 +32,27 @@ class EntryItemsState extends ChangeNotifier {
         .listen((results) {
       _items = removeDuplicates(
           results.map((row) => row['entry_id'] as int).toList());
+      notifyListeners();
       debugPrint(
           "Remote $tableName changed and now has only ${_items.length} items");
-      for (final listener in _onLoadedListeners) {
-        listener();
-      }
-      notifyListeners();
     });
   }
 
   Future<void> addItem(int entryId) async {
-    await db.execute(
-      'INSERT INTO $tableName (id, time, entry_id, owner_id) VALUES (uuid(), datetime(), ?, ?)',
-      [entryId, getUserId()],
-    );
-    _items.insert(0, entryId);
-    for (final listener in _onAddListeners) {
-      await listener(entryId);
+    if (isItemInStore(entryId)) {
+      await db.execute('''
+      UPDATE $tableName SET time = datetime()
+      WHERE entry_id = ?''', [entryId]);
+    } else {
+      await db.execute('''
+      INSERT INTO $tableName (id, time, entry_id, owner_id)
+      VALUES (uuid(), datetime(), ?, ?)
+    ''', [entryId, getUserId()]);
     }
-    notifyListeners();
   }
 
   Future<void> clearItems() async {
     await db.execute('DELETE FROM $tableName');
-    for (final entryId in _items) {
-      for (final listener in _onRemoveListeners) {
-        listener(entryId);
-      }
-    }
-    _items.clear();
-    notifyListeners();
   }
 
   Future<void> removeItem(int entryId) async {
@@ -114,32 +72,28 @@ class EntryItemsState extends ChangeNotifier {
         batchIds,
       );
     }
-
-    // Update state and notify listeners for this batch
-    _items.removeWhere((id) => entryIds.contains(id));
-    for (final entryId in entryIds) {
-      for (final listener in _onRemoveListeners) {
-        listener(entryId);
-      }
-    }
-    notifyListeners();
-    // debugPrint('Removed ${entryIds.length} items from $tableName');
-  }
-
-  bool isItemInStore(int entryId) {
-    return _items.contains(entryId);
   }
 
   Future<void> toggleItem(int entryId) async {
-    if (!isItemInStore(entryId)) {
-      await addItem(entryId);
+    if (isItemInStore(entryId)) {
+      removeItem(entryId);
     } else {
-      await removeItem(entryId);
+      addItem(entryId);
     }
+  }
+
+  bool isItemInStore(entryId) {
+    return _items.contains(entryId);
   }
 }
 
 List<T> removeDuplicates<T>(List<T> inputList) {
   final seen = <T>{};
-  return inputList.where((element) => seen.add(element)).toList();
+  final result = <T>[];
+  for (var element in inputList) {
+    if (seen.add(element)) {
+      result.add(element);
+    }
+  }
+  return result;
 }

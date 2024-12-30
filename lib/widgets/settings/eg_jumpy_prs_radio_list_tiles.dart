@@ -72,7 +72,7 @@ class EgIsJumpyPrsRadioListTiles extends StatelessWidget {
         activeColor: Theme.of(context).colorScheme.onPrimary,
         activeTrackColor: Theme.of(context).colorScheme.secondary,
         trackOutlineColor:
-            MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+            WidgetStateProperty.all(Theme.of(context).colorScheme.secondary),
         inactiveThumbColor: Theme.of(context).colorScheme.secondary,
         inactiveTrackColor: const Color.fromARGB(0, 0, 0, 0),
         visualDensity: VisualDensity.compact,

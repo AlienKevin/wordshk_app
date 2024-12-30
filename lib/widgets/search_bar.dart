@@ -205,13 +205,13 @@ class IsSearching extends State<SearchBar> {
     final baseOffset = max(controller.selection.baseOffset, 0);
     final extentOffset = max(controller.selection.extentOffset, 0);
     // delete selection and add character in place of selection
-    final newQuery = query.substring(0, baseOffset) +
-        string +
-        query.substring(extentOffset);
+    final newQuery =
+        query.substring(0, baseOffset) + string + query.substring(extentOffset);
     controller.value = TextEditingValue(
         text: newQuery,
         selection: TextSelection(
-            baseOffset: baseOffset, extentOffset: baseOffset + string.characters.length));
+            baseOffset: baseOffset,
+            extentOffset: baseOffset + string.characters.length));
     context.read<SearchQueryState>().updateSearchQuery(newQuery);
     if (widget.onChanged != null) {
       widget.onChanged!(newQuery);
@@ -266,7 +266,7 @@ class IsSearching extends State<SearchBar> {
             // Trim the beginning "combining dotted circle" (U+25CC)
             onPressed: () => typeDiacritic(diacritic.substring(1)),
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
+                backgroundColor: WidgetStateProperty.all<Color>(
                     Theme.of(context).canvasColor)),
             icon: Text(diacritic,
                 textAlign: TextAlign.center,
@@ -323,8 +323,8 @@ class IsSearching extends State<SearchBar> {
                       icon: switch (context.watch<InputModeState>().mode) {
                         InputMode.keyboard => const Icon(Icons.brush),
                         InputMode.ink => Icon(isMaterial(context)
-                      ? Icons.keyboard
-                          : CupertinoIcons.keyboard),
+                            ? Icons.keyboard
+                            : CupertinoIcons.keyboard),
                         InputMode.done => const Icon(Icons.brush)
                       },
                       tooltip: switch (context.watch<InputModeState>().mode) {

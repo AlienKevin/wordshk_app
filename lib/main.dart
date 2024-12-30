@@ -523,18 +523,18 @@ class _MyAppState extends State<MyApp> {
             brightness == Brightness.light ? blueColor : lightBlueColor);
     textButtonTheme(Brightness brightness) => TextButtonThemeData(
             style: ButtonStyle(
-          textStyle: MaterialStateProperty.all(
+          textStyle: WidgetStateProperty.all(
               bodyLarge.copyWith(color: accentColor(brightness))),
           foregroundColor:
-              MaterialStateProperty.resolveWith((_) => accentColor(brightness)),
+              WidgetStateProperty.resolveWith((_) => accentColor(brightness)),
         ));
     elevatedButtonTheme(Brightness brightness) => ElevatedButtonThemeData(
             style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(blueColor),
-          textStyle: MaterialStateProperty.all(
-              bodyLarge.copyWith(color: Colors.white)),
-          foregroundColor: MaterialStateProperty.all(Colors.white),
-          padding: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(blueColor),
+          textStyle:
+              WidgetStateProperty.all(bodyLarge.copyWith(color: Colors.white)),
+          foregroundColor: WidgetStateProperty.all(Colors.white),
+          padding: WidgetStateProperty.all(
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0)),
         ));
     dividerColor(Brightness brightness) =>
@@ -542,7 +542,7 @@ class _MyAppState extends State<MyApp> {
     dividerTheme(Brightness brightness) => DividerThemeData(
         space: 0, thickness: 1, color: dividerColor(brightness));
     switchTheme(Brightness brightness) => SwitchThemeData(
-          thumbColor: MaterialStateProperty.resolveWith((states) {
+          thumbColor: WidgetStateProperty.resolveWith((states) {
             // On Android, the switch is invisible when not selected (because
             // it has the same color as the background), so we need to return
             // a different color for the thumb.
