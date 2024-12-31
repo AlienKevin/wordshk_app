@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:wordshk/models/schema.dart';
 import 'package:wordshk/powersync.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wordshk/states/bookmark_state.dart';
+import 'package:wordshk/states/history_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -37,6 +41,9 @@ class _LoginPageState extends State<LoginPage> {
       // We connect and upgrade the database schema here so that by the time the watch() calls are made in the
       // ListsPage, watch will track the new tables instead..
       await connectDatabase();
+
+      context.read<BookmarkState>().watchChanges();
+      context.read<HistoryState>().watchChanges();
 
       if (context.mounted) {
         context.go("/");

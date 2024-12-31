@@ -15,18 +15,19 @@ class EntryItemsState extends ChangeNotifier {
   StreamSubscription<List<sqlite.Row>>? _subscription;
 
   EntryItemsState({required this.tableName}) {
-    _watchChanges();
+    watchChanges();
   }
 
   @override
   void dispose() {
-    _subscription?.cancel();
     super.dispose();
+    _subscription?.cancel();
   }
 
   List<int> get items => _items;
 
-  void _watchChanges() {
+  void watchChanges() {
+    _subscription?.cancel();
     _subscription = db
         .watch('SELECT * FROM $tableName ORDER BY time DESC')
         .listen((results) {
