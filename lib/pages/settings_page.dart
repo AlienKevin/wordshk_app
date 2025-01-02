@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:wordshk/powersync.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
 import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/history_state.dart';
+import 'package:wordshk/states/login_state.dart';
 import 'package:wordshk/states/text_size_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
@@ -143,11 +145,20 @@ class SettingsPage extends StatelessWidget {
           child: MySettingsList(
             sections: [
               SettingsSection(
-                title: Text("Log In to Sync"),
+                title: Text("Log in to Sync"),
                 tiles: [
                   SettingsTile.navigation(
-                    title: Text("Log in"),
-                    onPressed: (context) => context.push('/login'),
+                    title: context.watch<LoginState>().isLoggedIn
+                        ? Text("Log out")
+                        : Text("Log in/Sign up"),
+                    onPressed: (context) async {
+                      if (context.read<LoginState>().isLoggedIn) {
+                        await logout();
+                        context.go('/');
+                      } else {
+                        context.push('/login');
+                      }
+                    },
                   ),
                 ],
               ),

@@ -64,6 +64,7 @@ import 'package:wordshk/states/exercise_introduction_state.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/input_mode_state.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/states/login_state.dart';
 import 'package:wordshk/states/romanization_state.dart';
 import 'package:wordshk/states/search_bar_position_state.dart';
 import 'package:wordshk/states/search_query_state.dart';
@@ -224,6 +225,7 @@ void runMyApp(
         ChangeNotifierProvider<ExerciseIntroductionState>(
             create: (_) => ExerciseIntroductionState(prefs)),
         ChangeNotifierProvider<EntryState>(create: (_) => EntryState()),
+        ChangeNotifierProvider<LoginState>(create: (_) => LoginState()),
       ],
       child: MyApp(firstTimeUser: firstTimeUser_, prefs: prefs),
     ),

@@ -27,6 +27,7 @@ class EntryItemsState extends ChangeNotifier {
   List<int> get items => _items;
 
   void watchChanges() {
+    debugPrint('entry_items_state.dart: watchChanges');
     _subscription?.cancel();
     _subscription = db
         .watch('SELECT * FROM $tableName ORDER BY time DESC')
