@@ -42,10 +42,9 @@ class _LoginPageState extends State<LoginPage> {
       // ListsPage, watch will track the new tables instead..
       await connectDatabase();
 
-      context.read<BookmarkState>().watchChanges();
-      context.read<HistoryState>().watchChanges();
-
       if (context.mounted) {
+        context.read<BookmarkState>().watchChanges();
+        context.read<HistoryState>().watchChanges();
         context.go("/");
       }
     } on AuthException catch (e) {
@@ -118,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _busy
                             ? null
                             : () {
-                                context.go('/signup');
+                                context.push('/signup');
                               },
                         child: const Text('Sign Up'),
                       ),

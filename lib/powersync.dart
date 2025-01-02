@@ -3,13 +3,18 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:powersync/powersync.dart';
+import 'package:provider/provider.dart';
 import 'package:wordshk/models/sync_mode.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
+import 'package:wordshk/states/bookmark_state.dart';
+import 'package:wordshk/states/history_state.dart';
 
 import './app_config.dart';
 import './models/schema.dart';
@@ -287,7 +292,7 @@ Future<void> connectDatabase() async {
 }
 
 /// Explicit sign out - clear database and log out.
-Future<void> logout() async {
+Future<void> logout(BuildContext context) async {
   await Supabase.instance.client.auth.signOut();
   await Supabase.instance.dispose();
   await db.disconnectAndClear();
@@ -295,4 +300,11 @@ Future<void> logout() async {
   // Resetting app so that no-sync mode works again
   await setSyncEnabled(false);
   await openDatabase();
+
+  if (context.mounted) {
+    context.read<BookmarkState>().watchChanges();
+    context.read<HistoryState>().watchChanges();
+
+    context.go('/');
+  }
 }

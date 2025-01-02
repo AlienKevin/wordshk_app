@@ -42,7 +42,7 @@ class _SignupPageState extends State<SignupPage> {
         if (response.session != null) {
           context.go('/');
         } else {
-          context.go('/login');
+          context.push('/login');
         }
       }
     } on AuthException catch (e) {
@@ -64,8 +64,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
-              "Sign Up"),
+          title: const Text("Sign Up"),
         ),
         body: Center(
           child: SingleChildScrollView(

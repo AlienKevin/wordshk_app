@@ -153,8 +153,7 @@ class SettingsPage extends StatelessWidget {
                         : Text("Log in/Sign up"),
                     onPressed: (context) async {
                       if (context.read<LoginState>().isLoggedIn) {
-                        await logout();
-                        context.go('/');
+                        await logout(context);
                       } else {
                         context.push('/login');
                       }
