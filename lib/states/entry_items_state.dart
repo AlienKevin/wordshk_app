@@ -61,13 +61,13 @@ class EntryItemsState extends ChangeNotifier {
     await removeItems([entryId]);
   }
 
-  Future<void> removeItems(List<int> entryIds) async {
+  Future<void> removeItems(List<int> entryIds, {int batchSize = 500}) async {
     if (entryIds.isEmpty) return;
 
     // debugPrint('Removing ${entryIds.length} items from $tableName');
-    // Delete in batches of 100 to avoid too many parameters in IN clause
-    for (var i = 0; i < entryIds.length; i += 100) {
-      final batchIds = entryIds.sublist(i, min(i + 100, entryIds.length));
+    // Delete in batches to avoid too many parameters in IN clause
+    for (var i = 0; i < entryIds.length; i += batchSize) {
+      final batchIds = entryIds.sublist(i, min(i + batchSize, entryIds.length));
       final placeholders = List.filled(batchIds.length, '?').join(',');
       await db.execute(
         'DELETE FROM $tableName WHERE entry_id IN ($placeholders)',

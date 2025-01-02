@@ -127,7 +127,7 @@ class SupabaseConnector extends PowerSyncBackendConnector {
       }
 
       // Delete in batches to prevent 414 URI too long error on Android
-      const batchSize = 100;
+      const batchSize = 500;
       for (final table in deleteOps.keys) {
         final ids = deleteOps[table]!;
         for (var i = 0; i < ids.length; i += batchSize) {
