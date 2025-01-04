@@ -44,11 +44,11 @@ import 'package:wordshk/pages/settings/script_page.dart';
 import 'package:wordshk/pages/settings/search_bar_position_page.dart';
 import 'package:wordshk/pages/settings/text_size_page.dart';
 import 'package:wordshk/pages/settings_page.dart';
-import 'package:wordshk/pages/signup_page.dart';
 import 'package:wordshk/pages/stories_catalog_page.dart';
 import 'package:wordshk/pages/story_page.dart';
 import 'package:wordshk/pages/tone_exercise_introduction_page.dart';
 import 'package:wordshk/pages/tone_exercise_page.dart';
+import 'package:wordshk/pages/verify_otp_page.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/src/rust/frb_generated.dart';
 import 'package:wordshk/states/analytics_settings_state.dart';
@@ -57,7 +57,6 @@ import 'package:wordshk/states/auto_paste_search_state.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/entry_eg_font_size_state.dart';
 import 'package:wordshk/states/entry_eg_jumpy_prs_state.dart';
-import 'package:wordshk/states/entry_items_state.dart';
 import 'package:wordshk/states/entry_language_state.dart';
 import 'package:wordshk/states/entry_state.dart';
 import 'package:wordshk/states/exercise_introduction_state.dart';
@@ -311,8 +310,9 @@ initializeRouter(bool firstTimeUser, SharedPreferences prefs) {
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: '/signup',
-        builder: (context, state) => const SignupPage(),
+        path: '/verify-otp',
+        builder: (context, state) =>
+            VerifyOtpPage(email: state.uri.queryParameters['email']!),
       ),
       StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,

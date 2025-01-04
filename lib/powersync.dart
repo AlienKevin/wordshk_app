@@ -199,7 +199,7 @@ Future<void> openDatabase() async {
   await loadSupabase();
   if (isLoggedIn()) {
     // If the user is already logged in, connect immediately.
-    // Otherwise, connect once logged via login/signup view.
+    // Otherwise, connect once logged via login view.
     await connectDatabase();
   } else {
     // If database is empty, check by querying tables properly

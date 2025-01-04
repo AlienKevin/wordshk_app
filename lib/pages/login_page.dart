@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:wordshk/models/schema.dart';
-import 'package:wordshk/powersync.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:wordshk/states/bookmark_state.dart';
-import 'package:wordshk/states/history_state.dart';
-import 'package:wordshk/states/login_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,7 +10,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late TextEditingController _passwordController;
   late TextEditingController _usernameController;
   String? _error;
   late bool _busy;
@@ -26,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
 
     _busy = false;
-    _passwordController = TextEditingController(text: '');
     _usernameController = TextEditingController(text: '');
   }
 
@@ -36,18 +28,13 @@ class _LoginPageState extends State<LoginPage> {
       _error = null;
     });
     try {
-      await Supabase.instance.client.auth.signInWithPassword(
-          email: _usernameController.text, password: _passwordController.text);
-
-      // We connect and upgrade the database schema here so that by the time the watch() calls are made in the
-      // ListsPage, watch will track the new tables instead..
-      await connectDatabase();
+      await Supabase.instance.client.auth.signInWithOtp(
+          email: _usernameController.text,
+          shouldCreateUser: true,
+          emailRedirectTo: 'https://words.hk');
 
       if (context.mounted) {
-        context.read<BookmarkState>().watchChanges();
-        context.read<HistoryState>().watchChanges();
-        context.read<LoginState>().listen();
-        context.go("/");
+        context.push('/verify-otp?email=${_usernameController.text}');
       }
     } on AuthException catch (e) {
       setState(() {
@@ -81,24 +68,15 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text('Login'),
-                      const SizedBox(height: 35),
+                      const Text(
+                          'Login/sign up via a one-time password sent to the following email:'),
+                      const SizedBox(height: 10),
                       TextFormField(
                         controller: _usernameController,
-                        decoration: const InputDecoration(labelText: "Email"),
-                        enabled: !_busy,
-                        onFieldSubmitted: _busy
-                            ? null
-                            : (String value) {
-                                _login(context);
-                              },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        obscureText: true,
-                        controller: _passwordController,
                         decoration: InputDecoration(
-                            labelText: "Password", errorText: _error),
+                            labelText: "Email",
+                            errorText: _error,
+                            errorMaxLines: 5),
                         enabled: !_busy,
                         onFieldSubmitted: _busy
                             ? null
@@ -113,15 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                             : () {
                                 _login(context);
                               },
-                        child: const Text('Login'),
-                      ),
-                      TextButton(
-                        onPressed: _busy
-                            ? null
-                            : () {
-                                context.push('/signup');
-                              },
-                        child: const Text('Sign Up'),
+                        child: const Text('Login/Sign Up'),
                       ),
                     ],
                   ),
