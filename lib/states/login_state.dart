@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wordshk/powersync.dart' as PowerSync;
 
 class LoginState extends ChangeNotifier {
   bool _isLoggedIn = false;
@@ -7,6 +8,11 @@ class LoginState extends ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
 
   LoginState() {
+    _isLoggedIn = PowerSync.isLoggedIn();
+    listen();
+  }
+
+  listen() {
     Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
       final AuthChangeEvent event = data.event;
       if (event == AuthChangeEvent.signedOut) {

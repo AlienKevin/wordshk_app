@@ -6,6 +6,7 @@ import 'package:wordshk/powersync.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/history_state.dart';
+import 'package:wordshk/states/login_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -45,6 +46,7 @@ class _LoginPageState extends State<LoginPage> {
       if (context.mounted) {
         context.read<BookmarkState>().watchChanges();
         context.read<HistoryState>().watchChanges();
+        context.read<LoginState>().listen();
         context.go("/");
       }
     } on AuthException catch (e) {

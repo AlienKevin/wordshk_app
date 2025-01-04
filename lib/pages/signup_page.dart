@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:wordshk/powersync.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wordshk/states/bookmark_state.dart';
+import 'package:wordshk/states/history_state.dart';
+import 'package:wordshk/states/login_state.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -40,6 +44,9 @@ class _SignupPageState extends State<SignupPage> {
 
       if (context.mounted) {
         if (response.session != null) {
+          context.read<BookmarkState>().watchChanges();
+          context.read<HistoryState>().watchChanges();
+          context.read<LoginState>().listen();
           context.go('/');
         } else {
           context.push('/login');
