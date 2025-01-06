@@ -145,12 +145,12 @@ class SettingsPage extends StatelessWidget {
           child: MySettingsList(
             sections: [
               SettingsSection(
-                title: Text("Log in to Sync"),
+                title: Text(AppLocalizations.of(context)!.loginToSync),
                 tiles: [
                   SettingsTile.navigation(
                     title: context.watch<LoginState>().isLoggedIn
-                        ? Text("Log out")
-                        : Text("Log in/Sign up"),
+                        ? Text(AppLocalizations.of(context)!.logout)
+                        : Text(AppLocalizations.of(context)!.loginSlashSignUp),
                     onPressed: (context) async {
                       if (context.read<LoginState>().isLoggedIn) {
                         await logout(context);

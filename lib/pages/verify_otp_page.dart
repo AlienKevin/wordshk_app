@@ -8,6 +8,7 @@ import 'package:wordshk/powersync.dart';
 import 'package:wordshk/states/bookmark_state.dart';
 import 'package:wordshk/states/history_state.dart';
 import 'package:wordshk/states/login_state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class VerifyOtpPage extends StatefulWidget {
   const VerifyOtpPage({super.key, required this.email});
@@ -64,7 +65,7 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Verify OTP"),
+          title: Text(AppLocalizations.of(context)!.verifyOtp),
         ),
         body: Center(
             child: SingleChildScrollView(
@@ -77,15 +78,16 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text(
-                                'Verify OTP Sent to ${widget.email}. Make sure you spelled your email address correctly and check your spam folder if needed.'),
+                            Text(AppLocalizations.of(context)!
+                                .verifyOtpSentToEmail(widget.email)),
                             const SizedBox(height: 25),
                             TextField(
                               controller: _otpController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
-                                hintText: 'Enter the 6-digit code',
+                                hintText: AppLocalizations.of(context)!
+                                    .enterSixDigitCode,
                                 errorText: _error,
                                 errorMaxLines: 5,
                               ),
@@ -97,7 +99,8 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
                                   : () {
                                       verifyOtp(context);
                                     },
-                              child: const Text('Verify OTP'),
+                              child:
+                                  Text(AppLocalizations.of(context)!.verifyOtp),
                             )
                           ],
                         ),

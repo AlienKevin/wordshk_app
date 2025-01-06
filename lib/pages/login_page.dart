@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -55,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Log In to Sync"),
+          title: Text(AppLocalizations.of(context)!.loginToSync),
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -68,13 +69,12 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
-                          'Login/sign up via a one-time password sent to the following email:'),
+                      Text(AppLocalizations.of(context)!.loginWithOtp),
                       const SizedBox(height: 10),
                       TextFormField(
                         controller: _usernameController,
                         decoration: InputDecoration(
-                            labelText: "Email",
+                            labelText: AppLocalizations.of(context)!.email,
                             errorText: _error,
                             errorMaxLines: 5),
                         enabled: !_busy,
@@ -91,7 +91,8 @@ class _LoginPageState extends State<LoginPage> {
                             : () {
                                 _login(context);
                               },
-                        child: const Text('Login/Sign Up'),
+                        child: Text(
+                            AppLocalizations.of(context)!.loginSlashSignUp),
                       ),
                     ],
                   ),

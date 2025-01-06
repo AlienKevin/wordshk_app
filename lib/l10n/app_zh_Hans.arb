@@ -39,6 +39,14 @@
     "readMore": "详情",
     "close": "关闭",
 
+    "loginToSync": "登录以同步",
+    "logout": "退出登录",
+    "loginWithOtp": "请输入您的邮箱地址以接收用于登录的动态密码：",
+    "loginSlashSignUp": "登录/注册",
+    "verifyOtp": "验证动态密码",
+    "enterSixDigitCode": "输入6位验证码",
+    "verifyOtpSentToEmail": "验证发送到 {email} 的动态密码。请确保邮箱地址拼写正确，并检查垃圾邮件文件夹。",
+
     "posNoun": "名词",
     "posVerb": "动词",
     "posAdjective": "形容词",

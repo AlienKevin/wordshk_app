@@ -45,6 +45,14 @@
     "readMore": "Read More",
     "close": "Close",
 
+    "loginToSync": "Log In to Sync",
+    "logout": "Log Out",
+    "loginWithOtp": "Login/sign up via a one-time password sent to the following email:",
+    "loginSlashSignUp": "Login/Sign Up",
+    "verifyOtp": "Verify OTP",
+    "enterSixDigitCode": "Enter the 6-digit code",
+    "verifyOtpSentToEmail": "Verify OTP Sent to {email}. Make sure you spelled your email address correctly and check your spam folder if needed.",
+
     "posNoun": "noun",
     "posVerb": "verb",
     "posAdjective": "adjective",

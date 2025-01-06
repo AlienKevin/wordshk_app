@@ -39,6 +39,14 @@
     "readMore": "詳情",
     "close": "關閉",
 
+    "loginToSync": "登入以同步",
+    "logout": "退出登入",
+    "loginWithOtp": "請輸入您的郵件地址以接收用於登入的動態密碼：",
+    "loginSlashSignUp": "登入/註冊",
+    "verifyOtp": "驗證動態密碼",
+    "enterSixDigitCode": "輸入6位動態密碼",
+    "verifyOtpSentToEmail": "驗證發送到 {email} 的動態密碼。請確保郵箱地址拼寫正確，並檢查垃圾郵件資料夾。",
+
     "posNoun": "名詞",
     "posVerb": "動詞",
     "posAdjective": "形容詞",
