@@ -3,7 +3,7 @@ description: words.hk dictionary for mobile
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 3.3.2+32
+version: 3.4.0+33
 
 environment:
   sdk: "^3.0.0"
