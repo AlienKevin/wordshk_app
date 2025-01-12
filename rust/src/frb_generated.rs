@@ -255,11 +255,14 @@ fn wire__crate__api__api__get_entry_summaries_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_entry_ids = <Vec<u32>>::sse_decode(&mut deserializer);
+            let api_romanization = <crate::api::api::Romanization>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::get_entry_summaries(api_entry_ids))?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::api::get_entry_summaries(
+                        api_entry_ids,
+                        api_romanization,
+                    ))?;
                     Ok(output_ok)
                 })())
             }
@@ -458,10 +461,12 @@ impl SseDecode for crate::api::api::EntrySummary {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_variantTrad = <String>::sse_decode(deserializer);
         let mut var_variantSimp = <String>::sse_decode(deserializer);
+        let mut var_prs = <Vec<String>>::sse_decode(deserializer);
         let mut var_defs = <Vec<crate::api::api::EntryDef>>::sse_decode(deserializer);
         return crate::api::api::EntrySummary {
             variant_trad: var_variantTrad,
             variant_simp: var_variantSimp,
+            prs: var_prs,
             defs: var_defs,
         };
     }
@@ -898,6 +903,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::EntrySummary {
         [
             self.variant_trad.into_into_dart().into_dart(),
             self.variant_simp.into_into_dart().into_dart(),
+            self.prs.into_into_dart().into_dart(),
             self.defs.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -1129,6 +1135,7 @@ impl SseEncode for crate::api::api::EntrySummary {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.variant_trad, serializer);
         <String>::sse_encode(self.variant_simp, serializer);
+        <Vec<String>>::sse_encode(self.prs, serializer);
         <Vec<crate::api::api::EntryDef>>::sse_encode(self.defs, serializer);
     }
 }

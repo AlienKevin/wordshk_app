@@ -11,8 +11,8 @@ use parking_lot::RwLock;
 use wordshk_tools::dict::{clause_to_string, EntryId};
 use wordshk_tools::english_index::EnglishSearchRank;
 use wordshk_tools::entry_group_index;
-use wordshk_tools::jyutping::LaxJyutPing;
 pub use wordshk_tools::jyutping::Romanization;
+use wordshk_tools::jyutping::{LaxJyutPing, LaxJyutPings};
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
 use wordshk_tools::rich_dict::RichVariants;
 use wordshk_tools::search::VariantMapLike;
@@ -86,6 +86,7 @@ pub struct EgSearchResult {
 pub struct EntrySummary {
     pub variant_trad: String,
     pub variant_simp: String,
+    pub prs: Vec<String>,
     pub defs: Vec<EntryDef>,
 }
 
@@ -139,7 +140,7 @@ pub fn init_api(dict_path: String, dict_zip: Vec<u8>) {
         .unwrap();
 }
 
-pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
+pub fn get_entry_summaries(entry_ids: Vec<u32>, romanization: Romanization) -> Vec<EntrySummary> {
     let summaries = entry_ids
         .into_iter()
         .filter_map(|entry_id| {
@@ -149,6 +150,7 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>) -> Vec<EntrySummary> {
             Some(EntrySummary {
                 variant_trad: variants.0.first().unwrap().word.clone(),
                 variant_simp: variants.0.first().unwrap().word_simp.clone(),
+                prs: extract_standard_prs(&variants.0.first().unwrap().prs, romanization),
                 defs,
             })
         })
@@ -253,6 +255,14 @@ fn jyutping_to_standard_romanization(
     }
 }
 
+fn extract_standard_prs(jyutpings: &LaxJyutPings, romanization: Romanization) -> Vec<String> {
+    jyutpings
+        .0
+        .iter()
+        .filter_map(|pr| jyutping_to_standard_romanization(pr, romanization))
+        .collect()
+}
+
 fn variant_ranks_to_results(
     variant_ranks: &mut BinaryHeap<search::VariantSearchRank>,
     dict: &dyn RichDictLike,
@@ -277,12 +287,7 @@ fn variant_ranks_to_results(
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
             matched_variant: matched_variant.clone(),
-            prs: variants.0[variant_index]
-                .prs
-                .0
-                .iter()
-                .filter_map(|pr| jyutping_to_standard_romanization(pr, romanization))
-                .collect(),
+            prs: extract_standard_prs(&variants.0[variant_index].prs, romanization),
             yues: defs
                 .iter()
                 .map(|def| match script {
@@ -391,11 +396,7 @@ fn english_ranks_to_results(
                 .map(|v| {
                     (
                         v.word.clone(),
-                        v.prs
-                            .0
-                            .iter()
-                            .filter_map(|pr| jyutping_to_standard_romanization(pr, romanization))
-                            .join(", "),
+                        extract_standard_prs(&v.prs, romanization).join(", "),
                     )
                 })
                 .collect(),

@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `eg_ranks_to_results`, `english_ranks_to_results`, `get_entry_defs`, `jyutping_to_standard_romanization`, `pr_ranks_to_results`, `variant_ranks_to_results`
+// These functions are ignored because they are not marked as `pub`: `eg_ranks_to_results`, `english_ranks_to_results`, `extract_standard_prs`, `get_entry_defs`, `jyutping_to_standard_romanization`, `pr_ranks_to_results`, `variant_ranks_to_results`
 // These types are ignored because they are not used by any `pub` functions: `log_stream_sink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `initialize`
 
@@ -17,8 +17,10 @@ Future<void> initApi({required String dictPath, required List<int> dictZip}) =>
     RustLib.instance.api
         .crateApiApiInitApi(dictPath: dictPath, dictZip: dictZip);
 
-Future<List<EntrySummary>> getEntrySummaries({required List<int> entryIds}) =>
-    RustLib.instance.api.crateApiApiGetEntrySummaries(entryIds: entryIds);
+Future<List<EntrySummary>> getEntrySummaries(
+        {required List<int> entryIds, required Romanization romanization}) =>
+    RustLib.instance.api.crateApiApiGetEntrySummaries(
+        entryIds: entryIds, romanization: romanization);
 
 Future<CombinedSearchResults> combinedSearch(
         {required int capacity,
@@ -158,17 +160,22 @@ class EntryDef {
 class EntrySummary {
   final String variantTrad;
   final String variantSimp;
+  final List<String> prs;
   final List<EntryDef> defs;
 
   const EntrySummary({
     required this.variantTrad,
     required this.variantSimp,
+    required this.prs,
     required this.defs,
   });
 
   @override
   int get hashCode =>
-      variantTrad.hashCode ^ variantSimp.hashCode ^ defs.hashCode;
+      variantTrad.hashCode ^
+      variantSimp.hashCode ^
+      prs.hashCode ^
+      defs.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -177,6 +184,7 @@ class EntrySummary {
           runtimeType == other.runtimeType &&
           variantTrad == other.variantTrad &&
           variantSimp == other.variantSimp &&
+          prs == other.prs &&
           defs == other.defs;
 }
 

@@ -96,7 +96,7 @@ abstract class RustLibApi extends BaseApi {
       {required String query, required Script script});
 
   Future<List<EntrySummary>> crateApiApiGetEntrySummaries(
-      {required List<int> entryIds});
+      {required List<int> entryIds, required Romanization romanization});
 
   Future<void> crateApiApiInitApi(
       {required String dictPath, required List<int> dictZip});
@@ -249,11 +249,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<List<EntrySummary>> crateApiApiGetEntrySummaries(
-      {required List<int> entryIds}) {
+      {required List<int> entryIds, required Romanization romanization}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_list_prim_u_32_loose(entryIds, serializer);
+        sse_encode_romanization(romanization, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 6, port: port_);
       },
@@ -262,7 +263,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiApiGetEntrySummariesConstMeta,
-      argValues: [entryIds],
+      argValues: [entryIds, romanization],
       apiImpl: this,
     ));
   }
@@ -270,7 +271,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiApiGetEntrySummariesConstMeta =>
       const TaskConstMeta(
         debugName: "get_entry_summaries",
-        argNames: ["entryIds"],
+        argNames: ["entryIds", "romanization"],
       );
 
   @override
@@ -417,12 +418,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   EntrySummary dco_decode_entry_summary(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return EntrySummary(
       variantTrad: dco_decode_String(arr[0]),
       variantSimp: dco_decode_String(arr[1]),
-      defs: dco_decode_list_entry_def(arr[2]),
+      prs: dco_decode_list_String(arr[2]),
+      defs: dco_decode_list_entry_def(arr[3]),
     );
   }
 
@@ -779,10 +781,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_variantTrad = sse_decode_String(deserializer);
     var var_variantSimp = sse_decode_String(deserializer);
+    var var_prs = sse_decode_list_String(deserializer);
     var var_defs = sse_decode_list_entry_def(deserializer);
     return EntrySummary(
         variantTrad: var_variantTrad,
         variantSimp: var_variantSimp,
+        prs: var_prs,
         defs: var_defs);
   }
 
@@ -1162,6 +1166,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.variantTrad, serializer);
     sse_encode_String(self.variantSimp, serializer);
+    sse_encode_list_String(self.prs, serializer);
     sse_encode_list_entry_def(self.defs, serializer);
   }
 

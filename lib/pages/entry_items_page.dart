@@ -1,6 +1,4 @@
 import 'dart:collection';
-import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:wordshk/src/rust/api/api.dart';
 import 'package:wordshk/states/language_state.dart';
+import 'package:wordshk/states/romanization_state.dart';
 
 import '../constants.dart';
 import '../models/embedded.dart';
@@ -297,7 +296,9 @@ class _EntryItemsState<T extends EntryItemsState>
         itemCount: context.watch<T>().items.length,
         itemBuilder: (context, index) {
           final id = context.watch<T>().items.elementAt(index);
-          final summary = getEntrySummaries(entryIds: [id])
+          final summary = getEntrySummaries(
+                  entryIds: [id],
+                  romanization: context.read<RomanizationState>().romanization)
               .then((summaries) => summaries.first);
           final selected =
               embedded == Embedded.embedded && id == selectedEntryId;
@@ -334,11 +335,20 @@ class _EntryItemsState<T extends EntryItemsState>
                               : null,
                         )
                     },
-                    title: Text(
-                      switch (context.watch<LanguageState>().getScript()) {
-                        Script.traditional => snapshot.data.variantTrad,
-                        Script.simplified => snapshot.data.variantSimp,
-                      },
+                    title: Text.rich(
+                      TextSpan(children: [
+                        TextSpan(
+                            text: switch (
+                                context.watch<LanguageState>().getScript()) {
+                          Script.traditional => snapshot.data.variantTrad,
+                          Script.simplified => snapshot.data.variantSimp,
+                        }),
+                        TextSpan(text: " "),
+                        TextSpan(
+                            text: snapshot.data.prs.join(", "),
+                            style: TextStyle(
+                                color: selected ? lightGreyColor : greyColor)),
+                      ]),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
