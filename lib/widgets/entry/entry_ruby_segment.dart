@@ -133,7 +133,7 @@ List<Widget> showRubySegment(
             ],
           )
         : Column(children: [
-            ...!isEndingPunctuation
+            ...!isEndingPunctuation && prs.isNotEmpty
                 ? [
                     SelectionContainer.disabled(
                         child: Padding(
