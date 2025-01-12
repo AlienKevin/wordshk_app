@@ -617,6 +617,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           SearchResultType.eg,
           maxLines: 1,
           defIndex: result.defIndex,
+          egIndex: result.egIndex,
           embedded: embedded);
     }).toList();
   }
@@ -831,6 +832,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       TextSpan Function(bool selected) resultText, SearchResultType resultType,
       {int maxLines = 2,
       int? defIndex,
+      int? egIndex,
       bool showFirstEntryInGroupInitially = false,
       Embedded embedded = Embedded.embedded}) {
     final selected = embedded == Embedded.embedded &&
@@ -852,6 +854,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               key: ValueKey(index),
               id: id,
               defIndex: defIndex,
+              egIndex: egIndex,
               showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
               embedded: embedded,
             );
@@ -862,7 +865,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             analyticsState.clickSearchResultType(resultType);
             if (embedded != Embedded.embedded) {
               context.push(
-                  "/entry/id/$id?showFirstInGroup=$showFirstEntryInGroupInitially${defIndex == null ? "" : "&defIndex=$defIndex"}&embedded=${embedded.name}");
+                  "/entry/id/$id?showFirstInGroup=$showFirstEntryInGroupInitially${defIndex == null ? "" : "&defIndex=$defIndex"}${egIndex == null ? "" : "&egIndex=$egIndex"}&embedded=${embedded.name}");
             }
           },
           child: Padding(

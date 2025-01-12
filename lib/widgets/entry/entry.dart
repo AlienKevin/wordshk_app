@@ -32,6 +32,7 @@ class EntryWidget extends StatefulWidget {
   final List<Entry> entryGroup;
   final int initialEntryIndex;
   final int? initialDefIndex;
+  final int? initialEgIndex;
   final OnTapLink? onTapLink;
   final bool showEgs;
   final bool allowLookup;
@@ -42,6 +43,7 @@ class EntryWidget extends StatefulWidget {
     required this.entryGroup,
     required this.initialEntryIndex,
     required this.initialDefIndex,
+    required this.initialEgIndex,
     required this.onTapLink,
     this.showEgs = true,
     this.allowLookup = true,
@@ -62,6 +64,7 @@ class _EntryWidgetState extends State<EntryWidget>
   late final List<(int, int)> defIndexRanges;
   OverlayEntry? overlayEntry;
   GlobalKey entryWidgetKey = GlobalKey();
+  late int targetDefIndex;
 
   int getStartDefIndex(int entryIndex) => defIndexRanges[entryIndex].$1;
 
@@ -87,7 +90,7 @@ class _EntryWidgetState extends State<EntryWidget>
     );
     _scrollController = ScrollController();
 
-    final targetDefIndex = getStartDefIndex(widget.initialEntryIndex) +
+    targetDefIndex = getStartDefIndex(widget.initialEntryIndex) +
         (widget.initialDefIndex != null ? widget.initialDefIndex! + 1 : 0);
     // debugPrint("defIndexRanges: $defIndexRanges");
     // debugPrint("initialEntryIndex: ${widget.initialEntryIndex}");
@@ -167,6 +170,7 @@ class _EntryWidgetState extends State<EntryWidget>
                                 entryGroup: snapshot.data!,
                                 initialEntryIndex: 0,
                                 initialDefIndex: null,
+                                initialEgIndex: null,
                                 onTapLink: null,
                                 showEgs: false,
                                 allowLookup: false,
@@ -438,8 +442,8 @@ class _EntryWidgetState extends State<EntryWidget>
                             setState(() {
                               entryIndex = newIndex;
                               isScrollingToTarget = true;
+                              targetDefIndex = getStartDefIndex(newIndex);
                             });
-                            final targetDefIndex = getStartDefIndex(newIndex);
                             await _observerController.animateTo(
                               index: targetDefIndex,
                               duration: const Duration(milliseconds: 500),
@@ -486,12 +490,12 @@ class _EntryWidgetState extends State<EntryWidget>
     );
   }
 
-  showDef(int entryIndex, int index, TextStyle lineTextStyle, Color linkColor,
-      double rubyFontSize) {
+  showDef(int entryIndex, int defIndex, TextStyle lineTextStyle,
+      Color linkColor, double rubyFontSize) {
     final entry = widget.entryGroup[entryIndex];
     return EntryDef(
-      def: entry.defs[index - 1],
-      defIndex: index - 1,
+      def: entry.defs[defIndex],
+      defIndex: defIndex,
       entryLanguage: context.watch<EntryLanguageState>().language,
       script: context.watch<LanguageState>().getScript(),
       lineTextStyle: lineTextStyle,
@@ -500,6 +504,10 @@ class _EntryWidgetState extends State<EntryWidget>
       isSingleDef: entry.defs.length == 1 && widget.entryGroup.length == 1,
       onTapLink: widget.onTapLink,
       showEgs: widget.showEgs,
+      egsInitialExpanded: (entryIndex == widget.initialEntryIndex &&
+              defIndex == widget.initialDefIndex)
+          ? (widget.initialEgIndex == null ? false : widget.initialEgIndex! > 0)
+          : false,
     );
   }
 
@@ -545,9 +553,8 @@ class _EntryWidgetState extends State<EntryWidget>
             onTapLink: onTapLink),
       ]),
       ...entry.defs.indexed.map((item) {
-        final index = item.$1 + 1;
         return showDef(
-            entryIndex, index, lineTextStyle, linkColor, rubyFontSize);
+            entryIndex, item.$1, lineTextStyle, linkColor, rubyFontSize);
       })
     ];
   }

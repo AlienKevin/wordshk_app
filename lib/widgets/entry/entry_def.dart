@@ -17,6 +17,7 @@ class EntryDef extends StatelessWidget {
   final bool isSingleDef;
   final OnTapLink? onTapLink;
   final bool showEgs;
+  final bool egsInitialExpanded;
 
   const EntryDef({
     Key? key,
@@ -30,6 +31,7 @@ class EntryDef extends StatelessWidget {
     required this.isSingleDef,
     required this.onTapLink,
     required this.showEgs,
+    required this.egsInitialExpanded,
   }) : super(key: key);
 
   @override
@@ -79,6 +81,7 @@ class EntryDef extends StatelessWidget {
               ? [
                   EntryEgs(
                     egs: def.egs,
+                    egsInitialExpanded: egsInitialExpanded,
                     entryLanguage: entryLanguage,
                     script: script,
                     lineTextStyle: lineTextStyle,

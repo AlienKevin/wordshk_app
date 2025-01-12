@@ -241,6 +241,9 @@ EntryPage entryPageBuilder(BuildContext context, GoRouterState state) {
   final defIndex = state.uri.queryParameters['defIndex'] == null
       ? null
       : int.parse(state.uri.queryParameters['defIndex']!);
+  final egIndex = state.uri.queryParameters['egIndex'] == null
+      ? null
+      : int.parse(state.uri.queryParameters['egIndex']!);
   final embedded = state.uri.queryParameters['embedded'] == null
       ? Embedded.topLevel
       : Embedded.values.byName(state.uri.queryParameters['embedded']!);
@@ -255,6 +258,7 @@ EntryPage entryPageBuilder(BuildContext context, GoRouterState state) {
     id: entryId,
     showFirstEntryInGroupInitially: showFirstEntryInGroupInitially,
     defIndex: defIndex,
+    egIndex: egIndex,
     embedded: embedded,
   );
 }

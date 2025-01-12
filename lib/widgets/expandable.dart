@@ -4,6 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class MyExpandable extends StatefulWidget {
   final Widget child;
+  final bool initialExpanded;
   final String collapseText;
   final String expandText;
   final TextStyle lineTextStyle;
@@ -11,6 +12,7 @@ class MyExpandable extends StatefulWidget {
   const MyExpandable(
       {super.key,
       required this.child,
+      required this.initialExpanded,
       required this.collapseText,
       required this.expandText,
       required this.lineTextStyle});
@@ -21,12 +23,13 @@ class MyExpandable extends StatefulWidget {
 
 class _MyExpandableState extends State<MyExpandable>
     with SingleTickerProviderStateMixin {
-  bool expanded = false;
+  late bool expanded;
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+    expanded = widget.initialExpanded;
     _controller = AnimationController(
       vsync: this,
       duration:
@@ -63,9 +66,9 @@ class _MyExpandableState extends State<MyExpandable>
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
-                    expanded ? widget.collapseText : widget.expandText,
-                    style: widget.lineTextStyle,
-                  ),
+                  expanded ? widget.collapseText : widget.expandText,
+                  style: widget.lineTextStyle,
+                ),
                 RotationTransition(
                   turns: Tween<double>(begin: 0, end: 0.5).animate(_controller),
                   child: Icon(

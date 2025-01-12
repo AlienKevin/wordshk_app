@@ -19,6 +19,7 @@ class EntryPage extends StatefulWidget {
   final int id;
   final bool showFirstEntryInGroupInitially;
   final int? defIndex;
+  final int? egIndex;
   final Embedded embedded;
 
   const EntryPage({
@@ -26,6 +27,7 @@ class EntryPage extends StatefulWidget {
     required this.id,
     required this.showFirstEntryInGroupInitially,
     this.defIndex,
+    this.egIndex,
     this.embedded = Embedded.topLevel,
   }) : super(key: key);
 
@@ -114,6 +116,7 @@ class _EntryPageState extends State<EntryPage> {
         entryGroup: entryGroup!,
         initialEntryIndex: initialEntryIndex!,
         initialDefIndex: widget.defIndex,
+        initialEgIndex: widget.egIndex,
         onTapLink: (entryVariant) {
           log("Tapped on link $entryVariant");
           getEntryId(

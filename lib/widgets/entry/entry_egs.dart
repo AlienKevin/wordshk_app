@@ -9,6 +9,7 @@ import 'entry_eg.dart';
 
 class EntryEgs extends StatelessWidget {
   final List<Eg> egs;
+  final bool egsInitialExpanded;
   final EntryLanguage entryLanguage;
   final Script script;
   final TextStyle lineTextStyle;
@@ -20,6 +21,7 @@ class EntryEgs extends StatelessWidget {
   const EntryEgs({
     Key? key,
     required this.egs,
+    required this.egsInitialExpanded,
     required this.entryLanguage,
     required this.script,
     required this.lineTextStyle,
@@ -73,6 +75,7 @@ class EntryEgs extends StatelessWidget {
             ),
           ]),
           MyExpandable(
+              initialExpanded: egsInitialExpanded,
               expandText: AppLocalizations.of(context)!.entryMoreExamples,
               collapseText: AppLocalizations.of(context)!.entryCollapseExamples,
               lineTextStyle: lineTextStyle.copyWith(
