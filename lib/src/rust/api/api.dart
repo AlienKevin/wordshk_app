@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `english_ranks_to_results`, `get_entry_defs`, `jyutping_to_standard_romanization`, `pr_ranks_to_results`, `variant_ranks_to_results`
+// These functions are ignored because they are not marked as `pub`: `eg_ranks_to_results`, `english_ranks_to_results`, `get_entry_defs`, `jyutping_to_standard_romanization`, `pr_ranks_to_results`, `variant_ranks_to_results`
 // These types are ignored because they are not used by any `pub` functions: `log_stream_sink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `initialize`
 
@@ -33,14 +33,10 @@ Future<CombinedSearchResults> combinedSearch(
 
 Future<List<EgSearchResult>> egSearch(
         {required int capacity,
-        required int maxFirstIndexInEg,
         required String query,
         required Script script}) =>
-    RustLib.instance.api.crateApiApiEgSearch(
-        capacity: capacity,
-        maxFirstIndexInEg: maxFirstIndexInEg,
-        query: query,
-        script: script);
+    RustLib.instance.api
+        .crateApiApiEgSearch(capacity: capacity, query: query, script: script);
 
 Future<List<String>> getEntryGroupJson({required int id}) =>
     RustLib.instance.api.crateApiApiGetEntryGroupJson(id: id);
@@ -52,16 +48,21 @@ class CombinedSearchResults {
   final (int?, List<VariantSearchResult>) variantResults;
   final (int?, List<PrSearchResult>) prResults;
   final (int?, List<EnglishSearchResult>) englishResults;
+  final (int?, List<EgSearchResult>) egResults;
 
   const CombinedSearchResults({
     required this.variantResults,
     required this.prResults,
     required this.englishResults,
+    required this.egResults,
   });
 
   @override
   int get hashCode =>
-      variantResults.hashCode ^ prResults.hashCode ^ englishResults.hashCode;
+      variantResults.hashCode ^
+      prResults.hashCode ^
+      englishResults.hashCode ^
+      egResults.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -70,7 +71,8 @@ class CombinedSearchResults {
           runtimeType == other.runtimeType &&
           variantResults == other.variantResults &&
           prResults == other.prResults &&
-          englishResults == other.englishResults;
+          englishResults == other.englishResults &&
+          egResults == other.egResults;
 }
 
 class EgSearchResult {

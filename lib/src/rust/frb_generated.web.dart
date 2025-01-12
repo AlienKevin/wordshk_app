@@ -105,6 +105,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PrSearchResult dco_decode_pr_search_result(dynamic raw);
 
   @protected
+  (int?, List<EgSearchResult>)
+      dco_decode_record_opt_box_autoadd_u_32_list_eg_search_result(dynamic raw);
+
+  @protected
   (int?, List<EnglishSearchResult>)
       dco_decode_record_opt_box_autoadd_u_32_list_english_search_result(
           dynamic raw);
@@ -232,6 +236,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PrSearchResult sse_decode_pr_search_result(SseDeserializer deserializer);
+
+  @protected
+  (int?, List<EgSearchResult>)
+      sse_decode_record_opt_box_autoadd_u_32_list_eg_search_result(
+          SseDeserializer deserializer);
 
   @protected
   (int?, List<EnglishSearchResult>)
@@ -371,6 +380,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_pr_search_result(
       PrSearchResult self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_u_32_list_eg_search_result(
+      (int?, List<EgSearchResult>) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_opt_box_autoadd_u_32_list_english_search_result(

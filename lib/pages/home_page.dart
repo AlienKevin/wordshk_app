@@ -361,57 +361,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       !containsSensitiveContent(result.variants.join(" ")))
                   .toList()
             );
+            final filteredEgResults = (
+              results.egResults.$1,
+              results.egResults.$2
+                  .where((result) => !containsSensitiveContent(
+                      "${result.matchedEg.prefix}${result.matchedEg.query}${result.matchedEg.suffix}"))
+                  .toList()
+            );
             results = CombinedSearchResults(
-                prResults: filteredPrResults,
-                variantResults: filteredVariantResults,
-                englishResults: filteredEnglishResults);
+              prResults: filteredPrResults,
+              variantResults: filteredVariantResults,
+              englishResults: filteredEnglishResults,
+              egResults: filteredEgResults,
+            );
           }
 
           final isCombinedResultsEmpty = results.prResults.$2.isEmpty &&
               results.variantResults.$2.isEmpty &&
-              results.englishResults.$2.isEmpty;
-          if (isCombinedResultsEmpty) {
-            egSearch(
-                    capacity: 10,
-                    maxFirstIndexInEg: 10,
-                    query: query,
-                    script: script)
-                .then((results) {
-              if (appFlavor == "huawei") {
-                // Hide sensitive results
-                results = results
-                    .where((result) => !containsSensitiveContent(
-                        result.matchedEg.prefix +
-                            result.matchedEg.query +
-                            result.matchedEg.suffix))
-                    .toList();
-              }
-              if (!context.mounted) return;
-              if (searchStartTime >= lastSearchStartTime) {
-                // print("Query: $query");
-                // print("Result: ${results.map((res) => res.eg)}");
-                if (isSearchResultsEmpty &&
-                    query == context.read<SearchQueryState>().query) {
-                  setState(() {
-                    egSearchResults =
-                        results.unique((result) => result.matchedEg);
-                    isSearchResultsEmpty = egSearchResults.isEmpty;
-                    searchResultOrder = [SearchResultType.eg];
-                    finishedSearch = true;
-                  });
-                  // if (isSearchResultsEmpty) {
-                  //   analyticsState.addResultNotFound(ResultNotFound(query));
-                  // }
-                }
-              }
-            });
-          }
+              results.englishResults.$2.isEmpty &&
+              results.egResults.$2.isEmpty;
+
           setState(() {
             isSearchResultsEmpty = isCombinedResultsEmpty;
-            egSearchResults.clear();
             prSearchResults = results.prResults.$2;
             variantSearchResults = results.variantResults.$2;
             englishSearchResults = results.englishResults.$2;
+            egSearchResults = results.egResults.$2;
 
             // Higher priority = higher number
             getSearchResultTypePriority(SearchResultType type) =>
@@ -419,12 +394,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   SearchResultType.variant => results.variantResults.$1!,
                   SearchResultType.pr => results.prResults.$1!,
                   SearchResultType.english => results.englishResults.$1!,
-                  SearchResultType.eg => 0, // impossible
+                  SearchResultType.eg => results.egResults.$1!,
                 };
             searchResultOrder = [
               if (variantSearchResults.isNotEmpty) SearchResultType.variant,
               if (prSearchResults.isNotEmpty) SearchResultType.pr,
               if (englishSearchResults.isNotEmpty) SearchResultType.english,
+              if (egSearchResults.isNotEmpty) SearchResultType.eg,
             ].sorted((a, b) => getSearchResultTypePriority(b)
                 .compareTo(getSearchResultTypePriority(a)));
             if (!isCombinedResultsEmpty) {

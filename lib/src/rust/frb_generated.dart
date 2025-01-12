@@ -88,10 +88,7 @@ abstract class RustLibApi extends BaseApi {
   Stream<String> crateApiApiCreateLogStream();
 
   Future<List<EgSearchResult>> crateApiApiEgSearch(
-      {required int capacity,
-      required int maxFirstIndexInEg,
-      required String query,
-      required Script script});
+      {required int capacity, required String query, required Script script});
 
   Future<List<String>> crateApiApiGetEntryGroupJson({required int id});
 
@@ -174,15 +171,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<List<EgSearchResult>> crateApiApiEgSearch(
-      {required int capacity,
-      required int maxFirstIndexInEg,
-      required String query,
-      required Script script}) {
+      {required int capacity, required String query, required Script script}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_u_32(capacity, serializer);
-        sse_encode_u_32(maxFirstIndexInEg, serializer);
         sse_encode_String(query, serializer);
         sse_encode_script(script, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
@@ -193,14 +186,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiApiEgSearchConstMeta,
-      argValues: [capacity, maxFirstIndexInEg, query, script],
+      argValues: [capacity, query, script],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiApiEgSearchConstMeta => const TaskConstMeta(
         debugName: "eg_search",
-        argNames: ["capacity", "maxFirstIndexInEg", "query", "script"],
+        argNames: ["capacity", "query", "script"],
       );
 
   @override
@@ -363,8 +356,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   CombinedSearchResults dco_decode_combined_search_results(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return CombinedSearchResults(
       variantResults:
           dco_decode_record_opt_box_autoadd_u_32_list_variant_search_result(
@@ -374,6 +367,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       englishResults:
           dco_decode_record_opt_box_autoadd_u_32_list_english_search_result(
               arr[2]),
+      egResults:
+          dco_decode_record_opt_box_autoadd_u_32_list_eg_search_result(arr[3]),
     );
   }
 
@@ -566,6 +561,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  (
+    int?,
+    List<EgSearchResult>
+  ) dco_decode_record_opt_box_autoadd_u_32_list_eg_search_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_opt_box_autoadd_u_32(arr[0]),
+      dco_decode_list_eg_search_result(arr[1]),
+    );
+  }
+
+  @protected
   (int?, List<EnglishSearchResult>)
       dco_decode_record_opt_box_autoadd_u_32_list_english_search_result(
           dynamic raw) {
@@ -715,10 +726,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_englishResults =
         sse_decode_record_opt_box_autoadd_u_32_list_english_search_result(
             deserializer);
+    var var_egResults =
+        sse_decode_record_opt_box_autoadd_u_32_list_eg_search_result(
+            deserializer);
     return CombinedSearchResults(
         variantResults: var_variantResults,
         prResults: var_prResults,
-        englishResults: var_englishResults);
+        englishResults: var_englishResults,
+        egResults: var_egResults);
   }
 
   @protected
@@ -966,6 +981,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  (int?, List<EgSearchResult>)
+      sse_decode_record_opt_box_autoadd_u_32_list_eg_search_result(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_opt_box_autoadd_u_32(deserializer);
+    var var_field1 = sse_decode_list_eg_search_result(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
   (int?, List<EnglishSearchResult>)
       sse_decode_record_opt_box_autoadd_u_32_list_english_search_result(
           SseDeserializer deserializer) {
@@ -1100,6 +1125,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         self.prResults, serializer);
     sse_encode_record_opt_box_autoadd_u_32_list_english_search_result(
         self.englishResults, serializer);
+    sse_encode_record_opt_box_autoadd_u_32_list_eg_search_result(
+        self.egResults, serializer);
   }
 
   @protected
@@ -1302,6 +1329,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_matched_segment(self.matchedPr, serializer);
     sse_encode_list_String(self.yues, serializer);
     sse_encode_list_String(self.engs, serializer);
+  }
+
+  @protected
+  void sse_encode_record_opt_box_autoadd_u_32_list_eg_search_result(
+      (int?, List<EgSearchResult>) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_box_autoadd_u_32(self.$1, serializer);
+    sse_encode_list_eg_search_result(self.$2, serializer);
   }
 
   @protected

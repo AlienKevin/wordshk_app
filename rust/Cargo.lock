@@ -415,8 +415,7 @@ checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
 [[package]]
 name = "fast2s"
 version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1316063b5422f1f7bf4cc784c959eaf04b843de7c9ecbd4190c60614aa23b27e"
+source = "git+https://github.com/AlienKevin/fast2s.git?rev=aedb438cf4e8cf27ec65b236bdced865661d3146#aedb438cf4e8cf27ec65b236bdced865661d3146"
 dependencies = [
  "bincode",
  "hashbrown 0.12.3",
@@ -2158,7 +2157,7 @@ dependencies = [
 [[package]]
 name = "wordshk_tools"
 version = "3.16.0-beta.10"
-source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=5d4fd431c0775f75c527cd300c28c98b0d9d1624#5d4fd431c0775f75c527cd300c28c98b0d9d1624"
+source = "git+https://github.com/AlienKevin/wordshk-tools.git?rev=513606b2af11bd38130152acd31e4a7418cebc1d#513606b2af11bd38130152acd31e4a7418cebc1d"
 dependencies = [
  "csv",
  "deunicode",

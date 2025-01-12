@@ -25,6 +25,7 @@ pub struct CombinedSearchResults {
     pub variant_results: (Option<u32>, Vec<VariantSearchResult>),
     pub pr_results: (Option<u32>, Vec<PrSearchResult>),
     pub english_results: (Option<u32>, Vec<EnglishSearchResult>),
+    pub eg_results: (Option<u32>, Vec<EgSearchResult>),
 }
 
 #[frb(mirror(Script))]
@@ -163,52 +164,36 @@ pub fn combined_search(
 ) -> CombinedSearchResults {
     let api = API.read();
     let api = api.as_ref().unwrap();
-    match &mut search::combined_search(api, &query, script, romanization) {
-        CombinedSearchRank::Variant(variant_ranks) => CombinedSearchResults {
-            variant_results: variant_ranks_to_results(
-                variant_ranks,
-                api,
-                script,
-                romanization,
-                capacity,
-            ),
-            pr_results: (None, vec![]),
-            english_results: (None, vec![]),
-        },
-        CombinedSearchRank::Pr(pr_ranks) => CombinedSearchResults {
-            variant_results: (None, vec![]),
-            pr_results: pr_ranks_to_results(pr_ranks, api, script, capacity),
-            english_results: (None, vec![]),
-        },
-        CombinedSearchRank::All(variant_ranks, pr_ranks, english_ranks) => CombinedSearchResults {
-            variant_results: variant_ranks_to_results(
-                variant_ranks,
-                api,
-                script,
-                romanization,
-                capacity,
-            ),
-            pr_results: pr_ranks_to_results(pr_ranks, api, script, capacity),
-            english_results: english_ranks_to_results(
-                english_ranks,
-                api,
-                script,
-                romanization,
-                capacity,
-            ),
-        },
+    let CombinedSearchRank {
+        variant: variant_ranks,
+        pr: pr_ranks,
+        english: english_ranks,
+        eg: eg_ranks,
+    } = &mut search::combined_search(api, &query, script, romanization);
+    CombinedSearchResults {
+        variant_results: variant_ranks_to_results(
+            variant_ranks,
+            api,
+            script,
+            romanization,
+            capacity,
+        ),
+        pr_results: pr_ranks_to_results(pr_ranks, api, script, capacity),
+        english_results: english_ranks_to_results(
+            english_ranks,
+            api,
+            script,
+            romanization,
+            capacity,
+        ),
+        eg_results: eg_ranks_to_results(eg_ranks, capacity),
     }
 }
 
-pub fn eg_search(
-    capacity: u32,
-    max_first_index_in_eg: u32,
-    query: String,
-    script: Script,
-) -> Vec<EgSearchResult> {
+pub fn eg_search(capacity: u32, query: String, script: Script) -> Vec<EgSearchResult> {
     let api = API.read();
     let api = api.as_ref().unwrap();
-    let mut ranks = search::eg_search(api, &query, max_first_index_in_eg as usize, script);
+    let mut ranks = search::eg_search(api, &query, script);
     let mut results = vec![];
     let mut i = 0;
     while ranks.len() > 0 && i < capacity {
@@ -419,4 +404,26 @@ fn english_ranks_to_results(
         i += 1;
     }
     (max_score, english_search_results)
+}
+
+fn eg_ranks_to_results(
+    eg_ranks: &mut BinaryHeap<search::EgSearchRank>,
+    capacity: u32,
+) -> (Option<u32>, Vec<EgSearchResult>) {
+    let mut eg_search_results = vec![];
+    let mut i = 0;
+    let max_score = eg_ranks
+        .peek()
+        .map(|rank| 100 - rank.matched_eg.prefix.chars().count() as u32);
+    while !eg_ranks.is_empty() && i < capacity {
+        let entry = eg_ranks.pop().unwrap();
+        eg_search_results.push(EgSearchResult {
+            id: entry.id as u32,
+            def_index: entry.def_index as u32,
+            eg_index: entry.eg_index as u32,
+            matched_eg: entry.matched_eg.clone(),
+        });
+        i += 1;
+    }
+    (max_score, eg_search_results)
 }

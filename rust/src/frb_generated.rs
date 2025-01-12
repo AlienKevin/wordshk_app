@@ -147,7 +147,6 @@ fn wire__crate__api__api__eg_search_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_capacity = <u32>::sse_decode(&mut deserializer);
-            let api_max_first_index_in_eg = <u32>::sse_decode(&mut deserializer);
             let api_query = <String>::sse_decode(&mut deserializer);
             let api_script = <crate::api::api::Script>::sse_decode(&mut deserializer);
             deserializer.end();
@@ -155,7 +154,6 @@ fn wire__crate__api__api__eg_search_impl(
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(crate::api::api::eg_search(
                         api_capacity,
-                        api_max_first_index_in_eg,
                         api_query,
                         api_script,
                     ))?;
@@ -398,10 +396,13 @@ impl SseDecode for crate::api::api::CombinedSearchResults {
             <(Option<u32>, Vec<crate::api::api::PrSearchResult>)>::sse_decode(deserializer);
         let mut var_englishResults =
             <(Option<u32>, Vec<crate::api::api::EnglishSearchResult>)>::sse_decode(deserializer);
+        let mut var_egResults =
+            <(Option<u32>, Vec<crate::api::api::EgSearchResult>)>::sse_decode(deserializer);
         return crate::api::api::CombinedSearchResults {
             variant_results: var_variantResults,
             pr_results: var_prResults,
             english_results: var_englishResults,
+            eg_results: var_egResults,
         };
     }
 }
@@ -664,6 +665,15 @@ impl SseDecode for crate::api::api::PrSearchResult {
     }
 }
 
+impl SseDecode for (Option<u32>, Vec<crate::api::api::EgSearchResult>) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_field0 = <Option<u32>>::sse_decode(deserializer);
+        let mut var_field1 = <Vec<crate::api::api::EgSearchResult>>::sse_decode(deserializer);
+        return (var_field0, var_field1);
+    }
+}
+
 impl SseDecode for (Option<u32>, Vec<crate::api::api::EnglishSearchResult>) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -803,6 +813,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::CombinedSearchResults {
             self.variant_results.into_into_dart().into_dart(),
             self.pr_results.into_into_dart().into_dart(),
             self.english_results.into_into_dart().into_dart(),
+            self.eg_results.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1077,6 +1088,10 @@ impl SseEncode for crate::api::api::CombinedSearchResults {
             self.english_results,
             serializer,
         );
+        <(Option<u32>, Vec<crate::api::api::EgSearchResult>)>::sse_encode(
+            self.eg_results,
+            serializer,
+        );
     }
 }
 
@@ -1270,6 +1285,14 @@ impl SseEncode for crate::api::api::PrSearchResult {
         <Vec<crate::api::api::MatchedSegment>>::sse_encode(self.matched_pr, serializer);
         <Vec<String>>::sse_encode(self.yues, serializer);
         <Vec<String>>::sse_encode(self.engs, serializer);
+    }
+}
+
+impl SseEncode for (Option<u32>, Vec<crate::api::api::EgSearchResult>) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<u32>>::sse_encode(self.0, serializer);
+        <Vec<crate::api::api::EgSearchResult>>::sse_encode(self.1, serializer);
     }
 }
 
