@@ -590,7 +590,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return egSearchResults.mapIndexed((index, result) {
       egs(bool selected) => [
             TextSpan(
-                text: result.matchedEg.prefix,
+                text: result.matchedEg.prefix.characters.length > 10
+                    ? '…${result.matchedEg.prefix.characters.takeLast(10).string}'
+                    : result.matchedEg.prefix,
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
