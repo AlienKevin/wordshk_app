@@ -403,9 +403,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               if (egSearchResults.isNotEmpty) SearchResultType.eg,
             ].sorted((a, b) => getSearchResultTypePriority(b)
                 .compareTo(getSearchResultTypePriority(a)));
-            if (!isCombinedResultsEmpty) {
-              finishedSearch = true;
-            }
+            
+            finishedSearch = true;
           });
         }
       });
