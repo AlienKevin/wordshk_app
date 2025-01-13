@@ -37,3 +37,13 @@ create policy "owned bookmarks" on public.bookmarks for ALL using (
 create policy "owned history" on public.history for ALL using (
   auth.uid() = owner_id
 );
+
+-- Set up delete_user function for user self-deletion
+CREATE or replace function delete_user()
+returns void 
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+    DELETE FROM auth.users WHERE id = auth.uid();
+$$;

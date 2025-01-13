@@ -48,6 +48,9 @@
     "verifyOtp": "驗證動態密碼",
     "enterSixDigitCode": "輸入6位動態密碼",
     "verifyOtpSentToEmail": "驗證發送到 {email} 嘅動態密碼。請確保郵箱地址拼寫正確，並檢查垃圾郵件資料夾。",
+    "deleteAccount": "刪除帳戶",
+    "confirmDeleteAccount": "確認刪除帳戶",
+    "deleteAccountWarning": "你係咪確定要刪除你嘅帳戶？雲端同埋本地嘅相关資料都會被刪除。",
 
     "posNoun": "名詞",
     "posVerb": "動詞",

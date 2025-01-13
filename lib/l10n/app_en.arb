@@ -52,6 +52,9 @@
     "verifyOtp": "Verify OTP",
     "enterSixDigitCode": "Enter the 6-digit code",
     "verifyOtpSentToEmail": "Verify OTP Sent to {email}. Make sure you spelled your email address correctly and check your spam folder if needed.",
+    "deleteAccount": "Delete Account",
+    "confirmDeleteAccount": "Confirm Account Deletion",
+    "deleteAccountWarning": "Are you sure you want to delete your account? All your associated data will be deleted both on the cloud and locally.",
 
     "posNoun": "noun",
     "posVerb": "verb",

@@ -14,6 +14,7 @@ import 'package:wordshk/states/login_state.dart';
 import 'package:wordshk/states/text_size_state.dart';
 import 'package:wordshk/utils.dart';
 import 'package:wordshk/widgets/constrained_content.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../device_info.dart';
 import '../states/entry_language_state.dart';
@@ -159,6 +160,63 @@ class SettingsPage extends StatelessWidget {
                       }
                     },
                   ),
+                  ...context.watch<LoginState>().isLoggedIn
+                      ? [
+                          SettingsTile.navigation(
+                            title: Text(
+                                AppLocalizations.of(context)!.deleteAccount,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.error)),
+                            onPressed: (context) async {
+                              if (context.read<LoginState>().isLoggedIn) {
+                                final confirmed = await showDialog<bool>(
+                                  useRootNavigator: false,
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text(AppLocalizations.of(context)!
+                                        .confirmDeleteAccount),
+                                    content: Text(AppLocalizations.of(context)!
+                                        .deleteAccountWarning),
+                                    actionsAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    actions: [
+                                      TextButton(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .delete,
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .error)),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .cancel),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirmed == true) {
+                                  await Supabase.instance.client
+                                      .rpc('delete_user');
+                                  if (context.mounted) {
+                                    await logout(context);
+                                  }
+                                }
+                              }
+                            },
+                          ),
+                        ]
+                      : []
                 ],
               ),
               SettingsSection(
