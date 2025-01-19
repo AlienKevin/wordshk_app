@@ -69,7 +69,12 @@ Notes:
       gzip app_tmp/dict.db
       ```
       Copy the two files back to this project. Copy the `dict.db.gz` back to `assets/`.
-4. Build iOS and Android binaries:
+4. Generate TTS recordings for new sentences
+   a. Regenerate `dict.json` by going to `examples/export_json_dict` and run `cargo run --release`
+   b. Copy the generated `app_tmp/dict.json` to project root
+   c. Generate TTS by going to `tts/`, activate conda environment `conda activate wordshk`, and run `python tts.py`
+   d. Upload newly generated audios to Alicloud OSS bucket by running `python upload_to_bucket.py`
+5. Build iOS and Android binaries:
    ```
    flutter clean
    flutter pub get
@@ -79,7 +84,7 @@ Notes:
    # Go to Xcode and Product -> Archive
    flutter build appbundle --flavor full
    ```
-5. TAG the commit for F-droid.
+6. TAG the commit for F-droid.
 
 # Normalize jyutping syllable audios
 
