@@ -403,7 +403,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               if (egSearchResults.isNotEmpty) SearchResultType.eg,
             ].sorted((a, b) => getSearchResultTypePriority(b)
                 .compareTo(getSearchResultTypePriority(a)));
-            
+
             finishedSearch = true;
           });
         }
@@ -595,7 +595,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
-                    ?.copyWith(color: greyColor)),
+                    ?.copyWith(color: selected ? lightGreyColor : greyColor)),
             TextSpan(
                 text: result.matchedEg.query,
                 style: Theme.of(context).textTheme.titleSmall!.copyWith(
@@ -607,7 +607,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
-                    ?.copyWith(color: greyColor)),
+                    ?.copyWith(color: selected ? lightGreyColor : greyColor)),
           ];
       return showSearchResult(
           startIndex + index,
