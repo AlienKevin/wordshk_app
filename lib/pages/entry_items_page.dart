@@ -397,7 +397,7 @@ class _EntryItemsState<T extends EntryItemsState>
                     },
                   );
                 } else {
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 }
               });
         },
