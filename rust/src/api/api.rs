@@ -294,7 +294,9 @@ fn variant_ranks_to_results(
     let mut i = 0;
     let max_score = variant_ranks.peek().map(|rank| {
         let m = &rank.matched_variant;
-        (100 - m.prefix.chars().count() - m.suffix.chars().count()) as u32
+        100u32
+            .saturating_sub(m.prefix.chars().count() as u32)
+            .saturating_sub(m.suffix.chars().count() as u32)
     });
     while !variant_ranks.is_empty() && i < capacity {
         let search::VariantSearchRank {
@@ -335,7 +337,9 @@ fn mandarin_variant_ranks_to_results(
     let mut i = 0;
     let max_score = variant_ranks.peek().map(|rank| {
         let m = &rank.matched_variant;
-        (100 - m.prefix.chars().count() - m.suffix.chars().count()) as u32
+        100u32
+            .saturating_sub(m.prefix.chars().count() as u32)
+            .saturating_sub(m.suffix.chars().count() as u32)
     });
     while !variant_ranks.is_empty() && i < capacity {
         let search::VariantSearchRank {
@@ -481,7 +485,7 @@ fn eg_ranks_to_results(
     let mut i = 0;
     let max_score = eg_ranks
         .peek()
-        .map(|rank| 100 - rank.matched_eg.prefix.chars().count() as u32);
+        .map(|rank| 100u32.saturating_sub(rank.matched_eg.prefix.chars().count() as u32));
     while !eg_ranks.is_empty() && i < capacity {
         let entry = eg_ranks.pop().unwrap();
         eg_search_results.push(EgSearchResult {
