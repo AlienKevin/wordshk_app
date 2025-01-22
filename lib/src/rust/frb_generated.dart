@@ -357,19 +357,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   CombinedSearchResults dco_decode_combined_search_results(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return CombinedSearchResults(
       variantResults:
           dco_decode_record_opt_box_autoadd_u_32_list_variant_search_result(
               arr[0]),
+      mandarinVariantResults:
+          dco_decode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+              arr[1]),
       prResults:
-          dco_decode_record_opt_box_autoadd_u_32_list_pr_search_result(arr[1]),
+          dco_decode_record_opt_box_autoadd_u_32_list_pr_search_result(arr[2]),
       englishResults:
           dco_decode_record_opt_box_autoadd_u_32_list_english_search_result(
-              arr[2]),
+              arr[3]),
       egResults:
-          dco_decode_record_opt_box_autoadd_u_32_list_eg_search_result(arr[3]),
+          dco_decode_record_opt_box_autoadd_u_32_list_eg_search_result(arr[4]),
     );
   }
 
@@ -467,6 +470,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<MandarinVariantSearchResult>
+      dco_decode_list_mandarin_variant_search_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_mandarin_variant_search_result)
+        .toList();
+  }
+
+  @protected
   List<MatchedSegment> dco_decode_list_matched_segment(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_matched_segment).toList();
@@ -514,6 +526,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return (raw as List<dynamic>)
         .map(dco_decode_variant_search_result)
         .toList();
+  }
+
+  @protected
+  MandarinVariantSearchResult dco_decode_mandarin_variant_search_result(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return MandarinVariantSearchResult(
+      id: dco_decode_u_32(arr[0]),
+      variant: dco_decode_String(arr[1]),
+      matchedMandarinVariant: dco_decode_matched_infix(arr[2]),
+      prs: dco_decode_list_String(arr[3]),
+      yue: dco_decode_String(arr[4]),
+      eng: dco_decode_String(arr[5]),
+    );
   }
 
   @protected
@@ -590,6 +619,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return (
       dco_decode_opt_box_autoadd_u_32(arr[0]),
       dco_decode_list_english_search_result(arr[1]),
+    );
+  }
+
+  @protected
+  (
+    int?,
+    List<MandarinVariantSearchResult>
+  ) dco_decode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_opt_box_autoadd_u_32(arr[0]),
+      dco_decode_list_mandarin_variant_search_result(arr[1]),
     );
   }
 
@@ -722,6 +768,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_variantResults =
         sse_decode_record_opt_box_autoadd_u_32_list_variant_search_result(
             deserializer);
+    var var_mandarinVariantResults =
+        sse_decode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+            deserializer);
     var var_prResults =
         sse_decode_record_opt_box_autoadd_u_32_list_pr_search_result(
             deserializer);
@@ -733,6 +782,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             deserializer);
     return CombinedSearchResults(
         variantResults: var_variantResults,
+        mandarinVariantResults: var_mandarinVariantResults,
         prResults: var_prResults,
         englishResults: var_englishResults,
         egResults: var_egResults);
@@ -860,6 +910,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<MandarinVariantSearchResult>
+      sse_decode_list_mandarin_variant_search_result(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <MandarinVariantSearchResult>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_mandarin_variant_search_result(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   List<MatchedSegment> sse_decode_list_matched_segment(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -940,6 +1004,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MandarinVariantSearchResult sse_decode_mandarin_variant_search_result(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_u_32(deserializer);
+    var var_variant = sse_decode_String(deserializer);
+    var var_matchedMandarinVariant = sse_decode_matched_infix(deserializer);
+    var var_prs = sse_decode_list_String(deserializer);
+    var var_yue = sse_decode_String(deserializer);
+    var var_eng = sse_decode_String(deserializer);
+    return MandarinVariantSearchResult(
+        id: var_id,
+        variant: var_variant,
+        matchedMandarinVariant: var_matchedMandarinVariant,
+        prs: var_prs,
+        yue: var_yue,
+        eng: var_eng);
+  }
+
+  @protected
   MatchedInfix sse_decode_matched_infix(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_prefix = sse_decode_String(deserializer);
@@ -1001,6 +1084,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_field0 = sse_decode_opt_box_autoadd_u_32(deserializer);
     var var_field1 = sse_decode_list_english_search_result(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  (
+    int?,
+    List<MandarinVariantSearchResult>
+  ) sse_decode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_opt_box_autoadd_u_32(deserializer);
+    var var_field1 =
+        sse_decode_list_mandarin_variant_search_result(deserializer);
     return (var_field0, var_field1);
   }
 
@@ -1125,6 +1221,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_record_opt_box_autoadd_u_32_list_variant_search_result(
         self.variantResults, serializer);
+    sse_encode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+        self.mandarinVariantResults, serializer);
     sse_encode_record_opt_box_autoadd_u_32_list_pr_search_result(
         self.prResults, serializer);
     sse_encode_record_opt_box_autoadd_u_32_list_english_search_result(
@@ -1226,6 +1324,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_mandarin_variant_search_result(
+      List<MandarinVariantSearchResult> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_mandarin_variant_search_result(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_matched_segment(
       List<MatchedSegment> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1300,6 +1408,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_mandarin_variant_search_result(
+      MandarinVariantSearchResult self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self.id, serializer);
+    sse_encode_String(self.variant, serializer);
+    sse_encode_matched_infix(self.matchedMandarinVariant, serializer);
+    sse_encode_list_String(self.prs, serializer);
+    sse_encode_String(self.yue, serializer);
+    sse_encode_String(self.eng, serializer);
+  }
+
+  @protected
   void sse_encode_matched_infix(MatchedInfix self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.prefix, serializer);
@@ -1350,6 +1470,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_opt_box_autoadd_u_32(self.$1, serializer);
     sse_encode_list_english_search_result(self.$2, serializer);
+  }
+
+  @protected
+  void
+      sse_encode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+          (int?, List<MandarinVariantSearchResult>) self,
+          SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_box_autoadd_u_32(self.$1, serializer);
+    sse_encode_list_mandarin_variant_search_result(self.$2, serializer);
   }
 
   @protected

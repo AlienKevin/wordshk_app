@@ -69,6 +69,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<EntrySummary> dco_decode_list_entry_summary(dynamic raw);
 
   @protected
+  List<MandarinVariantSearchResult>
+      dco_decode_list_mandarin_variant_search_result(dynamic raw);
+
+  @protected
   List<MatchedSegment> dco_decode_list_matched_segment(dynamic raw);
 
   @protected
@@ -93,6 +97,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<VariantSearchResult> dco_decode_list_variant_search_result(dynamic raw);
 
   @protected
+  MandarinVariantSearchResult dco_decode_mandarin_variant_search_result(
+      dynamic raw);
+
+  @protected
   MatchedInfix dco_decode_matched_infix(dynamic raw);
 
   @protected
@@ -112,6 +120,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (int?, List<EnglishSearchResult>)
       dco_decode_record_opt_box_autoadd_u_32_list_english_search_result(
           dynamic raw);
+
+  @protected
+  (
+    int?,
+    List<MandarinVariantSearchResult>
+  ) dco_decode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+      dynamic raw);
 
   @protected
   (int?, List<PrSearchResult>)
@@ -198,6 +213,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  List<MandarinVariantSearchResult>
+      sse_decode_list_mandarin_variant_search_result(
+          SseDeserializer deserializer);
+
+  @protected
   List<MatchedSegment> sse_decode_list_matched_segment(
       SseDeserializer deserializer);
 
@@ -226,6 +246,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  MandarinVariantSearchResult sse_decode_mandarin_variant_search_result(
+      SseDeserializer deserializer);
+
+  @protected
   MatchedInfix sse_decode_matched_infix(SseDeserializer deserializer);
 
   @protected
@@ -246,6 +270,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (int?, List<EnglishSearchResult>)
       sse_decode_record_opt_box_autoadd_u_32_list_english_search_result(
           SseDeserializer deserializer);
+
+  @protected
+  (
+    int?,
+    List<MandarinVariantSearchResult>
+  ) sse_decode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+      SseDeserializer deserializer);
 
   @protected
   (int?, List<PrSearchResult>)
@@ -337,6 +368,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<EntrySummary> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_mandarin_variant_search_result(
+      List<MandarinVariantSearchResult> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_matched_segment(
       List<MatchedSegment> self, SseSerializer serializer);
 
@@ -368,6 +403,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<VariantSearchResult> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_mandarin_variant_search_result(
+      MandarinVariantSearchResult self, SseSerializer serializer);
+
+  @protected
   void sse_encode_matched_infix(MatchedInfix self, SseSerializer serializer);
 
   @protected
@@ -388,6 +427,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_record_opt_box_autoadd_u_32_list_english_search_result(
       (int?, List<EnglishSearchResult>) self, SseSerializer serializer);
+
+  @protected
+  void
+      sse_encode_record_opt_box_autoadd_u_32_list_mandarin_variant_search_result(
+          (int?, List<MandarinVariantSearchResult>) self,
+          SseSerializer serializer);
 
   @protected
   void sse_encode_record_opt_box_autoadd_u_32_list_pr_search_result(

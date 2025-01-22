@@ -16,10 +16,11 @@
     "searchDictionaryOnlyPronunciationFound": "對唔住，我哋凈係揾到咗呢個詞嘅發音：",
     "searchResults": "{resultsCategory}結果",
     "searchResultsCategoryCantonese": "廣東話",
+    "searchResultsCategoryMandarin": "普通話",
     "searchResultsCategoryEnglish": "英文",
     "searchResultsCategoryExample": "例句",
 
-    "searchDictionaryHint": "廣東話/{romanization}/英文",
+    "searchDictionaryHint": "廣東話/普通話/{romanization}/英文",
 
     "switchToHandwriting": "切換到手寫",
     "switchToKeyboard": "切換到鍵盤",

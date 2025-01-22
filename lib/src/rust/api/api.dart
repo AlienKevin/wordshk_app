@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `eg_ranks_to_results`, `english_ranks_to_results`, `extract_standard_prs`, `get_entry_defs`, `jyutping_to_standard_romanization`, `pr_ranks_to_results`, `variant_ranks_to_results`
+// These functions are ignored because they are not marked as `pub`: `eg_ranks_to_results`, `english_ranks_to_results`, `extract_standard_prs`, `get_entry_defs`, `jyutping_to_standard_romanization`, `mandarin_variant_ranks_to_results`, `pr_ranks_to_results`, `variant_ranks_to_results`
 // These types are ignored because they are not used by any `pub` functions: `log_stream_sink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `initialize`
 
@@ -48,12 +48,14 @@ Future<int?> getEntryId({required String query, required Script script}) =>
 
 class CombinedSearchResults {
   final (int?, List<VariantSearchResult>) variantResults;
+  final (int?, List<MandarinVariantSearchResult>) mandarinVariantResults;
   final (int?, List<PrSearchResult>) prResults;
   final (int?, List<EnglishSearchResult>) englishResults;
   final (int?, List<EgSearchResult>) egResults;
 
   const CombinedSearchResults({
     required this.variantResults,
+    required this.mandarinVariantResults,
     required this.prResults,
     required this.englishResults,
     required this.egResults,
@@ -62,6 +64,7 @@ class CombinedSearchResults {
   @override
   int get hashCode =>
       variantResults.hashCode ^
+      mandarinVariantResults.hashCode ^
       prResults.hashCode ^
       englishResults.hashCode ^
       egResults.hashCode;
@@ -72,6 +75,7 @@ class CombinedSearchResults {
       other is CombinedSearchResults &&
           runtimeType == other.runtimeType &&
           variantResults == other.variantResults &&
+          mandarinVariantResults == other.mandarinVariantResults &&
           prResults == other.prResults &&
           englishResults == other.englishResults &&
           egResults == other.egResults;
@@ -186,6 +190,45 @@ class EntrySummary {
           variantSimp == other.variantSimp &&
           prs == other.prs &&
           defs == other.defs;
+}
+
+class MandarinVariantSearchResult {
+  final int id;
+  final String variant;
+  final MatchedInfix matchedMandarinVariant;
+  final List<String> prs;
+  final String yue;
+  final String eng;
+
+  const MandarinVariantSearchResult({
+    required this.id,
+    required this.variant,
+    required this.matchedMandarinVariant,
+    required this.prs,
+    required this.yue,
+    required this.eng,
+  });
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      variant.hashCode ^
+      matchedMandarinVariant.hashCode ^
+      prs.hashCode ^
+      yue.hashCode ^
+      eng.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MandarinVariantSearchResult &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          variant == other.variant &&
+          matchedMandarinVariant == other.matchedMandarinVariant &&
+          prs == other.prs &&
+          yue == other.yue &&
+          eng == other.eng;
 }
 
 class MatchedInfix {

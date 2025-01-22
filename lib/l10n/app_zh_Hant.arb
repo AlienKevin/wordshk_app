@@ -14,10 +14,11 @@
     "searchDictionaryOnlyPronunciationFound": "抱歉，我們只找到了這個詞的發音：",
     "searchResults": "{resultsCategory}結果",
     "searchResultsCategoryCantonese": "粵語",
+    "searchResultsCategoryMandarin": "普通話",
     "searchResultsCategoryEnglish": "英文",
     "searchResultsCategoryExample": "例句",
 
-    "searchDictionaryHint": "粵語/{romanization}/英文",
+    "searchDictionaryHint": "粵語/普通話/{romanization}/英文",
 
     "switchToHandwriting": "切換到手寫",
     "switchToKeyboard": "切換到鍵盤",

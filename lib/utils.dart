@@ -61,6 +61,7 @@ String getSearchResultTypeName(
       SearchResultType.pr =>
         getRomanizationName(context.read<RomanizationState>().romanization, s),
       SearchResultType.variant => s.searchResultsCategoryCantonese,
+      SearchResultType.mandarinVariant => s.searchResultsCategoryMandarin,
       SearchResultType.english => s.searchResultsCategoryEnglish,
       SearchResultType.eg => s.searchResultsCategoryExample
     };

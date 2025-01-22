@@ -8,13 +8,13 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use once_cell::sync::Lazy;
 use parking_lot::RwLock;
-use wordshk_tools::dict::{clause_to_string, EntryId};
+use wordshk_tools::dict::clause_to_string;
 use wordshk_tools::english_index::EnglishSearchRank;
 use wordshk_tools::entry_group_index;
 pub use wordshk_tools::jyutping::Romanization;
 use wordshk_tools::jyutping::{LaxJyutPing, LaxJyutPings};
 use wordshk_tools::lean_rich_dict::to_lean_rich_entry;
-use wordshk_tools::rich_dict::RichVariants;
+use wordshk_tools::rich_dict::RichEntry;
 use wordshk_tools::search::VariantMapLike;
 use wordshk_tools::search::{self, CombinedSearchRank, RichDictLike};
 pub use wordshk_tools::search::{MatchedInfix, MatchedSegment, Script};
@@ -23,6 +23,7 @@ use wordshk_tools::sqlite_db::SqliteDb;
 pub struct CombinedSearchResults {
     // First Option<usize> is the score
     pub variant_results: (Option<u32>, Vec<VariantSearchResult>),
+    pub mandarin_variant_results: (Option<u32>, Vec<MandarinVariantSearchResult>),
     pub pr_results: (Option<u32>, Vec<PrSearchResult>),
     pub english_results: (Option<u32>, Vec<EnglishSearchResult>),
     pub eg_results: (Option<u32>, Vec<EgSearchResult>),
@@ -67,6 +68,15 @@ pub struct VariantSearchResult {
     pub prs: Vec<String>,
     pub yues: Vec<String>,
     pub engs: Vec<String>,
+}
+
+pub struct MandarinVariantSearchResult {
+    pub id: u32,
+    pub variant: String,
+    pub matched_mandarin_variant: MatchedInfix,
+    pub prs: Vec<String>,
+    pub yue: String,
+    pub eng: String,
 }
 
 pub struct EnglishSearchResult {
@@ -146,7 +156,9 @@ pub fn get_entry_summaries(entry_ids: Vec<u32>, romanization: Romanization) -> V
         .filter_map(|entry_id| {
             let api = API.read();
             let api = api.as_ref().unwrap();
-            let (variants, defs) = get_entry_defs(entry_id, api)?;
+            let entry = api.get_entry(entry_id)?;
+            let variants = &entry.variants;
+            let defs = get_entry_defs(&entry);
             Some(EntrySummary {
                 variant_trad: variants.0.first().unwrap().word.clone(),
                 variant_simp: variants.0.first().unwrap().word_simp.clone(),
@@ -168,6 +180,7 @@ pub fn combined_search(
     let api = api.as_ref().unwrap();
     let CombinedSearchRank {
         variant: variant_ranks,
+        mandarin_variant: mandarin_variant_ranks,
         pr: pr_ranks,
         english: english_ranks,
         eg: eg_ranks,
@@ -175,6 +188,13 @@ pub fn combined_search(
     CombinedSearchResults {
         variant_results: variant_ranks_to_results(
             variant_ranks,
+            api,
+            script,
+            romanization,
+            capacity,
+        ),
+        mandarin_variant_results: mandarin_variant_ranks_to_results(
+            mandarin_variant_ranks,
             api,
             script,
             romanization,
@@ -283,7 +303,9 @@ fn variant_ranks_to_results(
             variant_index,
             ..
         } = variant_ranks.pop().unwrap();
-        let (variants, defs) = get_entry_defs(id, dict).unwrap();
+        let entry = dict.get_entry(id).unwrap();
+        let variants = &entry.variants;
+        let defs = get_entry_defs(&entry);
         variant_search_results.push(VariantSearchResult {
             id: id as u32,
             matched_variant: matched_variant.clone(),
@@ -296,6 +318,53 @@ fn variant_ranks_to_results(
                 })
                 .collect(),
             engs: defs.iter().map(|def| def.eng.clone()).collect(),
+        });
+        i += 1;
+    }
+    (max_score, variant_search_results)
+}
+
+fn mandarin_variant_ranks_to_results(
+    variant_ranks: &mut BinaryHeap<search::VariantSearchRank>,
+    dict: &dyn RichDictLike,
+    script: Script,
+    romanization: Romanization,
+    capacity: u32,
+) -> (Option<u32>, Vec<MandarinVariantSearchResult>) {
+    let mut variant_search_results = vec![];
+    let mut i = 0;
+    let max_score = variant_ranks.peek().map(|rank| {
+        let m = &rank.matched_variant;
+        (100 - m.prefix.chars().count() - m.suffix.chars().count()) as u32
+    });
+    while !variant_ranks.is_empty() && i < capacity {
+        let search::VariantSearchRank {
+            id,
+            matched_variant: matched_mandarin_variant,
+            variant_index: mandarin_variant_index,
+            ..
+        } = variant_ranks.pop().unwrap();
+        let entry = dict.get_entry(id).unwrap();
+        let defs = get_entry_defs(&entry);
+        let first_variant = entry.variants.0.first().unwrap();
+        let mandarin_variant = &entry.mandarin_variants.0[mandarin_variant_index];
+        let matched_def_index = *mandarin_variant.def_indices.first().unwrap();
+        let matched_def = &defs[matched_def_index];
+        variant_search_results.push(MandarinVariantSearchResult {
+            id: id as u32,
+            variant: match script {
+                Script::Traditional => &first_variant.word,
+                Script::Simplified => &first_variant.word_simp,
+            }
+            .clone(),
+            matched_mandarin_variant: matched_mandarin_variant.clone(),
+            prs: extract_standard_prs(&first_variant.prs, romanization),
+            yue: match script {
+                Script::Traditional => &matched_def.yue_trad,
+                Script::Simplified => &matched_def.yue_simp,
+            }
+            .clone(),
+            eng: matched_def.eng.clone(),
         });
         i += 1;
     }
@@ -318,7 +387,8 @@ fn pr_ranks_to_results(
             matched_pr,
             ..
         } = pr_ranks.pop().unwrap();
-        let (_, defs) = get_entry_defs(id, dict).unwrap();
+        let entry = dict.get_entry(id).unwrap();
+        let defs = get_entry_defs(&entry);
         pr_search_results.push(PrSearchResult {
             id: id as u32,
             variants,
@@ -343,27 +413,23 @@ pub struct EntryDef {
     pub eng: String,
 }
 
-fn get_entry_defs(id: EntryId, dict: &dyn RichDictLike) -> Option<(RichVariants, Vec<EntryDef>)> {
-    let entry = dict.get_entry(id)?;
+fn get_entry_defs(entry: &RichEntry) -> Vec<EntryDef> {
     let defs: &Vec<wordshk_tools::rich_dict::RichDef> = &entry.defs;
-    Some((
-        entry.variants,
-        defs.iter()
-            .filter_map(|def| {
-                def.eng
-                    .as_ref()
-                    .map(|def| {
-                        let result = clause_to_string(&def);
-                        result
-                    })
-                    .map(|eng| EntryDef {
-                        yue_trad: clause_to_string(&def.yue),
-                        yue_simp: clause_to_string(&def.yue_simp),
-                        eng,
-                    })
-            })
-            .collect(),
-    ))
+    defs.iter()
+        .filter_map(|def| {
+            def.eng
+                .as_ref()
+                .map(|def| {
+                    let result = clause_to_string(&def);
+                    result
+                })
+                .map(|eng| EntryDef {
+                    yue_trad: clause_to_string(&def.yue),
+                    yue_simp: clause_to_string(&def.yue_simp),
+                    eng,
+                })
+        })
+        .collect()
 }
 
 fn english_ranks_to_results(

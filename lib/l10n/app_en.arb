@@ -20,10 +20,11 @@
       }
     },
     "searchResultsCategoryCantonese": "Cantonese",
+    "searchResultsCategoryMandarin": "Mandarin",
     "searchResultsCategoryEnglish": "English",
     "searchResultsCategoryExample": "Example Sentence",
 
-    "searchDictionaryHint": "Cantonese/English/{romanization}",
+    "searchDictionaryHint": "Cant./Eng./Mand./{romanization}",
 
     "switchToHandwriting": "Switch to Handwriting",
     "switchToKeyboard": "Switch to Keyboard",

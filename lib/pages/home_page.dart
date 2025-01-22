@@ -47,6 +47,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<PrSearchResult> prSearchResults = [];
   List<VariantSearchResult> variantSearchResults = [];
+  List<MandarinVariantSearchResult> mandarinVariantSearchResults = [];
   List<EnglishSearchResult> englishSearchResults = [];
   List<SearchResultType> searchResultOrder = [];
   List<EgSearchResult> egSearchResults = [];
@@ -308,6 +309,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _clearSearchResults() {
     setState(() {
       variantSearchResults.clear();
+      mandarinVariantSearchResults.clear();
       prSearchResults.clear();
       englishSearchResults.clear();
       egSearchResults.clear();
@@ -354,6 +356,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       "${result.matchedVariant.prefix}${result.matchedVariant.query}${result.matchedVariant.suffix} ${result.yues.join(" ")}"))
                   .toList()
             );
+            final filteredMandarinVariantResults = (
+              results.mandarinVariantResults.$1,
+              results.mandarinVariantResults.$2
+                  .where((result) => !containsSensitiveContent(
+                      "${result.variant} ${result.yue}"))
+                  .toList()
+            );
             final filteredEnglishResults = (
               results.englishResults.$1,
               results.englishResults.$2
@@ -371,6 +380,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             results = CombinedSearchResults(
               prResults: filteredPrResults,
               variantResults: filteredVariantResults,
+              mandarinVariantResults: filteredMandarinVariantResults,
               englishResults: filteredEnglishResults,
               egResults: filteredEgResults,
             );
@@ -378,6 +388,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
           final isCombinedResultsEmpty = results.prResults.$2.isEmpty &&
               results.variantResults.$2.isEmpty &&
+              results.mandarinVariantResults.$2.isEmpty &&
               results.englishResults.$2.isEmpty &&
               results.egResults.$2.isEmpty;
 
@@ -385,6 +396,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             isSearchResultsEmpty = isCombinedResultsEmpty;
             prSearchResults = results.prResults.$2;
             variantSearchResults = results.variantResults.$2;
+            mandarinVariantSearchResults = results.mandarinVariantResults.$2;
             englishSearchResults = results.englishResults.$2;
             egSearchResults = results.egResults.$2;
 
@@ -392,12 +404,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             getSearchResultTypePriority(SearchResultType type) =>
                 switch (type) {
                   SearchResultType.variant => results.variantResults.$1!,
+                  SearchResultType.mandarinVariant =>
+                    results.mandarinVariantResults.$1!,
                   SearchResultType.pr => results.prResults.$1!,
                   SearchResultType.english => results.englishResults.$1!,
                   SearchResultType.eg => results.egResults.$1!,
                 };
             searchResultOrder = [
               if (variantSearchResults.isNotEmpty) SearchResultType.variant,
+              if (mandarinVariantSearchResults.isNotEmpty)
+                SearchResultType.mandarinVariant,
               if (prSearchResults.isNotEmpty) SearchResultType.pr,
               if (englishSearchResults.isNotEmpty) SearchResultType.english,
               if (egSearchResults.isNotEmpty) SearchResultType.eg,
@@ -754,6 +770,67 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }).toList();
   }
 
+  List<Widget> showMandarinVariantSearchResults(
+      int startIndex, TextStyle textStyle, Embedded embedded) {
+    return mandarinVariantSearchResults.map((result) {
+      return showSearchResult(
+          startIndex + mandarinVariantSearchResults.indexOf(result),
+          result.id,
+          (bool selected) => TextSpan(children: [
+                WidgetSpan(
+                    child: Text.rich(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        TextSpan(children: [
+                          TextSpan(
+                              text: result.matchedMandarinVariant.prefix,
+                              style: textStyle.copyWith(
+                                  color: selected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : null)),
+                          TextSpan(
+                              text: result.matchedMandarinVariant.query,
+                              style: textStyle.copyWith(
+                                  color: selected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w600)),
+                          TextSpan(
+                              text: result.matchedMandarinVariant.suffix,
+                              style: textStyle.copyWith(
+                                  color: selected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : null)),
+                          TextSpan(
+                              text: " ${result.variant}",
+                              style: textStyle.copyWith(
+                                color: selected ? lightGreyColor : greyColor,
+                              )),
+                          TextSpan(
+                              text: " ${result.prs.join(", ")} ",
+                              style: textStyle.copyWith(
+                                color: selected ? lightGreyColor : greyColor,
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .fontSize,
+                              )),
+                        ]))),
+                TextSpan(text: "\n"),
+                ...showDefSummary(
+                    context,
+                    switch (watchSummaryDefLanguage(context)) {
+                      SummaryDefLanguage.english => [result.eng],
+                      SummaryDefLanguage.cantonese => [result.yue]
+                    },
+                    textStyle.copyWith(
+                        color: selected ? lightGreyColor : greyColor)),
+              ]),
+          SearchResultType.mandarinVariant,
+          embedded: embedded);
+    }).toList();
+  }
+
   Widget showSearchResultCategory(String category) => Row(
         children: [
           Expanded(
@@ -790,6 +867,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     showSearchResultCategory(
                         s.searchResults(s.searchResultsCategoryCantonese)),
                     ...addSeparator(showVariantSearchResults(
+                        startIndex, textStyle, embedded))
+                  ],
+                SearchResultType.mandarinVariant => [
+                    showSearchResultCategory(
+                        s.searchResults(s.searchResultsCategoryMandarin)),
+                    ...addSeparator(showMandarinVariantSearchResults(
                         startIndex, textStyle, embedded))
                   ],
                 SearchResultType.pr => [

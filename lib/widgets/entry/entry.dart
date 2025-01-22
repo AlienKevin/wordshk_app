@@ -533,12 +533,10 @@ class _EntryWidgetState extends State<EntryWidget>
         ),
         EntryLabels(
             entryId: entry.id, poses: entry.poses, labels: entry.labels),
-        ...(context.read<LanguageState>().language == Language.zhHans)
-            ? [
-                EntryMandarinVariants(
-                    label: "[普通话]", mandarinVariants: entry.mandarinVariants)
-              ]
-            : [],
+        EntryMandarinVariants(
+            label:
+                "[${AppLocalizations.of(context)!.searchResultsCategoryMandarin}]",
+            mandarinVariants: entry.mandarinVariants),
         EntrySimsOrAnts(
             label: "[${AppLocalizations.of(context)!.synonym}]",
             simsOrAnts: entry.sims,

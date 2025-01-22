@@ -395,6 +395,10 @@ impl SseDecode for crate::api::api::CombinedSearchResults {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_variantResults =
             <(Option<u32>, Vec<crate::api::api::VariantSearchResult>)>::sse_decode(deserializer);
+        let mut var_mandarinVariantResults = <(
+            Option<u32>,
+            Vec<crate::api::api::MandarinVariantSearchResult>,
+        )>::sse_decode(deserializer);
         let mut var_prResults =
             <(Option<u32>, Vec<crate::api::api::PrSearchResult>)>::sse_decode(deserializer);
         let mut var_englishResults =
@@ -403,6 +407,7 @@ impl SseDecode for crate::api::api::CombinedSearchResults {
             <(Option<u32>, Vec<crate::api::api::EgSearchResult>)>::sse_decode(deserializer);
         return crate::api::api::CombinedSearchResults {
             variant_results: var_variantResults,
+            mandarin_variant_results: var_mandarinVariantResults,
             pr_results: var_prResults,
             english_results: var_englishResults,
             eg_results: var_egResults,
@@ -541,6 +546,20 @@ impl SseDecode for Vec<crate::api::api::EntrySummary> {
     }
 }
 
+impl SseDecode for Vec<crate::api::api::MandarinVariantSearchResult> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::api::MandarinVariantSearchResult>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::api::MatchedSegment> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -615,6 +634,27 @@ impl SseDecode for Vec<crate::api::api::VariantSearchResult> {
     }
 }
 
+impl SseDecode for crate::api::api::MandarinVariantSearchResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_id = <u32>::sse_decode(deserializer);
+        let mut var_variant = <String>::sse_decode(deserializer);
+        let mut var_matchedMandarinVariant =
+            <crate::api::api::MatchedInfix>::sse_decode(deserializer);
+        let mut var_prs = <Vec<String>>::sse_decode(deserializer);
+        let mut var_yue = <String>::sse_decode(deserializer);
+        let mut var_eng = <String>::sse_decode(deserializer);
+        return crate::api::api::MandarinVariantSearchResult {
+            id: var_id,
+            variant: var_variant,
+            matched_mandarin_variant: var_matchedMandarinVariant,
+            prs: var_prs,
+            yue: var_yue,
+            eng: var_eng,
+        };
+    }
+}
+
 impl SseDecode for crate::api::api::MatchedInfix {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -684,6 +724,21 @@ impl SseDecode for (Option<u32>, Vec<crate::api::api::EnglishSearchResult>) {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_field0 = <Option<u32>>::sse_decode(deserializer);
         let mut var_field1 = <Vec<crate::api::api::EnglishSearchResult>>::sse_decode(deserializer);
+        return (var_field0, var_field1);
+    }
+}
+
+impl SseDecode
+    for (
+        Option<u32>,
+        Vec<crate::api::api::MandarinVariantSearchResult>,
+    )
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_field0 = <Option<u32>>::sse_decode(deserializer);
+        let mut var_field1 =
+            <Vec<crate::api::api::MandarinVariantSearchResult>>::sse_decode(deserializer);
         return (var_field0, var_field1);
     }
 }
@@ -816,6 +871,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::CombinedSearchResults {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.variant_results.into_into_dart().into_dart(),
+            self.mandarin_variant_results.into_into_dart().into_dart(),
             self.pr_results.into_into_dart().into_dart(),
             self.english_results.into_into_dart().into_dart(),
             self.eg_results.into_into_dart().into_dart(),
@@ -914,6 +970,31 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::api::EntrySummary>
     for crate::api::api::EntrySummary
 {
     fn into_into_dart(self) -> crate::api::api::EntrySummary {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::api::MandarinVariantSearchResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.id.into_into_dart().into_dart(),
+            self.variant.into_into_dart().into_dart(),
+            self.matched_mandarin_variant.into_into_dart().into_dart(),
+            self.prs.into_into_dart().into_dart(),
+            self.yue.into_into_dart().into_dart(),
+            self.eng.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::api::MandarinVariantSearchResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::api::MandarinVariantSearchResult>
+    for crate::api::api::MandarinVariantSearchResult
+{
+    fn into_into_dart(self) -> crate::api::api::MandarinVariantSearchResult {
         self
     }
 }
@@ -1086,6 +1167,10 @@ impl SseEncode for crate::api::api::CombinedSearchResults {
             self.variant_results,
             serializer,
         );
+        <(
+            Option<u32>,
+            Vec<crate::api::api::MandarinVariantSearchResult>,
+        )>::sse_encode(self.mandarin_variant_results, serializer);
         <(Option<u32>, Vec<crate::api::api::PrSearchResult>)>::sse_encode(
             self.pr_results,
             serializer,
@@ -1197,6 +1282,16 @@ impl SseEncode for Vec<crate::api::api::EntrySummary> {
     }
 }
 
+impl SseEncode for Vec<crate::api::api::MandarinVariantSearchResult> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::api::MandarinVariantSearchResult>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::api::MatchedSegment> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1257,6 +1352,18 @@ impl SseEncode for Vec<crate::api::api::VariantSearchResult> {
     }
 }
 
+impl SseEncode for crate::api::api::MandarinVariantSearchResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.id, serializer);
+        <String>::sse_encode(self.variant, serializer);
+        <crate::api::api::MatchedInfix>::sse_encode(self.matched_mandarin_variant, serializer);
+        <Vec<String>>::sse_encode(self.prs, serializer);
+        <String>::sse_encode(self.yue, serializer);
+        <String>::sse_encode(self.eng, serializer);
+    }
+}
+
 impl SseEncode for crate::api::api::MatchedInfix {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1308,6 +1415,19 @@ impl SseEncode for (Option<u32>, Vec<crate::api::api::EnglishSearchResult>) {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Option<u32>>::sse_encode(self.0, serializer);
         <Vec<crate::api::api::EnglishSearchResult>>::sse_encode(self.1, serializer);
+    }
+}
+
+impl SseEncode
+    for (
+        Option<u32>,
+        Vec<crate::api::api::MandarinVariantSearchResult>,
+    )
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<u32>>::sse_encode(self.0, serializer);
+        <Vec<crate::api::api::MandarinVariantSearchResult>>::sse_encode(self.1, serializer);
     }
 }
 
